@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import FirstPage from '../pages/FirstPage';
-import * as actions from '../pages/actions';
+import * as actions from '../actions/Loginactions';
 
 const mapStateToProps = state => ({
-    isLogged : state.isLogged
+    status: state.status
   });
 
   export default connect(mapStateToProps, actions)(FirstPage);

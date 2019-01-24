@@ -4,8 +4,6 @@ import RegisterUserContainer from '../containers/RegisterUserContainer';
 import FirstPageContainer from '../containers/FirstPageContainer';
 import LoginUserContainer from '../containers/LoginUserContainer';
 
-//import ProfileUser from './pages/ProfileUser';
-
 const RootStack = createStackNavigator({
   FirstPage : {
     screen: FirstPageContainer,

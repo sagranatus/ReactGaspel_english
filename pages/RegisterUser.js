@@ -2,6 +2,9 @@
 import React, { Component } from 'react'; 
 import { AppRegistry, StyleSheet, TextInput, View, Alert, Button, Text } from 'react-native';
 import {PropTypes} from 'prop-types';
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'UserDatabase.db' });
+
 
 export default class RegisterUser extends Component {
 static navigationOptions =  ({ navigation }) => {
@@ -18,19 +21,31 @@ static navigationOptions =  ({ navigation }) => {
 };
 constructor(props) { 
     super(props) 
-    this.state = { 
-      UserName: '',
+    this.state = {       
       UserEmail: '',
+      UserName: '',
+      UserCatholicName: '',
+      UserAge: '',
+      UserRegion: '',
+      UserCathedral: '',
+      UserId: '',
       UserPassword: '' 
     } 
   }
+
+// 등록하기 클릭시 이벤트
+UserRegistrationFunction = () =>{
  
-  UserRegistrationFunction = () =>{
- 
- const { UserName }  = this.state ;
  const { UserEmail }  = this.state ;
+ const { UserName }  = this.state ;
+ const { UserCatholicName }  = this.state ;
+ const { UserAge }  = this.state ;
+ const { UserRegion }  = this.state ;
+ const { UserCathedral }  = this.state ;
  const { UserPassword }  = this.state ; 
+ const {UserId} = this.state ; 
  
+  // 서버에 데이터 전송
 fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
   method: 'POST',
   headers: {
@@ -38,19 +53,51 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({ 
-    name: UserName, 
-    email: UserEmail, 
+    name: UserName,     
+    email: UserEmail,
+    christ_name: UserCatholicName,
+    age: UserAge,
+    region: UserRegion,
+    cathedral: UserCathedral,
+    id: UserId, 
     password: UserPassword 
   })
  
 }).then((response) => response.json())
-      .then((responseJson) => { 
-        if(this.props.setLogin){
-          this.props.setLogin()
-        }
-// Showing response message coming from server after inserting records.
-        Alert.alert(responseJson); 
-        this.props.navigation.navigate('FirstPage', {});
+      .then((responseJson) => {
+
+          // If server response message same as Data Matched
+       if(responseJson.success === 'SUCCESS')
+       {             
+        const setLogin = this.props.setLogin
+        const navigation = this.props.navigation
+       // 데이터베이스에 삽입!
+        db.transaction(function(tx) {
+          tx.executeSql(
+            'INSERT INTO users (uid, user_id, email, name, christ_name, age, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
+            [responseJson.id, UserId, UserEmail, UserName, UserCatholicName, UserAge, UserRegion, UserCathedral, "now"],
+            (tx, results) => {
+              console.log('Results', results.rowsAffected);
+              console.log('Result', responseJson.id); // response로 uid값이 나와야 함
+              if (results.rowsAffected > 0) {
+                if(setLogin){ // action setLogin
+                  setLogin(responseJson.id)
+                  }
+                // Alert.alert(responseJson.success); 
+                  navigation.navigate('FirstPage', {});        
+             
+              } else {
+                alert('Registration Failed');
+              }
+            }
+          );
+        });
+
+       
+      } else{ 
+        Alert.alert(responseJson.success);
+      }
+       
       }).catch((error) => {
         console.error(error);
       });
@@ -65,14 +112,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
         <View style={styles.MainContainer}>      
         <Button title="Click Here To Login" onPress={this.GoLoginFunction} color="#2196F3" />    
                 <Text style= {{ fontSize: 20, color: "#000", textAlign: 'center', marginBottom: 15 }}>User Registration Form</Text>        
-                <TextInput                
-                // Adding hint in Text Input using Place holder.
-                placeholder="Enter User Name"        
-                onChangeText={UserName => this.setState({UserName})}        
-                // Making the Under line Transparent.
-                underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
-                />
+               
                 <TextInput                
                 // Adding hint in Text Input using Place holder.
                 placeholder="Enter User Email"        
@@ -81,6 +121,54 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 underlineColorAndroid='transparent'        
                 style={styles.TextInputStyleClass}
                 />        
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Id"        
+                onChangeText={UserId => this.setState({UserId})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Name"        
+                onChangeText={UserName => this.setState({UserName})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Catholic Name"        
+                onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Age"        
+                onChangeText={UserAge => this.setState({UserAge})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Region"        
+                onChangeText={UserRegion => this.setState({UserRegion})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
+                 <TextInput                
+                // Adding hint in Text Input using Place holder.
+                placeholder="Enter User Cathedral"        
+                onChangeText={UserCathedral => this.setState({UserCathedral})}        
+                // Making the Under line Transparent.
+                underlineColorAndroid='transparent'        
+                style={styles.TextInputStyleClass}
+                />
                 <TextInput                
                 // Adding hint in Text Input using Place holder.
                 placeholder="Enter User Password"        
@@ -100,7 +188,10 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
  
 RegisterUser.propTypes = { 
   setLogin:PropTypes.func,
-  isLogged: PropTypes.bool
+  status: PropTypes.shape({
+    isLogged: PropTypes.bool,
+    loginId: PropTypes.string
+})
 };
 
 const styles = StyleSheet.create({

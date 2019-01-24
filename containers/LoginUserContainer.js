@@ -1,16 +1,9 @@
 import { connect } from 'react-redux';
 import LoginUser from '../pages/LoginUser';
-import * as actions from '../pages/actions';
-import {setLogin, setLogout} from '../pages/actions';
+import * as actions from '../actions/Loginactions';
 
-import { bindActionCreators } from 'redux';
 const mapStateToProps = state => ({
-    isLogged : state.isLogged
+    status : state.status
   });
-  
-  const mapDispatchToProps = dispatch => (
-    bindActionCreators({
-      setLogin, setLogout
-    }, dispatch)
-  );
-export default connect(mapStateToProps, mapDispatchToProps)(LoginUser);
+
+export default connect(mapStateToProps, actions)(LoginUser);

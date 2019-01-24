@@ -1,63 +1,63 @@
-import React, { Component } from 'react';
- 
-import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
- 
-// Importing Stack Navigator library to add multiple activities.
-import { StackNavigator } from 'react-navigation';
- 
-// Creating Login Activity.
-export default class MainPage extends Component { 
-  // Setting up Login Activity title.
-  static navigationOptions =
-   {
-      title: 'First Page',
-   };
- 
-constructor(props) { 
-    super(props) 
-    this.state = { 
-        isLoggedIn: false
-    } 
-  }
-
-  render() {
-    return (      
-        <View style={styles.MainContainer}> 
-                <Text style= {styles.TextComponentStyle}>Logged Page</Text>                      
-                <Button title="Click Here To Login" color="#2196F3" />           
-            
-        
-        </View>
-    )             
+import React, { Component } from 'react'; 
+import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { StyleSheet, TextInput, View, Alert, Button, Text, Platform} from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons'
+import Main1 from '../containers/Main1Container';
+import Main2 from './Main2';
+import Main3 from './Main3';
+import Main4 from './Main4';
+import TabBarComponent from './TabBarComponent.js'
+const getTabBarIcon = (navigation, focused, tintColor) => {
+	const { routeName } = navigation.state;
+	let IconComponent = Icon;
+	let iconName;
+	if (routeName === 'Home') {
+	  iconName = 'star';
+	  // We want to add badges to home tab icon
+	//  IconComponent = HomeIconWithBadge;
+	} else if (routeName === 'Main2') {
+	  iconName = 'search';
+	} else if (routeName === 'Main3') {
+	  iconName = 'tag';
+	} else if (routeName === 'Main4') {
+	  iconName = 'user';
+	}
   
-}
-}
- 
-const styles = StyleSheet.create({
- 
-    MainContainer :{     
-    justifyContent: 'center',
-    flex:1,
-    margin: 10,
-    },
-     
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
-     TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
-      textAlign: 'center', 
-      marginBottom: 15
-     }
-    });
+	// You can return any component that you like here!
+	return <IconComponent name={iconName} size={25} color={tintColor} />;
+  };
+
+  const TabNavigator = createBottomTabNavigator({
+	Home: { screen: Main1 },
+	Main2: { screen: Main2 },
+	Main3: {screen: Main3 },
+	Main4: { screen: Main4 } 
+	},
+	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
+? {
+	defaultNavigationOptions: ({ navigation }) => ({
+	  tabBarIcon: ({ focused, tintColor }) =>
+		getTabBarIcon(navigation, focused, tintColor),
+	}),
+	tabBarOptions: {
+	  activeTintColor: 'tomato',
+	  inactiveTintColor: 'gray',
+	},
+    tabBarComponent: props => <TabBarComponent {...props} />,
+    tabBarPosition: 'bottom'
+   }
+: 
+  {
+	defaultNavigationOptions: ({ navigation }) => ({
+	  tabBarIcon: ({ focused, tintColor }) =>
+		getTabBarIcon(navigation, focused, tintColor),
+	}),
+	tabBarOptions: {
+	  activeTintColor: 'tomato',
+	  inactiveTintColor: 'gray',
+	},
+	}
+	
+	);
+
+  export default createAppContainer(TabNavigator);

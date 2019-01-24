@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
 import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'UserDatabase.db' });
 
-// Importing Stack Navigator library to add multiple activities.
-import { StackNavigator } from 'react-navigation';
- 
-// Creating Login Activity.
 export default class LoginUser extends Component { 
     static navigationOptions =  ({ navigation }) => {
         return {
@@ -13,8 +11,9 @@ export default class LoginUser extends Component {
             <Button
             onPress={() =>{
                 navigation.navigate('FirstPage', {});} }
-            title="Info"
-            color="#000"
+            title="back"
+            color="transparent"
+            titleColor="#fff"
             />
         ),
         }
@@ -26,13 +25,13 @@ constructor(props) {
       UserPassword: '' 
     } 
   }
- 
+
+// login 클릭시 이벤트
 UserLoginFunction = () =>{ 
  const { UserEmail }  = this.state ;
  const { UserPassword }  = this.state ;
- 
- 
-fetch('https://sssagranatus.cafe24.com/servertest/User_Login.php', {
+// server로 값을 전달함
+fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
   method: 'POST',
   headers: {
     'Accept': 'application/json',
@@ -46,18 +45,55 @@ fetch('https://sssagranatus.cafe24.com/servertest/User_Login.php', {
 }).then((response) => response.json())
       .then((responseJson) => {
  
-        // If server response message same as Data Matched
-       if(responseJson === 'Data Matched')
-        {   
-            if(this.props.setLogin){
-                this.props.setLogin()
-            }
-            alert(this.props.isLogged)
-            //Then open Profile activity and send user email to profile activity.
-            this.props.navigation.navigate('FirstPage', {}); 
+        // 성공적으로 값이 있을 경우에 
+       if(responseJson.success === 'SUCCESS')
+        {              
+          
+            const navigation = this.props.navigation
+            const setLogin = this.props.setLogin;
+            db.transaction(tx => {
+              tx.executeSql(
+                'SELECT * FROM users where uid = ?',
+                [responseJson.id],
+                (tx, results) => {
+                  var len = results.rows.length;
+                //  기기 DB에 값이 있는 경우 
+                  if (len > 0) {                  
+                    alert("exist");
+                    if(setLogin){ // action setLogin -> 이때 nextprops가 전달된다!!
+                      setLogin(responseJson.id) // uid 값
+                    }
+                    navigation.navigate('FirstPage', {}); 
+                //  기기 DB에 값이 없는 경우 DB에 삽입후에 firstpage로 이동
+                  } else {
+                    db.transaction(function(tx) {
+                      tx.executeSql(
+                        'INSERT INTO users (uid, user_id, email, name, christ_name, age, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
+                        [responseJson.id, responseJson.user_id, responseJson.email, responseJson.name, responseJson.christ_name, responseJson.age, responseJson.region, responseJson.cathedral, responseJson.created_at],
+                        (tx, results) => {
+                          console.log('Results', results.rowsAffected);
+                          console.log('Result', responseJson.id); // response로 uid값이 나와야 함
+                          if (results.rowsAffected > 0) {
+                            console.log('Message', "added success")
+                            if(setLogin){ // action setLogin
+                              setLogin(responseJson.id) // uid 값
+                            }
+                            navigation.navigate('FirstPage', {});                         
+                          } else {
+                            alert('Registration Failed');
+                          }
+                        }
+                      );
+                    });                             
+                  }
+                }
+              );
+            });            
+           // alert(responseJson.id+"/"+responseJson.name+"/"+responseJson.user_id+"/"+responseJson.email+"/"+responseJson.christ_name+"/"+responseJson.region+"/"+responseJson.cathedral+"/"+responseJson.created_at)
+           // Alert.alert(responseJson.id)            
         }
         else{ 
-          Alert.alert(responseJson);
+          Alert.alert(responseJson.success); // FAIL
         }
  
       }).catch((error) => {
@@ -89,8 +125,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/User_Login.php', {
                 secureTextEntry={true}
               />
       
-              <Button title="Click Here To Login" onPress={this.UserLoginFunction} color="#2196F3" />
-            
+              <Button title="Click Here To Login" onPress={this.UserLoginFunction} color="#2196F3" />           
         
       
       </View>
@@ -100,7 +135,10 @@ fetch('https://sssagranatus.cafe24.com/servertest/User_Login.php', {
 }
 LoginUser.propTypes = { 
     setLogin:PropTypes.func,
-    isLogged: PropTypes.bool
+    status: PropTypes.shape({
+      isLogged: PropTypes.bool,
+      loginId: PropTypes.string
+  })
   };
    
 const styles = StyleSheet.create({

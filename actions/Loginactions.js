@@ -1,6 +1,7 @@
-export const setLogin = () => { 
+export const setLogin = (loginId) => { 
     const action = {
-      type: 'LOGIN'
+      type: 'LOGIN',
+      payload: loginId
     };
     return action;
   };
@@ -11,5 +12,4 @@ export const setLogin = () => {
     };
     return action;
   };
-  
   
