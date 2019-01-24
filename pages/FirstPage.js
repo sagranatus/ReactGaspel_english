@@ -34,13 +34,17 @@ constructor(props) {
                 'CREATE TABLE IF NOT EXISTS comment(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, onesentence TEXT NOT NULL, comment TEXT NOT NULL)',
                 []
               );
+              txn.executeSql(
+                'CREATE TABLE IF NOT EXISTS lectio(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, onesentence TEXT NOT NULL, bg1 TEXT NOT NULL, bg2 TEXT NOT NULL, bg3 TEXT NOT NULL, sum1 TEXT NOT NULL, sum2 TEXT NOT NULL, js1 TEXT NOT NULL, js2 TEXT NOT NULL)',
+                []
+              );
             }
           }
         );
       });
 
     this.state = { 
-        isLoggedIn: this.props.status.isLogged | false, // this.props.isLogged는 store에 저장된 state이다.
+       isLoggedIn: this.props.status.isLogged | false, // this.props.isLogged는 store에 저장된 state이다.
       // isLoggedIn:true,
        loginId: "",
         loginName: ""

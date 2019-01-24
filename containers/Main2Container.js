@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Main1 from '../pages/Main1';
+import Main2 from '../pages/Main2';
 import * as actions from '../actions/Gaspelactions';
 
 const mapStateToProps = state => ({
@@ -7,4 +7,4 @@ const mapStateToProps = state => ({
      status: state.status
   });
 
-  export default connect(mapStateToProps, actions)(Main1);
+  export default connect(mapStateToProps, actions)(Main2);

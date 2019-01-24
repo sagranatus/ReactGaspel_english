@@ -11,7 +11,7 @@ req = fetch('https://sssagranatus.cafe24.com/servertest/get_gaspel.php', {
 })
  
     const action = {
-      type: 'GETGASPEL',
+      type: 'GETGASPEL_LECTIO',
       payload: req.then((response) => response.json())
     };
     return action;
@@ -34,17 +34,17 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
   })
     
       const action = {
-        type: 'GETTHREEGASPEL',
+        type: 'GETTHREEGASPEL_LECTIO',
         payload: req.then((response) => response.json())
       };
       return action;
     };
 
- 
+  
 
-export const insertComment = (status, id, date, onesentence, comment) => { 
+export const insertLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) => { 
   console.log("message", "insert"+onesentence)
-  req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -55,20 +55,26 @@ export const insertComment = (status, id, date, onesentence, comment) => {
       id: id,
       date: date,
       onesentence: onesentence,
-      comment: comment
+      bg1: bg1,
+      bg2: bg2,
+      bg3: bg3,
+      sum1: sum1,
+      sum2: sum2,
+      js1: js1,
+      js2: js2
     }) 
   })
     
       const action = {
-        type: 'INSERTCOMMENT',
+        type: 'INSERTLECTIO',
         payload: req.then((response) => response.json())
       };
       return action;
     };
 
-export const updateComment = (status, id, date, onesentence, comment) => { 
+export const updateLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) => { 
   console.log("message", "update"+onesentence)
-  req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -79,12 +85,18 @@ export const updateComment = (status, id, date, onesentence, comment) => {
       id: id,
       date: date,
       onesentence: onesentence,
-      comment: comment
+      bg1: bg1,
+      bg2: bg2,
+      bg3: bg3,
+      sum1: sum1,
+      sum2: sum2,
+      js1: js1,
+      js2: js2
     }) 
   })
     
       const action = {
-        type: 'UPDATECOMMENT',
+        type: 'UPDATELECTIO',
         payload: req.then((response) => response.json())
       };
       return action;

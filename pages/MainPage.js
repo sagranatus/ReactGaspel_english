@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { StyleSheet, TextInput, View, Alert, Button, Text, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
-import Main1 from '../containers/Main1Container';
-import Main2 from './Main2';
-import Main3 from './Main3';
+import Main1 from './Main1';
+import Main2 from '../containers/Main2Container';
+import Main3 from '../containers/Main3Container';
 import Main4 from './Main4';
 import TabBarComponent from './TabBarComponent.js'
 const getTabBarIcon = (navigation, focused, tintColor) => {

@@ -30,7 +30,10 @@ constructor(props) {
 UserLoginFunction = () =>{ 
  const { UserEmail }  = this.state ;
  const { UserPassword }  = this.state ;
+
+
 // server로 값을 전달함
+
 fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
   method: 'POST',
   headers: {
@@ -47,8 +50,9 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
  
         // 성공적으로 값이 있을 경우에 
        if(responseJson.success === 'SUCCESS')
-        {              
+        {        
           
+            //userDB에 값 확인 및 삽입
             const navigation = this.props.navigation
             const setLogin = this.props.setLogin;
             db.transaction(tx => {
@@ -56,12 +60,14 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                 'SELECT * FROM users where uid = ?',
                 [responseJson.id],
                 (tx, results) => {
+                  this.getAllComments(responseJson.id)
+                  this.getAllLectios(responseJson.id)
                   var len = results.rows.length;
                 //  기기 DB에 값이 있는 경우 
                   if (len > 0) {                  
                     alert("exist");
                     if(setLogin){ // action setLogin -> 이때 nextprops가 전달된다!!
-                      setLogin(responseJson.id) // uid 값
+                      setLogin(responseJson.id) // uid 값                      
                     }
                     navigation.navigate('FirstPage', {}); 
                 //  기기 DB에 값이 없는 경우 DB에 삽입후에 firstpage로 이동
@@ -100,9 +106,171 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
         console.error(error);
       });
  
+     
  
   }
- 
+getAllComments(id){    
+ // console.log("hahaha", id)    
+  fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      status: "selectall",
+      id: id
+    })
+  
+  }).then((response) => response.json())
+        .then((responseJson) => {
+       //   console.log("haha", "1!!!")
+          // 성공적으로 값이 있을 경우에 
+        if(responseJson.error == false)
+          {
+         //   console.log("haha", "true!!!")
+         //   console.log("haha", responseJson.stack)
+            const stack = responseJson.stack
+            // 값이 가져와 졌다. 날짜에 값이 있는지 확인하고 없는 경우에는 insert 한다.
+               //comment있는지 확인    
+           //    console.log("haha2", stack[0][1]+stack[0][0]+stack.length);
+               var date, id, onesentence, comment;
+              for(var i=0; i<stack.length; i++){
+               // console.log("haha3", i+stack[i][1]+stack[i][0])
+               date = stack[i][1]
+               id = stack[i][0]
+               onesentence = stack[i][2]
+               comment = stack[i][3]
+           //    console.log("haha3",date+id+onesentence+comment)               
+               this.getComments(date, id, onesentence, comment)              
+              }
+            
+          }else{
+            console.log("haha", "fail!!!")
+          }
+        }).catch((error) => {
+          console.error(error);
+        });   
+} 
+
+getAllLectios(id){    
+  console.log("hahaha", id)    
+  fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      status: "selectall",
+      id: id
+    })
+  
+  }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log("haha", "1!!!")
+          // 성공적으로 값이 있을 경우에 
+        if(responseJson.error == false)
+          {
+            console.log("haha", "true!!!")
+            console.log("haha", responseJson.stack)
+            const stack = responseJson.stack
+            // 값이 가져와 졌다. 날짜에 값이 있는지 확인하고 없는 경우에는 insert 한다.
+               //comment있는지 확인    
+               console.log("haha2", stack[0][1]+stack[0][0]+stack.length);
+               var date, id, onesentence, comment;
+              for(var i=0; i<stack.length; i++){
+               // console.log("haha3", i+stack[i][1]+stack[i][0])
+               date = stack[i][1]
+               id = stack[i][0]
+               onesentence = stack[i][2]
+               bg1 = stack[i][3]
+               bg2 = stack[i][4]
+               bg3 = stack[i][5]
+               sum1 = stack[i][6]
+               sum2 = stack[i][7]
+               js1 = stack[i][8]
+               js2 = stack[i][9]
+             //  comment = stack[i][3]
+            //   console.log("haha3",date+id+onesentence+comment)               
+               this.getLectios(date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2)              
+              }
+            
+          }else{
+            console.log("haha", "fail!!!")
+          }
+        }).catch((error) => {
+          console.error(error);
+        });   
+} 
+
+getComments(date, id, onesentence, comment){
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM comment where date = ? and uid = ?',
+      [date, id],
+      (tx, results) => {
+        var len = results.rows.length;
+      //  값이 있는 경우에 
+     // console.log('haha', results.rows.item(0).comment) 
+        if (len > 0) {                  
+            console.log('haha', "first comment existed")   
+        
+        } else {
+          console.log('haha', "first comment not existed")  
+          db.transaction(function(tx) {
+            tx.executeSql(
+              'INSERT INTO comment (uid, date, onesentence, comment) VALUES (?,?,?,?)',
+              [id, date, onesentence, comment],
+              (tx, results) => {
+                console.log('haha', 'done');
+                if (results.rowsAffected > 0) {
+                  console.log('haha', "insert done")                   
+                } else {
+                  alert('insert failed');
+                }
+              }
+            );
+          });                            
+        }
+      }
+    );
+  }); 
+}
+
+getLectios(date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2){
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM lectio where date = ? and uid = ?',
+      [date, id],
+      (tx, results) => {
+        var len = results.rows.length;
+      //  값이 있는 경우에 
+     // console.log('haha', results.rows.item(0).comment) 
+        if (len > 0) {                  
+            console.log('haha', "first lectio existed")   
+        
+        } else {
+          console.log('haha', "first lectio not existed")  
+          db.transaction(function(tx) {
+            tx.executeSql(
+              'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
+              [id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+              (tx, results) => {
+                console.log('haha', 'done');
+                if (results.rowsAffected > 0) {
+                  console.log('haha', "lectio insert done")                   
+                } else {
+                  alert('insert failed');
+                }
+              }
+            );
+          });                            
+        }
+      }
+    );
+  }); 
+}
   render() {
     return (      
       <View style={styles.MainContainer}> 
@@ -134,7 +302,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
   }
 }
 LoginUser.propTypes = { 
-    setLogin:PropTypes.func,
+    setLogin: PropTypes.func,
     status: PropTypes.shape({
       isLogged: PropTypes.bool,
       loginId: PropTypes.string
