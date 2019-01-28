@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import MainPage from './MainPage';
+import { setLogin } from '../actions/Loginactions';
 
 export default class FirstPage extends Component { 
 
@@ -46,10 +47,38 @@ constructor(props) {
     this.state = { 
        isLoggedIn: this.props.status.isLogged | false, // this.props.isLogged는 store에 저장된 state이다.
       // isLoggedIn:true,
-       loginId: "",
-        loginName: ""
+       loginId: null,
+        loginName: null
     } 
     console.log(this.props.status.isLogged);
+  }
+
+  componentWillMount(){
+  // 로그인 상태 값을 가져옴!!
+  AsyncStorage.getItem('login_id', (err, result) => {
+    console.log("result", result)
+    if(result != null){
+      this.setState({
+        loginId: result,
+        isLoggedIn: true
+      });
+      this.props.setLogin(result)
+    }    
+  })
+
+    AsyncStorage.getItem('login_name', (err, result) => {
+      console.log("result", result)
+      this.setState({
+        loginName: result
+            });
+    
+  })
+  //AsyncStorage.removeItem('login_id');
+
+  }
+
+  componentWillUnmount(){
+
   }
 shouldComponentUpdate(nextProps) {
   if(this.props.status.isLogged !== nextProps.status.isLogged){
@@ -59,8 +88,20 @@ shouldComponentUpdate(nextProps) {
 
 }
 componentWillReceiveProps(nextProps){  
-    console.log("message",nextProps.status.loginId)    
-    if(this.props.status.loginId !== nextProps.status.loginId){
+  
+    console.log("message", nextProps.status.loginId)    
+    if(this.props.status.loginId !== nextProps.status.loginId && nextProps.status.loginId == null){
+      console.log('what?')
+      this.setState({
+        isLoggedIn: false,
+        loginId: null,
+        loginName: null
+      });
+      console.log("saea!", nextProps.status.isLogged)
+    }
+   
+    if(this.props.status.loginId !== nextProps.status.loginId && nextProps.status.loginId != null){
+      console.log("saea!", "did it?")
       // 로그인이나 회원가입한 뒤에 DB에서 loginName 찾기    
         db.transaction(tx => {
             tx.executeSql(
@@ -79,7 +120,8 @@ componentWillReceiveProps(nextProps){
                   alert(this.state.loginName+this.state.loginId);
              
                 } else {
-                  alert('No user found');            
+                  alert('No user found');  
+                        
                 }
               }
             );

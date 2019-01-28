@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage} from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -52,6 +52,14 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
        if(responseJson.success === 'SUCCESS')
         {        
           
+          // 우선적으로 asyncstorage에 로그인 상태 저장
+          try {
+            AsyncStorage.setItem('login_id', responseJson.id);
+            AsyncStorage.setItem('login_name', responseJson.name);
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          }
+
             //userDB에 값 확인 및 삽입
             const navigation = this.props.navigation
             const setLogin = this.props.setLogin;

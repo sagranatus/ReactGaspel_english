@@ -44,6 +44,7 @@ constructor(props) {
     this.props.getGaspel(today) // 데이터 가져오기
 
     const loginId = this.props.status.loginId;
+
     //comment있는지 확인    
     db.transaction(tx => {
         tx.executeSql(
@@ -219,9 +220,8 @@ constructor(props) {
           
     }
 
-     // comment 가져올때
-     if(nextProps.gaspels.comment != null){   
-      
+     // comment 삽입시
+     if(nextProps.gaspels.comment != null){
         alert(nextProps.gaspels.comment.comment+" is inserted")
      }
   }

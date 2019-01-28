@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { StyleSheet, TextInput, View, Alert, Button, Text, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
-import Main1 from './Main1';
+import Main1 from '../containers/Main1Container';
 import Main2 from '../containers/Main2Container';
 import Main3 from '../containers/Main3Container';
 import Main4 from './Main4';
+import Main5 from '../containers/Main5Container';
 import TabBarComponent from './TabBarComponent.js'
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
@@ -21,6 +22,8 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	  iconName = 'tag';
 	} else if (routeName === 'Main4') {
 	  iconName = 'user';
+	}else{
+		iconName = 'calendar';
 	}
   
 	// You can return any component that you like here!
@@ -31,7 +34,8 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	Home: { screen: Main1 },
 	Main2: { screen: Main2 },
 	Main3: {screen: Main3 },
-	Main4: { screen: Main4 } 
+	Main4: { screen: Main4 },
+	Main5: { screen: Main5 }  
 	},
 	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
 ? {
@@ -43,7 +47,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	  activeTintColor: 'tomato',
 	  inactiveTintColor: 'gray',
 	},
-    tabBarComponent: props => <TabBarComponent {...props} />,
+    tabBarComponent: props => <TabBarComponent {...props} />, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
     tabBarPosition: 'bottom'
    }
 : 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, AsyncStorage} from 'react-native';
 import {PropTypes} from 'prop-types';
 
 export default class Main1 extends Component { 
@@ -9,22 +9,33 @@ constructor(props) {
     super(props)  
   }
 
+  logOut(){
+    this.props.setLogout()
+  }
+
   render() {
     
         return (      
             <View style={styles.MainContainer}> 
                     <Text style= {styles.TextComponentStyle}>Main3</Text>           
-            
+                    <TouchableOpacity
+                    onPress={() => this.logOut()} // logout
+                    >
+                    <Text style={{color:"#000", textAlign:'center'}}>
+                        logout
+                    </Text>
+                </TouchableOpacity>
             </View>
         )
        
   }
 }
 Main1.propTypes = { 
-    status: PropTypes.arrayOf(PropTypes.shape({
+    setLogout: PropTypes.func,
+    status: PropTypes.shape({
         isLogged: PropTypes.bool,
         loginId: PropTypes.string
-    }))
+    })
   };
   
 const styles = StyleSheet.create({

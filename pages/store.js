@@ -15,7 +15,7 @@ const loginReducer = (state = initialState_Login, action) => { // action에 따�
     case 'LOGOUT':
       return {
            isLogged: false,
-           loginId: ""
+           loginId: null
       };        
     default:
       return state;
