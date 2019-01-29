@@ -324,7 +324,7 @@ transitionToNextPanel(nextIndex){
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.js1}</Text>   
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.js2}</Text>        
                 <TouchableOpacity
-                onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+                onPress={() => this.setState({ Lectioediting: true, currentIndex: 1 })}
                 >
                     <Text style={{color:"#000", textAlign:'center'}}>
                         Edit
@@ -435,8 +435,7 @@ transitionToNextPanel(nextIndex){
                     </KeyboardAvoidingView>
 
                  
-            <ScrollView style={styles.MainContainer}> 
-             
+            <ScrollView style={styles.MainContainer}>              
                 <TouchableOpacity
                 onPress={() => this.getPrevMoreGaspel()}
                 >
@@ -474,6 +473,7 @@ Main3.propTypes = {
 const styles = StyleSheet.create({
  
     MainContainer :{  
+        marginBottom:150
     },
           
      TextComponentStyle: {

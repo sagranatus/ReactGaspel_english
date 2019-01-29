@@ -70,10 +70,11 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                 (tx, results) => {
                   this.getAllComments(responseJson.id)
                   this.getAllLectios(responseJson.id)
+                  this.getAllWeekends(responseJson.id)
                   var len = results.rows.length;
                 //  기기 DB에 값이 있는 경우 
                   if (len > 0) {                  
-                    alert("exist");
+                 //   alert("exist");
                     if(setLogin){ // action setLogin -> 이때 nextprops가 전달된다!!
                       setLogin(responseJson.id) // uid 값                      
                     }
@@ -211,6 +212,50 @@ getAllLectios(id){
           console.error(error);
         });   
 } 
+
+getAllWeekends(id){    
+  // console.log("hahaha", id)    
+   fetch('https://sssagranatus.cafe24.com/servertest/weekendData.php', {
+     method: 'POST',
+     headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+     },
+     body: JSON.stringify({ 
+       status: "selectall",
+       id: id
+     })
+   
+   }).then((response) => response.json())
+         .then((responseJson) => {
+        //   console.log("haha", "1!!!")
+           // 성공적으로 값이 있을 경우에 
+         if(responseJson.error == false)
+           {
+          //   console.log("haha", "true!!!")
+          //   console.log("haha", responseJson.stack)
+             const stack = responseJson.stack
+             // 값이 가져와 졌다. 날짜에 값이 있는지 확인하고 없는 경우에는 insert 한다.
+                //comment있는지 확인    
+            //    console.log("haha2", stack[0][1]+stack[0][0]+stack.length);
+                var date, id, mysentence, mythought;
+               for(var i=0; i<stack.length; i++){
+                 console.log("haha3", i+stack[i][1]+stack[i][0])
+              //  date = stack[i][1]
+              //  id = stack[i][0]
+              //  onesentence = stack[i][2]
+              //  comment = stack[i][3]
+            //    console.log("haha3",date+id+onesentence+comment)               
+               // this.getComments(date, id, onesentence, comment)              
+               }
+             
+           }else{
+             console.log("haha", "fail!!!")
+           }
+         }).catch((error) => {
+           console.error(error);
+         });   
+ } 
 
 getComments(date, id, onesentence, comment){
   db.transaction(tx => {

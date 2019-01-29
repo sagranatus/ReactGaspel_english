@@ -39,6 +39,10 @@ constructor(props) {
                 'CREATE TABLE IF NOT EXISTS lectio(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, onesentence TEXT NOT NULL, bg1 TEXT NOT NULL, bg2 TEXT NOT NULL, bg3 TEXT NOT NULL, sum1 TEXT NOT NULL, sum2 TEXT NOT NULL, js1 TEXT NOT NULL, js2 TEXT NOT NULL)',
                 []
               );
+              txn.executeSql(
+                'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, mysentence TEXT NOT NULL, mythought TEXT NOT NULL)',
+                []
+              );
             }
           }
         );
@@ -77,9 +81,7 @@ constructor(props) {
 
   }
 
-  componentWillUnmount(){
-
-  }
+ 
 shouldComponentUpdate(nextProps) {
   if(this.props.status.isLogged !== nextProps.status.isLogged){
     return false;
@@ -89,18 +91,10 @@ shouldComponentUpdate(nextProps) {
 }
 componentWillReceiveProps(nextProps){  
   
-    console.log("message", nextProps.status.loginId)    
-    if(this.props.status.loginId !== nextProps.status.loginId && nextProps.status.loginId == null){
-      console.log('what?')
-      this.setState({
-        isLoggedIn: false,
-        loginId: null,
-        loginName: null
-      });
-      console.log("saea!", nextProps.status.isLogged)
-    }
+    console.log("message", nextProps.status.loginId)  
    
-    if(this.props.status.loginId !== nextProps.status.loginId && nextProps.status.loginId != null){
+    // setLogin 후에 
+    if(this.props.status.loginId !== nextProps.status.loginId){
       console.log("saea!", "did it?")
       // 로그인이나 회원가입한 뒤에 DB에서 loginName 찾기    
         db.transaction(tx => {
@@ -120,8 +114,13 @@ componentWillReceiveProps(nextProps){
                   alert(this.state.loginName+this.state.loginId);
              
                 } else {
-                  alert('No user found');  
-                        
+                  // 로그아웃시에 
+                  //alert('No user found');  
+                  this.setState({
+                    loginId: null,
+                    loginName: null,
+                    isLoggedIn: false
+                  });      
                 }
               }
             );

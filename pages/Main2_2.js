@@ -3,8 +3,23 @@ import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, Scr
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
+var date;
+export default class Main2_2 extends Component { 
 
-export default class Main2 extends Component { 
+static navigationOptions =  ({ navigation }) => {
+    return {
+    headerLeft: (
+        <Button
+        onPress={() =>{
+            navigation.navigate('Main5', {otherParam: date});} }
+        title="back"
+        color="transparent"
+        titleColor="#fff"
+        />
+    ),
+    }
+};
+
 constructor(props) { 
     super(props)      
     this.state = {
@@ -25,26 +40,22 @@ constructor(props) {
   componentWillMount(){
     console.log("componentWillMount")
     const { params } = this.props.navigation.state;
-
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
+   // console.log(params.otherParam)
+   
+    var year, month, day
 
     if(params != null){
+        date = params.otherParam
         console.log("params is not nul!")
         year = params.otherParam.substring(0, 4);
         month = params.otherParam.substring(5, 7);
         day = params.otherParam.substring(8, 10);
     }
+    
+
     var today = year+"-"+month+"-"+day;
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+
     console.log(today+" "+today_comment_date)
     this.setState({
         Date: today,
@@ -52,7 +63,7 @@ constructor(props) {
     })
 
     this.props.getGaspel(today) // 데이터 가져오기
-
+   
     const loginId = this.props.status.loginId;
 
     //comment있는지 확인    
@@ -76,17 +87,16 @@ constructor(props) {
       });    
   }
 
-    getTodayLabel() {        
-        var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
-        var today = new Date().getDay();
-        var todayLabel = week[today];        
-        return todayLabel;
-    }
+  getTodayLabel(date) {        
+    var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
+    var todayLabel = week[date.getDay()];        
+    return todayLabel;
+}
 
 
-  componentWillReceiveProps(nextProps){
-    console.log("componentWillReceiveProps - Main2")
-    
+  componentWillReceiveProps(nextProps){ 
+
+
     var today_comment_date = this.state.Commentdate
     var loginId = this.props.status.loginId
       //comment있는지 확인    
@@ -125,12 +135,12 @@ constructor(props) {
    
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
-        }
         //console.log("saea",pos)
         //console.log("here", pos[0].indexOf(","))
         //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
+        }
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
         //console.log("saea",pos[0].length)
         //console.log("saea",pos.index)
@@ -382,7 +392,7 @@ constructor(props) {
         )       
   }
 }
-Main2.propTypes = {
+Main2_2.propTypes = {
     getGaspel: PropTypes.func,
     getThreeGaspel: PropTypes.func,
     insertComment: PropTypes.func,   

@@ -4,7 +4,22 @@ import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
-export default class Main4 extends Component { 
+
+var date;
+export default class Main4_2 extends Component { 
+static navigationOptions =  ({ navigation }) => {
+    return {
+    headerLeft: (
+        <Button
+        onPress={() =>{
+            navigation.navigate('Main5', {otherParam: date});} }
+        title="back"
+        color="transparent"
+        titleColor="#fff"
+        />
+    ),
+    }
+};
 constructor(props) { 
     super(props)      
     this.state = {
@@ -182,20 +197,19 @@ transitionToNextPanel(nextIndex){
 
 
   componentWillMount(){
-    var date = new Date();
-    var lastday = date.getDate() - (date.getDay() - 1) + 6;
-    date = new Date(date.setDate(lastday));
-
-    console.log("Date", date)
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
+    const { params } = this.props.navigation.state;
+    // console.log(params.otherParam)
+ 
+     var year, month, day
+ 
+     if(params != null){
+         console.log("params is not nul!")
+         date = params.otherParam
+         year = params.otherParam.substring(0, 4);
+         month = params.otherParam.substring(5, 7);
+         day = params.otherParam.substring(8, 10);
+     }
+     
     var today = year+"-"+month+"-"+day;
     
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
@@ -565,7 +579,7 @@ transitionToNextPanel(nextIndex){
         )       
   }
 }
-Main4.propTypes = {
+Main4_2.propTypes = {
     getGaspel: PropTypes.func,
     getThreeGaspel: PropTypes.func,
     insertWeekend: PropTypes.func,   

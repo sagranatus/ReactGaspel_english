@@ -4,7 +4,24 @@ import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
-export default class Main4 extends Component { 
+
+var date;
+export default class Main3_2 extends Component { 
+
+static navigationOptions =  ({ navigation }) => {
+    return {
+    headerLeft: (
+        <Button
+        onPress={() =>{
+            navigation.navigate('Main5', {otherParam: date});} }
+        title="back"
+        color="transparent"
+        titleColor="#fff"
+        />
+    ),
+    }
+};
+
 constructor(props) { 
     super(props)      
     this.state = {
@@ -23,11 +40,9 @@ constructor(props) {
         sum2:"",
         js1:"",
         js2:"",
-        mysentence: "",
-        mythought: "",
         Commentdate:"",
-        Weekendupdate: false,
-        Weekendediting: false,
+        Lectioupdate: false,
+        Lectioediting: false,
         currentIndex:0,
         isDone:false
      }
@@ -48,10 +63,10 @@ moveNext(){
 
 moveFinal(){
     console.log("saea")
-    alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
-    // weekend server
-    if(this.state.Weekendupdate){        
-        this.props.updateWeekend("update",this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
+    alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
+    // lectio server
+    if(this.state.Lectioupdate){        
+        this.props.updateLectio("update",this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
         const date = this.state.Commentdate;
         const bg1 = this.state.bg1
@@ -61,8 +76,6 @@ moveFinal(){
         const sum2 = this.state.sum2
         const js1 = this.state.js1
         const js2 = this.state.js2
-        const mysentence = this.state.mysentence
-        const mythought = this.state.mythought
         // comment DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
@@ -71,31 +84,16 @@ moveFinal(){
             (tx, results) => {
             console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Message', "Lectio update success")                   
-            } else {
-                alert('Update Failed');
-            }
-            }
-        );
-
-        tx.executeSql(
-            'UPDATE weekend set mysentence=?, mythought=? where uid=? and date=?',
-            [mysentence, mythought, loginId, date],
-            (tx, results) => {
-            console.log('Results', 'done');
-            if (results.rowsAffected > 0) {
-                console.log('Message', "Weekend update success")                   
+                console.log('Message', "lectio update success")                   
             } else {
                 alert('Update Failed');
             }
             }
         );
         }); 
-
-        
-        this.setState({ Weekendediting: false });
+        this.setState({ Lectioediting: false });
     }else{
-        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
+        this.props.insertLectio("insert", this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
         const date = this.state.Commentdate;
@@ -106,11 +104,7 @@ moveFinal(){
         const sum2 = this.state.sum2
         const js1 = this.state.js1
         const js2 = this.state.js2
-        const mysentence = this.state.mysentence
-        const mythought = this.state.mythought
-       
-      
-        // 값이 있는지 확인하고 없는 경우 Weekend DB에 삽입한다 
+        // 값이 있는지 확인하고 없는 경우 lectio DB에 삽입한다 
         db.transaction(tx => {
             tx.executeSql(
               'SELECT * FROM lectio where date = ? and uid = ?',
@@ -121,17 +115,14 @@ moveFinal(){
                 if (len > 0) {                  
                     console.log('Message', "exist")        
                 } else {
-                    this.setState({ Weekendupdate: true }) 
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
                       [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
                       (tx, results) => {
                         console.log('Results', 'done');
-                          
                         if (results.rowsAffected > 0) {
-                          console.log('Message', "lectio added success")            
-                            
+                          console.log('Message', "lectio added success")                   
                         } else {
                           alert('Added Failed');
                         }
@@ -141,35 +132,6 @@ moveFinal(){
                 }
               }
             );
-
-            tx.executeSql(
-                'SELECT * FROM weekend where date = ? and uid = ?',
-                [date, loginId],
-                (tx, results) => {
-                  var len = results.rows.length;
-                //  값이 있는 경우에 
-                  if (len > 0) {                  
-                      console.log('Message', "exist")        
-                  } else {
-                    db.transaction(function(tx) {
-                      tx.executeSql(
-                        'INSERT INTO weekend (uid, date, mysentence, mythought) VALUES (?,?,?,?)',
-                        [loginId,date,mysentence, mythought],
-                        (tx, results) => {
-                          console.log('Results', 'done');
-                            
-                          if (results.rowsAffected > 0) {
-                            console.log('Message', "weekend added success")            
-                              
-                          } else {
-                            alert('Added Failed');
-                          }
-                        }
-                      );
-                    });                             
-                  }
-                }
-              );
           });    
     }
 }
@@ -182,22 +144,20 @@ transitionToNextPanel(nextIndex){
 
 
   componentWillMount(){
-    var date = new Date();
-    var lastday = date.getDate() - (date.getDay() - 1) + 6;
-    date = new Date(date.setDate(lastday));
-
-    console.log("Date", date)
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
+    const { params } = this.props.navigation.state;
+    // console.log(params.otherParam)
+ 
+     var year, month, day
+ 
+     if(params != null){
+         console.log("params is not nul!")
+         date = params.otherParam
+         year = params.otherParam.substring(0, 4);
+         month = params.otherParam.substring(5, 7);
+         day = params.otherParam.substring(8, 10);
+     }
+     
     var today = year+"-"+month+"-"+day;
-    
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
     console.log(today+" "+today_comment_date)
     this.setState({
@@ -208,7 +168,7 @@ transitionToNextPanel(nextIndex){
     this.props.getGaspel(today) // 데이터 가져오기
 
     const loginId = this.props.status.loginId;
-    //Weekend있는지 확인    
+    //lectio있는지 확인    
     db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM lectio where date = ? and uid = ?',
@@ -226,31 +186,12 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Weekendupdate: true
+                    Lectioupdate: true
                 })
-            } else {        
-                console.log('Message', "no value")                             
+            } else {                                  
             }
           }
         );
-
-        tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Message', results.rows.item(0).mysentence)   
-                  this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought
-                  })
-              } else {        
-                  console.log('Message', "no value")                             
-              }
-            }
-          );
       });    
   }
 
@@ -261,12 +202,11 @@ transitionToNextPanel(nextIndex){
 }
 
 
-
   componentWillReceiveProps(nextProps){
     
     var today_comment_date = this.state.Commentdate
     var loginId = this.props.status.loginId
-     //Weekend있는지 확인    
+     //lectio있는지 확인    
      db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM lectio where date = ? and uid = ?',
@@ -284,36 +224,17 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Weekendupdate: true
+                    Lectioupdate: true
                 })
-            } else {       
-                console.log('Message', "nonono")                              
+            } else {                                  
             }
           }
         );
-
-        tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Message', results.rows.item(0).mysentence)   
-                  this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought
-                  })
-              } else {       
-                  console.log('Message', "nonono")                              
-              }
-            }
-          );
       });    
       // 이는 getGaspel에서 받아오는 경우
-      if(nextProps.weekend.sentence != null){
-        var contents = ""+nextProps.weekend.contents
-        var sentence = ""+nextProps.weekend.sentence
+      if(nextProps.lectios.sentence != null){
+        var contents = ""+nextProps.lectios.contents
+        var sentence = ""+nextProps.lectios.sentence
         var start = contents.indexOf("✠");
         var end = contents.indexOf("◎ 그리스도님 찬미합니다");
         contents = contents.substring(start, end);
@@ -369,19 +290,24 @@ transitionToNextPanel(nextIndex){
       }
 
       // threegaspel 가져올때 
-    if(nextProps.weekend.threegaspels != null){        
+    if(nextProps.lectios.threegaspels != null){        
         if(this.state.Move == "prev"){
             this.setState({
-                Contents : nextProps.weekend.threegaspels+"\n"+this.state.Contents
+                Contents : nextProps.lectios.threegaspels+"\n"+this.state.Contents
             })    
         }else{
             this.setState({
-                Contents : this.state.Contents+"\n"+nextProps.weekend.threegaspels
+                Contents : this.state.Contents+"\n"+nextProps.lectios.threegaspels
             })    
         }
           
     }
 
+     // comment 가져올때
+     if(nextProps.lectios.comment != null){   
+      
+        alert(nextProps.lectios.comment.comment+" is inserted")
+     }
   }
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
@@ -404,9 +330,9 @@ transitionToNextPanel(nextIndex){
 
   render() {
     console.log("state", this.state.currentIndex)
-    console.log("message", this.props.weekend);
+    console.log("message", this.props.lectios);
     console.log("message_loginId", this.props.status.loginId)
-    if(this.state.Weekendupdate == true && this.state.Weekendediting == false){
+    if(this.state.Lectioupdate == true && this.state.Lectioediting == false){
         return (
             <View> 
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.bg1}</Text>   
@@ -416,10 +342,8 @@ transitionToNextPanel(nextIndex){
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.sum2}</Text>   
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.js1}</Text>   
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.js2}</Text>        
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.mysentence}</Text>  
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.mythought}</Text>  
                 <TouchableOpacity
-                onPress={() => this.setState({ Weekendediting: true, currentIndex: 1 })}
+                onPress={() => this.setState({ Lectioediting: true, currentIndex: 1 })}
                 >
                     <Text style={{color:"#000", textAlign:'center'}}>
                         Edit
@@ -432,7 +356,7 @@ transitionToNextPanel(nextIndex){
         return (  
             <View> 
                     <OnboardingButton
-                        totalItems={9}
+                        totalItems={8}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
@@ -526,23 +450,12 @@ transitionToNextPanel(nextIndex){
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
-
-                        <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>선택 문장은?</Text>
-                        <TextInput
-                        multiline = {true}
-                        placeholder="여기에 적어봅시다"
-                        value={this.state.mysentence}        
-                        onChangeText={mysentence => this.setState({mysentence})}        
-                        // Making the Under line Transparent.
-                        underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
-                        </View>            
                         
                     </KeyboardAvoidingView>
 
                  
-            <ScrollView style={styles.MainContainer}>              
+            <ScrollView style={styles.MainContainer}> 
+             
                 <TouchableOpacity
                 onPress={() => this.getPrevMoreGaspel()}
                 >
@@ -565,12 +478,12 @@ transitionToNextPanel(nextIndex){
         )       
   }
 }
-Main4.propTypes = {
+Main3_2.propTypes = {
     getGaspel: PropTypes.func,
     getThreeGaspel: PropTypes.func,
-    insertWeekend: PropTypes.func,   
-    updateWeekend: PropTypes.func, 
-    weekend: PropTypes.object, // gaspelaction 결과값
+    insertLectio: PropTypes.func,   
+    updateLectio: PropTypes.func, 
+    lectios: PropTypes.object, // gaspelaction 결과값
     status: PropTypes.shape({
         isLogged: PropTypes.bool,
         loginId: PropTypes.string

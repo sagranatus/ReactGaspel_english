@@ -1,28 +1,37 @@
 import React from 'react';
 import { createStackNavigator,  createAppContainer} from 'react-navigation';
-import RegisterUserContainer from '../containers/RegisterUserContainer';
-import FirstPageContainer from '../containers/FirstPageContainer';
-import LoginUserContainer from '../containers/LoginUserContainer';
+import Main2_2 from '../containers/Main2_2Container';
+import Main3_2 from '../containers/Main3_2Container';
+import Main4_2 from '../containers/Main4_2Container';
+import Main5 from '../containers/Main5Container';
 
 const RootStack = createStackNavigator({
-  FirstPage : {
-    screen: FirstPageContainer,
+    Main5 : {
+    screen: Main5,
     navigationOptions: {
-      header: null
+        header: null
     },
   },
-  RegisterUser: {
-    screen: RegisterUserContainer,
+  Main2_2: {
+    screen: Main2_2,
     navigationOptions: {
-      title: 'Register User',
+      title: 'Main2_2',
       headerStyle: { backgroundColor: '#f05555' },
       headerTintColor: '#ffffff',
     },
   },
-  LoginUser: {
-    screen: LoginUserContainer,
+  Main3_2: {
+    screen: Main3_2,
     navigationOptions: {
-      title: 'Login User',
+      title: 'Main3_2',
+      headerStyle: { backgroundColor: '#f05555' },
+      headerTintColor: '#ffffff',
+    },
+  },
+  Main4_2: {
+    screen: Main4_2,
+    navigationOptions: {
+      title: 'Main4_2',
       headerStyle: { backgroundColor: '#f05555' },
       headerTintColor: '#ffffff',
     },

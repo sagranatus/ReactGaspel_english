@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container';
 import Main2 from '../containers/Main2Container';
 import Main3 from '../containers/Main3Container';
-import Main4 from './Main4';
+import Main4 from '../containers/Main4Container';
 import Main5 from '../containers/Main5Container';
+import CalendarNav from './CalendarNav'
 import TabBarComponent from './TabBarComponent.js'
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
@@ -35,7 +36,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	Main2: { screen: Main2 },
 	Main3: {screen: Main3 },
 	Main4: { screen: Main4 },
-	Main5: { screen: Main5 }  
+	Main5: { screen: CalendarNav }  
 	},
 	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
 ? {
