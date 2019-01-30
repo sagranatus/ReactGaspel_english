@@ -1,6 +1,7 @@
 // gaspel2는 calendar에서 다른 날짜로 이동시에 Main2_2에 대한 action이다.
 
 export const getGaspel = (date) => { 
+  console.log("Gaspel2actions : ", "getGaspel")
 req = fetch('https://sssagranatus.cafe24.com/servertest/get_gaspel.php', {
   method: 'POST',
   headers: {
@@ -21,6 +22,7 @@ req = fetch('https://sssagranatus.cafe24.com/servertest/get_gaspel.php', {
   
 
 export const getThreeGaspel = (status, person, chapter, verse) => { 
+  console.log("Gaspel2actions : ", "get three gaspels")
   req = fetch('https://sssagranatus.cafe24.com/servertest/get_three_gaspel.php', {
     method: 'POST',
     headers: {
@@ -45,7 +47,7 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
  
 
 export const insertComment = (status, id, date, onesentence, comment) => { 
-  console.log("message", "insert"+onesentence)
+  console.log("Gaspel2actions : ", "inserted")
   req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
     method: 'POST',
     headers: {
@@ -69,7 +71,7 @@ export const insertComment = (status, id, date, onesentence, comment) => {
     };
 
 export const updateComment = (status, id, date, onesentence, comment) => { 
-  console.log("message", "update"+onesentence)
+  console.log("Gaspel2actions : ", "updated")
   req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
     method: 'POST',
     headers: {

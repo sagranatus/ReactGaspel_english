@@ -1,4 +1,5 @@
 export const getGaspel = (date) => { 
+console.log("Weekend2actions : ", "getGaspel")
 req = fetch('https://sssagranatus.cafe24.com/servertest/get_gaspel.php', {
   method: 'POST',
   headers: {
@@ -19,6 +20,7 @@ req = fetch('https://sssagranatus.cafe24.com/servertest/get_gaspel.php', {
   
 
 export const getThreeGaspel = (status, person, chapter, verse) => { 
+  console.log("Weekend2actions : ", "get three gaspels")
   req = fetch('https://sssagranatus.cafe24.com/servertest/get_three_gaspel.php', {
     method: 'POST',
     headers: {
@@ -43,7 +45,7 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
   
 
 export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence, mythought) => { 
-  console.log("message", "insert"+onesentence)
+  console.log("Weekend2actions : ", "inserted")
   req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
     method: 'POST',
     headers: {
@@ -89,7 +91,7 @@ export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1
     };
 
 export const updateWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence, mythought) => { 
-  console.log("message", "update"+onesentence)
+  console.log("Weekend2actions : ", "updated")
   req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
     method: 'POST',
     headers: {

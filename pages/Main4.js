@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -25,7 +25,7 @@ constructor(props) {
         js2:"",
         mysentence: "",
         mythought: "",
-        Commentdate:"",
+        Weekenddate:"",
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
@@ -47,13 +47,13 @@ moveNext(){
 }
 
 moveFinal(){
-    console.log("saea")
+    console.log("Main4 - moveFinal")
     alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
     // weekend server
     if(this.state.Weekendupdate){        
-        this.props.updateWeekend("update",this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
+        this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
         const loginId = this.props.status.loginId;
-        const date = this.state.Commentdate;
+        const date = this.state.Weekenddate;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -63,17 +63,16 @@ moveFinal(){
         const js2 = this.state.js2
         const mysentence = this.state.mysentence
         const mythought = this.state.mythought
-        // comment DB를 업데이트한다.
+        // lectio DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
             'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
             [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
             (tx, results) => {
-            console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Message', "Lectio update success")                   
+                console.log('Main4 - lectio data updated : ', "success")                     
             } else {
-                alert('Update Failed');
+                console.log('Main4 - lectio data updated : ', "failed")   
             }
             }
         );
@@ -82,11 +81,10 @@ moveFinal(){
             'UPDATE weekend set mysentence=?, mythought=? where uid=? and date=?',
             [mysentence, mythought, loginId, date],
             (tx, results) => {
-            console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Message', "Weekend update success")                   
+                console.log('Main4 - weekend data updated : ', "success")               
             } else {
-                alert('Update Failed');
+                console.log('Main4 - weekend data updated : ', "failed")   
             }
             }
         );
@@ -95,10 +93,10 @@ moveFinal(){
         
         this.setState({ Weekendediting: false });
     }else{
-        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
+        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
-        const date = this.state.Commentdate;
+        const date = this.state.Weekenddate;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -119,21 +117,19 @@ moveFinal(){
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                    console.log('Message', "exist")        
+                    console.log('Main4 - data : ', "existed")        
                 } else {
                     this.setState({ Weekendupdate: true }) 
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
                       [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
-                      (tx, results) => {
-                        console.log('Results', 'done');
-                          
+                      (tx, results) => {                          
                         if (results.rowsAffected > 0) {
-                          console.log('Message', "lectio added success")            
+                            console.log('Main4 - lectio data inserted : ', "success")          
                             
                         } else {
-                          alert('Added Failed');
+                            console.log('Main4 - lectio data inserted : ', "failed") 
                         }
                       }
                     );
@@ -155,14 +151,11 @@ moveFinal(){
                       tx.executeSql(
                         'INSERT INTO weekend (uid, date, mysentence, mythought) VALUES (?,?,?,?)',
                         [loginId,date,mysentence, mythought],
-                        (tx, results) => {
-                          console.log('Results', 'done');
-                            
+                        (tx, results) => {                            
                           if (results.rowsAffected > 0) {
-                            console.log('Message', "weekend added success")            
-                              
+                            console.log('Main4 - weekend data inserted : ', "success") 
                           } else {
-                            alert('Added Failed');
+                            console.log('Main4 - weekend data inserted : ', "failed")
                           }
                         }
                       );
@@ -171,6 +164,7 @@ moveFinal(){
                 }
               );
           });    
+          this.setState({ Weekendupdate: true });
     }
 }
 
@@ -185,8 +179,6 @@ transitionToNextPanel(nextIndex){
     var date = new Date();
     var lastday = date.getDate() - (date.getDay() - 1) + 6;
     date = new Date(date.setDate(lastday));
-
-    console.log("Date", date)
     var year = date.getFullYear();
     var month = date.getMonth()+1
     var day = date.getDate();
@@ -199,16 +191,17 @@ transitionToNextPanel(nextIndex){
     var today = year+"-"+month+"-"+day;
     
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
-    console.log(today+" "+today_comment_date)
+    console.log('Main4 - weekend date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
-        Commentdate: today_comment_date
+        Weekenddate: today_comment_date
     })
 
-    this.props.getGaspel(today) // 데이터 가져오기
+    // 데이터 가져오기
+    this.props.getGaspel(today) 
 
+    //Weekend DB 있는지 확인        
     const loginId = this.props.status.loginId;
-    //Weekend있는지 확인    
     db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM lectio where date = ? and uid = ?',
@@ -217,7 +210,7 @@ transitionToNextPanel(nextIndex){
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Message', results.rows.item(0).bg1)   
+                console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
                 this.setState({
                     bg1 : results.rows.item(0).bg1,
                     bg2 : results.rows.item(0).bg2,
@@ -228,8 +221,7 @@ transitionToNextPanel(nextIndex){
                     js2 : results.rows.item(0).js2,
                     Weekendupdate: true
                 })
-            } else {        
-                console.log('Message', "no value")                             
+            } else {                                    
             }
           }
         );
@@ -241,13 +233,12 @@ transitionToNextPanel(nextIndex){
               var len = results.rows.length;
             //  값이 있는 경우에 
               if (len > 0) {                  
-                  console.log('Message', results.rows.item(0).mysentence)   
+                console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
                       mysentence : results.rows.item(0).mysentence,
                       mythought : results.rows.item(0).mythought
                   })
-              } else {        
-                  console.log('Message', "no value")                             
+              } else {                                     
               }
             }
           );
@@ -260,13 +251,10 @@ transitionToNextPanel(nextIndex){
     return todayLabel;
 }
 
-
-
-  componentWillReceiveProps(nextProps){
-    
-    var today_comment_date = this.state.Commentdate
+  componentWillReceiveProps(nextProps){    
+   /* var today_comment_date = this.state.Weekenddate
     var loginId = this.props.status.loginId
-     //Weekend있는지 확인    
+     //Weekend DB 있는지 확인    
      db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM lectio where date = ? and uid = ?',
@@ -309,9 +297,12 @@ transitionToNextPanel(nextIndex){
               }
             }
           );
-      });    
+      });   
+      
+      */
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.weekend.sentence != null){
+        console.log('Main4 - get Gaspel Data')  
         var contents = ""+nextProps.weekend.contents
         var sentence = ""+nextProps.weekend.sentence
         var start = contents.indexOf("✠");
@@ -343,7 +334,7 @@ transitionToNextPanel(nextIndex){
         var first_verse = pos[0]
         var last_verse = pos[pos.length-1]
 
-        console.log(first_verse+last_verse)
+        console.log("Main4 - first verse, last verse get : ", first_verse+"/"+last_verse)
 
         // 복음사가 가져옴
     var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
@@ -355,7 +346,7 @@ transitionToNextPanel(nextIndex){
         today_person = contents.substring(2,idx_today-2);
     }
 
-    console.log("saea","today who?"+today_person+chapter);
+    console.log("Main4 - person & chapter get : ",today_person+"/"+chapter);
     
         this.setState({
             Contents : contents,
@@ -369,7 +360,8 @@ transitionToNextPanel(nextIndex){
       }
 
       // threegaspel 가져올때 
-    if(nextProps.weekend.threegaspels != null){        
+    if(nextProps.weekend.threegaspels != null){  
+        console.log("Main4 - Three gaspel get")           
         if(this.state.Move == "prev"){
             this.setState({
                 Contents : nextProps.weekend.threegaspels+"\n"+this.state.Contents
@@ -393,7 +385,6 @@ transitionToNextPanel(nextIndex){
   }
   // 이후 3절 가져오기
   getNextMoreGaspel(){
-    console.log(this.state.Person+this.state.Chapter+this.state.Lastverse)
      this.props.getThreeGaspel("next", this.state.Person, this.state.Chapter, this.state.Lastverse)
      this.setState({
         Lastverse: this.state.Lastverse+3,
@@ -403,9 +394,7 @@ transitionToNextPanel(nextIndex){
    
 
   render() {
-    console.log("state", this.state.currentIndex)
-    console.log("message", this.props.weekend);
-    console.log("message_loginId", this.props.status.loginId)
+    console.log("Main4 - gaspels in render");
     if(this.state.Weekendupdate == true && this.state.Weekendediting == false){
         return (
             <View> 
@@ -449,8 +438,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.bg1}        
-                        onChangeText={bg1 => this.setState({bg1})}        
-                        // Making the Under line Transparent.
+                        onChangeText={bg1 => this.setState({bg1})}  
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass}  />                           
                         </View>
@@ -461,8 +449,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.bg2}        
-                        onChangeText={bg2 => this.setState({bg2})}        
-                        // Making the Under line Transparent.
+                        onChangeText={bg2 => this.setState({bg2})}   
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -473,8 +460,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.bg3}        
-                        onChangeText={bg3 => this.setState({bg3})}        
-                        // Making the Under line Transparent.
+                        onChangeText={bg3 => this.setState({bg3})}   
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -485,8 +471,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.sum1}        
-                        onChangeText={sum1 => this.setState({sum1})}        
-                        // Making the Under line Transparent.
+                        onChangeText={sum1 => this.setState({sum1})}   
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -497,8 +482,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.sum2}        
-                        onChangeText={sum2 => this.setState({sum2})}        
-                        // Making the Under line Transparent.
+                        onChangeText={sum2 => this.setState({sum2})}      
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -509,8 +493,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.js1}        
-                        onChangeText={js1 => this.setState({js1})}        
-                        // Making the Under line Transparent.
+                        onChangeText={js1 => this.setState({js1})}     
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -521,8 +504,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.js2}        
-                        onChangeText={js2 => this.setState({js2})}        
-                        // Making the Under line Transparent.
+                        onChangeText={js2 => this.setState({js2})}       
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
@@ -533,8 +515,7 @@ transitionToNextPanel(nextIndex){
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.mysentence}        
-                        onChangeText={mysentence => this.setState({mysentence})}        
-                        // Making the Under line Transparent.
+                        onChangeText={mysentence => this.setState({mysentence})}   
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>            

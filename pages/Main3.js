@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -23,7 +23,7 @@ constructor(props) {
         sum2:"",
         js1:"",
         js2:"",
-        Commentdate:"",
+        Lectiodate:"",
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
@@ -36,7 +36,7 @@ constructor(props) {
      this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
   }
 
-  movePrevious(){
+movePrevious(){
     this.transitionToNextPanel(this.state.currentIndex -1);
 }
 
@@ -45,13 +45,13 @@ moveNext(){
 }
 
 moveFinal(){
-    console.log("saea")
+    console.log("Main3 - moveFinal")
     alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
     // lectio server
     if(this.state.Lectioupdate){        
-        this.props.updateLectio("update",this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
+        this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
-        const date = this.state.Commentdate;
+        const date = this.state.Lectiodate;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -65,21 +65,20 @@ moveFinal(){
             'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
             [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
             (tx, results) => {
-            console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Message', "lectio update success")                   
+                console.log('Main3 - lectio data updated : ', "success")                       
             } else {
-                alert('Update Failed');
+                console.log('Main3 - lectio data updated : ', "success")     
             }
             }
         );
         }); 
         this.setState({ Lectioediting: false });
     }else{
-        this.props.insertLectio("insert", this.props.status.loginId, this.state.Commentdate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
+        this.props.insertLectio("insert", this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
-        const date = this.state.Commentdate;
+        const date = this.state.Lectiodate;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -87,6 +86,7 @@ moveFinal(){
         const sum2 = this.state.sum2
         const js1 = this.state.js1
         const js2 = this.state.js2
+
         // 값이 있는지 확인하고 없는 경우 lectio DB에 삽입한다 
         db.transaction(tx => {
             tx.executeSql(
@@ -96,18 +96,17 @@ moveFinal(){
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                    console.log('Message', "exist")        
+                    console.log('Main3 - lectio data', "existed")        
                 } else {
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
                       [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
                       (tx, results) => {
-                        console.log('Results', 'done');
                         if (results.rowsAffected > 0) {
-                          console.log('Message', "lectio added success")                   
+                            console.log('Main3 - lectio data inserted : ', "success")                 
                         } else {
-                          alert('Added Failed');
+                            console.log('Main3 - lectio data inserted : ', "failed")       
                         }
                       }
                     );
@@ -116,6 +115,7 @@ moveFinal(){
               }
             );
           });    
+          this.setState({ Lectioupdate: true });
     }
 }
 
@@ -139,16 +139,19 @@ transitionToNextPanel(nextIndex){
     } 
     var today = year+"-"+month+"-"+day;
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
-    console.log(today+" "+today_comment_date)
+    console.log('Main3 - today date : ', today+"/"+today_comment_date)
+
     this.setState({
         Date: today,
-        Commentdate: today_comment_date
+        Lectiodate: today_comment_date
     })
 
-    this.props.getGaspel(today) // 데이터 가져오기
+    // 데이터 가져오기
+    this.props.getGaspel(today) 
 
-    const loginId = this.props.status.loginId;
-    //lectio있는지 확인    
+    
+    //lectio있는지 확인
+    const loginId = this.props.status.loginId;    
     db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM lectio where date = ? and uid = ?',
@@ -157,7 +160,7 @@ transitionToNextPanel(nextIndex){
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Message', results.rows.item(0).bg1)   
+                console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
                 this.setState({
                     bg1 : results.rows.item(0).bg1,
                     bg2 : results.rows.item(0).bg2,
@@ -184,36 +187,43 @@ transitionToNextPanel(nextIndex){
 
 
   componentWillReceiveProps(nextProps){
-    
-    var today_comment_date = this.state.Commentdate
-    var loginId = this.props.status.loginId
-     //lectio있는지 확인    
-     db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [today_comment_date,loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Message', results.rows.item(0).bg1)   
-                this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
-                    js2 : results.rows.item(0).js2,
-                    Lectioupdate: true
-                })
-            } else {                                  
+   /* console.log("awdadw", nextProps.lectios.bg1)
+    // comment 가져올때
+    if(nextProps.lectios.bg1 != null){   
+        alert(nextProps.lectios.bg1+" is inserted")
+         //lectio insert 후에 update로 변하도록 하기 위함 
+        var today_comment_date = this.state.Lectiodate
+        var loginId = this.props.status.loginId
+        db.transaction(tx => {
+            tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Message', results.rows.item(0).bg1)   
+                    this.setState({
+                        bg1 : results.rows.item(0).bg1,
+                        bg2 : results.rows.item(0).bg2,
+                        bg3 : results.rows.item(0).bg3,
+                        sum1 : results.rows.item(0).sum1,
+                        sum2 : results.rows.item(0).sum2,
+                        js1 : results.rows.item(0).js1,
+                        js2 : results.rows.item(0).js2,
+                        Lectioupdate: true
+                    })
+                } else {                                  
+                }
             }
-          }
-        );
-      });    
+            );
+        });           
+     }
+     */
+    
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.lectios.sentence != null){
+        console.log('Main3 - get Gaspel Data')  
         var contents = ""+nextProps.lectios.contents
         var sentence = ""+nextProps.lectios.sentence
         var start = contents.indexOf("✠");
@@ -228,9 +238,9 @@ transitionToNextPanel(nextIndex){
    
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        //console.log("saea",pos)
-        //console.log("here", pos[0].indexOf(","))
-        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
+        }
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
         //console.log("saea",pos[0].length)
         //console.log("saea",pos.index)
@@ -245,7 +255,7 @@ transitionToNextPanel(nextIndex){
         var first_verse = pos[0]
         var last_verse = pos[pos.length-1]
 
-        console.log(first_verse+last_verse)
+        console.log("Main3 - first verse, last verse get : ", first_verse+"/"+last_verse)
 
         // 복음사가 가져옴
     var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
@@ -257,7 +267,7 @@ transitionToNextPanel(nextIndex){
         today_person = contents.substring(2,idx_today-2);
     }
 
-    console.log("saea","today who?"+today_person+chapter);
+    console.log("Main3 - person & chapter get : ",today_person+"/"+chapter);
     
         this.setState({
             Contents : contents,
@@ -271,7 +281,8 @@ transitionToNextPanel(nextIndex){
       }
 
       // threegaspel 가져올때 
-    if(nextProps.lectios.threegaspels != null){        
+    if(nextProps.lectios.threegaspels != null){   
+        console.log("Main3 - Three gaspel get")             
         if(this.state.Move == "prev"){
             this.setState({
                 Contents : nextProps.lectios.threegaspels+"\n"+this.state.Contents
@@ -280,15 +291,9 @@ transitionToNextPanel(nextIndex){
             this.setState({
                 Contents : this.state.Contents+"\n"+nextProps.lectios.threegaspels
             })    
-        }
-          
+        }          
     }
-
-     // comment 가져올때
-     if(nextProps.lectios.comment != null){   
-      
-        alert(nextProps.lectios.comment.comment+" is inserted")
-     }
+     
   }
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
@@ -300,19 +305,15 @@ transitionToNextPanel(nextIndex){
   }
   // 이후 3절 가져오기
   getNextMoreGaspel(){
-    console.log(this.state.Person+this.state.Chapter+this.state.Lastverse)
      this.props.getThreeGaspel("next", this.state.Person, this.state.Chapter, this.state.Lastverse)
      this.setState({
         Lastverse: this.state.Lastverse+3,
         Move: "next"
     });
-   }
-   
+   }   
 
   render() {
-    console.log("state", this.state.currentIndex)
-    console.log("message", this.props.lectios);
-    console.log("message_loginId", this.props.status.loginId)
+    console.log("Main3 - gaspels in render");
     if(this.state.Lectioupdate == true && this.state.Lectioediting == false){
         return (
             <View> 

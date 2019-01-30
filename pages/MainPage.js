@@ -1,14 +1,14 @@
-import React, { Component } from 'react'; 
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
-import { StyleSheet, TextInput, View, Alert, Button, Text, Platform} from 'react-native';
+import React from 'react'
+import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
+import { Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
-import Main1 from '../containers/Main1Container';
-import Main2 from '../containers/Main2Container';
-import Main3 from '../containers/Main3Container';
-import Main4 from '../containers/Main4Container';
-import Main5 from '../containers/Main5Container';
+import Main1 from '../containers/Main1Container'
+import Main2 from '../containers/Main2Container'
+import Main3 from '../containers/Main3Container'
+import Main4 from '../containers/Main4Container'
 import CalendarNav from './CalendarNav'
 import TabBarComponent from './TabBarComponent.js'
+
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
@@ -27,7 +27,6 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 		iconName = 'calendar';
 	}
   
-	// You can return any component that you like here!
 	return <IconComponent name={iconName} size={25} color={tintColor} />;
   };
 

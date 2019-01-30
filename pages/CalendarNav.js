@@ -9,7 +9,7 @@ const RootStack = createStackNavigator({
     Main5 : {
     screen: Main5,
     navigationOptions: {
-        header: null
+        header: null,
     },
   },
   Main2_2: {

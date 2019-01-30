@@ -8,7 +8,8 @@ export const setLogin = (loginId) => {
   };
   
   export const setLogout = () => {
-    console.log("logout!!")    
+    console.log("logout action")    
+    // 로그인 상태저장을 삭제
     AsyncStorage.removeItem('login_id');
     AsyncStorage.removeItem('login_name');
     const action = {

@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
- 
-import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage} from 'react-native';
-import {PropTypes} from 'prop-types';
-import { openDatabase } from 'react-native-sqlite-storage';
-var db = openDatabase({ name: 'UserDatabase.db' });
-import MainPage from './MainPage';
-import { setLogin } from '../actions/Loginactions';
+import React, { Component } from 'react' 
+import { StyleSheet, View, Button, Text, AsyncStorage} from 'react-native'
+import {PropTypes} from 'prop-types'
+import { openDatabase } from 'react-native-sqlite-storage'
+var db = openDatabase({ name: 'UserDatabase.db' })
+import MainPage from './MainPage'
 
 export default class FirstPage extends Component { 
 
@@ -16,15 +14,15 @@ export default class FirstPage extends Component {
  
 constructor(props) { 
     super(props) 
-    alert(this.props.status.isLogged)
-    console.log(this.props.status)
+    console.log("FirstPage - this.props.status : ", this.props.status)
+
     // DB 테이블 생성
     db.transaction(function(txn) {
         txn.executeSql(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='users'",
           [],
           function(tx, res) {
-            console.log('item:', res.rows.length);
+            console.log('FirstPage - item:', res.rows.length);
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS users', []);
               txn.executeSql(
@@ -49,35 +47,35 @@ constructor(props) {
       });
 
     this.state = { 
-       isLoggedIn: this.props.status.isLogged | false, // this.props.isLogged는 store에 저장된 state이다.
+       isLoggedIn: this.props.status.isLogged | false, 
       // isLoggedIn:true,
        loginId: null,
         loginName: null
     } 
-    console.log(this.props.status.isLogged);
+    console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
 
   componentWillMount(){
-  // 로그인 상태 값을 가져옴!!
+  // 로그인 상태값 가져오기
   AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("result", result)
+    console.log("FirstPage - login_id : ", result)
     if(result != null){
       this.setState({
         loginId: result,
         isLoggedIn: true
       });
-      this.props.setLogin(result)
+      this.props.setLogin(result) // 다시 새로고침할때 async값이 있는 경우 login을 해서 props 값을 저장해줘야 한다.
     }    
   })
 
     AsyncStorage.getItem('login_name', (err, result) => {
-      console.log("result", result)
+      console.log("FirstPage - login_name : ", result)
       this.setState({
         loginName: result
             });
     
   })
-  //AsyncStorage.removeItem('login_id');
+ 
 
   }
 
@@ -90,12 +88,12 @@ shouldComponentUpdate(nextProps) {
 
 }
 componentWillReceiveProps(nextProps){  
-  
-    console.log("message", nextProps.status.loginId)  
+    // props의 loginId값이 변경될때 적용
+    console.log("FirstPage - this.props.status.loginId: ", nextProps.status.loginId)  
    
     // setLogin 후에 
     if(this.props.status.loginId !== nextProps.status.loginId){
-      console.log("saea!", "did it?")
+      console.log("FirstPage - componentWillReceiveProps")
       // 로그인이나 회원가입한 뒤에 DB에서 loginName 찾기    
         db.transaction(tx => {
             tx.executeSql(
@@ -105,17 +103,15 @@ componentWillReceiveProps(nextProps){
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {
-                  console.log("Message", results.rows.item(0).uid+results.rows.item(0).name)
+                  console.log("FirstPage - Message", results.rows.item(0).uid+"is get")
                   this.setState({
                     loginId: results.rows.item(0).uid,
                     loginName: results.rows.item(0).name,
                     isLoggedIn: true
                   });
-                  alert(this.state.loginName+this.state.loginId);
-             
+                               
                 } else {
                   // 로그아웃시에 
-                  //alert('No user found');  
                   this.setState({
                     loginId: null,
                     loginName: null,
@@ -129,7 +125,7 @@ componentWillReceiveProps(nextProps){
 
 }
   render() {
-    console.log('Message', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
+    console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
     if (!this.state.isLoggedIn)
         return (      
             <View style={styles.MainContainer}> 

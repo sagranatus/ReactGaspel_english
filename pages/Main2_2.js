@@ -11,7 +11,7 @@ static navigationOptions =  ({ navigation }) => {
     headerLeft: (
         <Button
         onPress={() =>{
-            navigation.navigate('Main5', {otherParam: date});} }
+            navigation.navigate('Main5', {otherParam: date});} } // date값 전달해서 받도록 함
         title="back"
         color="transparent"
         titleColor="#fff"
@@ -38,15 +38,15 @@ constructor(props) {
   }
 
   componentWillMount(){
-    console.log("componentWillMount")
+    console.log("Main2_2 - componentWillMount")
     const { params } = this.props.navigation.state;
    // console.log(params.otherParam)
    
     var year, month, day
 
     if(params != null){
+        console.log("Main2_2 - params : ", params+"existed" )
         date = params.otherParam
-        console.log("params is not nul!")
         year = params.otherParam.substring(0, 4);
         month = params.otherParam.substring(5, 7);
         day = params.otherParam.substring(8, 10);
@@ -56,26 +56,25 @@ constructor(props) {
     var today = year+"-"+month+"-"+day;
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
 
-    console.log(today+" "+today_comment_date)
+    console.log("Main2_2 - date : ", today+"/"+today_comment_date)
     this.setState({
         Date: today,
         Commentdate: today_comment_date
     })
 
-    this.props.getGaspel(today) // 데이터 가져오기
-   
-    const loginId = this.props.status.loginId;
+    this.props.getGaspel(today) // 데이터 가져오기   
 
-    //comment있는지 확인    
+    //comment있는지 확인        
+    const loginId = this.props.status.loginId;
     db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM comment where date = ? and uid = ?',
-          [today_comment_date,loginId],
+          [today_comment_date, loginId],
           (tx, results) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Message', results.rows.item(0).comment)   
+                console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
                 this.setState({
                     Comment: results.rows.item(0).comment,
                     Commentupdate: true
@@ -94,33 +93,42 @@ constructor(props) {
 }
 
 
-  componentWillReceiveProps(nextProps){ 
-
-
-    var today_comment_date = this.state.Commentdate
-    var loginId = this.props.status.loginId
-      //comment있는지 확인    
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM comment where date = ? and uid = ?',
-          [today_comment_date,loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Message', results.rows.item(0).comment)   
-                this.setState({
-                    Comment: results.rows.item(0).comment,
-                    Commentupdate: true
-                })
-            } else {                                  
+ componentWillReceiveProps(nextProps){
+    console.log("Main2_2 - componentWillReceiveProps")
+     // comment 삽입시
+     if(nextProps.gaspels.comment != null){
+       
+        alert(nextProps.gaspels.comment.comment+" is inserted")
+         //comment insert 후에 update로 변하도록 하기 위함
+        var today_comment_date = this.state.Commentdate
+        var loginId = this.props.status.loginId
+            
+        db.transaction(tx => {
+            tx.executeSql(
+            'SELECT * FROM comment where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
+                    this.setState({
+                        Comment: results.rows.item(0).comment,
+                        Commentupdate: true
+                    })
+                  //  const main5 =  new Main5()
+                 //   main5.getAllPoints()
+                } else {                                  
+                }
             }
-          }
-        );
-      });    
-  
+            );
+        });    
+       
+     }
+    
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.gaspels.sentence != null){
+        console.log('Main2_2 - get Gaspel Data')   
         var contents = ""+nextProps.gaspels.contents
         var sentence = ""+nextProps.gaspels.sentence
         var start = contents.indexOf("✠");
@@ -135,12 +143,12 @@ constructor(props) {
    
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        //console.log("saea",pos)
-        //console.log("here", pos[0].indexOf(","))
-        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
         }
+        //console.log("saea",pos)
+        //console.log("here", pos[0].indexOf(","))
+        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
         //console.log("saea",pos[0].length)
         //console.log("saea",pos.index)
@@ -155,7 +163,7 @@ constructor(props) {
         var first_verse = pos[0]
         var last_verse = pos[pos.length-1]
 
-        console.log(first_verse+last_verse)
+        console.log("Main2_2 - first verse, last verse get : ", first_verse+"/"+last_verse)
 
         // 숫자 엔터 시도
     /*    pos = contents_.match(/\d{1,2}/) 
@@ -217,7 +225,7 @@ constructor(props) {
         today_person = contents.substring(2,idx_today-2);
     }
 
-    console.log("saea","today who?"+today_person+chapter);
+    console.log("Main2_2 - person & chapter get : ",today_person+"/"+chapter);
     
         this.setState({
             Contents : contents,
@@ -231,7 +239,8 @@ constructor(props) {
       }
 
       // threegaspel 가져올때 
-    if(nextProps.gaspels.threegaspels != null){        
+    if(nextProps.gaspels.threegaspels != null){
+        console.log("Main2_2 - Three gaspel get")        
         if(this.state.Move == "prev"){
             this.setState({
                 Contents : nextProps.gaspels.threegaspels+"\n"+this.state.Contents
@@ -244,10 +253,7 @@ constructor(props) {
           
     }
 
-     // comment 삽입시
-     if(nextProps.gaspels.comment != null){
-        alert(nextProps.gaspels.comment.comment+" is inserted")
-     }
+    
   }
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
@@ -259,7 +265,6 @@ constructor(props) {
   }
   // 이후 3절 가져오기
   getNextMoreGaspel(){
-    console.log(this.state.Person+this.state.Chapter+this.state.Lastverse)
      this.props.getThreeGaspel("next", this.state.Person, this.state.Chapter, this.state.Lastverse)
      this.setState({
         Lastverse: this.state.Lastverse+3,
@@ -273,17 +278,18 @@ constructor(props) {
         const loginId = this.props.status.loginId;
         const comment = this.state.Comment;
         const date = this.state.Commentdate;
+
         // comment DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
             'UPDATE comment set comment=? where uid=? and date=?',
             [comment, loginId, date],
             (tx, results) => {
-            console.log('Results', 'done');
+          //  console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Message', "update success")                   
+                console.log('Main2_2 - comment data updated : ', "update success")                   
             } else {
-                alert('Update Failed');
+                console.log('Main2_2 - comment data updated : ', "update fail")  
             }
             }
         );
@@ -304,18 +310,17 @@ constructor(props) {
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                    console.log('Message', "exist")        
+                    console.log('Main2_2 - comment data : ', "already existed")      
                 } else {
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO comment (uid, date, onesentence, comment) VALUES (?,?,?,?)',
                       [loginId,date,sentence, comment],
                       (tx, results) => {
-                        console.log('Results', 'done');
                         if (results.rowsAffected > 0) {
-                          console.log('Message', "added success")                   
+                            console.log('Main2_2 - comment data inserted : ', "success")                 
                         } else {
-                          alert('Added Failed');
+                            console.log('Main2 - comment data inserted : ', "failed") 
                         }
                       }
                     );
@@ -329,10 +334,10 @@ constructor(props) {
    }
 
   render() {
-    console.log("message", this.props.gaspels);
-    console.log("message_loginId", this.props.status.loginId)
+    console.log("Main2_2 - gaspels in render");
         return (  
             <View> 
+              
             <ScrollView style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
@@ -340,8 +345,7 @@ constructor(props) {
                     <TextInput
                     placeholder="Enter User Id"
                     value={this.state.Comment}        
-                    onChangeText={Comment => this.setState({Comment})}        
-                    // Making the Under line Transparent.
+                    onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
                      <TouchableOpacity
@@ -358,12 +362,11 @@ constructor(props) {
                     <TextInput
                     placeholder="Enter User Id"
                     value={this.state.Comment}        
-                    onChangeText={Comment => this.setState({Comment})}        
-                    // Making the Under line Transparent.
+                    onChangeText={Comment => this.setState({Comment})}   
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
                      <TouchableOpacity
-                    onPress={() => this.insertComment()} // insertComment
+                    onPress={() => this.insertComment()} // insertComment - update
                     >
                     <Text style={{color:"#000", textAlign:'center'}}>
                         update

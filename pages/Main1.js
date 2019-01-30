@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, AsyncStorage} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {PropTypes} from 'prop-types';
 
 export default class Main1 extends Component { 

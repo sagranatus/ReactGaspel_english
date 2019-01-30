@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, TextInput, View, Alert, Button, Text} from 'react-native';
+import { StyleSheet, View, Button, Text} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar} from 'react-native-calendars';
+import {NavigationEvents} from 'react-navigation'
 
 export default class Main5 extends Component { 
-
+ 
 constructor(props) { 
-    super(props)  
-    
+    super(props)     
    
+    
     this.state = {
         Today : "",
         selectedDate: "",
@@ -30,11 +31,12 @@ constructor(props) {
     }
     this.onselectDate= this.onselectDate.bind(this);
   }
+  
  
   componentWillMount(){
-    console.log("componentWillMount - Main5")
+    console.log("Main5 - componentWillMount")
    
-      // 오늘 날짜로 캘린더 가져오기
+    // 오늘 날짜로 캘린더 가져오기
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -47,12 +49,13 @@ constructor(props) {
     } 
     var today = year+"-"+month+"-"+day;
     this.setState({Today: today, selectedDate: today})
+    // 오늘 값을 가져온다
     this.onselectDate(null, today)
-    this.getAllPoints()
-   
+    this.getAllPoints()   
 }
 
 getAllPoints(){
+  console.log("Main5 - getallpoints")
    // 날짜에 맞는 Comment값 모두 가져오기
      //comment있는지 확인    
      db.transaction(tx => {
@@ -63,8 +66,7 @@ getAllPoints(){
           var len = results.rows.length;
         //  값이 있는 경우에 
           if (len > 0) {     
-              console.log("Message", "comment~~")             
-              console.log('Message', results.rows.item(0).date)
+              console.log("Main5 - get Comments data")    
               var year_site = results.rows.item(0).date.indexOf("년");
               var month_site = results.rows.item(0).date.indexOf("월");
               var day_site = results.rows.item(0).date.indexOf("일");
@@ -75,16 +77,15 @@ getAllPoints(){
                 year = results.rows.item(i).date.substring(0, year_site);
                 month = results.rows.item(i).date.substring(year_site+2, month_site);
                 day = results.rows.item(i).date.substring(month_site+2, day_site);
-
-                console.log("date", year+"-"+month+"-"+day)
+                
                 date = year+"-"+month+"-"+day
                 commentDates.push(date);
               }
-              console.log(commentDates)
+              console.log('Main5 - get Comments data : ', commentDates)
               this.commentFunc(commentDates)             
                          
           } else {                  
-            console.log('Message', "npo")                
+            console.log('Main5 - get Comments data : ', "no value")            
           }
         }
       );
@@ -99,7 +100,7 @@ getAllPoints(){
         var len = results.rows.length;
       //  값이 있는 경우에 
         if (len > 0) {                  
-            console.log('Message', "lectio~")   
+            console.log('Main5 - get Lectios data')             
             var year_site = results.rows.item(0).date.indexOf("년");
             var month_site = results.rows.item(0).date.indexOf("월");
             var day_site = results.rows.item(0).date.indexOf("일");
@@ -110,16 +111,16 @@ getAllPoints(){
               year = results.rows.item(i).date.substring(0, year_site);
               month = results.rows.item(i).date.substring(year_site+2, month_site);
               day = results.rows.item(i).date.substring(month_site+2, day_site);
-
-              console.log("date", year+"-"+month+"-"+day)
+             
               date = year+"-"+month+"-"+day
               lectioDates.push(date);
             } 
+            console.log('Main5 - get Lectios data : ',lectioDates) 
             this.lectioFunc(lectioDates)            
          
             
         } else {
-          console.log('Message', "lectio no~")    
+          console.log('Main5 - get Lectios data : ', "no value")   
           this.lectioFunc("")                        
         }
       }
@@ -127,26 +128,26 @@ getAllPoints(){
   });  
 }
 componentWillReceiveProps(nextProps){
+  // 새로운 값 저장 후 뒤로에서 값 전달 및 새로고침
   const { params } = nextProps.navigation.state;
     if(params != null){
-      console.log("awdadw",params.otherParam)
+      console.log("Main5 - mavigation params existed : ",params.otherParam)
       this.onselectDate(null, params.otherParam)
       this.getAllPoints()
-    }
-  console.log("componentWillReceiveProps !!!!!!!!!!!!!!!! main5")
+    }  
 }
 
 commentFunc = (commentDates) => {
-  console.log("commentFunc")
+  console.log("Main5 - commentFunc")
   var obj = commentDates.reduce((c, v) => Object.assign(c, {[v]: {marked: true, dotColor: 'red', activeOpacity: 0}}), {});
   this.setState({ CommentMarked : obj});
  }
 
  lectioFunc = (lectioDates) => {
+  console.log("Main5 - lectioFunc")
   var result
   if(lectioDates != ""){
     var obj = lectioDates.reduce((c, v) => Object.assign(c, {[v]: {marked: true, dotColor: 'blue', activeOpacity: 0}}), {});
-    console.log("awdaw", this.state.CommentMarked)    
     if(this.state.CommentMarked != undefined){
       result = Object.assign(this.state.CommentMarked, obj);
     }else{
@@ -154,24 +155,21 @@ commentFunc = (commentDates) => {
     }   
   }else{
     result = this.state.CommentMarked
-    console.log(result)
+    console.log("Main5 - results of points : ", result)
   } 
   this.setState({ Marked : result});
  }
 
  
  onselectDate(day, today){
+  console.log("Main5 - onselectDate")
   var date
-
   if(today != null){  
+    console.log("Main5 - onselectDate date : ", today)
     date = today.substring(0, 4)+"년 "+today.substring(5, 7)+"월 "+today.substring(8, 10)+"일 "+this.getTodayLabel( new Date(today))
     
   }else{
-    console.log(day)
-    //this.setState({
-      //Comment: "aqwd"+day.day
-    //});
-    // alert('selected day'+day.year+day.month+day.day); 
+    console.log("Main5 - onselectDate date : ", day)
      if(day.month < 10){
       day.month = "0"+day.month;
     }
@@ -185,15 +183,11 @@ commentFunc = (commentDates) => {
       selectedDate: date_format,
       selectedDay: this.getTodayLabel( new Date(date_format)) == "일요일" ? true : false
     })
-    date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))
-    console.log('date_data', date)
-  
+    date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))    
   }
  
+  console.log("Main5 - onselectDate date changed : ", date)
     //comment있는지 확인    
-    
-      
-      //lectio있는지 확인    
       db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM comment where date = ? and uid = ?',
@@ -202,7 +196,7 @@ commentFunc = (commentDates) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Message_data', results.rows.item(0).comment)   
+                console.log('Main5 - comment data : ', results.rows.item(0).comment)   
                 this.setState({
                   Comment: results.rows.item(0).comment,
                   onesentence: results.rows.item(0).onesentence
@@ -223,7 +217,7 @@ commentFunc = (commentDates) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Message_data', results.rows.item(0).bg1)   
+                console.log('Main5 - lectio data : ', results.rows.item(0).bg1)   
             this.setState({
                 bg1:results.rows.item(0).bg1,
                 bg2:results.rows.item(0).bg2,
@@ -261,7 +255,7 @@ commentFunc = (commentDates) => {
               var len = results.rows.length;
             //  값이 있는 경우에 
               if (len > 0) {                  
-                  console.log('Message_data', results.rows.item(0).mysentence)   
+                  console.log('Main5 - weekend data : ', results.rows.item(0).mysentence)   
               this.setState({
                   mysentence:results.rows.item(0).mysentence,
                   mythought:results.rows.item(0).mythought
@@ -292,11 +286,14 @@ commentFunc = (commentDates) => {
 }
 
   render() {    
-    console.log("render")
-    console.log(this.state.Marked)
-   
+    console.log("Main5 - render")   
         return (      
           <View>
+              <NavigationEvents
+                onWillFocus={payload => {
+                    console.log("will focus", payload);
+                }}
+                />
           <Calendar
             current={this.state.Today}
             pastScrollRange={24}
@@ -312,10 +309,8 @@ commentFunc = (commentDates) => {
               '2019-01-18': {marked: true, dotColor: 'red', activeOpacity: 0},
             // '2019-01-19': {disabled: true, disableTouchEvent: true}
             }}*/
-            markedDates={this.state.Marked} 
-            
+            markedDates={this.state.Marked}             
             onPressArrowLeft={substractMonth => substractMonth()}
-            // Handler which gets executed when press arrow icon left. It receive a callback can go next month
             onPressArrowRight={addMonth => addMonth()}
           />
            <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
