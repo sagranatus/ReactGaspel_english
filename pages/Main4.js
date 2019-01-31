@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -25,6 +25,8 @@ constructor(props) {
         js2:"",
         mysentence: "",
         mythought: "",
+        start: false,
+        praying: false,
         Weekenddate:"",
         Weekendupdate: false,
         Weekendediting: false,
@@ -88,9 +90,7 @@ moveFinal(){
             }
             }
         );
-        }); 
-
-        
+        });         
         this.setState({ Weekendediting: false });
     }else{
         this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
@@ -119,7 +119,6 @@ moveFinal(){
                 if (len > 0) {                  
                     console.log('Main4 - data : ', "existed")        
                 } else {
-                    this.setState({ Weekendupdate: true }) 
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
@@ -164,7 +163,7 @@ moveFinal(){
                 }
               );
           });    
-          this.setState({ Weekendupdate: true });
+          this.setState({ praying: true });
     }
 }
 
@@ -395,7 +394,135 @@ transitionToNextPanel(nextIndex){
 
   render() {
     console.log("Main4 - gaspels in render");
-    if(this.state.Weekendupdate == true && this.state.Weekendediting == false){
+    if(this.state.Weekendupdate == true){
+        if(this.state.Weekendediting == true){
+            return(
+                <View>     
+                <View>
+                    <Button title="뒤로가기" onPress={() =>  this.setState({Weekendediting: false}) } color="#2196F3" />         
+                </View>
+                <OnboardingButton
+                    totalItems={8}
+                    currentIndex={this.state.currentIndex}
+                    movePrevious={this.movePrevious}
+                    moveNext={this.moveNext}
+                    moveFinal={this.moveFinal}
+                />
+               <KeyboardAvoidingView style={{height:100}}>                  
+
+                    <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>복음의 등장인물은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.bg1}        
+                    onChangeText={bg1 => this.setState({bg1})}  
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass}  />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>복음의 배경장소는?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.bg2}        
+                    onChangeText={bg2 => this.setState({bg2})}   
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>배경시간 혹은 상황은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.bg3}        
+                    onChangeText={bg3 => this.setState({bg3})}   
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.sum1}        
+                    onChangeText={sum1 => this.setState({sum1})}   
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>특별히 눈에 띄는 부분은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.sum2}        
+                    onChangeText={sum2 => this.setState({sum2})}      
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.js1}        
+                    onChangeText={js1 => this.setState({js1})}     
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.js2}        
+                    onChangeText={js2 => this.setState({js2})}       
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
+                    <Text style={{textAlign:'center'}}>선택 문장은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.mysentence}        
+                    onChangeText={mysentence => this.setState({mysentence})}   
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>            
+                    
+                </KeyboardAvoidingView>
+
+             
+                <ScrollView style={styles.MainContainer}>              
+                    <TouchableOpacity
+                    onPress={() => this.getPrevMoreGaspel()}
+                    >
+                        <Text style={{color:"#000", textAlign:'center'}}>
+                            getMore
+                        </Text>
+                    </TouchableOpacity>                          
+                    <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>        
+                    <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+                    <TouchableOpacity
+                    onPress={() => this.getNextMoreGaspel()}
+                    >
+                        <Text style={{color:"#000", textAlign:'center'}}>
+                            getMore
+                        </Text>
+                    </TouchableOpacity>
+                                    
+                </ScrollView>  
+            </View>
+            )
+        }
         return (
             <View> 
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.bg1}</Text>   
@@ -408,7 +535,7 @@ transitionToNextPanel(nextIndex){
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.mysentence}</Text>  
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.mythought}</Text>  
                 <TouchableOpacity
-                onPress={() => this.setState({ Weekendediting: true, currentIndex: 1 })}
+                onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
                 >
                     <Text style={{color:"#000", textAlign:'center'}}>
                         Edit
@@ -420,6 +547,18 @@ transitionToNextPanel(nextIndex){
         
         return (  
             <View> 
+                 <View style={this.state.start == false ? {} : {display:'none'}}>                 
+                   <Text>Start?</Text>
+                   <Button title="start" onPress={() =>  this.setState({start: true}) } color="#2196F3" /> 
+                </View>
+                <View style={this.state.praying == true ? {} : {display:'none'}}>                 
+                   <Text>praying {this.state.js2}</Text>
+                   <Button title="Done" onPress={() =>  this.setState({praying: false, start: false, Weekendupdate: true}) } color="#2196F3" /> 
+                </View>
+                <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>     
+                    <View style={this.state.start == true ? {} : {display:'none'}} >
+                        <Button title="뒤로가기" onPress={() =>  this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0}) } color="#2196F3" />         
+                    </View>
                     <OnboardingButton
                         totalItems={9}
                         currentIndex={this.state.currentIndex}
@@ -523,25 +662,26 @@ transitionToNextPanel(nextIndex){
                     </KeyboardAvoidingView>
 
                  
-            <ScrollView style={styles.MainContainer}>              
-                <TouchableOpacity
-                onPress={() => this.getPrevMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>                          
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>        
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-                <TouchableOpacity
-                onPress={() => this.getNextMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>
-                                
-            </ScrollView>  
+                    <ScrollView style={styles.MainContainer}>              
+                        <TouchableOpacity
+                        onPress={() => this.getPrevMoreGaspel()}
+                        >
+                            <Text style={{color:"#000", textAlign:'center'}}>
+                                getMore
+                            </Text>
+                        </TouchableOpacity>                          
+                        <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>        
+                        <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+                        <TouchableOpacity
+                        onPress={() => this.getNextMoreGaspel()}
+                        >
+                            <Text style={{color:"#000", textAlign:'center'}}>
+                                getMore
+                            </Text>
+                        </TouchableOpacity>
+                                        
+                    </ScrollView>  
+                </View>
             </View>   
         )       
   }

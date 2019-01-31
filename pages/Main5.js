@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text} from 'react-native';
+import { StyleSheet, View, Button, Text, ScrollView} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -333,9 +333,11 @@ commentFunc = (commentDates) => {
            <View style={this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
            <Button title="주일의 독서 편집" onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
            </View>
+           
            <Text>{this.state.selectedDate}</Text>
            <Text>{this.state.selectedDay}</Text>
             <Text>{this.state.onesentence}</Text>
+            <ScrollView style={{marginBottom:240}}>
             <Text>{this.state.Comment}</Text>
             <Text>{this.state.bg1}</Text>
             <Text>{this.state.bg2}</Text>
@@ -345,6 +347,7 @@ commentFunc = (commentDates) => {
             <Text>{this.state.js1}</Text>
             <Text>{this.state.js2}</Text>
             <Text>{this.state.mysentence}</Text>
+            </ScrollView>
         </View>
       )
    

@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Button, Text } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -30,7 +30,8 @@ constructor(props) {
       UserRegion: '',
       UserCathedral: '',
       UserId: '',
-      UserPassword: '' 
+      UserPassword: '',
+      UserPassword_confirm: ''
     } 
   }
 
@@ -44,9 +45,16 @@ UserRegistrationFunction = () =>{
  const { UserRegion }  = this.state ;
  const { UserCathedral }  = this.state ;
  const { UserPassword }  = this.state ; 
- const {UserId} = this.state ; 
- 
-  // 서버에 데이터 전송
+ const { UserPassword_confirm }  = this.state ;  
+
+ const st = UserEmail.indexOf("@")
+ const UserId = UserEmail.substring(0, st)
+
+
+ if(UserPassword !== UserPassword_confirm){
+   alert("비밀번호가 다릅니다")
+ }else{
+     // 서버에 데이터 전송
 fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
   method: 'POST',
   headers: {
@@ -101,6 +109,9 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
       }).catch((error) => {
         console.error(error);
       });
+ }
+ 
+ 
  
   }
   GoLoginFunction = () =>{
@@ -109,61 +120,81 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
  
   render() {
     return ( 
-        <View style={styles.MainContainer}>      
-        <Button title="Click Here To Login" onPress={this.GoLoginFunction} color="#2196F3" />    
-                <Text style= {{ fontSize: 20, color: "#000", textAlign: 'center', marginBottom: 15 }}>User Registration Form</Text>        
-               
+        <View style={styles.MainContainer}>            
                 <TextInput                
-                placeholder="Enter User Email"        
+                placeholder="이메일"        
                 onChangeText={UserEmail => this.setState({UserEmail})}     
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
-                />        
+                style={[styles.TextInputStyleClass, {width:350, marginTop:40}]}
+                />       
+                
                  <TextInput                
-                placeholder="Enter User Id"        
-                onChangeText={UserId => this.setState({UserId})}    
-                underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
-                />
-                 <TextInput                
-                placeholder="Enter User Name"        
+                placeholder="이름"        
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
+                style={[styles.TextInputStyleClass, {width:110}]}
                 />
                  <TextInput                
-                placeholder="Enter User Catholic Name"        
+                placeholder="세례명"        
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
+                style={[styles.TextInputStyleClass, {width:110}]}
                 />
                  <TextInput                
-                placeholder="Enter User Age"        
+                placeholder="나이"        
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
+                style={[styles.TextInputStyleClass, {width:110}]}
                 />
+                
+                
                  <TextInput                
-                placeholder="Enter User Region"        
+                placeholder="교구"        
                 onChangeText={UserRegion => this.setState({UserRegion})}       
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
+                style={[styles.TextInputStyleClass, {width:170}]}
                 />
                  <TextInput                
-                placeholder="Enter User Cathedral"        
+                placeholder="본당"        
                 onChangeText={UserCathedral => this.setState({UserCathedral})}
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}
+                style={[styles.TextInputStyleClass, {width:170}]}
                 />
                 <TextInput                
-                placeholder="Enter User Password"        
+                placeholder="비밀번호"        
                 onChangeText={UserPassword => this.setState({UserPassword})}     
                 underlineColorAndroid='transparent'        
-                style={styles.TextInputStyleClass}        
+                style={[styles.TextInputStyleClass, {width:170}]}       
                 secureTextEntry={true}
                 /> 
-                <Button title="Click Here To Register" onPress={this.UserRegistrationFunction} color="#2196F3" />  
-                
+                <TextInput                
+                placeholder="비밀번호 확인"        
+                onChangeText={UserPassword_confirm => this.setState({UserPassword_confirm})}     
+                underlineColorAndroid='transparent'        
+                style={[styles.TextInputStyleClass, {width:170}]}       
+                secureTextEntry={true}
+                /> 
+                <View style={{width:300, marginTop:10, marginBottom: 20}}>                
+                <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={this.UserRegistrationFunction} 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  등록하기
+                  </Text>
+                </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity 
+                  activeOpacity = {0.9} 
+                  style={{backgroundColor: '#fff', padding: 10}}
+                  onPress={this.GoLoginFunction}
+                  >  
+                <Text style={{color:"#000", textAlign:'center'}}>
+                  이미 계정이 있으신가요? 로그인하기
+                  </Text>
+              </TouchableOpacity>
         </View>
             
     );
@@ -184,13 +215,15 @@ MainContainer :{
  
 justifyContent: 'center',
 flex:1,
+flexDirection: 'row',
+flexWrap: 'wrap',
 margin: 10
 },
  
 TextInputStyleClass: {
- 
 textAlign: 'center',
 marginBottom: 7,
+margin:5,
 height: 40,
 borderWidth: 1,
 // Set border Hex Color Code Here.

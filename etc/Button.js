@@ -51,8 +51,7 @@ const styles = StyleSheet.create({
         borderColor: DISABLED_COLOR
     },
     text: {
-        color:TEXT_COLOR,
-        fontWeight: 'bold',
+        color:"#000",
         textAlign: 'center'
     },
     disabledText:{

@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     container:{
         justifyContent: 'space-between',
         flexDirection: 'row',
-        backgroundColor: '#000'
+        backgroundColor: '#fff'
     },
     button:{
         margin:0,

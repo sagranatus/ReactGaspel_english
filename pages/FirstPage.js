@@ -1,5 +1,5 @@
 import React, { Component } from 'react' 
-import { StyleSheet, View, Button, Text, AsyncStorage} from 'react-native'
+import { StyleSheet, View, Button, Text, TouchableOpacity, AsyncStorage, Image} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
@@ -7,10 +7,6 @@ import MainPage from './MainPage'
 
 export default class FirstPage extends Component { 
 
-  static navigationOptions =
-   {
-      title: 'First Page',
-   };
  
 constructor(props) { 
     super(props) 
@@ -127,12 +123,31 @@ componentWillReceiveProps(nextProps){
   render() {
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
     if (!this.state.isLoggedIn)
-        return (      
+        return (               
             <View style={styles.MainContainer}> 
-                    <Text style= {styles.TextComponentStyle}>First Page before login</Text>                      
-                    <Button title="Click Here To Register" onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } color="#2196F3" />
-                    <Button title="Click Here To Login" onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } color="#2196F3" />              
-            
+             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+              <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
+                <View style={{margin:10, marginTop: 40}}>  
+                  <TouchableOpacity
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#fff', paddingHorizontal: 110, paddingVertical: 10}}
+                  onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
+                  >
+                  <Text style={{color:"#01579b", textAlign:'center'}}>
+                  회원가입하고 시작하기
+                  </Text>
+                </TouchableOpacity> 
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: 'transparent', padding: 10}}
+                  onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  이미 계정이 있으신가요? 로그인
+                  </Text>
+               </TouchableOpacity>
+                  
+              </View>
             </View>
         )
     else   
@@ -142,6 +157,7 @@ componentWillReceiveProps(nextProps){
   }
 }
 FirstPage.propTypes = { 
+  setLogout: PropTypes.func,
     status: PropTypes.shape({
         isLogged: PropTypes.bool,
         loginId: PropTypes.string
@@ -151,9 +167,12 @@ FirstPage.propTypes = {
 const styles = StyleSheet.create({
  
     MainContainer :{     
+    backgroundColor:"#01579b",
     justifyContent: 'center',
+    alignItems: 'center',
     flex:1,
-    margin: 10,
+    margin: 0,
+    color:"#fff"
     },
      
     TextInputStyleClass: {     
@@ -170,9 +189,10 @@ const styles = StyleSheet.create({
     },
      
      TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
-      textAlign: 'center', 
+       fontSize: 16,
+      color: "#fff",
+      textAlign: 'center',
+      marginTop: 3, 
       marginBottom: 15
      }
     });

@@ -3,7 +3,6 @@ import { createStackNavigator,  createAppContainer} from 'react-navigation';
 import RegisterUserContainer from '../containers/RegisterUserContainer';
 import FirstPageContainer from '../containers/FirstPageContainer';
 import LoginUserContainer from '../containers/LoginUserContainer';
-
 const RootStack = createStackNavigator({
   FirstPage : {
     screen: FirstPageContainer,
@@ -14,19 +13,20 @@ const RootStack = createStackNavigator({
   RegisterUser: {
     screen: RegisterUserContainer,
     navigationOptions: {
-      title: 'Register User',
-      headerStyle: { backgroundColor: '#f05555' },
+      title: '회원가입',
+      headerStyle: { backgroundColor: '#01579b' },
       headerTintColor: '#ffffff',
     },
   },
   LoginUser: {
     screen: LoginUserContainer,
     navigationOptions: {
-      title: 'Login User',
-      headerStyle: { backgroundColor: '#f05555' },
+      title: '로그인',
+      headerStyle: { backgroundColor: '#01579b' },
       headerTintColor: '#ffffff',
     },
   }
+ 
   
 });
 

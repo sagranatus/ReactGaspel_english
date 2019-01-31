@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Main5 from './Main5';
 import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' });
 
+
 export default class Main2 extends Component { 
+
 constructor(props) { 
     super(props)      
     this.state = {
@@ -333,11 +335,13 @@ constructor(props) {
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
-                     <TouchableOpacity
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10}}
                     onPress={() => this.insertComment()} // insertComment
                     >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        insert
+                    <Text style={{color:"#fff", textAlign:'center'}}>
+                        저장
                     </Text>
                 </TouchableOpacity>
                 </View>
@@ -351,30 +355,32 @@ constructor(props) {
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
                      <TouchableOpacity
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10}}
                     onPress={() => this.insertComment()} // insertComment - update
                     >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        update
+                    <Text style={{color:"#FFF", textAlign:'center'}}>
+                        수정
                     </Text>
                 </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
-                <TouchableOpacity
-                onPress={() => this.getPrevMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>                          
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>        
+                                       
+                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getPrevMoreGaspel()}>
+                    <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                </TouchableHighlight >         
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-                <TouchableOpacity
-                onPress={() => this.getNextMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>                  
+               
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getNextMoreGaspel()}>
+                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                </TouchableHighlight >                 
             </ScrollView>  
             </View>   
         )       
@@ -412,10 +418,11 @@ const styles = StyleSheet.create({
     },
      
      TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
+       fontSize: 17,
+      color: "#01579b",
       textAlign: 'center', 
-      marginBottom: 15
+      marginBottom: 5,
+      marginTop:15
      },
      DescriptionComponentStyle: {
         fontSize: 14,

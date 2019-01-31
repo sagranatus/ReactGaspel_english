@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage} from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage, TouchableOpacity } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -332,27 +332,44 @@ getWeekends(date, id, mysentence, mythought){
     );
   }); 
 }
+GoRegisterFunction = () =>{
+  this.props.navigation.navigate('RegisterUser', {});
+ }
+
   render() {
     return (      
-      <View style={styles.MainContainer}> 
-              <Text style= {styles.TextComponentStyle}>User Login Form</Text>        
+      <View style={styles.MainContainer}>       
               <TextInput        
-                placeholder="Enter User Email"      
-                onChangeText={UserEmail => this.setState({UserEmail})}      
-                // Making the Under line Transparent.
+                placeholder="이메일"      
+                onChangeText={UserEmail => this.setState({UserEmail})}  
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}
               />      
               <TextInput                
-                placeholder="Enter User Password"      
+                placeholder="비밀번호"      
                 onChangeText={UserPassword => this.setState({UserPassword})}      
-                // Making the Under line Transparent.
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}      
                 secureTextEntry={true}
               />
-      
-              <Button title="Click Here To Login" onPress={this.UserLoginFunction} color="#2196F3" />           
+             <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={this.UserLoginFunction} 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  로그인
+                  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                  activeOpacity = {0.9} 
+                  style={{backgroundColor: '#fff', padding: 10}}
+                  onPress={this.GoRegisterFunction}
+                  >  
+                <Text style={{color:"#000", textAlign:'center'}}>
+                  계정이 없으신가요? 가입하기
+                  </Text>
+              </TouchableOpacity>
         
       
       </View>
