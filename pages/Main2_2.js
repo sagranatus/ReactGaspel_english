@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -9,13 +9,17 @@ export default class Main2_2 extends Component {
 static navigationOptions =  ({ navigation }) => {
     return {
     headerLeft: (
-        <Button
+      
+        <TouchableOpacity
+        activeOpacity = {0.9}
+        style={{backgroundColor: '#01579b', padding: 10}}
         onPress={() =>{
-            navigation.navigate('Main5', {otherParam: date});} } // date값 전달해서 받도록 함
-        title="back"
-        color="transparent"
-        titleColor="#fff"
-        />
+            navigation.navigate('Main5', {otherParam: date});} } 
+        >
+        <Text style={{color:"#FFF", textAlign:'left'}}>
+           {"<"} BACK
+        </Text>
+    </TouchableOpacity>
     ),
     }
 };
@@ -144,7 +148,7 @@ constructor(props) {
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
         if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
+            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
         //console.log("saea",pos)
         //console.log("here", pos[0].indexOf(","))
@@ -333,32 +337,33 @@ constructor(props) {
       
    }
 
-  render() {
+   render() {
     console.log("Main2_2 - gaspels in render");
         return (  
-            <View> 
-              
+            <View>              
             <ScrollView style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
-                    <Text style={{textAlign:'center'}}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
                     <TextInput
-                    placeholder="Enter User Id"
+                    placeholder="여기에 작성하세요"
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
-                     <TouchableOpacity
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10}}
                     onPress={() => this.insertComment()} // insertComment
                     >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        insert
+                    <Text style={{color:"#fff", textAlign:'center'}}>
+                        저장
                     </Text>
                 </TouchableOpacity>
                 </View>
 
                 <View style={this.state.Commentupdate == true ? {} : {display:'none'}}>
-                    <Text style={{textAlign:'center'}}>오늘 복음에서 가장 마음에 드는 구절</Text>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절</Text>
                     <TextInput
                     placeholder="Enter User Id"
                     value={this.state.Comment}        
@@ -366,30 +371,32 @@ constructor(props) {
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
                      <TouchableOpacity
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10}}
                     onPress={() => this.insertComment()} // insertComment - update
                     >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        update
+                    <Text style={{color:"#FFF", textAlign:'center'}}>
+                        수정
                     </Text>
                 </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
-                <TouchableOpacity
-                onPress={() => this.getPrevMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>                          
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>        
+                                       
+                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getPrevMoreGaspel()}>
+                    <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                </TouchableHighlight >         
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-                <TouchableOpacity
-                onPress={() => this.getNextMoreGaspel()}
-                >
-                    <Text style={{color:"#000", textAlign:'center'}}>
-                        getMore
-                    </Text>
-                </TouchableOpacity>                  
+               
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getNextMoreGaspel()}>
+                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                </TouchableHighlight >                 
             </ScrollView>  
             </View>   
         )       
@@ -427,10 +434,11 @@ const styles = StyleSheet.create({
     },
      
      TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
+       fontSize: 17,
+      color: "#01579b",
       textAlign: 'center', 
-      marginBottom: 15
+      marginBottom: 5,
+      marginTop:15
      },
      DescriptionComponentStyle: {
         fontSize: 14,
@@ -440,7 +448,7 @@ const styles = StyleSheet.create({
 
     TextInputStyleClass: { 
     textAlign: 'center',
-    marginBottom: 7,
+    marginBottom: 15,
     height: 40,
     borderWidth: 1,
     // Set border Hex Color Code Here.
@@ -451,5 +459,11 @@ const styles = StyleSheet.create({
      
     // Set border Radius.
      //borderRadius: 10 ,
+    },
+    TextQuestionStyleClass: {
+        textAlign: 'center',
+        color: '#000',
+        fontSize:14,
+        margin:15
     }
     });

@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text, ScrollView} from 'react-native';
+import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
-import {Calendar} from 'react-native-calendars';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
 
 export default class Main5 extends Component { 
  
 constructor(props) { 
-    super(props)     
-   
+    super(props)   
     
     this.state = {
+        hi : "",
         Today : "",
         selectedDate: "",
-        selectedDay: false, // 요일
+        selectedDay: false, 
+        selectedDate_format: "",// 요일
         onesentence: "",
         Comment: "",
         bg1:"",
@@ -27,7 +28,10 @@ constructor(props) {
         js1:"",
         js2:"",
         mysentence: "",
-        mythought: ""
+        mythought: "",
+        buttonStatus: "sentence",
+        showButton1: false,
+        showButton2: false
     }
     this.onselectDate= this.onselectDate.bind(this);
   }
@@ -35,7 +39,14 @@ constructor(props) {
  
   componentWillMount(){
     console.log("Main5 - componentWillMount")
-   
+    LocaleConfig.locales['kr'] = {
+      monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+      monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+      dayNames: ['일','월','화','수','목','금','토'],
+      dayNamesShort: ['일','월','화','수','목','금','토']
+    };
+    
+    LocaleConfig.defaultLocale = 'kr';
     // 오늘 날짜로 캘린더 가져오기
     var date = new Date();
     var year = date.getFullYear();
@@ -139,7 +150,12 @@ componentWillReceiveProps(nextProps){
 
 commentFunc = (commentDates) => {
   console.log("Main5 - commentFunc")
-  var obj = commentDates.reduce((c, v) => Object.assign(c, {[v]: {marked: true, dotColor: 'red', activeOpacity: 0}}), {});
+  var obj = commentDates.reduce((c, v) => Object.assign(c, {[v]: {customStyles: {
+        container: {
+          backgroundColor: '#87CEEB',
+        },text: {
+        color: '#fff'
+      }}, marked: true, dotColor: 'red', activeOpacity: 0}}), {});
   this.setState({ CommentMarked : obj});
  }
 
@@ -147,7 +163,13 @@ commentFunc = (commentDates) => {
   console.log("Main5 - lectioFunc")
   var result
   if(lectioDates != ""){
-    var obj = lectioDates.reduce((c, v) => Object.assign(c, {[v]: {marked: true, dotColor: 'blue', activeOpacity: 0}}), {});
+    var obj = lectioDates.reduce((c, v) => Object.assign(c, {[v]: {customStyles: {
+      container: {
+        backgroundColor: '#01579b',
+      },
+      text: {
+        color: '#fff'
+      },}, marked: true, dotColor: 'blue', activeOpacity: 0}}), {});
     if(this.state.CommentMarked != undefined){
       result = Object.assign(this.state.CommentMarked, obj);
     }else{
@@ -162,6 +184,11 @@ commentFunc = (commentDates) => {
 
  
  onselectDate(day, today){
+   if(day != null){
+     console.log("nono")
+     this.setState({Today: day})
+   }
+  this.setState({buttonStatus: "sentence"})
   console.log("Main5 - onselectDate")
   var date
   if(today != null){  
@@ -183,8 +210,12 @@ commentFunc = (commentDates) => {
       selectedDate: date_format,
       selectedDay: this.getTodayLabel( new Date(date_format)) == "일요일" ? true : false
     })
-    date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))    
+    date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
   }
+
+  this.setState({
+    selectedDate_format: date
+  })
  
   console.log("Main5 - onselectDate date changed : ", date)
     //comment있는지 확인    
@@ -199,12 +230,16 @@ commentFunc = (commentDates) => {
                 console.log('Main5 - comment data : ', results.rows.item(0).comment)   
                 this.setState({
                   Comment: results.rows.item(0).comment,
-                  onesentence: results.rows.item(0).onesentence
+                  onesentence: results.rows.item(0).onesentence,
+                  showButton1: true,
+                  showButton2: true
                 })
             } else {  
               this.setState({
                 Comment: "",
-                onesentence: ""
+                onesentence: "",
+                showButton1: false,
+                showButton2: false
               })                                
             }
           }
@@ -226,7 +261,9 @@ commentFunc = (commentDates) => {
                 sum2:results.rows.item(0).sum2,
                 js1:results.rows.item(0).js1,
                 js2:results.rows.item(0).js2,
-                onesentence: results.rows.item(0).onesentence
+                onesentence: results.rows.item(0).onesentence,
+                showButton1: true,
+                showButton2: true
               })
             } else {          
               this.setState({
@@ -236,11 +273,13 @@ commentFunc = (commentDates) => {
                 sum1:"",
                 sum2:"",
                 js1:"",
-                js2:""
+                js2:"",
+                showButton3: false
               })        
               if(this.state.Comment == ""){
                 this.setState({
-                  onesentence: ""
+                  onesentence: "",
+                  showButton1: false
                 })     
               }                
             }
@@ -277,7 +316,10 @@ commentFunc = (commentDates) => {
 
     }
   
-  
+  sayHi(){
+    alert("hi")
+    this.setState({hi: "hi"});
+  }
   
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
@@ -288,6 +330,7 @@ commentFunc = (commentDates) => {
   render() {    
     console.log("Main5 - render")   
         return (      
+          
           <View>
               <NavigationEvents
                 onWillFocus={payload => {
@@ -295,6 +338,8 @@ commentFunc = (commentDates) => {
                 }}
                 />
           <Calendar
+           markingType={'custom'}
+            firstDay={1}
             current={this.state.Today}
             pastScrollRange={24}
             futureScrollRange={24}
@@ -313,40 +358,167 @@ commentFunc = (commentDates) => {
             onPressArrowLeft={substractMonth => substractMonth()}
             onPressArrowRight={addMonth => addMonth()}
           />
-           <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
-           <Button title="말씀새기기 하러가기" onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
-           <View style={!this.state.selectedDay && this.state.Comment!="" ? {} : {display:'none'}}>
-           <Button title="말씀새기기 편집" onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
 
-            <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-           <Button title="거룩한 독서 하러가기" onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
-           <View style={!this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
-           <Button title="거룩한 독서 편집" onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
+           <Text style={{ color: "#01579b", textAlign: 'center', fontSize:15, marginTop:20 }}>{this.state.selectedDate_format}</Text>
+
+
+           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', height: 50}}>
+            <TouchableHighlight 
+            style={this.state.showButton1 == true ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "sentence"})}
+            underlayColor = {"#fff"}>
+              <Image source={this.state.buttonStatus=="sentence" ? require('../resources/slide1.png') : require('../resources/slide1_off.png')} style={{width: 30, height: 30, margin:10}} />
+            </TouchableHighlight>
+            <TouchableHighlight 
+            style={this.state.showButton2 == true && !this.state.selectedDay ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "comment"})}
+            underlayColor = {"#fff"}>
+              <Image source={this.state.buttonStatus=="comment" ? require('../resources/slide2.png') : require('../resources/slide2_off.png')} style={{width: 30, height: 30, margin:10}} />
+            </TouchableHighlight>
+            <TouchableHighlight 
+            style={this.state.showButton2 == true ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "lectio"})}
+            underlayColor = {"#fff"}>
+              <Image source={this.state.buttonStatus=="lectio" ? require('../resources/slide3.png') : require('../resources/slide3_off.png')} style={{width: 30, height: 30, margin:10}} />
+            </TouchableHighlight>
+            </View>
           
-           <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-           <Button title="주일의 독서 하러가기" onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
-           <View style={this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
-           <Button title="주일의 독서 편집" onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } color="#2196F3" />
-           </View>
+          <View style={this.state.buttonStatus == "sentence" && this.state.onesentence !== "" ? {} : {display:'none'}}>   
+            <Text style={styles.smallText}>그날의 복음 말씀</Text>     
+            <Text style={{color: "#01579b", textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginTop:20}}>{this.state.onesentence}</Text>              
+          </View>
+
+          <View style={this.state.buttonStatus == "comment" ? {} : {display:'none'}}>   
+            
+            <View style={!this.state.selectedDay && this.state.Comment!="" ? {} : {display:'none'}}>
+            <Text style={styles.smallText}>말씀새기기</Text>   
+            <Text style={{ fontSize: 14, color: "#000", marginTop: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.Comment}</Text>
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={{backgroundColor: '#01579b', padding: 10}}
+              onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
+              >
+              <Text style={{color:"#fff", textAlign:'center'}}>
+              말씀새기기 편집
+              </Text>
+            </TouchableOpacity>
+            </View>
+
+            <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={{backgroundColor: '#01579b', padding: 10}}
+                onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
+                >
+                <Text style={{color:"#fff", textAlign:'center'}}>
+                말씀새기기 하러가기
+                </Text>
+              </TouchableOpacity>
+              
+              </View>    
            
-           <Text>{this.state.selectedDate}</Text>
-           <Text>{this.state.selectedDay}</Text>
-            <Text>{this.state.onesentence}</Text>
+          </View>
+            
+          <ScrollView style={this.state.buttonStatus == "lectio" ? {marginBottom:180} : {display:'none'}}>   
+          <Text style={this.state.mysentence == ""  && this.state.js2!="" ? styles.smallText : {display:'none'}}>거룩한 독서</Text> 
+          <Text style={this.state.mysentence !== "" && this.state.js2!="" ? styles.smallText : {display:'none'}}>주일의 독서</Text>  
+          <View style={this.state.js2 !== "" ? {} : {display:'none'}}>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 등장인물은</Text> {this.state.bg1}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>장소는</Text> {this.state.bg2}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>시간은</Text> {this.state.bg3}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
+          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
+          </View>
+          <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
+
+            <View style={!this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
+            <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
+                onPress={() =>  this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
+                >
+                <Text style={{color:"#fff", textAlign:'center'}}>
+                거룩한 독서 편집
+                </Text>
+            </TouchableOpacity>          
+           </View>
+            <View style={this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
+            <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
+                onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
+                >
+                <Text style={{color:"#fff", textAlign:'center'}}>
+                주일의 독서 편집
+                </Text>
+            </TouchableOpacity> 
+            </View>
+            <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  거룩한 독서 하러가기
+                  </Text>
+              </TouchableOpacity> 
+              </View>
+              <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  주일의 독서 하러가기
+                  </Text>
+              </TouchableOpacity> 
+              </View>
+              <View style={{height:220}} />
+          
+          </ScrollView>  
+            
+            <View style={this.state.showButton1 == false ? {} : {display:'none'}}>
+              <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={() => this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  말씀새기기 하러가기
+                  </Text>
+              </TouchableOpacity> 
+              </View>      
+              <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  거룩한 독서 하러가기
+                  </Text>
+              </TouchableOpacity> 
+              </View>
+              <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{backgroundColor: '#01579b', padding: 10}}
+                  onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
+                  >
+                  <Text style={{color:"#fff", textAlign:'center'}}>
+                  주일의 독서 하러가기
+                  </Text>
+              </TouchableOpacity> 
+              </View>
+            </View> 
             <ScrollView style={{marginBottom:240}}>
-            <Text>{this.state.Comment}</Text>
-            <Text>{this.state.bg1}</Text>
-            <Text>{this.state.bg2}</Text>
-            <Text>{this.state.bg3}</Text>
-            <Text>{this.state.sum1}</Text>
-            <Text>{this.state.sum2}</Text>
-            <Text>{this.state.js1}</Text>
-            <Text>{this.state.js2}</Text>
-            <Text>{this.state.mysentence}</Text>
+            
+           
             </ScrollView>
         </View>
       )
@@ -389,5 +561,16 @@ const styles = StyleSheet.create({
       color: "#000",
       textAlign: 'center', 
       marginBottom: 15
-     }
+     },
+      
+     smallText: {
+      color: "#01579b",
+      textAlign: 'center', 
+      fontSize: 11,
+      margin:  5
+     },
+     lectioText:{
+       color: "#000", 
+       fontSize: 14,
+       padding: 5}
     });

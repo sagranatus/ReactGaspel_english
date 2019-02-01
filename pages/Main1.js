@@ -92,8 +92,11 @@ constructor(props) {
               } else {
                 console.log('Main1 - get Lectio data : ', "no value")   
               }
+              if(today_count > 0){
+                this.setState({today_count: 1})
+              }
 
-              this.setState({today_count: today_count})
+              
             }
           );
       });  
@@ -126,7 +129,11 @@ constructor(props) {
     var day = date_mon.getDay(),
         diff = date_mon.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
     var monday = new Date(date_mon.setDate(diff));
-
+  //  monday.setDate(monday.getDate() + 1);
+  //  var tues = new Date(monday)
+  //  tues.setDate(monday.getDate() + 1)
+   // console.log("tues", tues)
+    console.log("monday", monday)
     var year = monday.getFullYear();
     var month = monday.getMonth()+1
     var day = monday.getDate();
@@ -141,13 +148,18 @@ constructor(props) {
 
     this.setState({weekend_count: 0})
     var weekend_count = 0
-    
+    var weekend_count1 = 0
+    var weekend_count2 = 0
+//    var tues =  monday.setDate(monday.getDate() + 1);
+ //   console.log("tues", tues)
     for(var k=0; k<7; k++){
-        
+     
         new Promise((resolve, reject) => {
-       
-        var diff = monday.getDate() + k
-        var date = new Date(new Date().setDate(diff))
+      
+        var date = new Date(monday)
+        date.setDate(monday.getDate() + k)
+       // var diff = monday.getDate() + k
+       // var date = new Date(new Date().setDate(diff))
         console.log(date)
         var changed = this.changeDateFormat(date)
         console.log(changed)
@@ -163,31 +175,31 @@ constructor(props) {
                 if (len > 0) {                  
                     console.log('Main1 - get Comment data'+changed)  
                     weekend_count++       
+                    this.setState({weekend_count: weekend_count})
                     console.log(weekend_count)        
-                } else {
+                } else {                          
+                    tx.executeSql(
+                      'SELECT * FROM lectio where uid = ? and date =?',
+                      [loginId, changed],
+                      (tx, results) => {
+                        var len = results.rows.length;
+                      //  값이 있는 경우에 
+                        if (len > 0) {                  
+                            console.log('Main1 - get Lectio data'+changed)           
+                            weekend_count++      
+                            console.log(weekend_count)
+                        } else {
+                          console.log('Main1 - get Lectio data : ', "no value"+changed)   
+                        }                        
+                        this.setState({weekend_count: weekend_count})
+                        
+                      }
+                    );
                   console.log('Main1 - get Comment data : ', "no value"+changed)   
                 }
               }
             );
     
-            tx.executeSql(
-                'SELECT * FROM lectio where uid = ? and date =?',
-                [loginId, changed],
-                (tx, results) => {
-                  var len = results.rows.length;
-                //  값이 있는 경우에 
-                  if (len > 0) {                  
-                      console.log('Main1 - get Lectio data'+changed)           
-                      weekend_count++      
-                      console.log(weekend_count)
-                  } else {
-                    console.log('Main1 - get Lectio data : ', "no value"+changed)   
-                  }       
-                  
-                  this.setState({weekend_count: weekend_count})
-                  
-                }
-              );
           });  
         }, null, null);
     }
@@ -237,31 +249,33 @@ constructor(props) {
                 if (len > 0) {                  
                     console.log('Main1 - get Comment data'+changed)  
                     month_count++       
+                    this.setState({month_count: month_count})
                     console.log(month_count)        
                 } else {
+                  tx.executeSql(
+                    'SELECT * FROM lectio where uid = ? and date =?',
+                    [loginId, changed],
+                    (tx, results) => {
+                      var len = results.rows.length;
+                    //  값이 있는 경우에 
+                      if (len > 0) {                  
+                          console.log('Main1 - get Lectio data'+changed)           
+                          month_count++      
+                          console.log(month_count)
+                      } else {
+                        console.log('Main1 - get Lectio data : ', "no value"+changed)   
+                      }       
+                      
+                      this.setState({month_count: month_count})
+                      
+                    }
+                  );
                   console.log('Main1 - get Comment data : ', "no value"+changed)   
                 }
               }
             );
     
-            tx.executeSql(
-                'SELECT * FROM lectio where uid = ? and date =?',
-                [loginId, changed],
-                (tx, results) => {
-                  var len = results.rows.length;
-                //  값이 있는 경우에 
-                  if (len > 0) {                  
-                      console.log('Main1 - get Lectio data'+changed)           
-                      month_count++      
-                      console.log(month_count)
-                  } else {
-                    console.log('Main1 - get Lectio data : ', "no value"+changed)   
-                  }       
-                  
-                  this.setState({month_count: month_count})
-                  
-                }
-              );
+          
           });  
         }, null, null);
     }

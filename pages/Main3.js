@@ -48,7 +48,7 @@ moveNext(){
 
 moveFinal(){
     console.log("Main3 - moveFinal")
-    alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
+    //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
     // lectio server
     if(this.state.Lectioupdate){        
         this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
@@ -241,7 +241,7 @@ transitionToNextPanel(nextIndex){
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
         if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
+            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
         //console.log("saea",pos[0].length)
@@ -341,7 +341,7 @@ transitionToNextPanel(nextIndex){
                     <KeyboardAvoidingView style={{height:100}}>
                      
                         <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>복음의 등장인물은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -353,7 +353,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>복음의 배경장소는?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -365,7 +365,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>배경시간 혹은 상황은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -377,7 +377,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -389,7 +389,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>특별히 눈에 띄는 부분은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -401,7 +401,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -413,7 +413,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center'}}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -447,24 +447,24 @@ transitionToNextPanel(nextIndex){
         return (
             <ScrollView> 
                 <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
-                <Text style={{textAlign:'center'}}>복음의 등장인물은?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text  style={styles.TextResultStyleClass}>{this.state.bg1}</Text>   
-                <Text style={{textAlign:'center'}}>복음의 배경장소는?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.bg2}</Text>   
-                <Text style={{textAlign:'center'}}>배경시간 혹은 상황은?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>배경시간 혹은 상황은?</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.bg3}</Text>
-                <Text style={{textAlign:'center'}}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
                 <Text style={styles.TextResultStyleClass}>{this.state.sum1}</Text>  
-                <Text style={{textAlign:'center'}}>특별히 눈에 띄는 부분은?</Text> 
+                <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
                 <Text style={styles.TextResultStyleClass}>{this.state.sum2}</Text>   
-                <Text style={{textAlign:'center'}}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.js1}</Text>   
-                <Text style={{textAlign:'center'}}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.js2}</Text>        
            
                 <TouchableOpacity
                     activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10}}
+                    style={{backgroundColor: '#01579b', padding: 10, marginTop: 10}}
                     onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                     >
                     <Text style={{color:"#FFF", textAlign:'center'}}>
@@ -525,7 +525,7 @@ transitionToNextPanel(nextIndex){
                         </Text>                                
                         </View>
                      
-                    </ImageBackground>
+                </ImageBackground>
                     
                 </View>
                 
@@ -584,7 +584,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>복음의 등장인물은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -596,7 +596,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>복음의 배경장소는?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -608,7 +608,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>배경시간 혹은 상황은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -620,7 +620,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -632,7 +632,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>특별히 눈에 띄는 부분은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -644,7 +644,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -656,7 +656,7 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', fontSize:15, color: "#01579b", marginBottom:10}}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                        <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
@@ -732,10 +732,23 @@ const styles = StyleSheet.create({
     },
     TextResultStyleClass: { 
         textAlign: 'center',
+        color: "#000",
         margin:5,
         marginBottom: 7,
         borderWidth: 1,
          borderColor: '#01579b',
-         borderRadius: 5 
-        }
+         borderRadius: 5,
+         fontSize:14 
+        },
+    UpdateQuestionStyleClass: {
+        textAlign: 'center',
+        color: '#000',
+        fontSize:14
+    },
+    TextQuestionStyleClass: {
+        textAlign:'center', 
+        fontSize:15, 
+        color: "#01579b", 
+        marginBottom:10
+    }
     });

@@ -99,8 +99,8 @@ constructor(props) {
                         Comment: results.rows.item(0).comment,
                         Commentupdate: true
                     })
-                  //  const main5 =  new Main5()
-                 //   main5.getAllPoints()
+                    const main5 =  new Main5()    
+                    main5.sayHi()
                 } else {                                  
                 }
             }
@@ -127,7 +127,7 @@ constructor(props) {
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
         if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.-\d{1,2}/);
+            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
         //console.log("saea",pos)
         //console.log("here", pos[0].indexOf(","))
@@ -328,9 +328,9 @@ constructor(props) {
             <ScrollView style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
-                    <Text style={{textAlign:'center'}}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
                     <TextInput
-                    placeholder="Enter User Id"
+                    placeholder="여기에 작성하세요"
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
@@ -343,11 +343,11 @@ constructor(props) {
                     <Text style={{color:"#fff", textAlign:'center'}}>
                         저장
                     </Text>
-                </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
 
                 <View style={this.state.Commentupdate == true ? {} : {display:'none'}}>
-                    <Text style={{textAlign:'center'}}>오늘 복음에서 가장 마음에 드는 구절</Text>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절</Text>
                     <TextInput
                     placeholder="Enter User Id"
                     value={this.state.Comment}        
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
 
     TextInputStyleClass: { 
     textAlign: 'center',
-    marginBottom: 7,
+    marginBottom: 15,
     height: 40,
     borderWidth: 1,
     // Set border Hex Color Code Here.
@@ -443,5 +443,11 @@ const styles = StyleSheet.create({
      
     // Set border Radius.
      //borderRadius: 10 ,
+    },
+    TextQuestionStyleClass: {
+        textAlign: 'center',
+        color: '#000',
+        fontSize:14,
+        margin:15
     }
     });
