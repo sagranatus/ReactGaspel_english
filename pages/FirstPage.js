@@ -1,5 +1,5 @@
 import React, { Component } from 'react' 
-import { StyleSheet, View, Button, Text, TouchableOpacity, AsyncStorage, Image} from 'react-native'
+import { StyleSheet, View, Button, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
@@ -46,7 +46,8 @@ constructor(props) {
        isLoggedIn: this.props.status.isLogged | false, 
       // isLoggedIn:true,
        loginId: null,
-        loginName: null
+        loginName: null,
+        initialLoading: true
     } 
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
@@ -61,6 +62,10 @@ constructor(props) {
         isLoggedIn: true
       });
       this.props.setLogin(result) // 다시 새로고침할때 async값이 있는 경우 login을 해서 props 값을 저장해줘야 한다.
+    }else{
+      this.setState({
+        initialLoading: false 
+      })
     }    
   })
 
@@ -86,7 +91,7 @@ shouldComponentUpdate(nextProps) {
 componentWillReceiveProps(nextProps){  
     // props의 loginId값이 변경될때 적용
     console.log("FirstPage - this.props.status.loginId: ", nextProps.status.loginId)  
-   
+  
     // setLogin 후에 
     if(this.props.status.loginId !== nextProps.status.loginId){
       console.log("FirstPage - componentWillReceiveProps")
@@ -103,7 +108,8 @@ componentWillReceiveProps(nextProps){
                   this.setState({
                     loginId: results.rows.item(0).uid,
                     loginName: results.rows.item(0).name,
-                    isLoggedIn: true
+                    isLoggedIn: true,
+                    initialLoading: false
                   });
                                
                 } else {
@@ -111,49 +117,65 @@ componentWillReceiveProps(nextProps){
                   this.setState({
                     loginId: null,
                     loginName: null,
-                    isLoggedIn: false
+                    isLoggedIn: false,
+                    initialLoading: false
                   });      
                 }
               }
             );
           });
+          
     }
 
 }
   render() {
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
-    if (!this.state.isLoggedIn)
-        return (               
-            <View style={styles.MainContainer}> 
-             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-              <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
-                <View style={{margin:10, marginTop: 40}}>  
-                  <TouchableOpacity
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#fff', paddingHorizontal: 110, paddingVertical: 10}}
-                  onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
-                  >
-                  <Text style={{color:"#01579b", textAlign:'center'}}>
-                  회원가입하고 시작하기
-                  </Text>
-                </TouchableOpacity> 
-                  <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: 'transparent', padding: 10}}
-                  onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  이미 계정이 있으신가요? 로그인
-                  </Text>
-               </TouchableOpacity>
-                  
-              </View>
+    
+   
+        return (    
+          (this.state.initialLoading)
+            ? (    
+              <View style={styles.loadingContainer}>
+              <ActivityIndicator
+                animating
+                size="small"
+                {...this.props}
+              />
             </View>
-        )
-    else   
-        return (     
-            <MainPage />
-        )             
+            ) : (
+              (this.state.isLoggedIn)
+                ? (
+                  <MainPage />  
+                ) : (
+                  <View style={styles.MainContainer}> 
+                  <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+                   <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
+                     <View style={{margin:10, marginTop: 40}}>  
+                       <TouchableOpacity
+                       activeOpacity = {0.9}
+                       style={{backgroundColor: '#fff', paddingHorizontal: 110, paddingVertical: 10}}
+                       onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
+                       >
+                       <Text style={{color:"#01579b", textAlign:'center'}}>
+                       회원가입하고 시작하기
+                       </Text>
+                     </TouchableOpacity> 
+                       <TouchableOpacity 
+                       activeOpacity = {0.9}
+                       style={{backgroundColor: 'transparent', padding: 10}}
+                       onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } 
+                       >
+                       <Text style={{color:"#fff", textAlign:'center'}}>
+                       이미 계정이 있으신가요? 로그인
+                       </Text>
+                    </TouchableOpacity>
+                       
+                   </View>
+                 </View>
+                )
+              )
+           )              
+                  
   }
 }
 FirstPage.propTypes = { 
@@ -194,5 +216,15 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       marginTop: 3, 
       marginBottom: 15
-     }
+     },
+     loadingContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
+      marginTop: 0,
+      paddingTop: 20,
+      marginBottom: 0,
+      marginHorizontal: 0,
+      paddingHorizontal: 10
+    }
     });

@@ -125,26 +125,26 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 placeholder="이메일"        
                 onChangeText={UserEmail => this.setState({UserEmail})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:350, marginTop:40}]}
+                style={[styles.TextInputStyleClass, {width:'98%', marginTop:40}]}
                 />       
                 
                  <TextInput                
                 placeholder="이름"        
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:110}]}
+                style={[styles.TextInputStyleClass, {width:'30%'}]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:110}]}
+                style={[styles.TextInputStyleClass, {width:'30%'}]}
                 />
                  <TextInput                
                 placeholder="나이"        
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:110}]}
+                style={[styles.TextInputStyleClass, {width:'30%'}]}
                 />
                 
                 
@@ -152,26 +152,26 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 placeholder="교구"        
                 onChangeText={UserRegion => this.setState({UserRegion})}       
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:170}]}
+                style={[styles.TextInputStyleClass, {width:'47%'}]}
                 />
                  <TextInput                
                 placeholder="본당"        
                 onChangeText={UserCathedral => this.setState({UserCathedral})}
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:170}]}
+                style={[styles.TextInputStyleClass, {width:'47%'}]}
                 />
                 <TextInput                
                 placeholder="비밀번호"        
                 onChangeText={UserPassword => this.setState({UserPassword})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:170}]}       
+                style={[styles.TextInputStyleClass, {width:'47%'}]}       
                 secureTextEntry={true}
                 /> 
                 <TextInput                
                 placeholder="비밀번호 확인"        
                 onChangeText={UserPassword_confirm => this.setState({UserPassword_confirm})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:170}]}       
+                style={[styles.TextInputStyleClass, {width:'47%'}]}       
                 secureTextEntry={true}
                 /> 
                 <View style={{width:300, marginTop:10, marginBottom: 20}}>                
@@ -217,13 +217,13 @@ justifyContent: 'center',
 flex:1,
 flexDirection: 'row',
 flexWrap: 'wrap',
-margin: 10
+margin: 0
 },
  
 TextInputStyleClass: {
 textAlign: 'center',
 marginBottom: 7,
-margin:5,
+margin:'0.5%',
 height: 40,
 borderWidth: 1,
 // Set border Hex Color Code Here.

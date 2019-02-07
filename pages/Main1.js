@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button, AsyncStorage} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -16,7 +16,7 @@ constructor(props) {
         todayData: "",
         weekData: "",
         monthData: "",
-        todaycount: 0,
+        today_count: 0,
         weekend_count: 0,
         month_count: 0
     }
@@ -38,6 +38,14 @@ constructor(props) {
     var today = year+"-"+month+"-"+day;
     var todayDate = year+"."+month+"."+day+".";
     console.log(today)
+
+    // 오늘날짜를 설정 
+    try {
+      AsyncStorage.setItem('today1', today);
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+
     this.setState({today: today, todayDate: todayDate})
     this.props.getGaspel(today)
    
@@ -54,7 +62,37 @@ constructor(props) {
       
   }
 
-   countData(){
+   setChange(){
+     // 오늘날짜 계산
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var todaydate = year+"-"+month+"-"+day;
+    var todaydate2 = year+"."+month+"."+day+".";
+    AsyncStorage.getItem('today1', (err, result) => {
+      console.log("Main1 - get AsyncStorage today : ", result)
+      if(result == todaydate){
+        console.log("today is same")
+      }else{
+        console.log("today is different")
+        try {
+          AsyncStorage.setItem('today1', todaydate);
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }
+    
+        this.setState({today: todaydate, todayDate: todaydate2})
+        this.props.getGaspel(todaydate)
+      }    
+    })
+
     // 오늘 count 하기
     console.log(this.props.status.loginId)
     console.log(this.state.today)
@@ -294,7 +332,7 @@ constructor(props) {
             <View>
                <NavigationEvents
                 onWillFocus={payload => {
-                    this.countData();
+                    this.setChange();
                 }}
                 />                        
                  <Button title="logout" onPress={() =>  this.props.setLogout()} />              

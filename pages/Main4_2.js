@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, TouchableHighlight } from 'react-native';
+import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, TouchableHighlight, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -49,7 +49,8 @@ constructor(props) {
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
-        isDone:false
+        isDone:false,
+        initialLoading: true
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -68,7 +69,7 @@ moveNext(){
 
 moveFinal(){
     console.log("Main4_2 - moveFinal")
-    alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
+   // alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
     // weekend server
     if(this.state.Weekendupdate){        
         this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
@@ -237,9 +238,13 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Weekendupdate: true
+                    Weekendupdate: true,
+                    initialLoading: false
                 })
-            } else {                                    
+            } else {   
+                this.setState({
+                    initialLoading: false
+                })                                
             }
           }
         );
@@ -419,10 +424,21 @@ componentWillReceiveProps(nextProps){
  
     render() {
         console.log("Main4_2 - gaspels in render");
-        if(this.state.Weekendupdate == true){
-            if(this.state.Weekendediting == true){
-                return(
-                    <View>                    
+       return (this.state.initialLoading)
+       ? (    
+           <View style={styles.loadingContainer}>
+           <ActivityIndicator
+             animating
+             size="small"
+             {...this.props}
+           />
+         </View>
+         )
+    
+       : (this.state.Weekendupdate == true) ? 
+            (this.state.Weekendediting == true) ?
+               (
+                    <View>      
                     
                     <OnboardingButton
                         totalItems={8}
@@ -431,7 +447,7 @@ componentWillReceiveProps(nextProps){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                   <KeyboardAvoidingView style={{height:100}}>                  
+                   <KeyboardAvoidingView style={{height:130}}>                  
     
                         <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -532,7 +548,7 @@ componentWillReceiveProps(nextProps){
                     </KeyboardAvoidingView>
     
                  
-                    <ScrollView style={{marginBottom:150}}>              
+                    <ScrollView style={{marginBottom:230}}>              
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}
                             underlayColor = {"#fff"}
@@ -550,8 +566,8 @@ componentWillReceiveProps(nextProps){
                         </ScrollView>  
                 </View>
                 )
-            }
-            return (
+             :
+            (
                 <ScrollView> 
                     <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -583,9 +599,9 @@ componentWillReceiveProps(nextProps){
                 </ScrollView>
                
              )
-            }
             
-            return (  
+            :
+            (  
                 <View> 
                      <View style={this.state.start == false ? {} : {display:'none'}}>                 
                      <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />       
@@ -638,7 +654,8 @@ componentWillReceiveProps(nextProps){
                       
                     </View>
     
-                    <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>  
+                    <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>                   
+    
                         <OnboardingButton
                             totalItems={10}
                             currentIndex={this.state.currentIndex}
@@ -646,7 +663,7 @@ componentWillReceiveProps(nextProps){
                             moveNext={this.moveNext}
                             moveFinal={this.moveFinal}
                         />
-                       <KeyboardAvoidingView style={{height:100}}>
+                       <KeyboardAvoidingView style={{height:130}}>
                            <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                          
                             <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
@@ -780,7 +797,7 @@ componentWillReceiveProps(nextProps){
                         </KeyboardAvoidingView>
     
                      
-                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:300}}>         
+                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>         
                        
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -836,7 +853,7 @@ componentWillReceiveProps(nextProps){
             textAlign: 'center',
             margin:5,
             marginBottom: 7,
-            height: 60,
+            height: 90,
             borderWidth: 1,
              borderColor: '#01579b',
              borderRadius: 5 
@@ -861,5 +878,15 @@ componentWillReceiveProps(nextProps){
                 fontSize:15, 
                 color: "#01579b", 
                 marginBottom:10
-            }
+            },
+            loadingContainer: {
+                alignItems: 'center',
+                justifyContent: 'center',
+                flex: 1,
+                marginTop: 0,
+                paddingTop: 20,
+                marginBottom: 0,
+                marginHorizontal: 0,
+                paddingHorizontal: 10
+              }
         });

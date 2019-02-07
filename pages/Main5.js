@@ -185,7 +185,6 @@ commentFunc = (commentDates) => {
  
  onselectDate(day, today){
    if(day != null){
-     console.log("nono")
      this.setState({Today: day})
    }
   this.setState({buttonStatus: "sentence"})
@@ -202,8 +201,7 @@ commentFunc = (commentDates) => {
     }
     if(day.day < 10){
       day.day = "0"+day.day;
-    } 
-  
+    }   
     
     var date_format = day.year+"-"+day.month+"-"+day.day;
     this.setState({
@@ -367,20 +365,44 @@ commentFunc = (commentDates) => {
             style={this.state.showButton1 == true ? {} : {display:'none'}}
             onPress={()=>this.setState({buttonStatus: "sentence"})}
             underlayColor = {"#fff"}>
-              <Image source={this.state.buttonStatus=="sentence" ? require('../resources/slide1.png') : require('../resources/slide1_off.png')} style={{width: 30, height: 30, margin:10}} />
+              <Image source={require('../resources/slide1.png')} style={this.state.buttonStatus=="sentence" ? {width: 30, height: 30, margin:10} : {width:0, height: 0}} />
             </TouchableHighlight>
+            <TouchableHighlight 
+            style={this.state.showButton1 == true ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "sentence"})}
+            underlayColor = {"#fff"}>
+              <Image source={require('../resources/slide1_off.png')} style={this.state.buttonStatus!="sentence" ? {width: 30, height: 30, margin:10} : {width:0}} />
+            </TouchableHighlight>           
+            
+           <TouchableHighlight 
+            style={this.state.showButton2 == true && !this.state.selectedDay ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "comment"})}
+            underlayColor = {"#fff"}>
+               <Image source={require('../resources/slide2.png')} style={this.state.buttonStatus=="comment" ? {width: 30, height: 30, margin:10} : {width:0}} />
+            </TouchableHighlight>
+            
             <TouchableHighlight 
             style={this.state.showButton2 == true && !this.state.selectedDay ? {} : {display:'none'}}
             onPress={()=>this.setState({buttonStatus: "comment"})}
             underlayColor = {"#fff"}>
-              <Image source={this.state.buttonStatus=="comment" ? require('../resources/slide2.png') : require('../resources/slide2_off.png')} style={{width: 30, height: 30, margin:10}} />
+               <Image source={require('../resources/slide2_off.png')} style={this.state.buttonStatus!="comment" ? {width: 30, height: 30, margin:10} : {width:0}} />
             </TouchableHighlight>
+
+
             <TouchableHighlight 
             style={this.state.showButton2 == true ? {} : {display:'none'}}
             onPress={()=>this.setState({buttonStatus: "lectio"})}
             underlayColor = {"#fff"}>
-              <Image source={this.state.buttonStatus=="lectio" ? require('../resources/slide3.png') : require('../resources/slide3_off.png')} style={{width: 30, height: 30, margin:10}} />
+              <Image source={require('../resources/slide3.png')} style={this.state.buttonStatus=="lectio" ? {width: 30, height: 30, margin:10} : {width:0}} />
             </TouchableHighlight>
+
+            <TouchableHighlight 
+            style={this.state.showButton2 == true ? {} : {display:'none'}}
+            onPress={()=>this.setState({buttonStatus: "lectio"})}
+            underlayColor = {"#fff"}>
+              <Image source={require('../resources/slide3_off.png')} style={this.state.buttonStatus!="lectio" ? {width: 30, height: 30, margin:10} : {width:0}} />
+            </TouchableHighlight>
+
             </View>
           
           <View style={this.state.buttonStatus == "sentence" && this.state.onesentence !== "" ? {} : {display:'none'}}>   

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
+import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 export default class Main3 extends Component { 
@@ -29,7 +30,8 @@ constructor(props) {
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
-        isDone:false
+        isDone:false,
+        initialLoading: true
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -37,6 +39,78 @@ constructor(props) {
      this.movePrevious = this.movePrevious.bind(this);
      this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
   }
+
+
+  
+setChange(){
+    // 오늘날짜 계산
+   var date = new Date();
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+   var todaydate = year+"-"+month+"-"+day;
+   var todaydate2 = year+"."+month+"."+day+".";
+   var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+   AsyncStorage.getItem('today3', (err, result) => {
+     console.log("Main3 - get AsyncStorage today : ", result)
+     if(result == todaydate){
+       console.log("today is same")
+     }else{
+       console.log("today is different")
+          // 오늘날짜를 설정 
+        try {
+            AsyncStorage.setItem('today3', todaydate);
+        } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+        }        
+    
+       this.setState({Date: todaydate,  Lectiodate: today_comment_date})
+       this.props.getGaspel(todaydate)
+        //lectio있는지 확인
+        const loginId = this.props.status.loginId;    
+        db.transaction(tx => {
+            tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                    this.setState({
+                        bg1 : results.rows.item(0).bg1,
+                        bg2 : results.rows.item(0).bg2,
+                        bg3 : results.rows.item(0).bg3,
+                        sum1 : results.rows.item(0).sum1,
+                        sum2 : results.rows.item(0).sum2,
+                        js1 : results.rows.item(0).js1,
+                        js2 : results.rows.item(0).js2,
+                        Lectioupdate: true
+                    })
+                } else {               
+                    this.setState({
+                        bg1 : "",
+                        bg2 : "",
+                        bg3 : "",
+                        sum1 : "",
+                        sum2 : "",
+                        js1 : "",
+                        js2 : "",
+                        Lectioupdate: false
+                    })                   
+                }
+            }
+            );
+        });    
+     }    
+   })
+}
 
 movePrevious(){
     this.transitionToNextPanel(this.state.currentIndex -1);
@@ -140,6 +214,12 @@ transitionToNextPanel(nextIndex){
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
+       // 오늘날짜를 설정 
+       try {
+        AsyncStorage.setItem('today3', today);
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
     console.log('Main3 - today date : ', today+"/"+today_comment_date)
 
@@ -171,9 +251,13 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Lectioupdate: true
+                    Lectioupdate: true,
+                    initialLoading: false
                 })
-            } else {                                  
+            } else {
+                this.setState({          
+                    initialLoading: false
+                })                        
             }
           }
         );
@@ -315,11 +399,29 @@ transitionToNextPanel(nextIndex){
    }   
 
   render() {
+   
     console.log("Main3 - gaspels in render");
-    if(this.state.Lectioupdate == true){
-        if(this.state.Lectioediting == true){
-            return(
+    return   (this.state.initialLoading)
+    ? (    
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          animating
+          size="small"
+          {...this.props}
+        />
+      </View>
+      )
+
+    : 
+    (this.state.Lectioupdate == true) ?
+        (this.state.Lectioediting == true) ?
+           (
             <View>
+                 <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();
+                }}
+                />
                 <View>                  
                    <TouchableOpacity
                             activeOpacity = {0.9}
@@ -338,7 +440,7 @@ transitionToNextPanel(nextIndex){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                    <KeyboardAvoidingView style={{height:100}}>
+                    <KeyboardAvoidingView style={{height:130}}>
                      
                         <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -425,7 +527,7 @@ transitionToNextPanel(nextIndex){
                         </View>
                         
                     </KeyboardAvoidingView>                    
-                    <ScrollView style={{marginBottom:200}}>              
+                    <ScrollView style={{marginBottom:230}}>              
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
@@ -443,9 +545,14 @@ transitionToNextPanel(nextIndex){
                     </ScrollView>  
            </View>
            )
-        }
-        return (
+         :
+            (
             <ScrollView> 
+                 <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();
+                }}
+                />
                 <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text  style={styles.TextResultStyleClass}>{this.state.bg1}</Text>   
@@ -472,11 +579,15 @@ transitionToNextPanel(nextIndex){
                     </Text>
                 </TouchableOpacity>
             </ScrollView>
-         )
-        }
-        
-        return (  
+         )        
+        :
+         (  
             <View>
+                 <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();
+                }}
+                />
                 <View style={this.state.start == false ? {} : {display:'none'}}>                       
 
                 <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
@@ -498,36 +609,36 @@ transitionToNextPanel(nextIndex){
                 </View>
 
                 <View style={this.state.praying == true ? {} : {display:'none'}}>   
-                               
-                <View style = {styles.container}>
-                <TouchableOpacity
-                activeOpacity={0.7}
-                style={{ paddingVertical: 8,
-                    paddingHorizontal: 15}}
-                onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
-                >
-                    <Text style={{color:"#000", textAlign:'right'}}>
-                        Next
-                    </Text>
-                </TouchableOpacity>             
-                </View>  
-                <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
-                        <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
-            
-                        <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
-                         주님께서 나에게 말씀하셨다.{"\n"}
-                           "{this.state.js2}"
-                            {"\n"}{"\n"}
-                            "주님 제가 이 말씀을 깊이 새기고{"\n"}
-                            "하루를 살아가도록 이끄소서. 아멘.{"\n"}
-                            {"\n"}
-                            "(세번 반복한다){"\n"}
-                        </Text>                                
-                        </View>
-                     
-                </ImageBackground>
-                    
-                </View>
+                                   
+                    <View style = {styles.container}>
+                    <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={{ paddingVertical: 8,
+                        paddingHorizontal: 15}}
+                    onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
+                    >
+                        <Text style={{color:"#000", textAlign:'right'}}>
+                            Next
+                        </Text>
+                    </TouchableOpacity>             
+                    </View>  
+                    <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
+                            <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+                
+                            <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
+                            주님께서 나에게 말씀하셨다.{"\n"}
+                                "{this.state.js2}"
+                                {"\n"}{"\n"}
+                                "주님 제가 이 말씀을 깊이 새기고{"\n"}
+                                "하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                                {"\n"}
+                                "(세번 반복한다){"\n"}
+                            </Text>                                
+                            </View>
+                        
+                        </ImageBackground>
+                        
+                    </View>
                 
                 <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>     
                     <View style={this.state.start == true ? {} : {display:'none'}} >
@@ -549,7 +660,7 @@ transitionToNextPanel(nextIndex){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                    <KeyboardAvoidingView style={{height:100}}>
+                    <KeyboardAvoidingView style={{height:130}}>
                         <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                      
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
@@ -668,7 +779,7 @@ transitionToNextPanel(nextIndex){
                         </View>
                         
                     </KeyboardAvoidingView>                
-                    <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:400}}>         
+                    <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>         
                    
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -725,7 +836,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin:5,
     marginBottom: 7,
-    height: 60,
+    height: 90,
     borderWidth: 1,
      borderColor: '#01579b',
      borderRadius: 5 
@@ -750,5 +861,15 @@ const styles = StyleSheet.create({
         fontSize:15, 
         color: "#01579b", 
         marginBottom:10
-    }
+    },  
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      }
     });

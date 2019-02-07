@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, TouchableHighlight } from 'react-native';
+import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, TouchableHighlight, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -50,7 +50,8 @@ constructor(props) {
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
-        isDone:false
+        isDone:false,
+        initialLoading: true
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -69,7 +70,7 @@ moveNext(){
 
 moveFinal(){
     console.log("Main3_2 - moveFinal")
-    alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
+    //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
     // lectio server
     if(this.state.Lectioupdate){        
         this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
@@ -138,7 +139,7 @@ moveFinal(){
               }
             );
           });    
-          this.setState({ Lectioupdate: true });
+          this.setState({ praying: true });
     }
 }
 
@@ -192,9 +193,13 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Lectioupdate: true
+                    Lectioupdate: true,
+                    initialLoading: false
                 })
-            } else {                                  
+            } else {                      
+                this.setState({
+                    initialLoading: false
+                })            
             }
           }
         );
@@ -336,10 +341,23 @@ componentWillReceiveProps(nextProps){
  
     render() {
         console.log("Main3_2 - gaspels in render");
-        if(this.state.Lectioupdate == true){
-            if(this.state.Lectioediting == true){
-                return(
+        return   (this.state.initialLoading)
+        ? (    
+            <View style={styles.loadingContainer}>
+            <ActivityIndicator
+              animating
+              size="small"
+              {...this.props}
+            />
+          </View>
+          )
+    
+        : 
+        (this.state.Lectioupdate == true) ?
+            (this.state.Lectioediting == true) ?
+               (
                 <View>
+                   
                    <OnboardingButton
                             totalItems={7}
                             currentIndex={this.state.currentIndex}
@@ -347,7 +365,7 @@ componentWillReceiveProps(nextProps){
                             moveNext={this.moveNext}
                             moveFinal={this.moveFinal}
                         />
-                        <KeyboardAvoidingView style={{height:100}}>
+                        <KeyboardAvoidingView style={{height:130}}>
                          
                             <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                             <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -434,7 +452,7 @@ componentWillReceiveProps(nextProps){
                             </View>
                             
                         </KeyboardAvoidingView>                    
-                        <ScrollView style={{marginBottom:150}}>              
+                        <ScrollView style={{marginBottom:230}}>              
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}
                             underlayColor = {"#fff"}
@@ -452,8 +470,8 @@ componentWillReceiveProps(nextProps){
                         </ScrollView>  
                </View>
                )
-            }
-            return (
+             :
+                (
                 <ScrollView> 
                     <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -481,10 +499,9 @@ componentWillReceiveProps(nextProps){
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
-             )
-            }
-            
-            return (  
+             )        
+            :
+             (  
                 <View>
                     <View style={this.state.start == false ? {} : {display:'none'}}>                       
     
@@ -507,39 +524,39 @@ componentWillReceiveProps(nextProps){
                     </View>
     
                     <View style={this.state.praying == true ? {} : {display:'none'}}>   
-                                   
-                    <View style = {styles.container}>
-                    <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={{ paddingVertical: 8,
-                        paddingHorizontal: 15}}
-                    onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
-                    >
-                        <Text style={{color:"#000", textAlign:'right'}}>
-                            Next
-                        </Text>
-                    </TouchableOpacity>             
-                    </View>  
-                    <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
-                            <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
-                
-                            <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
-                             주님께서 나에게 말씀하셨다.{"\n"}
-                               "{this.state.js2}"
-                                {"\n"}{"\n"}
-                                "주님 제가 이 말씀을 깊이 새기고{"\n"}
-                                "하루를 살아가도록 이끄소서. 아멘.{"\n"}
-                                {"\n"}
-                                "(세번 반복한다){"\n"}
-                            </Text>                                
-                            </View>
-                         
-                        </ImageBackground>
-                        
-                    </View>
+                                       
+                        <View style = {styles.container}>
+                        <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{ paddingVertical: 8,
+                            paddingHorizontal: 15}}
+                        onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
+                        >
+                            <Text style={{color:"#000", textAlign:'right'}}>
+                                Next
+                            </Text>
+                        </TouchableOpacity>             
+                        </View>  
+                        <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
+                                <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
                     
-                    <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>                          
-                       
+                                <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
+                                주님께서 나에게 말씀하셨다.{"\n"}
+                                    "{this.state.js2}"
+                                    {"\n"}{"\n"}
+                                    "주님 제가 이 말씀을 깊이 새기고{"\n"}
+                                    "하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                                    {"\n"}
+                                    "(세번 반복한다){"\n"}
+                                </Text>                                
+                                </View>
+                            
+                            </ImageBackground>
+                            
+                        </View>
+                    
+                    <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>     
+                                             
                         <OnboardingButton
                             totalItems={9}
                             currentIndex={this.state.currentIndex}
@@ -547,7 +564,7 @@ componentWillReceiveProps(nextProps){
                             moveNext={this.moveNext}
                             moveFinal={this.moveFinal}
                         />
-                        <KeyboardAvoidingView style={{height:100}}>
+                        <KeyboardAvoidingView style={{height:130}}>
                             <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                          
                             <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
@@ -666,7 +683,7 @@ componentWillReceiveProps(nextProps){
                             </View>
                             
                         </KeyboardAvoidingView>                
-                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:300}}>         
+                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>         
                        
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -723,7 +740,7 @@ componentWillReceiveProps(nextProps){
         textAlign: 'center',
         margin:5,
         marginBottom: 7,
-        height: 60,
+        height: 90,
         borderWidth: 1,
          borderColor: '#01579b',
          borderRadius: 5 
@@ -748,5 +765,15 @@ componentWillReceiveProps(nextProps){
             fontSize:15, 
             color: "#01579b", 
             marginBottom:10
-        }
+        },  
+        loadingContainer: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            marginTop: 0,
+            paddingTop: 20,
+            marginBottom: 0,
+            marginHorizontal: 0,
+            paddingHorizontal: 10
+          }
         });

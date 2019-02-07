@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight  } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight, ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -37,7 +37,8 @@ constructor(props) {
         Move:"",
         Comment:"",
         Commentdate:"",
-        Commentupdate: false
+        Commentupdate: false,
+        initialLoading: true
      }
   }
 
@@ -81,9 +82,13 @@ constructor(props) {
                 console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
                 this.setState({
                     Comment: results.rows.item(0).comment,
-                    Commentupdate: true
+                    Commentupdate: true,
+                    initialLoading: false
                 })
-            } else {                                  
+            } else {       
+                this.setState({
+                    initialLoading: false
+                })                             
             }
           }
         );
@@ -339,7 +344,18 @@ constructor(props) {
 
    render() {
     console.log("Main2_2 - gaspels in render");
-        return (  
+    return   (this.state.initialLoading)
+    ? (    
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          animating
+          size="small"
+          {...this.props}
+        />
+      </View>
+      )
+
+    : ( 
             <View>              
             <ScrollView style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
@@ -465,5 +481,15 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize:14,
         margin:15
-    }
+    },
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      }
     });

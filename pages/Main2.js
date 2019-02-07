@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight  } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight, AsyncStorage, ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Main5 from './Main5';
@@ -22,7 +22,8 @@ constructor(props) {
         Move:"",
         Comment:"",
         Commentdate:"", // 년 월 일 형식
-        Commentupdate: false // true인 경우에 insert대신 update
+        Commentupdate: false, // true인 경우에 insert대신 update
+        initialLoading: true
      }
   }
 
@@ -38,6 +39,13 @@ constructor(props) {
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
+     // 오늘날짜를 설정 
+     try {
+        AsyncStorage.setItem('today2', today);
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }
+
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
     console.log("Main2 - today date : ", today+"/"+today_comment_date)
     this.setState({
@@ -60,14 +68,75 @@ constructor(props) {
                 console.log('Main2 - check Comment data : ', results.rows.item(0).comment)   
                 this.setState({
                     Comment: results.rows.item(0).comment,
-                    Commentupdate: true
+                    Commentupdate: true,
+                    initialLoading: false
                 })
-            } else {                                  
+            } else {     
+                this.setState({
+                    initialLoading: false
+                })                             
             }
           }
         );
       });    
   }
+
+  setChange(){
+    // 오늘날짜 계산
+   var date = new Date();
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+   var todaydate = year+"-"+month+"-"+day
+   var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+   AsyncStorage.getItem('today2', (err, result) => {
+     console.log("Main2 - get AsyncStorage today : ", result)
+     if(result == todaydate){
+       console.log("today is same")
+     }else{
+       console.log("today is different")
+          // 오늘날짜를 설정 
+        try {
+            AsyncStorage.setItem('today2', todaydate);
+        } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+        }
+       this.setState({Date: todaydate})
+       this.props.getGaspel(todaydate)
+
+       //comment있는지 확인    
+        const loginId = this.props.status.loginId;
+        db.transaction(tx => {
+            tx.executeSql(
+            'SELECT * FROM comment where date = ? and uid = ?',
+            [today_comment_date, loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main2 - check Comment data : ', results.rows.item(0).comment)   
+                    this.setState({
+                        Comment: results.rows.item(0).comment,
+                        Commentupdate: true
+                    })
+                } else { 
+                    this.setState({
+                        Comment: "",
+                        Commentupdate: false
+                    })                                
+                }
+            }
+            );
+        });    
+     }    
+   })
+}
 
     getTodayLabel() {        
         var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
@@ -318,11 +387,22 @@ constructor(props) {
 
   render() {
     console.log("Main2 - gaspels in render");
-        return (  
+    return   (this.state.initialLoading)
+    ? (    
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          animating
+          size="small"
+          {...this.props}
+        />
+      </View>
+      )
+
+    : (
             <View> 
                 <NavigationEvents
                 onWillFocus={payload => {
-                    console.log("will focus", payload);
+                    this.setChange();
                 }}
                 />
             <ScrollView style={styles.MainContainer}> 
@@ -449,5 +529,15 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize:14,
         margin:15
-    }
+    },
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      }
     });

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
+import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
@@ -31,7 +32,8 @@ constructor(props) {
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
-        isDone:false
+        isDone:false,
+        initialLoading: true
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -40,6 +42,109 @@ constructor(props) {
      this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
   }
 
+setChange(){
+    // 이번주 일요일 계산
+    var date = new Date()
+    console.log(date)
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+        var lastday = date.getDate() - (date.getDay() - 1) + 6;
+        date = new Date(date.setDate(lastday));
+    }    
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var todaydate = year+"-"+month+"-"+day;
+    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate))
+    console.log(todaydate)
+    AsyncStorage.getItem('thisweekend', (err, result) => {
+        console.log("Main4 - get AsyncStorage thisweekend : ", result)
+        if(result == todaydate){
+          console.log("thisweekend is same")
+        }else{
+          console.log("thisweekend is different")    
+            // 이번주일요일 날짜를 설정 
+            try {
+                AsyncStorage.setItem('thisweekend', todaydate);
+            } catch (error) {
+                console.error('AsyncStorage error: ' + error.message);
+            }
+
+            this.setState({
+                Date: todaydate,
+                Weekenddate: today_comment_date
+            })
+        
+            // 데이터 가져오기
+            this.props.getGaspel(todaydate) 
+
+             //Weekend DB 있는지 확인        
+            const loginId = this.props.status.loginId;
+            db.transaction(tx => {
+                tx.executeSql(
+                'SELECT * FROM lectio where date = ? and uid = ?',
+                [today_comment_date,loginId],
+                (tx, results) => {
+                    var len = results.rows.length;
+                //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
+                        this.setState({
+                            bg1 : results.rows.item(0).bg1,
+                            bg2 : results.rows.item(0).bg2,
+                            bg3 : results.rows.item(0).bg3,
+                            sum1 : results.rows.item(0).sum1,
+                            sum2 : results.rows.item(0).sum2,
+                            js1 : results.rows.item(0).js1,
+                            js2 : results.rows.item(0).js2,
+                            Weekendupdate: true
+                        })
+                    } else {                        
+                        this.setState({
+                            bg1 : "",
+                            bg2 : "",
+                            bg3 : "",
+                            sum1 : "",
+                            sum2 : "",
+                            js1 : "",
+                            js2 : "",
+                            Weekendupdate: false
+                        })            
+                    }
+                }
+                );
+
+                tx.executeSql(
+                    'SELECT * FROM weekend where date = ? and uid = ?',
+                    [today_comment_date,loginId],
+                    (tx, results) => {
+                    var len = results.rows.length;
+                    //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
+                        this.setState({
+                            mysentence : results.rows.item(0).mysentence,
+                            mythought : results.rows.item(0).mythought
+                        })
+                    } else {     
+                        this.setState({
+                            mysentence : "",
+                            mythought : ""
+                        })                                
+                    }
+                    }
+                );
+            });    
+
+        }    
+      })    
+   
+}
   movePrevious(){
     this.transitionToNextPanel(this.state.currentIndex -1);
 }
@@ -175,9 +280,15 @@ transitionToNextPanel(nextIndex){
 
 
   componentWillMount(){
-    var date = new Date();
-    var lastday = date.getDate() - (date.getDay() - 1) + 6;
-    date = new Date(date.setDate(lastday));
+   // var date = new Date(2019, 1, 10, 14, 52, 10);
+    var date = new Date()
+    console.log(date.getDay())
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+        var lastday = date.getDate() - (date.getDay() - 1) + 6;
+        console.log(lastday)
+        date = new Date(date.setDate(lastday));
+    }    
+    console.log(date)
     var year = date.getFullYear();
     var month = date.getMonth()+1
     var day = date.getDate();
@@ -189,6 +300,13 @@ transitionToNextPanel(nextIndex){
     } 
     var today = year+"-"+month+"-"+day;
     
+     // 이번주 일요일 날짜를 설정 
+     try {
+        AsyncStorage.setItem('thisweekend', today);
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }
+
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
     console.log('Main4 - weekend date : ', today+"/"+today_comment_date)
     this.setState({
@@ -218,9 +336,13 @@ transitionToNextPanel(nextIndex){
                     sum2 : results.rows.item(0).sum2,
                     js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2,
-                    Weekendupdate: true
+                    Weekendupdate: true,
+                    initialLoading: false
                 })
-            } else {                                    
+            } else {      
+                this.setState({
+                    initialLoading: false
+                })                              
             }
           }
         );
@@ -397,10 +519,26 @@ transitionToNextPanel(nextIndex){
 
   render() {
     console.log("Main4 - gaspels in render");
-    if(this.state.Weekendupdate == true){
-        if(this.state.Weekendediting == true){
-            return(
+   return (this.state.initialLoading)
+   ? (    
+       <View style={styles.loadingContainer}>
+       <ActivityIndicator
+         animating
+         size="small"
+         {...this.props}
+       />
+     </View>
+     )
+
+   : (this.state.Weekendupdate == true) ? 
+        (this.state.Weekendediting == true) ?
+           (
                 <View>     
+                    <NavigationEvents
+                    onWillFocus={payload => {
+                        this.setChange();
+                    }}
+                    />
                 <View>                  
                 <TouchableOpacity
                         activeOpacity = {0.9}
@@ -420,7 +558,7 @@ transitionToNextPanel(nextIndex){
                     moveNext={this.moveNext}
                     moveFinal={this.moveFinal}
                 />
-               <KeyboardAvoidingView style={{height:100}}>                  
+               <KeyboardAvoidingView style={{height:130}}>                  
 
                     <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
@@ -521,7 +659,7 @@ transitionToNextPanel(nextIndex){
                 </KeyboardAvoidingView>
 
              
-                <ScrollView style={{marginBottom:200}}>              
+                <ScrollView style={{marginBottom:230}}>              
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
@@ -539,9 +677,14 @@ transitionToNextPanel(nextIndex){
                     </ScrollView>  
             </View>
             )
-        }
-        return (
+         :
+        (
             <ScrollView> 
+                    <NavigationEvents
+                    onWillFocus={payload => {
+                        this.setChange();
+                    }}
+                    />
                 <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text  style={styles.TextResultStyleClass}>{this.state.bg1}</Text>   
@@ -572,10 +715,15 @@ transitionToNextPanel(nextIndex){
             </ScrollView>
            
          )
-        }
         
-        return (  
+        :
+        (  
             <View> 
+                <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();
+                }}
+                />
                  <View style={this.state.start == false ? {} : {display:'none'}}>                 
                  <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />       
                    <Text style={{color:'#01579b', textAlign: 'right', fontSize: 16, marginRight:10, marginTop:20}}>주일의 독서</Text>
@@ -647,7 +795,7 @@ transitionToNextPanel(nextIndex){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                   <KeyboardAvoidingView style={{height:100}}>
+                   <KeyboardAvoidingView style={{height:130}}>
                        <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                      
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
@@ -781,7 +929,7 @@ transitionToNextPanel(nextIndex){
                     </KeyboardAvoidingView>
 
                  
-                    <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:400}}>         
+                    <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>         
                    
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -837,7 +985,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         margin:5,
         marginBottom: 7,
-        height: 60,
+        height: 90,
         borderWidth: 1,
          borderColor: '#01579b',
          borderRadius: 5 
@@ -862,5 +1010,15 @@ const styles = StyleSheet.create({
             fontSize:15, 
             color: "#01579b", 
             marginBottom:10
-        }
+        },
+        loadingContainer: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            marginTop: 0,
+            paddingTop: 20,
+            marginBottom: 0,
+            marginHorizontal: 0,
+            paddingHorizontal: 10
+          }
     });
