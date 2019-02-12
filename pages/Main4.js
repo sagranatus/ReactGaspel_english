@@ -441,6 +441,9 @@ transitionToNextPanel(nextIndex){
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+        }
         //console.log("saea",pos)
         //console.log("here", pos[0].indexOf(","))
         //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
@@ -976,7 +979,8 @@ const styles = StyleSheet.create({
       textAlign: 'center'
      },
      DescriptionComponentStyle: {
-        fontSize: 14,
+        fontSize: 15,
+        lineHeight:25,
         color: "#000",
         marginBottom: 1
      },

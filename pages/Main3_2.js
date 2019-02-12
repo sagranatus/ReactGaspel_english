@@ -268,6 +268,9 @@ componentWillReceiveProps(nextProps){
          if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+        }
          var chapter = pos[0].substring(0,pos[0].indexOf(","))
          //console.log("saea",pos[0].length)
          //console.log("saea",pos.index)
@@ -731,7 +734,8 @@ componentWillReceiveProps(nextProps){
           textAlign: 'center'
          },
          DescriptionComponentStyle: {
-            fontSize: 14,
+            fontSize: 15,
+            lineHeight:25,
             color: "#000",
             marginBottom: 1
          },

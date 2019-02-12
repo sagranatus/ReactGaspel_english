@@ -132,6 +132,11 @@ constructor(props) {
               }
               if(today_count > 0){
                 this.setState({today_count: 1})
+                try {
+                  AsyncStorage.setItem('count1', 1);
+                } catch (error) {
+                  console.error('AsyncStorage error: ' + error.message);
+                }
               }
 
               
@@ -190,59 +195,69 @@ constructor(props) {
     var weekend_count2 = 0
 //    var tues =  monday.setDate(monday.getDate() + 1);
  //   console.log("tues", tues)
-    for(var k=0; k<7; k++){
-     
-        new Promise((resolve, reject) => {
-      
-        var date = new Date(monday)
-        date.setDate(monday.getDate() + k)
-       // var diff = monday.getDate() + k
-       // var date = new Date(new Date().setDate(diff))
-        console.log(date)
-        var changed = this.changeDateFormat(date)
-        console.log(changed)
+    var changed =  new Array();
+    var sentences = new Array();
+    var sentences2 = new Array();
+    for(var k=0; k<7; k++){      
+      var date = new Date(monday)
+      date.setDate(monday.getDate() + k)
+     // var diff = monday.getDate() + k
+     // var date = new Date(new Date().setDate(diff))
+      console.log(date)
+      changed.push(this.changeDateFormat(date))
+      console.log("date!!!",changed)
+    } 
+    console.log("saeadate!!", changed[1])
+       
         const loginId = this.props.status.loginId
      
         db.transaction(tx => {
             tx.executeSql(
-              'SELECT * FROM comment where uid = ? and date =?',
-              [loginId, changed],
+              'SELECT * FROM comment where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=?',
+              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
+              (tx, results) => {
+                var len = results.rows.length;
+                
+              //  값이 있는 경우에 
+                if (len > 0) {                  
+                  console.log("length", results.rows.item(1).onesentence)
+                  for(var k=0; k<len; k++){      
+                    sentences.push(results.rows.item(k).onesentence)
+                  } 
+
+                  console.log("sentences", sentences)  
+                } 
+              }
+            );                        
+            tx.executeSql(
+              'SELECT * FROM lectio where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=?',
+              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                    console.log('Main1 - get Comment data'+changed)  
-                    weekend_count++       
-                    this.setState({weekend_count: weekend_count})
-                    console.log(weekend_count)        
-                } else {                          
-                    tx.executeSql(
-                      'SELECT * FROM lectio where uid = ? and date =?',
-                      [loginId, changed],
-                      (tx, results) => {
-                        var len = results.rows.length;
-                      //  값이 있는 경우에 
-                        if (len > 0) {                  
-                            console.log('Main1 - get Lectio data'+changed)           
-                            weekend_count++      
-                            console.log(weekend_count)
-                        } else {
-                          console.log('Main1 - get Lectio data : ', "no value"+changed)   
-                        }                        
-                        this.setState({weekend_count: weekend_count})
-                        
-                      }
-                    );
-                  console.log('Main1 - get Comment data : ', "no value"+changed)   
-                }
+                  console.log("length", results.rows.item(1).onesentence)
+                  for(var k=0; k<len; k++){      
+                    sentences2.push(results.rows.item(k).onesentence)
+                  } 
+
+                  console.log("sentences2", sentences2)  
+                  sentences = sentences.concat(sentences2)
+                  sentences =sentences.filter( (item, idx, array) => {
+                    return array.indexOf( item ) === idx ;
+                  });
+                  console.log("resultssentences", sentences)  
+                  this.setState({weekend_count: sentences.length})
+                } else {         
+
+                }                       
               }
             );
+          console.log('Main1 - get Comment data : ', "no value"+changed)   
+          
     
           });  
-        }, null, null);
-    }
-     
-     
+         
   }
 
 
@@ -262,61 +277,71 @@ constructor(props) {
     } 
     var date_changed = year+"년 "+month+"월 "+day+"일 "+ this.getTodayLabel( new Date(firstday))
     console.log(date_changed)
-
+    var lastdate = new Date(date_first.getFullYear(), date_first.getMonth()+1, 0).getDate();
+    console.log("lastdate", lastdate)
     this.setState({month_count: 0})
     var month_count = 0
-    
-    for(var k=0; k<32; k++){
-        
-        new Promise((resolve, reject) => {
-       
-        var diff = firstday.getDate() + k
-        var date = new Date(new Date().setDate(diff))
-        console.log(date)
-        var changed = this.changeDateFormat(date)
-        console.log(changed)
+    var changed =  new Array();
+    var sentences = new Array();
+    var sentences2 = new Array();
+    for(var k=0; k<lastdate; k++){
+      var diff = firstday.getDate() + k
+      var date = new Date(new Date().setDate(diff))
+      console.log(date)
+      changed.push(this.changeDateFormat(date))
+      console.log(changed)
+    }        
+      
         const loginId = this.props.status.loginId
      
         db.transaction(tx => {
             tx.executeSql(
-              'SELECT * FROM comment where uid = ? and date =?',
-              [loginId, changed],
+              'SELECT * FROM comment where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?',
+              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                    console.log('Main1 - get Comment data'+changed)  
-                    month_count++       
-                    this.setState({month_count: month_count})
-                    console.log(month_count)        
-                } else {
-                  tx.executeSql(
-                    'SELECT * FROM lectio where uid = ? and date =?',
-                    [loginId, changed],
-                    (tx, results) => {
-                      var len = results.rows.length;
-                    //  값이 있는 경우에 
-                      if (len > 0) {                  
-                          console.log('Main1 - get Lectio data'+changed)           
-                          month_count++      
-                          console.log(month_count)
-                      } else {
-                        console.log('Main1 - get Lectio data : ', "no value"+changed)   
-                      }       
-                      
-                      this.setState({month_count: month_count})
-                      
-                    }
-                  );
-                  console.log('Main1 - get Comment data : ', "no value"+changed)   
+                    console.log('length', len)  
+                    console.log("length", results.rows.item(1).onesentence)
+                    console.log("sentences", sentences)  
+                  for(var k=0; k<len; k++){      
+                    sentences.push(results.rows.item(k).onesentence)
+                  } 
+       
                 }
               }
             );
-    
+          
+          tx.executeSql(
+            'SELECT * FROM lectio where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?',
+              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
+
+            (tx, results) => {
+              var len = results.rows.length;
+            //  값이 있는 경우에 
+              if (len > 0) {                  
+                console.log('length', len)  
+                console.log("length", results.rows.item(1).onesentence)
+                for(var k=0; k<len; k++){      
+                  sentences2.push(results.rows.item(k).onesentence)
+                } 
+                console.log("sentences2", sentences2)  
+                sentences = sentences.concat(sentences2)
+                sentences =sentences.filter( (item, idx, array) => {
+                  return array.indexOf( item ) === idx ;
+                });
+                console.log("resultssentences", sentences)  
+                this.setState({month_count: sentences.length})
+              
+              } else {
+              }     
+              
+            }
+          );   
           
           });  
-        }, null, null);
-    }
+
      
      
   }
@@ -332,13 +357,13 @@ constructor(props) {
             <View>
                <NavigationEvents
                 onWillFocus={payload => {
-                    this.setChange();
+                    this.setChange();   
                 }}
                 />                        
                  <Button title="logout" onPress={() =>  this.props.setLogout()} />              
                     <ImageBackground source={require('../resources/first_img1.png')} style={{width: '100%', height: 160}}>
                     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
-                      <Text style={{color:'#fff', textAlign: 'center', fontSize: 16}}>{this.state.sentence}</Text>
+                      <Text style={{color:'#fff', textAlign: 'center', fontSize: 17}}>{this.state.sentence}</Text>
                     </View>
                    </ImageBackground>
                     <Text style= {[styles.TextComponentStyle, {textAlign:'right'}]}>{this.state.todayDate}</Text>    

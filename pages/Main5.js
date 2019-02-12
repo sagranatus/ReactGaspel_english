@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
+import * as Animatable from 'react-native-animatable';
 
 export default class Main5 extends Component { 
- 
+ // Main5 = Animatable.createAnimatableComponent(Main5);
 constructor(props) { 
     super(props)   
     
@@ -31,7 +32,8 @@ constructor(props) {
         mythought: "",
         buttonStatus: "sentence",
         showButton1: false,
-        showButton2: false
+        showButton2: false,
+        calendarHide: false
     }
     this.onselectDate= this.onselectDate.bind(this);
   }
@@ -184,10 +186,11 @@ commentFunc = (commentDates) => {
 
  
  onselectDate(day, today){
+
    if(day != null){
      this.setState({Today: day})
    }
-  this.setState({buttonStatus: "sentence"})
+  this.setState({buttonStatus: "sentence", calendarHide: true})
   console.log("Main5 - onselectDate")
   var date
   if(today != null){  
@@ -324,39 +327,60 @@ commentFunc = (commentDates) => {
     var todayLabel = week[date.getDay()];        
     return todayLabel;
 }
-
+handleViewRef = ref => this.view = ref;
+  
+bounce(){
+  this.setState({calendarHide: false})
+  this.view.fadeInDown(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+}
   render() {    
     console.log("Main5 - render")   
         return (      
           
           <View>
+       <TouchableWithoutFeedback >
+        <Animatable.View ref={this.handleViewRef}>
+           
               <NavigationEvents
                 onWillFocus={payload => {
                     console.log("will focus", payload);
                 }}
                 />
-          <Calendar
-           markingType={'custom'}
-            firstDay={1}
-            current={this.state.Today}
-            pastScrollRange={24}
-            futureScrollRange={24}
-            horizontal
-            pagingEnabled
-          // onDayPress={this.onModalClose}
-          onDayPress={day=>this.onselectDate(day, null)}
-            style={{borderBottomWidth: 1, borderBottomColor: 'black'}}
-          /*  markedDates={{
-            // '2019-01-16': {selected: true, marked: true, selectedColor: 'blue'},
-            //  '2019-01-17': {marked: true},
-              '2019-01-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-            // '2019-01-19': {disabled: true, disableTouchEvent: true}
-            }}*/
-            markedDates={this.state.Marked}             
-            onPressArrowLeft={substractMonth => substractMonth()}
-            onPressArrowRight={addMonth => addMonth()}
-          />
-
+         
+          <View style={this.state.calendarHide ? {display:'none'} : {} }>
+            <Calendar
+            markingType={'custom'}
+              firstDay={1}
+              hideExtraDays={true}
+              current={this.state.Today}
+              pastScrollRange={24}
+              futureScrollRange={24}
+              horizontal
+              pagingEnabled
+            // onDayPress={this.onModalClose}
+            onDayPress={day=>this.onselectDate(day, null)}
+              style={{borderBottomWidth: 1, borderBottomColor: 'black'}}
+            /*  markedDates={{
+              // '2019-01-16': {selected: true, marked: true, selectedColor: 'blue'},
+              //  '2019-01-17': {marked: true},
+                '2019-01-18': {marked: true, dotColor: 'red', activeOpacity: 0},
+              // '2019-01-19': {disabled: true, disableTouchEvent: true}
+              }}*/
+              markedDates={this.state.Marked}             
+              onPressArrowLeft={substractMonth => substractMonth()}
+              onPressArrowRight={addMonth => addMonth()}
+            />
+          </View>
+           </Animatable.View>
+      </TouchableWithoutFeedback>
+          <View style={this.state.calendarHide ? {} : {display:'none'} }>
+              <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.bounce()}>
+                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                </TouchableHighlight >    
+          </View>
            <Text style={{ color: "#01579b", textAlign: 'center', fontSize:15, marginTop:20 }}>{this.state.selectedDate_format}</Text>
 
 

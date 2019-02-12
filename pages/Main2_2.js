@@ -149,13 +149,17 @@ constructor(props) {
         contents = contents.replace(/&rsquo;/gi, "");
         contents = contents.replace(/&prime;/gi, "'");
       //  contents = contents.replace(/\n/gi, " ");    
-   
+        console.log("saea1", contents)
       // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
         }
-        //console.log("saea",pos)
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+        }
+        
+        console.log("saea",pos)
         //console.log("here", pos[0].indexOf(","))
         //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
@@ -174,55 +178,7 @@ constructor(props) {
 
         console.log("Main2_2 - first verse, last verse get : ", first_verse+"/"+last_verse)
 
-        // 숫자 엔터 시도
-    /*    pos = contents_.match(/\d{1,2}/) 
-        console.log("here",pos)
-        var p = pos.index+length
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-      
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-        
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-        
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-
-        pos = contents.substring(p+2).match(/\d{1,2}/)
-        var p = pos.index+p+2
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-   
-        pos = contents.substring(p+3).match(/\d{1,2}/)
-        var p = pos.index+p+3
-        contents = contents.substring(0,p)+"\n"+contents.substring(p)
-        */
-
+    
         
         // 복음사가 가져옴
     var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
@@ -457,7 +413,8 @@ const styles = StyleSheet.create({
       marginTop:15
      },
      DescriptionComponentStyle: {
-        fontSize: 14,
+        fontSize: 15,
+        lineHeight:25,
         color: "#000",
         marginBottom: 1
      },
