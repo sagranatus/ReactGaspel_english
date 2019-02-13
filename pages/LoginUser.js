@@ -5,19 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
 export default class LoginUser extends Component { 
-    static navigationOptions =  ({ navigation }) => {
-        return {
-        headerLeft: (
-            <Button
-            onPress={() =>{
-                navigation.navigate('FirstPage', {});} }
-            title="back"
-            color="transparent"
-            titleColor="#fff"
-            />
-        ),
-        }
-    };
+   
 constructor(props) { 
     super(props) 
     this.state = { 
@@ -338,7 +326,20 @@ GoRegisterFunction = () =>{
 
   render() {
     return (      
-      <View style={styles.MainContainer}>       
+      <View style={styles.MainContainer}>      
+       <View style={{width:'100%'}}>          
+          <TouchableOpacity
+            activeOpacity = {0.9}
+            style={{backgroundColor: '#01579b', padding: 10}}
+            onPress={() =>{
+                this.props.navigation.navigate('FirstPage', {});} } 
+            >
+            <Text style={{color:"#FFF", textAlign:'left'}}>
+              {"<"} BACK
+            </Text>
+          </TouchableOpacity>   
+        </View> 
+              <View style={{width:'100%', marginTop:170, padding:10}}>
               <TextInput        
                 placeholder="이메일"      
                 onChangeText={UserEmail => this.setState({UserEmail})}  
@@ -363,14 +364,14 @@ GoRegisterFunction = () =>{
               </TouchableOpacity>
               <TouchableOpacity 
                   activeOpacity = {0.9} 
-                  style={{backgroundColor: '#fff', padding: 10}}
+                  style={{backgroundColor: '#fff', padding: 10, marginTop:20}}
                   onPress={this.GoRegisterFunction}
                   >  
                 <Text style={{color:"#000", textAlign:'center'}}>
                   계정이 없으신가요? 가입하기
                   </Text>
               </TouchableOpacity>
-        
+              </View>
       
       </View>
             
@@ -387,11 +388,12 @@ LoginUser.propTypes = {
    
 const styles = StyleSheet.create({
  
-    MainContainer :{
-     
-    justifyContent: 'center',
-    flex:1,
-    margin: 10,
+    MainContainer :{          
+      justifyContent: 'center',
+      flex:1,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      margin: 0
     },
      
     TextInputStyleClass: {

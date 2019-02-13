@@ -16,24 +16,24 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	if (routeName === '오늘의복음') {
 		//console.log(navigation)
 		//console.log(focused)
-		iconName = 'star';
-		return  <Image source={require('../resources/bottom0.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
+		iconName = 'user';
+	//	return  <Image source={require('../resources/bottom0.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	  // We want to add badges to home tab icon
 	//  IconComponent = HomeIconWithBadge;
 	} else if (routeName === '말씀새기기') {
-		iconName = 'search';
-		return  <Image source={require('../resources/bottom1.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
+		iconName = 'comment';
+	//	return  <Image source={require('../resources/bottom1.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	} else if (routeName === '거룩한독서') {
-		iconName = 'tag';
-		return  <Image source={require('../resources/bottom2.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
+		iconName = 'pencil';
+	//	return  <Image source={require('../resources/bottom2.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	} else if (routeName === '주일의독서') {
-		iconName = 'user';
-		return  <Image source={require('../resources/bottom3.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
+		iconName = 'bell';
+	//	return  <Image source={require('../resources/bottom3.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	}else{
 		iconName = 'calendar';
-		return  <Image source={require('../resources/bottom4.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
+	//	return  <Image source={require('../resources/bottom4.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	}
-  //<IconComponent name={iconName} size={25} color={tintColor} />;
+  return <IconComponent name={iconName} size={35} color={tintColor} />;
 //	return  <Image source={require('../resources/bottom0.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
   };
 
@@ -51,6 +51,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 		getTabBarIcon(navigation, focused, tintColor),
 	}),
 	tabBarOptions: {
+		showLabel: false,
 	  activeTintColor: '#01579b',
 	  inactiveTintColor: 'gray',
 	},

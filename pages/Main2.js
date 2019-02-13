@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight, AsyncStorage, ActivityIndicator  } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight, AsyncStorage, ActivityIndicator, Alert, Keyboard  } from 'react-native';
 import {PropTypes} from 'prop-types';
+import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
 import Main5 from './Main5';
 import {NavigationEvents} from 'react-navigation'
@@ -57,6 +58,7 @@ constructor(props) {
     
     //comment있는지 확인    
     const loginId = this.props.status.loginId;
+    console.log("id-main2",loginId)
     db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM comment where date = ? and uid = ?',
@@ -80,6 +82,7 @@ constructor(props) {
         );
       });    
   }
+
 
   setChange(){
     // 오늘날짜 계산
@@ -148,9 +151,12 @@ constructor(props) {
   componentWillReceiveProps(nextProps){
     console.log("Main2 - componentWillReceiveProps")
      // comment 삽입시
-     if(nextProps.gaspels.comment != null){
-       
-        alert(nextProps.gaspels.comment.comment+" is inserted")
+     if(nextProps.gaspels.comment != this.props.gaspels.comment){
+        Keyboard.dismiss()
+        if(this.state.Commentupdate == true){
+            Alert.alert("수정 하였습니다.")
+        }
+        
          //comment insert 후에 update로 변하도록 하기 위함
         var today_comment_date = this.state.Commentdate
         var loginId = this.props.status.loginId
@@ -168,8 +174,8 @@ constructor(props) {
                         Comment: results.rows.item(0).comment,
                         Commentupdate: true
                     })
-                    const main5 =  new Main5()    
-                    main5.sayHi()
+                   // const main5 =  new Main5()    
+                  //  main5.sayHi()
                 } else {                                  
                 }
             }
@@ -179,7 +185,7 @@ constructor(props) {
      }
     
       // 이는 getGaspel에서 받아오는 경우
-      if(nextProps.gaspels.sentence != null){
+    if(nextProps.gaspels.sentence != null){
         console.log('Main2 - get Gaspel Data')   
         var contents = ""+nextProps.gaspels.contents
         var sentence = ""+nextProps.gaspels.sentence
@@ -191,6 +197,7 @@ constructor(props) {
         contents = contents.replace(/&lsquo;/gi, "");
         contents = contents.replace(/&rsquo;/gi, "");
         contents = contents.replace(/&prime;/gi, "'");
+        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
       //  contents = contents.replace(/\n/gi, " ");    
    
       // 몇장 몇절인지 찾기
@@ -201,16 +208,10 @@ constructor(props) {
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
         }
-        //console.log("saea",pos)
-        //console.log("here", pos[0].indexOf(","))
-        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        //console.log("saea",pos[0].length)
-        //console.log("saea",pos.index)
-        contents_ = contents.substring(pos.index+pos[0].length)
-        var length = pos.index+pos[0].length;
-        //console.log(contents_)
 
+        contents_ = contents.substring(pos.index+pos[0].length)
+      
         // 여기서 각 절 번호 가져옴
         pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
 
@@ -221,16 +222,16 @@ constructor(props) {
         console.log("Main2 - first verse, last verse get : ", first_verse+"/"+last_verse)
             
         // 복음사가 가져옴
-    var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-    var today_person;
-    if(idx_today == -1){
-        idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-        today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
-    }else{
-        today_person = contents.substring(2,idx_today-2);
-    }
+        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
+        var today_person;
+        if(idx_today == -1){
+            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
+            today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+        }else{
+            today_person = contents.substring(2,idx_today-2);
+        }
 
-    console.log("Main2 - person & chapter get : ",today_person+"/"+chapter);
+        console.log("Main2 - person & chapter get : ",today_person+"/"+chapter);
     
         this.setState({
             Contents : contents,
@@ -241,7 +242,7 @@ constructor(props) {
             Chapter: chapter
 
         });   
-      }
+    }
 
       // threegaspel 가져올때 
     if(nextProps.gaspels.threegaspels != null){
@@ -345,7 +346,8 @@ constructor(props) {
         <View style={styles.loadingContainer}>
         <ActivityIndicator
           animating
-          size="small"
+          size="large"
+          color="#C8C8C8"
           {...this.props}
         />
       </View>
@@ -358,12 +360,13 @@ constructor(props) {
                     this.setChange();
                 }}
                 />
-            <ScrollView style={styles.MainContainer}> 
+            <View style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
+                    multiline = {true}
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
@@ -382,7 +385,8 @@ constructor(props) {
                 <View style={this.state.Commentupdate == true ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절</Text>
                     <TextInput
-                    placeholder="Enter User Id"
+                    placeholder="여기에 작성하세요"
+                    multiline = {true}
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}   
                     underlineColorAndroid='transparent'        
@@ -398,13 +402,13 @@ constructor(props) {
                 </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
-                                       
+                <ScrollView style={{marginBottom:320}}>                     
                 <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
-                    <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                    <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
                
@@ -412,9 +416,10 @@ constructor(props) {
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
-                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                    <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >                 
             </ScrollView>  
+            </View>
             </View>   
         )       
   }
@@ -435,21 +440,8 @@ const styles = StyleSheet.create({
  
     MainContainer :{     
     marginBottom: 30
-    },
-     
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
+    },     
+  
      TextComponentStyle: {
        fontSize: 17,
       color: "#01579b",
@@ -461,14 +453,17 @@ const styles = StyleSheet.create({
         fontSize: 15,
         lineHeight:25,
         color: "#000",
+        padding:1,
         marginBottom: 1
      },
 
     TextInputStyleClass: { 
     textAlign: 'center',
     marginBottom: 15,
-    height: 40,
+    height:60,
     borderWidth: 1,
+    padding:5,
+    margin:5,
     // Set border Hex Color Code Here.
      borderColor: '#2196F3',
      

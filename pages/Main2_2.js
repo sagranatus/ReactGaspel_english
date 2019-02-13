@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight, ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
+import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 var date;
@@ -106,8 +107,9 @@ constructor(props) {
     console.log("Main2_2 - componentWillReceiveProps")
      // comment 삽입시
      if(nextProps.gaspels.comment != null){
-       
-        alert(nextProps.gaspels.comment.comment+" is inserted")
+        if(this.state.Commentupdate == true){
+            Alert.alert("수정 하였습니다.")
+        }
          //comment insert 후에 update로 변하도록 하기 위함
         var today_comment_date = this.state.Commentdate
         var loginId = this.props.status.loginId
@@ -148,6 +150,7 @@ constructor(props) {
         contents = contents.replace(/&lsquo;/gi, "");
         contents = contents.replace(/&rsquo;/gi, "");
         contents = contents.replace(/&prime;/gi, "'");
+        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
       //  contents = contents.replace(/\n/gi, " ");    
         console.log("saea1", contents)
       // 몇장 몇절인지 찾기
@@ -160,15 +163,9 @@ constructor(props) {
         }
         
         console.log("saea",pos)
-        //console.log("here", pos[0].indexOf(","))
-        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        //console.log("saea",pos[0].length)
-        //console.log("saea",pos.index)
         contents_ = contents.substring(pos.index+pos[0].length)
-        var length = pos.index+pos[0].length;
-        //console.log(contents_)
-
+        
         // 여기서 각 절 번호 가져옴
         pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
 
@@ -305,20 +302,22 @@ constructor(props) {
         <View style={styles.loadingContainer}>
         <ActivityIndicator
           animating
-          size="small"
+          size="large"
+          color="#C8C8C8"
           {...this.props}
         />
       </View>
       )
 
-    : ( 
-            <View>              
-            <ScrollView style={styles.MainContainer}> 
+    : (
+            <View>      
+            <View style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
+                    multiline = {true}
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
@@ -331,13 +330,14 @@ constructor(props) {
                     <Text style={{color:"#fff", textAlign:'center'}}>
                         저장
                     </Text>
-                </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
 
                 <View style={this.state.Commentupdate == true ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절</Text>
                     <TextInput
-                    placeholder="Enter User Id"
+                    placeholder="여기에 작성하세요"
+                    multiline = {true}
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}   
                     underlineColorAndroid='transparent'        
@@ -353,13 +353,13 @@ constructor(props) {
                 </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
-                                       
+                <ScrollView style={{marginBottom:320}}>                     
                 <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
-                    <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                   <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
                
@@ -367,9 +367,10 @@ constructor(props) {
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
-                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                    <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >                 
             </ScrollView>  
+            </View>
             </View>   
         )       
   }
@@ -390,21 +391,8 @@ const styles = StyleSheet.create({
  
     MainContainer :{     
     marginBottom: 30
-    },
-     
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
+    },     
+  
      TextComponentStyle: {
        fontSize: 17,
       color: "#01579b",
@@ -416,14 +404,17 @@ const styles = StyleSheet.create({
         fontSize: 15,
         lineHeight:25,
         color: "#000",
+        padding:1,
         marginBottom: 1
      },
 
     TextInputStyleClass: { 
     textAlign: 'center',
     marginBottom: 15,
-    height: 40,
+    height:60,
     borderWidth: 1,
+    padding:5,
+    margin:5,
     // Set border Hex Color Code Here.
      borderColor: '#2196F3',
      

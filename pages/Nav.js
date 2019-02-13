@@ -13,8 +13,8 @@ const RootStack = createStackNavigator({
   RegisterUser: {
     screen: RegisterUserContainer,
     navigationOptions: {
-      title: '회원가입',
-      headerStyle: { backgroundColor: '#01579b' },
+      title: '',
+      headerStyle: { backgroundColor: '#01579b', display:'none'},
       headerTintColor: '#ffffff',
     },
   },
@@ -22,7 +22,7 @@ const RootStack = createStackNavigator({
     screen: LoginUserContainer,
     navigationOptions: {
       title: '로그인',
-      headerStyle: { backgroundColor: '#01579b' },
+      headerStyle: { backgroundColor: '#01579b', display:'none' },
       headerTintColor: '#ffffff',
     },
   }

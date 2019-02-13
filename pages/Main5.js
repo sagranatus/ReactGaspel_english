@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator} from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -33,7 +34,8 @@ constructor(props) {
         buttonStatus: "sentence",
         showButton1: false,
         showButton2: false,
-        calendarHide: false
+        calendarHide: false,
+        initialLoading: true
     }
     this.onselectDate= this.onselectDate.bind(this);
   }
@@ -65,6 +67,9 @@ constructor(props) {
     // 오늘 값을 가져온다
     this.onselectDate(null, today)
     this.getAllPoints()   
+}
+
+componentWillUnmount(){
 }
 
 getAllPoints(){
@@ -181,7 +186,7 @@ commentFunc = (commentDates) => {
     result = this.state.CommentMarked
     console.log("Main5 - results of points : ", result)
   } 
-  this.setState({ Marked : result});
+  this.setState({ Marked : result, initialLoading: false});
  }
 
  
@@ -190,7 +195,7 @@ commentFunc = (commentDates) => {
    if(day != null){
      this.setState({Today: day})
    }
-  this.setState({buttonStatus: "sentence", calendarHide: true})
+  this.setState({buttonStatus: "sentence"})
   console.log("Main5 - onselectDate")
   var date
   if(today != null){  
@@ -329,18 +334,31 @@ commentFunc = (commentDates) => {
 }
 handleViewRef = ref => this.view = ref;
   
-bounce(){
-  this.setState({calendarHide: false})
-  this.view.fadeInDown(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+bounce(){ 
+ // this.view.fadeInDown(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+}
+bounceUp(){ 
+  this.view.fadeInUp(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
 }
   render() {    
     console.log("Main5 - render")   
-        return (      
+    return (this.state.initialLoading)
+    ? (    
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          animating
+          size="large"
+          color="#C8C8C8"
+          {...this.props}
+        />
+      </View>
+      )
+ 
+    : (
           
           <View>
        <TouchableWithoutFeedback >
-        <Animatable.View ref={this.handleViewRef}>
-           
+        <Animatable.View ref={this.handleViewRef}>           
               <NavigationEvents
                 onWillFocus={payload => {
                     console.log("will focus", payload);
@@ -359,7 +377,7 @@ bounce(){
               pagingEnabled
             // onDayPress={this.onModalClose}
             onDayPress={day=>this.onselectDate(day, null)}
-              style={{borderBottomWidth: 1, borderBottomColor: 'black'}}
+              style={{borderBottomWidth: 1, borderBottomColor: '#484848'}}
             /*  markedDates={{
               // '2019-01-16': {selected: true, marked: true, selectedColor: 'blue'},
               //  '2019-01-17': {marked: true},
@@ -370,15 +388,23 @@ bounce(){
               onPressArrowLeft={substractMonth => substractMonth()}
               onPressArrowRight={addMonth => addMonth()}
             />
+             <View style={{backgroundColor:'#F5F5F5'} }>
+            <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => [this.bounceUp(), this.setState({calendarHide: true})]}>
+                    <Icon name={"chevron-up"} size={40} color={"#484848"} /> 
+                </TouchableHighlight >    
+              </View>
           </View>
            </Animatable.View>
       </TouchableWithoutFeedback>
-          <View style={this.state.calendarHide ? {} : {display:'none'} }>
+          <View style={this.state.calendarHide ? {backgroundColor:'#F5F5F5'} : {display:'none'} }>
               <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
-                onPress={() => this.bounce()}>
-                    <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                onPress={() => [this.bounce(), this.setState({calendarHide: false})]}>
+                   <Icon name={"chevron-down"} size={40} color={"#484848"} /> 
                 </TouchableHighlight >    
           </View>
            <Text style={{ color: "#01579b", textAlign: 'center', fontSize:15, marginTop:20 }}>{this.state.selectedDate_format}</Text>
@@ -465,7 +491,7 @@ bounce(){
            
           </View>
             
-          <ScrollView style={this.state.buttonStatus == "lectio" ? {marginBottom:180} : {display:'none'}}>   
+          <ScrollView style={this.state.buttonStatus == "lectio" ? {} : {display:'none'}}>   
           <Text style={this.state.mysentence == ""  && this.state.js2!="" ? styles.smallText : {display:'none'}}>거룩한 독서</Text> 
           <Text style={this.state.mysentence !== "" && this.state.js2!="" ? styles.smallText : {display:'none'}}>주일의 독서</Text>  
           <View style={this.state.js2 !== "" ? {} : {display:'none'}}>
@@ -523,7 +549,7 @@ bounce(){
                   </Text>
               </TouchableOpacity> 
               </View>
-              <View style={{height:220}} />
+              <View style={this.state.calendarHide ? {height:140} : {height:440}} />
           
           </ScrollView>  
             
@@ -562,10 +588,7 @@ bounce(){
               </TouchableOpacity> 
               </View>
             </View> 
-            <ScrollView style={{marginBottom:240}}>
-            
-           
-            </ScrollView>
+          
         </View>
       )
    
@@ -618,5 +641,15 @@ const styles = StyleSheet.create({
      lectioText:{
        color: "#000", 
        fontSize: 14,
-       padding: 5}
+       padding: 5},
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      }
     });

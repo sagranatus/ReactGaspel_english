@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
  
 import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button, AsyncStorage} from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -51,18 +52,71 @@ constructor(props) {
    
   
   }
+
+  componentWillUnmount(){
+    this.setState({
+      today : "",
+      todayDate: "",
+      sentence: "",
+      todayData: "",
+      weekData: "",
+      monthData: "",
+      today_count: 0,
+      weekend_count: 0,
+      month_count: 0
+    })
+  }
   logOut(){
     this.props.setLogout()
   }
 
   componentWillReceiveProps(nextProps){
       console.log(nextProps.gaspels.sentence) 
+      try {
+        AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }
          // 우선적으로 asyncstorage에 로그인 상태 저장
-         this.setState({sentence: nextProps.gaspels.sentence})
+      //   this.setState({sentence: nextProps.gaspels.sentence})
       
   }
 
    setChange(){
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var today = year+"-"+month+"-"+day;
+    var todayDate = year+"."+month+"."+day+".";
+    AsyncStorage.getItem('today1', (err, result) => {
+      console.log("Main1 - get AsyncStorage today : ", result)
+      if(result == today){
+        console.log("today is same")
+        AsyncStorage.getItem('sentence', (err, result) => {
+          console.log("Main1 - get AsyncStorage sentence : ", result)
+          this.setState({sentence: result})
+        })
+        
+      }else{
+        console.log("today is different")
+        try {
+            AsyncStorage.setItem('today1', today);
+            this.setState({today: today, todayDate: todayDate})
+            this.props.getGaspel(today)
+        } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+        }
+      }
+    })
+   
+
      // 오늘날짜 계산
     var date = new Date();
     var year = date.getFullYear();
@@ -74,27 +128,8 @@ constructor(props) {
     if(day < 10){
         day = "0"+day;
     } 
-    var todaydate = year+"-"+month+"-"+day;
-    var todaydate2 = year+"."+month+"."+day+".";
-    AsyncStorage.getItem('today1', (err, result) => {
-      console.log("Main1 - get AsyncStorage today : ", result)
-      if(result == todaydate){
-        console.log("today is same")
-      }else{
-        console.log("today is different")
-        try {
-          AsyncStorage.setItem('today1', todaydate);
-        } catch (error) {
-          console.error('AsyncStorage error: ' + error.message);
-        }
-    
-        this.setState({today: todaydate, todayDate: todaydate2})
-        this.props.getGaspel(todaydate)
-      }    
-    })
-
     // 오늘 count 하기
-    console.log(this.props.status.loginId)
+    console.log("id", this.props.status.loginId)
     console.log(this.state.today)
     const loginId = this.props.status.loginId
     const today = this.state.today
@@ -132,11 +167,8 @@ constructor(props) {
               }
               if(today_count > 0){
                 this.setState({today_count: 1})
-                try {
-                  AsyncStorage.setItem('count1', 1);
-                } catch (error) {
-                  console.error('AsyncStorage error: ' + error.message);
-                }
+              }else{
+                this.setState({today_count: 0})
               }
 
               
@@ -189,15 +221,12 @@ constructor(props) {
     var date_changed = year+"년 "+month+"월 "+day+"일 "+ this.getTodayLabel( new Date(monday))
     console.log(date_changed)
 
-    this.setState({weekend_count: 0})
-    var weekend_count = 0
-    var weekend_count1 = 0
-    var weekend_count2 = 0
 //    var tues =  monday.setDate(monday.getDate() + 1);
  //   console.log("tues", tues)
     var changed =  new Array();
     var sentences = new Array();
     var sentences2 = new Array();
+ 
     for(var k=0; k<7; k++){      
       var date = new Date(monday)
       date.setDate(monday.getDate() + k)
@@ -209,48 +238,53 @@ constructor(props) {
     } 
     console.log("saeadate!!", changed[1])
        
-        const loginId = this.props.status.loginId
-     
+        var loginId = this.props.status.loginId
+        console.log("id", loginId)
         db.transaction(tx => {
             tx.executeSql(
-              'SELECT * FROM comment where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=?',
+              'SELECT * FROM comment where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=?)',
               [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
               (tx, results) => {
                 var len = results.rows.length;
                 
               //  값이 있는 경우에 
-                if (len > 0) {                  
-                  console.log("length", results.rows.item(1).onesentence)
+                if (len > 0) {     
+                  console.log("id", loginId)             
+                  console.log("length", results.rows.item(0).onesentence)
                   for(var k=0; k<len; k++){      
                     sentences.push(results.rows.item(k).onesentence)
                   } 
 
                   console.log("sentences", sentences)  
+                }else{
+                  console.log("sentences", "no")  
                 } 
               }
             );                        
             tx.executeSql(
-              'SELECT * FROM lectio where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=?',
+              'SELECT * FROM lectio where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=?)',
               [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
-                  console.log("length", results.rows.item(1).onesentence)
+                  console.log("length", results.rows.item(0).onesentence)
                   for(var k=0; k<len; k++){      
                     sentences2.push(results.rows.item(k).onesentence)
                   } 
 
                   console.log("sentences2", sentences2)  
-                  sentences = sentences.concat(sentences2)
+                  sentences = sentences.concat(sentences2)                 
                   sentences =sentences.filter( (item, idx, array) => {
                     return array.indexOf( item ) === idx ;
                   });
                   console.log("resultssentences", sentences)  
                   this.setState({weekend_count: sentences.length})
-                } else {         
-
-                }                       
+                }else{
+                  console.log("sentences", "no")  
+                  console.log("resultssentences", sentences)  
+                  this.setState({weekend_count: sentences.length})
+                }                      
               }
             );
           console.log('Main1 - get Comment data : ', "no value"+changed)   
@@ -296,14 +330,14 @@ constructor(props) {
      
         db.transaction(tx => {
             tx.executeSql(
-              'SELECT * FROM comment where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?',
+              'SELECT * FROM comment where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?)',
               [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {                  
                     console.log('length', len)  
-                    console.log("length", results.rows.item(1).onesentence)
+                    console.log("length", results.rows.item(0).onesentence)
                     console.log("sentences", sentences)  
                   for(var k=0; k<len; k++){      
                     sentences.push(results.rows.item(k).onesentence)
@@ -314,15 +348,14 @@ constructor(props) {
             );
           
           tx.executeSql(
-            'SELECT * FROM lectio where uid = ? and date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?',
+            'SELECT * FROM lectio where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?)',
               [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
-
             (tx, results) => {
               var len = results.rows.length;
             //  값이 있는 경우에 
               if (len > 0) {                  
                 console.log('length', len)  
-                console.log("length", results.rows.item(1).onesentence)
+                console.log("length", results.rows.item(0).onesentence)
                 for(var k=0; k<len; k++){      
                   sentences2.push(results.rows.item(k).onesentence)
                 } 
@@ -335,6 +368,8 @@ constructor(props) {
                 this.setState({month_count: sentences.length})
               
               } else {
+                console.log("resultssentences", sentences)  
+                this.setState({month_count: sentences.length})
               }     
               
             }
@@ -359,8 +394,10 @@ constructor(props) {
                 onWillFocus={payload => {
                     this.setChange();   
                 }}
-                />                        
-                 <Button title="logout" onPress={() =>  this.props.setLogout()} />              
+                /> 
+                 <View style={{width:'100%', backgroundColor: '#01579b', padding: 2}}>  
+                     <Icon style={{textAlign:'right'}} name={"navicon"} size={40} color={"#fff"} onPress={() =>  this.props.setLogout()}/>    
+                  </View>                                 
                     <ImageBackground source={require('../resources/first_img1.png')} style={{width: '100%', height: 160}}>
                     <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
                       <Text style={{color:'#fff', textAlign: 'center', fontSize: 17}}>{this.state.sentence}</Text>

@@ -1,25 +1,13 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, Picker } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
 
 export default class RegisterUser extends Component {
-static navigationOptions =  ({ navigation }) => {
-    return {
-    headerLeft: (
-        <Button
-        onPress={() =>{
-            navigation.navigate('FirstPage', {});} }
-        title="back"
-        color="transparent"
-        titleColor="#fff"
-        />
-    ),
-    }
-};
+
 constructor(props) { 
     super(props) 
     this.state = {       
@@ -50,9 +38,15 @@ UserRegistrationFunction = () =>{
  const st = UserEmail.indexOf("@")
  const UserId = UserEmail.substring(0, st)
 
+ var exptext = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
 
- if(UserPassword !== UserPassword_confirm){
-   alert("비밀번호가 다릅니다")
+ if(exptext.test(UserEmail)==false){
+  Alert.alert("이메일 형식이 잘못되었습니다.")
+ }else if(UserEmail == "" || UserName == "" || UserCatholicName == "" || UserRegion == "" || UserCathedral == ""){
+  Alert.alert("내용을 모두 입력해주세요")
+ }else if(UserPassword !== UserPassword_confirm){
+   Alert.alert("비밀번호가 다릅니다")
+   console.log(UserEmail)
  }else{
      // 서버에 데이터 전송
 fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
@@ -104,6 +98,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
        
       } else{ 
         console.log('RegisterUser - registration failed : ', responseJson.success);
+        Alert.alert(responseJson.success)
       }
        
       }).catch((error) => {
@@ -120,61 +115,90 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
  
   render() {
     return ( 
-        <View style={styles.MainContainer}>            
+        <View style={styles.MainContainer}>  
+         <View style={{width:'100%'}}>          
+          <TouchableOpacity
+            activeOpacity = {0.9}
+            style={{backgroundColor: '#01579b', padding: 10}}
+            onPress={() =>{
+                this.props.navigation.navigate('FirstPage', {});} } 
+            >
+            <Text style={{color:"#FFF", textAlign:'left'}}>
+              {"<"} BACK
+            </Text>
+          </TouchableOpacity>   
+          </View>
                 <TextInput                
                 placeholder="이메일"        
                 onChangeText={UserEmail => this.setState({UserEmail})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'98%', marginTop:40}]}
+                style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}]}
                 />       
                 
                  <TextInput                
                 placeholder="이름"        
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'30%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'30%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}]}
                 />
                  <TextInput                
                 placeholder="나이"        
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'30%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}]}
                 />
                 
-                
-                 <TextInput                
-                placeholder="교구"        
-                onChangeText={UserRegion => this.setState({UserRegion})}       
-                underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'47%'}]}
-                />
+                <Picker
+                  selectedValue={this.state.UserRegion}
+                  style={{width:'48%'}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({UserRegion: itemValue})
+                  }>
+                  <Picker.Item label="교구 선택" value="" />
+                  <Picker.Item label="서울대교구" value="서울대교구" />
+                  <Picker.Item label="대전교구" value="대전교구" />
+                  <Picker.Item label="수원교구" value="수원교구" />
+                  <Picker.Item label="인천교구" value="인천교구" />
+                  <Picker.Item label="춘천교구" value="춘천교구" />
+                  <Picker.Item label="원주교구" value="원주교구" />
+                  <Picker.Item label="의정부교구" value="의정부교구" />
+                  <Picker.Item label="대구교구" value="대구교구" />
+                  <Picker.Item label="부산교구" value="부산교구" />
+                  <Picker.Item label="청주교구" value="청주교구" />
+                  <Picker.Item label="마산교구" value="마산교구" />
+                  <Picker.Item label="안동교구" value="안동교구" />
+                  <Picker.Item label="광주대교구" value="광주대교구" />
+                  <Picker.Item label="전주교구" value="전주교구" />
+                  <Picker.Item label="제주교구" value="제주교구" />
+                  <Picker.Item label="군종교구" value="군종교구" />
+                </Picker>
                  <TextInput                
                 placeholder="본당"        
                 onChangeText={UserCathedral => this.setState({UserCathedral})}
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'47%'}]}
+                style={[styles.TextInputStyleClass, {width:'48%'}]}
                 />
                 <TextInput                
                 placeholder="비밀번호"        
                 onChangeText={UserPassword => this.setState({UserPassword})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'47%'}]}       
+                style={[styles.TextInputStyleClass, {width:'48%'}]}       
                 secureTextEntry={true}
                 /> 
                 <TextInput                
                 placeholder="비밀번호 확인"        
                 onChangeText={UserPassword_confirm => this.setState({UserPassword_confirm})}     
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'47%'}]}       
+                style={[styles.TextInputStyleClass, {width:'48%'}]}       
                 secureTextEntry={true}
                 /> 
-                <View style={{width:300, marginTop:10, marginBottom: 20}}>                
+                <View style={{width:'100%', marginTop:10, marginBottom: 20, padding:10}}>                
                 <TouchableOpacity 
                   activeOpacity = {0.9}
                   style={{backgroundColor: '#01579b', padding: 10}}
@@ -223,7 +247,7 @@ margin: 0
 TextInputStyleClass: {
 textAlign: 'center',
 marginBottom: 7,
-margin:'0.5%',
+margin:1,
 height: 40,
 borderWidth: 1,
 // Set border Hex Color Code Here.

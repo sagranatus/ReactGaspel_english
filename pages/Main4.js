@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
+import Icon from 'react-native-vector-icons/EvilIcons'
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -434,6 +435,7 @@ transitionToNextPanel(nextIndex){
         contents = contents.replace(/&lsquo;/gi, "");
         contents = contents.replace(/&rsquo;/gi, "");
         contents = contents.replace(/&prime;/gi, "'");
+        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
       //  contents = contents.replace(/\n/gi, " ");    
    
       // 몇장 몇절인지 찾기
@@ -527,7 +529,8 @@ transitionToNextPanel(nextIndex){
        <View style={styles.loadingContainer}>
        <ActivityIndicator
          animating
-         size="small"
+         size="large"
+         color="#C8C8C8"
          {...this.props}
        />
      </View>
@@ -667,14 +670,14 @@ transitionToNextPanel(nextIndex){
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
-                            <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                            <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >                                       
                         <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
-                            <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                            <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >
                                         
                     </ScrollView>  
@@ -767,10 +770,10 @@ transitionToNextPanel(nextIndex){
                             "{this.state.mysentence}"{"\n"}
                             "{this.state.js2}"
                                 {"\n"}{"\n"}
-                                "주님 제가 이 말씀을 깊이 새기고{"\n"}
-                                "하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                                주님 제가 이 말씀을 깊이 새기고{"\n"}
+                                하루를 살아가도록 이끄소서. 아멘.{"\n"}
                                 {"\n"}
-                                "(세번 반복한다){"\n"}
+                                (세번 반복한다){"\n"}
                             </Text>                                
                             </View>
                         
@@ -805,24 +808,24 @@ transitionToNextPanel(nextIndex){
                         <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
             
                         <Text style={{textAlign:'center', color:'#fff', paddingTop:40, lineHeight: 22, fontSize:15}}>   오소서, 성령님 {"\n"}
-                                "당신의 빛, 그 빛살을 하늘에서 내리소서.{"\n"}
-                                "가난한 이 아버지, 은총 주님{"\n"}
-                                "오소서 마음에 빛을 주소서.{"\n"}
-                                "가장 좋은 위로자, 영혼의 기쁜 손님,{"\n"}
-                                "생기 돋워 주소서.{"\n"}
-                                "일할 때에 휴식을, 무더울 때 바람을,{"\n"}
-                                "슬플 때에 위로를, 지복의 빛이시여,{"\n"}
-                                "저희 맘 깊은 곳을 가득히 채우소서.{"\n"}
-                                "주님 도움 없으면 저희 삶 그 모든 것{"\n"}
-                                "이로운 것 없으리.{"\n"}
-                                "허물은 씻어 주고 마른 땅 물 주시고{"\n"}
-                                "병든 것 고치소서.{"\n"}
-                                "굳은 맘 풀어 주고 찬 마음 데우시고{"\n"}
-                                "바른길 이끄소서.{"\n"}
-                                "성령님을 믿으며 의지하는 이에게{"\n"}
-                                "칠은을 베푸소서.{"\n"}
-                                "공덕을 쌓게  하고 구원의 문을 넘어{"\n"}
-                                "영복을 얻게 하소서.아멘</Text>           
+                             당신의 빛, 그 빛살을 하늘에서 내리소서.{"\n"}
+                             가난한 이 아버지, 은총 주님{"\n"}
+                             오소서 마음에 빛을 주소서.{"\n"}
+                             가장 좋은 위로자, 영혼의 기쁜 손님,{"\n"}
+                             생기 돋워 주소서.{"\n"}
+                             일할 때에 휴식을, 무더울 때 바람을,{"\n"}
+                             슬플 때에 위로를, 지복의 빛이시여,{"\n"}
+                             저희 맘 깊은 곳을 가득히 채우소서.{"\n"}
+                             주님 도움 없으면 저희 삶 그 모든 것{"\n"}
+                             이로운 것 없으리.{"\n"}
+                             허물은 씻어 주고 마른 땅 물 주시고{"\n"}
+                             병든 것 고치소서.{"\n"}
+                             굳은 맘 풀어 주고 찬 마음 데우시고{"\n"}
+                             바른길 이끄소서.{"\n"}
+                             성령님을 믿으며 의지하는 이에게{"\n"}
+                             칠은을 베푸소서.{"\n"}
+                             공덕을 쌓게  하고 구원의 문을 넘어{"\n"}
+                             영복을 얻게 하소서.아멘</Text>          
                      
                         </View>
                          </ImageBackground>
@@ -938,17 +941,17 @@ transitionToNextPanel(nextIndex){
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
-                            <Image source={require('../resources/up.png')} style={{width: 25, height: 25}} />
+                           <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >     
                         <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
-                            <Image source={require('../resources/down.png')} style={{width: 25, height: 25}} />
+                             <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >
                                         
-                                        
+                        <View style={{height:60}} />    
                     </ScrollView>  
                 </View>
             </View>   
@@ -981,6 +984,7 @@ const styles = StyleSheet.create({
      DescriptionComponentStyle: {
         fontSize: 15,
         lineHeight:25,
+        padding:1,
         color: "#000",
         marginBottom: 1
      },

@@ -138,7 +138,8 @@ componentWillReceiveProps(nextProps){
               <View style={styles.loadingContainer}>
               <ActivityIndicator
                 animating
-                size="small"
+                size="large"
+                color="#C8C8C8"
                 {...this.props}
               />
             </View>
@@ -150,10 +151,10 @@ componentWillReceiveProps(nextProps){
                   <View style={styles.MainContainer}> 
                   <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
                    <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
-                     <View style={{margin:10, marginTop: 40}}>  
+                     <View style={{margin:10, marginTop: 40, width:'100%', padding:10}}>  
                        <TouchableOpacity
                        activeOpacity = {0.9}
-                       style={{backgroundColor: '#fff', paddingHorizontal: 110, paddingVertical: 10}}
+                       style={{backgroundColor: '#fff', padding: 10}}
                        onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
                        >
                        <Text style={{color:"#01579b", textAlign:'center'}}>
