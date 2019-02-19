@@ -7,40 +7,62 @@ import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
-import * as Animatable from 'react-native-animatable';
+import ImagePicker from 'react-native-image-picker';
+var commentDates = new Array()
+var lectioDates = new Array()
 
 export default class Main5 extends Component { 
  // Main5 = Animatable.createAnimatableComponent(Main5);
+ 
 constructor(props) { 
     super(props)   
     
     this.state = {
-        hi : "",
         Today : "",
         selectedDate: "",
         selectedDay: false, 
         selectedDate_format: "",// 요일
-        onesentence: "",
-        Comment: "",
-        bg1:"",
-        bg2:"",
-        bg3:"",
-        sum1:"",
-        sum1:"",
-        js1:"",
-        js2:"",
-        mysentence: "",
-        mythought: "",
-        buttonStatus: "sentence",
-        showButton1: false,
-        showButton2: false,
-        calendarHide: false,
-        initialLoading: true
+        onesentence: "",      
+        initialLoading: true,
+        avatarSource: require('../resources/first_img1.png'),
+        todaycount: 0,
+        weekcount: 0,
+        monthcount: 0
     }
     this.onselectDate= this.onselectDate.bind(this);
+   
   }
   
- 
+  pickImage(){
+    const options = {
+      title: 'Select Avatar',
+      customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchImageLibrary(options, (response) => {
+      console.log('Response = ', response);
+    
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+    
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    
+        this.setState({
+          avatarSource: source,
+        });
+      }
+    });
+  }
   componentWillMount(){
     console.log("Main5 - componentWillMount")
     LocaleConfig.locales['kr'] = {
@@ -65,14 +87,50 @@ constructor(props) {
     var today = year+"-"+month+"-"+day;
     this.setState({Today: today, selectedDate: today})
     // 오늘 값을 가져온다
-    this.onselectDate(null, today)
+   // this.onselectDate(null, today)
     this.getAllPoints()   
 }
 
+refreshContents(){
+  this.setState({
+    Today : "",
+    selectedDate: "",
+    selectedDay: false, 
+    selectedDate_format: "",// 요일
+    onesentence: "",      
+    initialLoading: true
+  })
+  LocaleConfig.locales['kr'] = {
+    monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+    monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+    dayNames: ['일','월','화','수','목','금','토'],
+    dayNamesShort: ['일','월','화','수','목','금','토']
+  };
+  
+  LocaleConfig.defaultLocale = 'kr';
+  // 오늘 날짜로 캘린더 가져오기
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  var day = date.getDate();
+  if(month < 10){
+      month = "0"+month;
+  }
+  if(day < 10){
+      day = "0"+day;
+  } 
+  var today = year+"-"+month+"-"+day;
+  this.setState({Today: today, selectedDate: today})
+  // 오늘 값을 가져온다
+ // this.onselectDate(null, today)
+  this.getAllPoints()   
+}
 componentWillUnmount(){
 }
 
 getAllPoints(){
+ 
+ 
   console.log("Main5 - getallpoints")
    // 날짜에 맞는 Comment값 모두 가져오기
      //comment있는지 확인    
@@ -90,7 +148,7 @@ getAllPoints(){
               var day_site = results.rows.item(0).date.indexOf("일");
               var year, month, day, date
              
-              var commentDates = new Array()
+        
               for(var i=0; i<results.rows.length; i++){
                 year = results.rows.item(i).date.substring(0, year_site);
                 month = results.rows.item(i).date.substring(year_site+2, month_site);
@@ -124,7 +182,6 @@ getAllPoints(){
             var day_site = results.rows.item(0).date.indexOf("일");
             var year, month, day, date
            
-            var lectioDates = new Array()
             for(var i=0; i<results.rows.length; i++){
               year = results.rows.item(i).date.substring(0, year_site);
               month = results.rows.item(i).date.substring(year_site+2, month_site);
@@ -150,7 +207,7 @@ componentWillReceiveProps(nextProps){
   const { params } = nextProps.navigation.state;
     if(params != null){
       console.log("Main5 - mavigation params existed : ",params.otherParam)
-      this.onselectDate(null, params.otherParam)
+   //   this.onselectDate(null, params.otherParam)
       this.getAllPoints()
     }  
 }
@@ -187,11 +244,84 @@ commentFunc = (commentDates) => {
     console.log("Main5 - results of points : ", result)
   } 
   this.setState({ Marked : result, initialLoading: false});
- }
 
+  this.countDays()
+}
+ countDays(){
+  var todaycount = 0
+  var weekcount = 0
+  var monthcount = 0
+ // return new Promise((resolve, reject) => {
+ 
+  console.log("countDays",commentDates)
+  console.log("countDays",lectioDates)
+
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  var day = date.getDate();
+  if(month < 10){
+      month = "0"+month;
+  } 
+  var today = year+"-"+month+"-"+day
+  console.log("countDays", commentDates.includes(today));
+  console.log("countDays", lectioDates.includes(today));
+  if(commentDates.includes(today) || lectioDates.includes(today)){
+    todaycount = 1
+  }else{
+    todaycount = 0
+  }
+  var date_mon = new Date();
+  var day = date_mon.getDay(),
+      diff = date_mon.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+  var monday = new Date(date_mon.setDate(diff));
+    for(var k=0; k<7; k++){      
+      var date = new Date(monday)
+      date.setDate(monday.getDate() + k)
+     // var diff = monday.getDate() + k
+     // var date = new Date(new Date().setDate(diff))
+      var year = date.getFullYear();
+      var month = date.getMonth()+1
+      var day = date.getDate();
+      if(month < 10){
+          month = "0"+month;
+      } 
+      var date = year+"-"+month+"-"+day
+      console.log(date)
+      console.log("countDays", commentDates.includes(date));
+      console.log("countDays", lectioDates.includes(date));
+      if(commentDates.includes(date) || lectioDates.includes(date)){
+        weekcount = weekcount+1
+      }else{
+      }
+    } 
+  var month = year+"-"+month
+
+  for(let i=0; i<31; i++){
+    var day;
+    if(i.toString().length == 1){
+      day = "0"+i;
+    }else{
+      day = i;
+    }
+      var date = month+"-"+day
+      console.log(date)
+      console.log("countDays", commentDates.includes(date));
+      console.log("countDays", lectioDates.includes(date));
+      if(commentDates.includes(date) || lectioDates.includes(date)){
+        monthcount = monthcount +1
+      }else{
+      }
+  }
+
+//  resolve(weekcount);
+//}, null, null);
+  console.log("result", todaycount+"/"+weekcount+"/"+monthcount)
+  this.setState({todaycount: todaycount, weekcount: weekcount, monthcount: monthcount})
+ }
  
  onselectDate(day, today){
-
+//  this.props.navigation.navigate('Sub5', {otherParam: this.state.selectedDate})
    if(day != null){
      this.setState({Today: day})
    }
@@ -219,127 +349,20 @@ commentFunc = (commentDates) => {
     date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
   }
 
+  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
+
   this.setState({
     selectedDate_format: date
-  })
- 
-  console.log("Main5 - onselectDate date changed : ", date)
-    //comment있는지 확인    
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM comment where date = ? and uid = ?',
-          [date,this.props.status.loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Main5 - comment data : ', results.rows.item(0).comment)   
-                this.setState({
-                  Comment: results.rows.item(0).comment,
-                  onesentence: results.rows.item(0).onesentence,
-                  showButton1: true,
-                  showButton2: true
-                })
-            } else {  
-              this.setState({
-                Comment: "",
-                onesentence: "",
-                showButton1: false,
-                showButton2: false
-              })                                
-            }
-          }
-        );
-
-        tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [date,this.props.status.loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Main5 - lectio data : ', results.rows.item(0).bg1)   
-            this.setState({
-                bg1:results.rows.item(0).bg1,
-                bg2:results.rows.item(0).bg2,
-                bg3:results.rows.item(0).bg3,
-                sum1:results.rows.item(0).sum1,
-                sum2:results.rows.item(0).sum2,
-                js1:results.rows.item(0).js1,
-                js2:results.rows.item(0).js2,
-                onesentence: results.rows.item(0).onesentence,
-                showButton1: true,
-                showButton2: true
-              })
-            } else {          
-              this.setState({
-                bg1:"",
-                bg2:"",
-                bg3:"",
-                sum1:"",
-                sum2:"",
-                js1:"",
-                js2:"",
-                showButton3: false
-              })        
-              if(this.state.Comment == ""){
-                this.setState({
-                  onesentence: "",
-                  showButton1: false
-                })     
-              }                
-            }
-          }
-        );
-
-        if(date.includes("일요일")){
-          tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [date,this.props.status.loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Main5 - weekend data : ', results.rows.item(0).mysentence)   
-              this.setState({
-                  mysentence:results.rows.item(0).mysentence,
-                  mythought:results.rows.item(0).mythought
-                })
-              } else {          
-                          
-              }
-            }
-          );
-        }else{
-          this.setState({
-            mysentence:"",
-            mythought:""
-          })  
-        }
-      
-      });    
-    
-
+  }) 
     }
-  
-  sayHi(){
-    alert("hi")
-    this.setState({hi: "hi"});
-  }
-  
+    
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
     var todayLabel = week[date.getDay()];        
     return todayLabel;
 }
 handleViewRef = ref => this.view = ref;
-  
-bounce(){ 
- // this.view.fadeInDown(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
-}
-bounceUp(){ 
-  this.view.fadeInUp(400).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
-}
+
   render() {    
     console.log("Main5 - render")   
     return (this.state.initialLoading)
@@ -357,15 +380,52 @@ bounceUp(){
     : (
           
           <View>
-       <TouchableWithoutFeedback >
-        <Animatable.View ref={this.handleViewRef}>           
-              <NavigationEvents
-                onWillFocus={payload => {
-                    console.log("will focus", payload);
-                }}
-                />
-         
-          <View style={this.state.calendarHide ? {display:'none'} : {} }>
+            <NavigationEvents
+            onWillFocus={payload => {
+                this.refreshContents()
+            }}
+            />
+            <View>
+          
+          <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 150}}>
+          <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={{
+                borderWidth:1,
+                borderColor:'rgba(0,0,0,0.2)',
+                alignItems:'center',
+                justifyContent:'center',
+                width:100,
+                height:100,
+                backgroundColor:'#000',
+                borderRadius:100,
+                overflow: 'hidden',
+                marginLeft:10
+              }}
+              onPress={() => this.pickImage() } 
+              >
+              <Image source={this.state.avatarSource} style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
+          </TouchableOpacity> 
+          <Text style={{textAlign: 'center', fontSize: 14, marginTop:10, color:'#000', fontWeight:'600'}}>장새아 루피나님</Text>     
+          </View>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.todaycount}</Text>      
+          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>오늘</Text>     
+          </View>
+        
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.weekcount}</Text>  
+          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번주</Text>          
+          </View>
+      
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.monthcount}</Text>   
+          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번달</Text>       
+          </View>  
+          </View>
+         </View>
+          <View>
             <Calendar
             markingType={'custom'}
               firstDay={1}
@@ -377,7 +437,7 @@ bounceUp(){
               pagingEnabled
             // onDayPress={this.onModalClose}
             onDayPress={day=>this.onselectDate(day, null)}
-              style={{borderBottomWidth: 1, borderBottomColor: '#484848'}}
+              style={{borderTopWidth: 1, borderTopColor: '#d8d8d8'}}
             /*  markedDates={{
               // '2019-01-16': {selected: true, marked: true, selectedColor: 'blue'},
               //  '2019-01-17': {marked: true},
@@ -388,206 +448,16 @@ bounceUp(){
               onPressArrowLeft={substractMonth => substractMonth()}
               onPressArrowRight={addMonth => addMonth()}
             />
-             <View style={{backgroundColor:'#F5F5F5'} }>
-            <TouchableHighlight
-                style={{ justifyContent: 'center', alignItems: 'center'}}
-                underlayColor = {"#fff"}
-                onPress={() => [this.bounceUp(), this.setState({calendarHide: true})]}>
-                    <Icon name={"chevron-up"} size={40} color={"#484848"} /> 
-                </TouchableHighlight >    
-              </View>
-          </View>
-           </Animatable.View>
-      </TouchableWithoutFeedback>
-          <View style={this.state.calendarHide ? {backgroundColor:'#F5F5F5'} : {display:'none'} }>
-              <TouchableHighlight
-                style={{ justifyContent: 'center', alignItems: 'center'}}
-                underlayColor = {"#fff"}
-                onPress={() => [this.bounce(), this.setState({calendarHide: false})]}>
-                   <Icon name={"chevron-down"} size={40} color={"#484848"} /> 
-                </TouchableHighlight >    
-          </View>
+          </View>        
+         
            <Text style={{ color: "#01579b", textAlign: 'center', fontSize:15, marginTop:20 }}>{this.state.selectedDate_format}</Text>
 
-
-           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', height: 50}}>
-            <TouchableHighlight 
-            style={this.state.showButton1 == true ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "sentence"})}
-            underlayColor = {"#fff"}>
-              <Image source={require('../resources/slide1.png')} style={this.state.buttonStatus=="sentence" ? {width: 30, height: 30, margin:10} : {width:0, height: 0}} />
-            </TouchableHighlight>
-            <TouchableHighlight 
-            style={this.state.showButton1 == true ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "sentence"})}
-            underlayColor = {"#fff"}>
-              <Image source={require('../resources/slide1_off.png')} style={this.state.buttonStatus!="sentence" ? {width: 30, height: 30, margin:10} : {width:0}} />
-            </TouchableHighlight>           
-            
-           <TouchableHighlight 
-            style={this.state.showButton2 == true && !this.state.selectedDay ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "comment"})}
-            underlayColor = {"#fff"}>
-               <Image source={require('../resources/slide2.png')} style={this.state.buttonStatus=="comment" ? {width: 30, height: 30, margin:10} : {width:0}} />
-            </TouchableHighlight>
-            
-            <TouchableHighlight 
-            style={this.state.showButton2 == true && !this.state.selectedDay ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "comment"})}
-            underlayColor = {"#fff"}>
-               <Image source={require('../resources/slide2_off.png')} style={this.state.buttonStatus!="comment" ? {width: 30, height: 30, margin:10} : {width:0}} />
-            </TouchableHighlight>
-
-
-            <TouchableHighlight 
-            style={this.state.showButton2 == true ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "lectio"})}
-            underlayColor = {"#fff"}>
-              <Image source={require('../resources/slide3.png')} style={this.state.buttonStatus=="lectio" ? {width: 30, height: 30, margin:10} : {width:0}} />
-            </TouchableHighlight>
-
-            <TouchableHighlight 
-            style={this.state.showButton2 == true ? {} : {display:'none'}}
-            onPress={()=>this.setState({buttonStatus: "lectio"})}
-            underlayColor = {"#fff"}>
-              <Image source={require('../resources/slide3_off.png')} style={this.state.buttonStatus!="lectio" ? {width: 30, height: 30, margin:10} : {width:0}} />
-            </TouchableHighlight>
-
-            </View>
-          
+      
           <View style={this.state.buttonStatus == "sentence" && this.state.onesentence !== "" ? {} : {display:'none'}}>   
             <Text style={styles.smallText}>그날의 복음 말씀</Text>     
             <Text style={{color: "#01579b", textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginTop:20}}>{this.state.onesentence}</Text>              
           </View>
 
-          <View style={this.state.buttonStatus == "comment" ? {} : {display:'none'}}>   
-            
-            <View style={!this.state.selectedDay && this.state.Comment!="" ? {} : {display:'none'}}>
-            <Text style={styles.smallText}>말씀새기기</Text>   
-            <Text style={{ fontSize: 14, color: "#000", marginTop: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.Comment}</Text>
-            <TouchableOpacity 
-              activeOpacity = {0.9}
-              style={{backgroundColor: '#01579b', padding: 10}}
-              onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
-              >
-              <Text style={{color:"#fff", textAlign:'center'}}>
-              말씀새기기 편집
-              </Text>
-            </TouchableOpacity>
-            </View>
-
-            <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                activeOpacity = {0.9}
-                style={{backgroundColor: '#01579b', padding: 10}}
-                onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
-                >
-                <Text style={{color:"#fff", textAlign:'center'}}>
-                말씀새기기 하러가기
-                </Text>
-              </TouchableOpacity>
-              
-              </View>    
-           
-          </View>
-            
-          <ScrollView style={this.state.buttonStatus == "lectio" ? {} : {display:'none'}}>   
-          <Text style={this.state.mysentence == ""  && this.state.js2!="" ? styles.smallText : {display:'none'}}>거룩한 독서</Text> 
-          <Text style={this.state.mysentence !== "" && this.state.js2!="" ? styles.smallText : {display:'none'}}>주일의 독서</Text>  
-          <View style={this.state.js2 !== "" ? {} : {display:'none'}}>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 등장인물은</Text> {this.state.bg1}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>장소는</Text> {this.state.bg2}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>시간은</Text> {this.state.bg3}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
-          </View>
-          <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
-
-            <View style={!this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
-            <TouchableOpacity 
-                activeOpacity = {0.9}
-                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
-                onPress={() =>  this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
-                >
-                <Text style={{color:"#fff", textAlign:'center'}}>
-                거룩한 독서 편집
-                </Text>
-            </TouchableOpacity>          
-           </View>
-            <View style={this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
-            <TouchableOpacity 
-                activeOpacity = {0.9}
-                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
-                onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
-                >
-                <Text style={{color:"#fff", textAlign:'center'}}>
-                주일의 독서 편집
-                </Text>
-            </TouchableOpacity> 
-            </View>
-            <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
-                  onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  거룩한 독서 하러가기
-                  </Text>
-              </TouchableOpacity> 
-              </View>
-              <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
-                  onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  주일의 독서 하러가기
-                  </Text>
-              </TouchableOpacity> 
-              </View>
-              <View style={this.state.calendarHide ? {height:140} : {height:440}} />
-          
-          </ScrollView>  
-            
-            <View style={this.state.showButton1 == false ? {} : {display:'none'}}>
-              <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
-                  onPress={() => this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  말씀새기기 하러가기
-                  </Text>
-              </TouchableOpacity> 
-              </View>      
-              <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
-                  onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  거룩한 독서 하러가기
-                  </Text>
-              </TouchableOpacity> 
-              </View>
-              <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
-              <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
-                  onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
-                  >
-                  <Text style={{color:"#fff", textAlign:'center'}}>
-                  주일의 독서 하러가기
-                  </Text>
-              </TouchableOpacity> 
-              </View>
-            </View> 
           
         </View>
       )

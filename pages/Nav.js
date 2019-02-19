@@ -3,6 +3,7 @@ import { createStackNavigator,  createAppContainer} from 'react-navigation';
 import RegisterUserContainer from '../containers/RegisterUserContainer';
 import FirstPageContainer from '../containers/FirstPageContainer';
 import LoginUserContainer from '../containers/LoginUserContainer';
+import Sub5 from './Sub5'
 const RootStack = createStackNavigator({
   FirstPage : {
     screen: FirstPageContainer,

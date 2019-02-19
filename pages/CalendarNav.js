@@ -1,19 +1,23 @@
-import React from 'react';
-import { View, Text} from 'react-native';
+import React, {Component} from 'react';
+import { View, Text, } from 'react-native';
+import {PropTypes} from 'prop-types';
 import { createStackNavigator,  createAppContainer} from 'react-navigation';
 import Main2_2 from '../containers/Main2_2Container';
 import Main3_2 from '../containers/Main3_2Container';
 import Main4_2 from '../containers/Main4_2Container';
-import Main5Container from '../containers/Main5Container';
+import Sub5Container from '../containers/Sub5Container';
+import Sub5 from './Sub5'
 import Main5 from './Main5';
 import {NavigationEvents} from 'react-navigation'
 
 const RootStack = createStackNavigator({
-    Main5 : {
-    screen: Main5Container,
+    Sub5 : {
+    screen: Sub5Container,
     navigationOptions: {
         header: null,
+        params: { type: "anime" }        
     },
+    
   },
   Main2_2: {
     screen: Main2_2,
@@ -53,31 +57,29 @@ const RootStack = createStackNavigator({
 
 const AppContainer = createAppContainer(RootStack);
 
-export default class App extends React.Component {
-  hi(){
-    const main5 =  new Main5()    
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var today = year+"-"+month+"-"+day;
-    // 오늘 값을 가져온다
-    main5.onselectDate(null, today)
+export default class CalendarNav extends Component {
+  constructor(props) { 
+    super(props) 
+  }
+  componentWillMount(){
+   
+  console.log("CalendarNav - componentWillMount")
+  const { params } = this.props.navigation.state
+ // console.log(params.otherParam)
+
+  if(params != null){
+      console.log("CalendarNav - params : ", params )      
+  }
+
   }
   render() {
-    
      return (
       <React.Fragment>
-        <AppContainer />     
+       <AppContainer params={this.props.navigation.state}/>
         <NavigationEvents
       onWillFocus={payload => {
-             
+         alert("adadw")   
+         console.log(this.props.navigation.state)
       }}
       />
       </React.Fragment>  
@@ -85,3 +87,9 @@ export default class App extends React.Component {
     
   }
 }
+CalendarNav.propTypes = { 
+  status: PropTypes.shape({
+      isLogged: PropTypes.bool,
+      loginId: PropTypes.string
+  })
+};

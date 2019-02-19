@@ -3,6 +3,8 @@ import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
+import {NavigationEvents} from 'react-navigation'
+
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 
@@ -208,6 +210,85 @@ transitionToNextPanel(nextIndex){
       });    
   }
 
+  refreshContents(){
+      this.setState({
+           Contents : "",
+            Date: "",
+            Sentence : "",
+            Person: "",
+            Chapter: "",
+            Firstverse: "",
+            Lastverse: "",
+            Move:"",
+            bg1:"",
+            bg2:"",
+            bg3:"",
+            sum1:"",
+            sum2:"",
+            js1:"",
+            js2:"",
+            start: false,
+            praying: false,
+            Lectiodate:"",
+            Lectioupdate: false,
+            Lectioediting: false,
+            currentIndex:0,
+            isDone:false,
+            initialLoading: true})
+    const { params } = this.props.navigation.state;
+    // console.log(params.otherParam)
+ 
+     var year, month, day
+ 
+     if(params != null){
+        console.log("Main3_2 - params : ", params+"existed" )
+         date = params.otherParam
+         year = params.otherParam.substring(0, 4);
+         month = params.otherParam.substring(5, 7);
+         day = params.otherParam.substring(8, 10);
+     }
+     
+    var today = year+"-"+month+"-"+day;
+    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+    console.log('Main3_2 - today date : ', today+"/"+today_comment_date)
+    this.setState({
+        Date: today,
+        Lectiodate: today_comment_date
+    })
+
+    this.props.getGaspel(today) // 데이터 가져오기
+
+    const loginId = this.props.status.loginId;
+    //lectio있는지 확인    
+    db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM lectio where date = ? and uid = ?',
+          [today_comment_date,loginId],
+          (tx, results) => {
+            var len = results.rows.length;
+          //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main3_2 - check Lectio data : ', results.rows.item(0).bg1) 
+                this.setState({
+                    bg1 : results.rows.item(0).bg1,
+                    bg2 : results.rows.item(0).bg2,
+                    bg3 : results.rows.item(0).bg3,
+                    sum1 : results.rows.item(0).sum1,
+                    sum2 : results.rows.item(0).sum2,
+                    js1 : results.rows.item(0).js1,
+                    js2 : results.rows.item(0).js2,
+                    Lectioupdate: true,
+                    initialLoading: false
+                })
+            } else {                      
+                this.setState({
+                    initialLoading: false
+                })            
+            }
+          }
+        );
+      });    
+  }
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
     var todayLabel = week[date.getDay()];        
@@ -364,6 +445,20 @@ componentWillReceiveProps(nextProps){
             (this.state.Lectioediting == true) ?
                (
                 <View>
+                    <NavigationEvents
+                    onWillFocus={payload => {
+                    this.refreshContents()
+                    }}
+                    />
+                    <TouchableOpacity
+                        activeOpacity = {0.9}
+                        style={{backgroundColor: '#01579b', padding: 10}}
+                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        >
+                        <Text style={{color:"#FFF", textAlign:'left'}}>
+                            {"<"} BACK
+                        </Text>
+                    </TouchableOpacity>   
                     <View>                  
                     
                    </View>
@@ -482,6 +577,20 @@ componentWillReceiveProps(nextProps){
              :
                 (
                 <ScrollView> 
+                     <NavigationEvents
+                    onWillFocus={payload => {
+                    this.refreshContents()
+                    }}
+                    />
+                     <TouchableOpacity
+                        activeOpacity = {0.9}
+                        style={{backgroundColor: '#01579b', padding: 10}}
+                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        >
+                        <Text style={{color:"#FFF", textAlign:'left'}}>
+                            {"<"} BACK
+                        </Text>
+                    </TouchableOpacity>
                     <Text style={{color:'#01579b', textAlign: 'center', fontSize: 17, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                     <Text  style={styles.TextResultStyleClass}>{this.state.bg1}</Text>   
@@ -511,7 +620,21 @@ componentWillReceiveProps(nextProps){
              )        
             :
              (  
-                <View>                
+                <View>   
+                     <NavigationEvents
+                    onWillFocus={payload => {
+                    this.refreshContents()
+                    }}
+                    />
+                     <TouchableOpacity
+                        activeOpacity = {0.9}
+                        style={{backgroundColor: '#01579b', padding: 10}}
+                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        >
+                        <Text style={{color:"#FFF", textAlign:'left'}}>
+                            {"<"} BACK
+                        </Text>
+                    </TouchableOpacity>             
                     <View style={this.state.start == false ? {} : {display:'none'}}>                       
     
                     <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       

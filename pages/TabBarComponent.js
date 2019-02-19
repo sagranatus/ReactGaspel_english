@@ -8,6 +8,7 @@ export default class TabBarComponent extends React.Component {
   }
 
   componentDidMount() {
+    console.log("saea", this.props)
     if (Platform.OS === 'android') {
       this.keyboardEventListeners = [
         Keyboard.addListener('keyboardDidShow', this.visible(false)), // keyboard가 보여질때 bottomtab 안보이게 하기

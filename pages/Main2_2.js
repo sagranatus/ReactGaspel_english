@@ -3,7 +3,10 @@ import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, Scr
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
+import {NavigationEvents} from 'react-navigation'
+
 var db = openDatabase({ name: 'UserDatabase.db' });
+
 var date;
 export default class Main2_2 extends Component { 
 
@@ -51,7 +54,7 @@ constructor(props) {
     var year, month, day
 
     if(params != null){
-        console.log("Main2_2 - params : ", params+"existed" )
+        console.log("Main2_2 - params : ", params )
         date = params.otherParam
         year = params.otherParam.substring(0, 4);
         month = params.otherParam.substring(5, 7);
@@ -96,6 +99,59 @@ constructor(props) {
       });    
   }
 
+  refreshContents(){
+    this.setState({Commentupdate: false, Comment:""})
+    const { params } = this.props.navigation.state;
+    // console.log(params.otherParam)
+    
+     var year, month, day
+ 
+     if(params != null){
+         console.log("Main2_2 - params : ", params )
+         date = params.otherParam
+         year = params.otherParam.substring(0, 4);
+         month = params.otherParam.substring(5, 7);
+         day = params.otherParam.substring(8, 10);
+     }
+     
+ 
+     var today = year+"-"+month+"-"+day;
+     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+ 
+     console.log("Main2_2 - date : ", today+"/"+today_comment_date)
+     this.setState({
+         Date: today,
+         Commentdate: today_comment_date
+     })
+ 
+     this.props.getGaspel(today) // 데이터 가져오기   
+ 
+     //comment있는지 확인        
+     const loginId = this.props.status.loginId;
+     db.transaction(tx => {
+         tx.executeSql(
+           'SELECT * FROM comment where date = ? and uid = ?',
+           [today_comment_date, loginId],
+           (tx, results) => {
+             var len = results.rows.length;
+           //  값이 있는 경우에 
+             if (len > 0) {                  
+                 console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
+                 this.setState({
+                     Comment: results.rows.item(0).comment,
+                     Commentupdate: true,
+                     initialLoading: false
+                 })
+             } else {       
+                 this.setState({
+                     initialLoading: false
+                 })                             
+             }
+           }
+         );
+       });    
+  }
+
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
     var todayLabel = week[date.getDay()];        
@@ -105,37 +161,7 @@ constructor(props) {
 
  componentWillReceiveProps(nextProps){
     console.log("Main2_2 - componentWillReceiveProps")
-     // comment 삽입시
-     if(nextProps.gaspels.comment != null){
-        if(this.state.Commentupdate == true){
-            Alert.alert("수정 하였습니다.")
-        }
-         //comment insert 후에 update로 변하도록 하기 위함
-        var today_comment_date = this.state.Commentdate
-        var loginId = this.props.status.loginId
-            
-        db.transaction(tx => {
-            tx.executeSql(
-            'SELECT * FROM comment where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-                var len = results.rows.length;
-            //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
-                    this.setState({
-                        Comment: results.rows.item(0).comment,
-                        Commentupdate: true
-                    })
-                  //  const main5 =  new Main5()
-                 //   main5.getAllPoints()
-                } else {                                  
-                }
-            }
-            );
-        });    
-       
-     }
+   
     
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.gaspels.sentence != null){
@@ -235,6 +261,7 @@ constructor(props) {
    }
    // comment 저장
    insertComment(){
+    
     if(this.state.Commentupdate){        
         this.props.updateComment("update",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
         const loginId = this.props.status.loginId;
@@ -244,21 +271,54 @@ constructor(props) {
         // comment DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
+          
             'UPDATE comment set comment=? where uid=? and date=?',
             [comment, loginId, date],
             (tx, results) => {
           //  console.log('Results', 'done');
             if (results.rowsAffected > 0) {
-                console.log('Main2_2 - comment data updated : ', "update success")                   
+                console.log('Main2_2 - comment data updated : ', "update success") 
+                this.setState({
+                  Comment: comment,
+                  Commentupdate: true
+              })                  
             } else {
                 console.log('Main2_2 - comment data updated : ', "update fail")  
             }
             }
         );
         }); 
+        Alert.alert("수정 하였습니다.")
+      /*  if(this.state.Commentupdate == true){
+          Alert.alert("수정 하였습니다.")
+      }
+       //comment insert 후에 update로 변하도록 하기 위함
+       var today_comment_date = this.state.Commentdate
+       var loginId = this.props.status.loginId
+           
+       db.transaction(tx => {
+           tx.executeSql(
+           'SELECT * FROM comment where date = ? and uid = ?',
+           [today_comment_date,loginId],
+           (tx, results) => {
+               var len = results.rows.length;
+           //  값이 있는 경우에 
+               if (len > 0) {                  
+                   console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
+                   this.setState({
+                       Comment: results.rows.item(0).comment,
+                       Commentupdate: true
+                   })
+                 //  const main5 =  new Main5()
+                //   main5.getAllPoints()
+               } else {                                  
+               }
+           }
+           );
+       });    */
               
     }else{
-        this.props.insertComment("insert",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
+       
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
         const comment = this.state.Comment;
@@ -274,13 +334,18 @@ constructor(props) {
                 if (len > 0) {                  
                     console.log('Main2_2 - comment data : ', "already existed")      
                 } else {
+                  this.setState({
+                    Comment: comment,
+                    Commentupdate: true
+                  }) 
                   db.transaction(function(tx) {
                     tx.executeSql(
                       'INSERT INTO comment (uid, date, onesentence, comment) VALUES (?,?,?,?)',
                       [loginId,date,sentence, comment],
                       (tx, results) => {
                         if (results.rowsAffected > 0) {
-                            console.log('Main2_2 - comment data inserted : ', "success")                 
+                            console.log('Main2_2 - comment data inserted : ', "success")  
+                                         
                         } else {
                             console.log('Main2 - comment data inserted : ', "failed") 
                         }
@@ -291,8 +356,13 @@ constructor(props) {
               }
             );
           });    
+          this.props.insertComment("insert",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
+     
     }
-      
+        
+   
+     
+   
    }
 
    render() {
@@ -310,7 +380,21 @@ constructor(props) {
       )
 
     : (
-            <View>      
+            <View>   
+                <NavigationEvents
+                onWillFocus={payload => {
+                  this.refreshContents()
+                }}
+                />
+               <TouchableOpacity
+              activeOpacity = {0.9}
+              style={{backgroundColor: '#01579b', padding: 10}}
+              onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+              >
+              <Text style={{color:"#FFF", textAlign:'left'}}>
+                  {"<"} BACK
+              </Text>
+          </TouchableOpacity>        
             <View style={styles.MainContainer}> 
                 <KeyboardAvoidingView >
                 <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
