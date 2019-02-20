@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, TouchableHighlight, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -117,6 +117,11 @@ moveFinal(){
         
         this.setState({ Weekendediting: false });
     }else{
+        try {
+          AsyncStorage.setItem('refreshMain5', 'refresh');
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }     
         this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
@@ -553,7 +558,19 @@ componentWillReceiveProps(nextProps){
                      <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        onPress={() =>  Alert.alert(
+                          '정말 끝내시겠습니까?',
+                          '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                          [                                 
+                            {
+                              text: 'Cancel',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                          ],
+                          {cancelable: false},
+                        )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK
@@ -696,7 +713,19 @@ componentWillReceiveProps(nextProps){
                    <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        onPress={() =>  Alert.alert(
+                          '정말 끝내시겠습니까?',
+                          '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                          [                                 
+                            {
+                              text: 'Cancel',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                          ],
+                          {cancelable: false},
+                        )} 
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK
@@ -744,7 +773,19 @@ componentWillReceiveProps(nextProps){
                    <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+                        onPress={() =>  Alert.alert(
+                          '정말 끝내시겠습니까?',
+                          '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                          [                                 
+                            {
+                              text: 'Cancel',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                          ],
+                          {cancelable: false},
+                        )} 
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK

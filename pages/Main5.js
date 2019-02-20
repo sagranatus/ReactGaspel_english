@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator, AsyncStorage} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -24,10 +24,12 @@ constructor(props) {
         selectedDate_format: "",// 요일
         onesentence: "",      
         initialLoading: true,
-        avatarSource: require('../resources/first_img1.png'),
+        avatarSource: "",
         todaycount: 0,
         weekcount: 0,
-        monthcount: 0
+        monthcount: 0,
+        name: "",
+        christname: ""
     }
     this.onselectDate= this.onselectDate.bind(this);
    
@@ -56,7 +58,12 @@ constructor(props) {
     
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
+        console.log("source", response.uri)
+        try {
+          AsyncStorage.setItem('profile', response.uri);
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }
         this.setState({
           avatarSource: source,
         });
@@ -64,6 +71,15 @@ constructor(props) {
     });
   }
   componentWillMount(){
+    AsyncStorage.getItem('profile', (err, result) => {
+      console.log("Main1 - get AsyncStorage today : ", result)
+      this.setState({
+        avatarSource:  { uri: result }
+      })
+      
+    })
+    commentDates = Array()
+    lectioDates = Array()
     console.log("Main5 - componentWillMount")
     LocaleConfig.locales['kr'] = {
       monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
@@ -88,50 +104,87 @@ constructor(props) {
     this.setState({Today: today, selectedDate: today})
     // 오늘 값을 가져온다
    // this.onselectDate(null, today)
+
+   db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM users where uid = ?',
+      [this.props.status.loginId],
+      (tx, results) => {
+        var len = results.rows.length;
+      //  값이 있는 경우에 
+        if (len > 0) {                  
+            console.log('Main5 - check user data : ', results.rows.item(0).name)   
+            this.setState({
+                name: results.rows.item(0).name,
+                christname: results.rows.item(0).christ_name
+            })
+        } else {                     
+        }
+      }
+    );
+  });    
     this.getAllPoints()   
 }
 
 refreshContents(){
-  this.setState({
-    Today : "",
-    selectedDate: "",
-    selectedDay: false, 
-    selectedDate_format: "",// 요일
-    onesentence: "",      
-    initialLoading: true
+  AsyncStorage.getItem('refreshMain5', (err, result) => {
+    console.log("Main5 - get AsyncStorage refresh : ", result)
+    if(result == "refresh"){
+      try {
+          AsyncStorage.setItem('refreshMain5', 'no');
+      } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+      }
+      commentDates = Array()
+      lectioDates = Array()
+      this.setState({
+        Today : "",
+        selectedDate: "",
+        selectedDay: false, 
+        selectedDate_format: "",// 요일
+        onesentence: "",      
+        initialLoading: true,
+        todaycount: 0,
+        weekcount: 0,
+        monthcount: 0
+      })
+      LocaleConfig.locales['kr'] = {
+        monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+        monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+        dayNames: ['일','월','화','수','목','금','토'],
+        dayNamesShort: ['일','월','화','수','목','금','토']
+      };
+      
+      LocaleConfig.defaultLocale = 'kr';
+      // 오늘 날짜로 캘린더 가져오기
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1
+      var day = date.getDate();
+      if(month < 10){
+          month = "0"+month;
+      }
+      if(day < 10){
+          day = "0"+day;
+      } 
+      var today = year+"-"+month+"-"+day;
+      this.setState({Today: today, selectedDate: today})
+      // 오늘 값을 가져온다
+     // this.onselectDate(null, today)
+      this.getAllPoints()  
+    }else{
+      
+    }
   })
-  LocaleConfig.locales['kr'] = {
-    monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-    monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-    dayNames: ['일','월','화','수','목','금','토'],
-    dayNamesShort: ['일','월','화','수','목','금','토']
-  };
   
-  LocaleConfig.defaultLocale = 'kr';
-  // 오늘 날짜로 캘린더 가져오기
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth()+1
-  var day = date.getDate();
-  if(month < 10){
-      month = "0"+month;
-  }
-  if(day < 10){
-      day = "0"+day;
-  } 
-  var today = year+"-"+month+"-"+day;
-  this.setState({Today: today, selectedDate: today})
-  // 오늘 값을 가져온다
- // this.onselectDate(null, today)
-  this.getAllPoints()   
 }
+
 componentWillUnmount(){
 }
 
 getAllPoints(){
  
- 
-  console.log("Main5 - getallpoints")
+  console.log("Main5 - getallpoints", this.props.status.loginId)
    // 날짜에 맞는 Comment값 모두 가져오기
      //comment있는지 확인    
      db.transaction(tx => {
@@ -204,12 +257,13 @@ getAllPoints(){
 }
 componentWillReceiveProps(nextProps){
   // 새로운 값 저장 후 뒤로에서 값 전달 및 새로고침
-  const { params } = nextProps.navigation.state;
-    if(params != null){
-      console.log("Main5 - mavigation params existed : ",params.otherParam)
-   //   this.onselectDate(null, params.otherParam)
+ /* const { params } = nextProps.navigation.state;
+    if(params.otherParam != null){
+      console.log("Main5 - navigation params existed : ",params.otherParam)
+   //   this.onselectDate(null, params.otherParam) */
       this.getAllPoints()
-    }  
+     
+   // }  
 }
 
 commentFunc = (commentDates) => {
@@ -380,9 +434,12 @@ handleViewRef = ref => this.view = ref;
     : (
           
           <View>
+             <View style={{width:'100%', backgroundColor: '#F9F9F9', padding: 2, borderBottomWidth: 1, borderBottomColor: '#d8d8d8', marginBottom:10}}>  
+                <Icon style={{textAlign:'right'}} name={"navicon"} size={40} color={"#d8d8d8"} onPress={() =>  this.props.setLogout()}/>    
+            </View>   
             <NavigationEvents
             onWillFocus={payload => {
-                this.refreshContents()
+                [this.refreshContents(), console.log("payload",payload)]
             }}
             />
             <View>
@@ -407,19 +464,19 @@ handleViewRef = ref => this.view = ref;
               >
               <Image source={this.state.avatarSource} style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
           </TouchableOpacity> 
-          <Text style={{textAlign: 'center', fontSize: 14, marginTop:10, color:'#000', fontWeight:'600'}}>장새아 루피나님</Text>     
+          <Text style={{textAlign: 'center', fontSize: 14, marginTop:10, color:'#000', fontWeight:'400', marginLeft:10}}>{this.state.name} {this.state.christname}</Text>     
           </View>
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
           <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.todaycount}</Text>      
           <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>오늘</Text>     
           </View>
         
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
           <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.weekcount}</Text>  
           <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번주</Text>          
           </View>
       
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 90, height: 90, marginTop:10}}>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
           <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.monthcount}</Text>   
           <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번달</Text>       
           </View>  
@@ -450,13 +507,7 @@ handleViewRef = ref => this.view = ref;
             />
           </View>        
          
-           <Text style={{ color: "#01579b", textAlign: 'center', fontSize:15, marginTop:20 }}>{this.state.selectedDate_format}</Text>
-
-      
-          <View style={this.state.buttonStatus == "sentence" && this.state.onesentence !== "" ? {} : {display:'none'}}>   
-            <Text style={styles.smallText}>그날의 복음 말씀</Text>     
-            <Text style={{color: "#01579b", textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginTop:20}}>{this.state.onesentence}</Text>              
-          </View>
+           
 
           
         </View>
@@ -468,6 +519,7 @@ handleViewRef = ref => this.view = ref;
   }
 }
 Main5.propTypes = { 
+  setLogout: PropTypes.func,
     status: PropTypes.shape({
         isLogged: PropTypes.bool,
         loginId: PropTypes.string

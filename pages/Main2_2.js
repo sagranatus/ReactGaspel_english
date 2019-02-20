@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight, ActivityIndicator  } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight, ActivityIndicator, AsyncStorage  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -318,6 +318,11 @@ constructor(props) {
        });    */
               
     }else{
+        try {
+          AsyncStorage.setItem('refreshMain5', 'refresh');
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }     
        
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;

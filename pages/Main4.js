@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, Alert, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {NavigationEvents} from 'react-navigation'
@@ -155,10 +155,12 @@ moveNext(){
 }
 
 moveFinal(){
+  
     console.log("Main4 - moveFinal")
     //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
     // weekend server
-    if(this.state.Weekendupdate){        
+    if(this.state.Weekendupdate){
+         
         this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
         const loginId = this.props.status.loginId;
         const date = this.state.Weekenddate;
@@ -199,6 +201,11 @@ moveFinal(){
         });         
         this.setState({ Weekendediting: false });
     }else{
+        try {
+            AsyncStorage.setItem('refreshMain5', 'refresh');
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          }     
         this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
@@ -549,7 +556,19 @@ transitionToNextPanel(nextIndex){
                 <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  this.setState({Weekendediting: false})} 
+                        onPress={() =>  Alert.alert(
+                            '정말 끝내시겠습니까?',
+                            '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                            [                                 
+                              {
+                                text: 'Cancel',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                              },
+                              {text: 'OK', onPress:() =>  this.setState({Weekendediting: false})},
+                            ],
+                            {cancelable: false},
+                          )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK
@@ -787,7 +806,19 @@ transitionToNextPanel(nextIndex){
                             <TouchableOpacity
                             activeOpacity = {0.9}
                             style={{backgroundColor: '#01579b', padding: 10}}
-                            onPress={() =>  this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0}) }
+                            onPress={() =>  Alert.alert(
+                                '정말 끝내시겠습니까?',
+                                '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                                [                                 
+                                  {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                  },
+                                  {text: 'OK', onPress:() =>  this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})},
+                                ],
+                                {cancelable: false},
+                              )}
                             >
                             <Text style={{color:"#FFF", textAlign:'left'}}>
                                {"<"} BACK

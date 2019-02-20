@@ -279,7 +279,9 @@ constructor(props) {
    }
    // comment 저장
    insertComment(){
-    if(this.state.Commentupdate){        
+   
+    if(this.state.Commentupdate){       
+       
         this.props.updateComment("update",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
         const loginId = this.props.status.loginId;
         const comment = this.state.Comment;
@@ -302,6 +304,11 @@ constructor(props) {
         }); 
               
     }else{
+        try {
+            AsyncStorage.setItem('refreshMain5', "refresh");
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          } 
         this.props.insertComment("insert",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;

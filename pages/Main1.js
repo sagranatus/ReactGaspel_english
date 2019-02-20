@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button, AsyncStorage} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button, AsyncStorage,TouchableHighlight, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
+import ImageSlider from 'react-native-image-slider';
+import Slideshow from 'react-native-image-slider-show';
+
 export default class Main1 extends Component { 
 
 constructor(props) { 
@@ -14,17 +17,57 @@ constructor(props) {
         today : "",
         todayDate: "",
         sentence: "",
-        todayData: "",
-        weekData: "",
-        monthData: "",
-        today_count: 0,
-        weekend_count: 0,
-        month_count: 0
+        comment:"",
+        bg1:"",
+        bg2:"",
+        bg3:"",
+        sum1:"",
+        sum2:"",
+        js1:"",
+        js2:"",
+        mysentence:"",
+        weekend: false,
+        position: 1,
+        interval: null,
+        dataSource: [
+        {
+          title: 'Title 1',
+          caption: 'Caption 1',
+          url: 'http://placeimg.com/640/380/beer',
+        }, {
+          title: 'Title 2',
+          caption: 'Caption 2',
+          url: 'http://placeimg.com/640/380/cat',
+        }, {
+          title: 'Title 3',
+          caption: 'Caption 3',
+          url: 'http://placeimg.com/640/380/any',
+        },
+      ], 
+      position2: 1,
+      interval2: null,
+      dataSource2: [
+        {
+          title: 'Title 1',
+          caption: 'Caption 1',
+          url: 'http://placeimg.com/640/130/beer',
+        }, {
+          title: 'Title 2',
+          caption: 'Caption 2',
+          url: 'http://placeimg.com/640/130/cat',
+        }, {
+          title: 'Title 3',
+          caption: 'Caption 3',
+          url: 'http://placeimg.com/640/130/any',
+        },
+      ],
+      initialLoading: true
     }
    
   }
   
   componentWillMount(){
+    
     console.log( this.props.navigation)
     var date = new Date();
     var year = date.getFullYear();
@@ -53,6 +96,21 @@ constructor(props) {
   
   }
 
+  componentDidMount(){
+    this.setState({
+      interval: setInterval(() => {
+        this.setState({
+          position: this.state.position === this.state.dataSource.length ? 0 : this.state.position + 1
+        });
+      }, 3000),
+      interval2: setInterval(() => {
+        this.setState({
+          position2: this.state.position2 === this.state.dataSource2.length ? 0 : this.state.position2 + 1
+        });
+      }, 2000)
+    });
+  }
+
   componentWillUnmount(){
     this.setState({
       today : "",
@@ -65,6 +123,7 @@ constructor(props) {
       weekend_count: 0,
       month_count: 0
     })
+    clearInterval(this.state.interval);
   }
   logOut(){
     this.props.setLogout()
@@ -72,17 +131,23 @@ constructor(props) {
 
   componentWillReceiveProps(nextProps){
       console.log(nextProps.gaspels.sentence) 
+      console.log(nextProps.gaspels.thisdate) 
       try {
         AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
+        AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
       } catch (error) {
         console.error('AsyncStorage error: ' + error.message);
       }
          // 우선적으로 asyncstorage에 로그인 상태 저장
-      //   this.setState({sentence: nextProps.gaspels.sentence})
-      
+         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate})
+  
+      var date = new Date();
+      var changed = this.changeDateFormat(date)
+      this.getData(changed)  
   }
 
    setChange(){
+    this.setState({initialLoading:true})
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -101,14 +166,18 @@ constructor(props) {
         console.log("today is same")
         AsyncStorage.getItem('sentence', (err, result) => {
           console.log("Main1 - get AsyncStorage sentence : ", result)
-          this.setState({sentence: result})
+        //  this.setState({sentence: result})
+          var changed = this.changeDateFormat(date)
+          this.getData(changed)
         })
         
       }else{
         console.log("today is different")
         try {
             AsyncStorage.setItem('today1', today);
-            this.setState({today: today, todayDate: todayDate})
+            var changed = this.changeDateFormat(today)
+            this.getData(changed)
+            this.setState({today: today})
             this.props.getGaspel(today)
         } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
@@ -116,9 +185,16 @@ constructor(props) {
       }
     })
    
+  }
 
-     // 오늘날짜 계산
-    var date = new Date();
+  getData(today){
+    const loginId = this.props.status.loginId 
+    var date = new Date()
+    console.log(date)
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+        var lastday = date.getDate() - (date.getDay() - 1) + 6;
+        date = new Date(date.setDate(lastday));
+    }    
     var year = date.getFullYear();
     var month = date.getMonth()+1
     var day = date.getDate();
@@ -128,57 +204,83 @@ constructor(props) {
     if(day < 10){
         day = "0"+day;
     } 
-    // 오늘 count 하기
-    console.log("id", this.props.status.loginId)
-    console.log(this.state.today)
-    const loginId = this.props.status.loginId
-    const today = this.state.today
-    var today_count = 0
-    var date = today.substring(0, 4)+"년 "+today.substring(5, 7)+"월 "+today.substring(8, 10)+"일 "+this.getTodayLabel( new Date(today))
-    console.log(date)
+    var todaydate = year+"-"+month+"-"+day;
    
+    var weekenddate = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate)) 
+    console.log("date", weekenddate+"/"+today)
+    if(weekenddate == today){
+      this.setState({weekend: true})
+    }
     db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM comment where date=? and uid = ?',
-          [date, loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Main1 - get Comment data')          
-                today_count++       
-            } else {
-              console.log('Main1 - get Comment data : ', "no value")   
-            }
+      tx.executeSql(
+        'SELECT * FROM comment where date = ? and uid = ?',
+        [today, loginId],
+        (tx, results) => {
+          var len = results.rows.length;
+        //  값이 있는 경우에 
+          if (len > 0) {                  
+              console.log('Main1 - check Comment data : ', results.rows.item(0).comment)   
+              this.setState({
+                  comment: results.rows.item(0).comment
+              })
+          } else {     
+              this.setState({
+                  comment: ""
+              })                             
           }
-        );
-
-        tx.executeSql(
-            'SELECT * FROM lectio where date=? and uid = ?',
-            [date, loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Main1 - get Lectio data')    
-                  today_count++             
-              } else {
-                console.log('Main1 - get Lectio data : ', "no value")   
-              }
-              if(today_count > 0){
-                this.setState({today_count: 1})
-              }else{
-                this.setState({today_count: 0})
-              }
-
-              
+        }
+      ),
+      tx.executeSql(
+        'SELECT * FROM lectio where date = ? and uid = ?',
+        [today,loginId],
+        (tx, results) => {
+            var len = results.rows.length;
+        //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
+                this.setState({
+                    bg1 : results.rows.item(0).bg1,
+                    bg2 : results.rows.item(0).bg2,
+                    bg3 : results.rows.item(0).bg3,
+                    sum1 : results.rows.item(0).sum1,
+                    sum2 : results.rows.item(0).sum2,
+                    js1 : results.rows.item(0).js1,
+                    js2 : results.rows.item(0).js2
+                })
+            } else {               
+                this.setState({
+                    bg1 : "",
+                    bg2 : "",
+                    bg3 : "",
+                    sum1 : "",
+                    sum2 : "",
+                    js1 : "",
+                    js2 : ""
+                })                   
             }
+        }
+        ),
+        tx.executeSql(
+          'SELECT * FROM weekend where date = ? and uid = ?',
+          [weekenddate,loginId],
+          (tx, results) => {
+              var len = results.rows.length;
+          //  값이 있는 경우에 
+              if (len > 0) {                  
+                  console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
+                  this.setState({
+                      mysentence : results.rows.item(0).mysentence,
+                      initialLoading:false
+                  })
+              } else {               
+                  this.setState({
+                      mysentence : "",
+                      initialLoading:false
+                  })                   
+              }
+          }
           );
-      });  
-
-      //
-      this.getWeekendData()
-      this.getMonthData()
+    });    
      
   }
 
@@ -198,188 +300,7 @@ constructor(props) {
   
   }
 
-  getWeekendData(){
   
-    var date_mon = new Date();
-    var day = date_mon.getDay(),
-        diff = date_mon.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-    var monday = new Date(date_mon.setDate(diff));
-  //  monday.setDate(monday.getDate() + 1);
-  //  var tues = new Date(monday)
-  //  tues.setDate(monday.getDate() + 1)
-   // console.log("tues", tues)
-    console.log("monday", monday)
-    var year = monday.getFullYear();
-    var month = monday.getMonth()+1
-    var day = monday.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var date_changed = year+"년 "+month+"월 "+day+"일 "+ this.getTodayLabel( new Date(monday))
-    console.log(date_changed)
-
-//    var tues =  monday.setDate(monday.getDate() + 1);
- //   console.log("tues", tues)
-    var changed =  new Array();
-    var sentences = new Array();
-    var sentences2 = new Array();
- 
-    for(var k=0; k<7; k++){      
-      var date = new Date(monday)
-      date.setDate(monday.getDate() + k)
-     // var diff = monday.getDate() + k
-     // var date = new Date(new Date().setDate(diff))
-      console.log(date)
-      changed.push(this.changeDateFormat(date))
-      console.log("date!!!",changed)
-    } 
-    console.log("saeadate!!", changed[1])
-       
-        var loginId = this.props.status.loginId
-        console.log("id", loginId)
-        db.transaction(tx => {
-            tx.executeSql(
-              'SELECT * FROM comment where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=?)',
-              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
-              (tx, results) => {
-                var len = results.rows.length;
-                
-              //  값이 있는 경우에 
-                if (len > 0) {     
-                  console.log("id", loginId)             
-                  console.log("length", results.rows.item(0).onesentence)
-                  for(var k=0; k<len; k++){      
-                    sentences.push(results.rows.item(k).onesentence)
-                  } 
-
-                  console.log("sentences", sentences)  
-                }else{
-                  console.log("sentences", "no")  
-                } 
-              }
-            );                        
-            tx.executeSql(
-              'SELECT * FROM lectio where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=?)',
-              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6]],
-              (tx, results) => {
-                var len = results.rows.length;
-              //  값이 있는 경우에 
-                if (len > 0) {                  
-                  console.log("length", results.rows.item(0).onesentence)
-                  for(var k=0; k<len; k++){      
-                    sentences2.push(results.rows.item(k).onesentence)
-                  } 
-
-                  console.log("sentences2", sentences2)  
-                  sentences = sentences.concat(sentences2)                 
-                  sentences =sentences.filter( (item, idx, array) => {
-                    return array.indexOf( item ) === idx ;
-                  });
-                  console.log("resultssentences", sentences)  
-                  this.setState({weekend_count: sentences.length})
-                }else{
-                  console.log("sentences", "no")  
-                  console.log("resultssentences", sentences)  
-                  this.setState({weekend_count: sentences.length})
-                }                      
-              }
-            );
-          console.log('Main1 - get Comment data : ', "no value"+changed)   
-          
-    
-          });  
-         
-  }
-
-
-  getMonthData(){
-    
-    var date_first = new Date();
-    var firstday = new Date(date_first.getFullYear(), date_first.getMonth(), 1);
-    console.log(firstday)
-    var year = firstday.getFullYear();
-    var month = firstday.getMonth()+1
-    var day = firstday.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var date_changed = year+"년 "+month+"월 "+day+"일 "+ this.getTodayLabel( new Date(firstday))
-    console.log(date_changed)
-    var lastdate = new Date(date_first.getFullYear(), date_first.getMonth()+1, 0).getDate();
-    console.log("lastdate", lastdate)
-    this.setState({month_count: 0})
-    var month_count = 0
-    var changed =  new Array();
-    var sentences = new Array();
-    var sentences2 = new Array();
-    for(var k=0; k<lastdate; k++){
-      var diff = firstday.getDate() + k
-      var date = new Date(new Date().setDate(diff))
-      console.log(date)
-      changed.push(this.changeDateFormat(date))
-      console.log(changed)
-    }        
-      
-        const loginId = this.props.status.loginId
-     
-        db.transaction(tx => {
-            tx.executeSql(
-              'SELECT * FROM comment where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?)',
-              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
-              (tx, results) => {
-                var len = results.rows.length;
-              //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('length', len)  
-                    console.log("length", results.rows.item(0).onesentence)
-                    console.log("sentences", sentences)  
-                  for(var k=0; k<len; k++){      
-                    sentences.push(results.rows.item(k).onesentence)
-                  } 
-       
-                }
-              }
-            );
-          
-          tx.executeSql(
-            'SELECT * FROM lectio where uid = ? and (date =? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=? or date=?)',
-              [loginId, changed[0], changed[1], changed[2], changed[3], changed[4], changed[5], changed[6], changed[7], changed[8], changed[9], changed[10], changed[11], changed[12], changed[13], changed[14], changed[15], changed[16], changed[17], changed[18], changed[19], changed[20], changed[21], changed[22], changed[23], changed[24], changed[25], changed[26], changed[27],  changed[28],  changed[29],  changed[30]],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                console.log('length', len)  
-                console.log("length", results.rows.item(0).onesentence)
-                for(var k=0; k<len; k++){      
-                  sentences2.push(results.rows.item(k).onesentence)
-                } 
-                console.log("sentences2", sentences2)  
-                sentences = sentences.concat(sentences2)
-                sentences =sentences.filter( (item, idx, array) => {
-                  return array.indexOf( item ) === idx ;
-                });
-                console.log("resultssentences", sentences)  
-                this.setState({month_count: sentences.length})
-              
-              } else {
-                console.log("resultssentences", sentences)  
-                this.setState({month_count: sentences.length})
-              }     
-              
-            }
-          );   
-          
-          });  
-
-     
-     
-  }
 
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
@@ -387,47 +308,126 @@ constructor(props) {
     return todayLabel;
 }
   render() {
-    
-        return (      
+    return (this.state.initialLoading)
+    ? (    
+
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          animating
+          size="large"
+          color="#C8C8C8"
+          {...this.props}
+        />
+      </View>
+      )
+
+    : (   
             <View>
+             
                <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();   
                 }}
                 /> 
-                 <View style={{width:'100%', backgroundColor: '#01579b', padding: 2}}>  
-                     <Icon style={{textAlign:'right'}} name={"navicon"} size={40} color={"#fff"} onPress={() =>  this.props.setLogout()}/>    
-                  </View>                                 
-                    <ImageBackground source={require('../resources/first_img1.png')} style={{width: '100%', height: 160}}>
-                    <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
-                      <Text style={{color:'#fff', textAlign: 'center', fontSize: 17}}>{this.state.sentence}</Text>
-                    </View>
-                   </ImageBackground>
-                    <Text style= {[styles.TextComponentStyle, {textAlign:'right'}]}>{this.state.todayDate}</Text>    
-                    <View style={styles.MainContainer}>
-                    <Image source={{uri: 'https://sssagranatus.cafe24.com/resource/firstimg.png'}} style={{width: '100%', height: 130}} />   
-
-                    <View style={{flex:1, flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 40}}>
-                    <ImageBackground source={require('../resources/first_1_1.png')} style={{width: 120, height: 120}}>
-                    <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color:'#fff', textAlign: 'center', fontSize: 26, marginBottom:10}}>{this.state.today_count}</Text> 
-                    </View>
-                   </ImageBackground>
-                 
-                   <ImageBackground source={require('../resources/first_1_2.png')} style={{width: 120, height: 120}}>
-                    <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color:'#fff', textAlign: 'center', fontSize: 26, marginBottom:10}}>{this.state.weekend_count}</Text> 
-                    </View>
-                   </ImageBackground>
+                   <View>      
+                   <Slideshow 
+                    dataSource={this.state.dataSource}
+                    position={this.state.position}
+                    onPositionChanged={position => this.setState({ position })} />                    
+                  </View>
+                  
                 
-                   <ImageBackground source={require('../resources/first_1_3.png')} style={{width: 120, height: 120}}>
-                    <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color:'#fff', textAlign: 'center', fontSize: 26, marginBottom:10}}>{this.state.month_count}</Text> 
+                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, marginBottom:10}}>                  
+                      <Text style= {{color:'#000', textAlign: 'center', fontSize: 15, width:'100%',marginBottom:5}}>{this.state.todayDate}</Text>                         
+                      <Text style={{color:'#000', textAlign: 'center', fontSize: 15, width:'100%'}}>{this.state.sentence}</Text>   
+                  </View>
+                  <View style={this.state.js2!="" || this.state.weekend ? {display:'none'} :{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, marginBottom: 10}}>
+           
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.comment == ""  ?{backgroundColor: '#01579b', padding: 10, width:'49%', marginRight:'2%'} : {backgroundColor: '#FFCC33', padding: 10, width:'49%', marginRight:'2%'}}
+                    onPress={this.state.comment == "" ? () =>  this.props.navigation.navigate('말씀새기기') : null}
+                    >
+                    <View style={this.state.comment != "" || this.state.js2 != "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                          간단한독서하기
+                      </Text>
                     </View>
-                   </ImageBackground>  
-                   </View>
-                    </View> 
-              
+                    <View style={this.state.comment == "" || this.state.js2 != "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                         간단한독서 완료
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.js2 == "" ?{backgroundColor: '#01579b', padding: 10, width:'49%'} : {backgroundColor: '#FFCC33', padding: 10, width:'49%'}}
+                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('거룩한독서')  : null} // insertComment
+                    >
+                    <View style={this.state.js2 != "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                          거룩한독서하기
+                      </Text>
+                    </View>
+                    <View style={this.state.js2 == "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                        거룩한독서 완료
+                      </Text>
+                    </View>
+                  </TouchableOpacity>        
+
+                  </View>
+                  
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.js2 == "" || this.state.weekend ? {display:'none'} : {backgroundColor: '#FFCC33', padding: 10, width:'100%'}}
+                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('거룩한독서')  : null} // insertComment
+                    >        
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                          거룩한독서 완료
+                      </Text>
+                  </TouchableOpacity>
+                  
+                            
+                  <View style={this.state.comment == "" || this.state.weekend ? {display:'none'} : {}}>
+                    <Text style={[styles.TextResultStyleClass, {}]}>{this.state.comment}</Text>
+                  </View>
+                  <View style={this.state.js2 == "" || this.state.weekend ? {display:'none'} : {}}>
+                    <Text style={styles.TextResultStyleClass}>"{this.state.js2}"</Text>
+                  </View>
+                  <View style={this.state.weekend ? {marginTop:30, marginBottom:30} : {}}>
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.mysentence == "" ?{backgroundColor: '#01579b', padding: 10, width:'100%', marginBottom:10} : {backgroundColor: '#FFCC33', padding: 10, width:'100%', marginBottom:10}}
+                    onPress={this.state.mysentence == "" ? () => this.props.navigation.navigate('주일의독서')  : null} // insertComment
+                    >        
+                    <View style={this.state.mysentence != "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                          주일의독서하기
+                      </Text>
+                    </View>
+                    <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
+                      <Text style={{color:"#fff", textAlign:'center'}}>
+                          주일의독서 완료
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  </View>
+                  <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
+                  <Text style={[styles.TextResultStyleClass, {}]}>"{this.state.js2}"</Text>
+                    <Text style={[styles.TextResultStyleClass, {marginTop:-10}]}>{this.state.mysentence}</Text>
+                    
+                  </View>
+
+                  <View style={{marginTop:0}}>      
+                   <Slideshow 
+                    height={150}
+                    dataSource={this.state.dataSource2}
+                    position={this.state.position2}
+                    onPositionChanged={position2 => this.setState({ position2 })} />
+                    
+                  </View>
              
             </View>
         )
@@ -464,9 +464,66 @@ const styles = StyleSheet.create({
     },
      
      TextComponentStyle: {
-       fontSize: 20,
+       fontSize: 17,
       color: "#000",
       textAlign: 'center', 
       marginBottom: 15
-     }
+     },
+
+
+    container: {
+    flex: 1,
+    backgroundColor:"#fff"
+    },
+    slider: { height: 120 },
+    contentText: { color: '#fff' },
+    buttons: {
+      zIndex: 1,
+      height: 15,
+      marginTop: -25,
+      marginBottom: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    button: {
+      margin: 3,
+      width: 15,
+      height: 15,
+      opacity: 0.9,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonSelected: {
+      opacity: 1,
+      color: 'red',
+    },
+    customSlide: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    customImage: {
+      flex:1,
+      width: '100%',
+      height: 80,
+      resizeMode: 'contain'
+      
+    },
+    TextResultStyleClass: { 
+      textAlign: 'center',
+      color: "#000",
+      margin:5,
+      marginBottom: 7,
+       fontSize:14 
+      },
+      loadingContainer: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          marginTop: 0,
+          paddingTop: 20,
+          marginBottom: 0,
+          marginHorizontal: 0,
+          paddingHorizontal: 10
+        }
     });

@@ -26,8 +26,7 @@ constructor(props) {
   mysentence: "",
   mythought: "",
   buttonStatus: "sentence",
-  showButton1: false,
-  showButton2: false
+  initialLoading: true
   }
   }
 
@@ -58,16 +57,12 @@ componentWillMount(){
                 console.log('Main5 - comment data : ', results.rows.item(0).comment)   
                 this.setState({
                   Comment: results.rows.item(0).comment,
-                  onesentence: results.rows.item(0).onesentence,
-                  showButton1: true,
-                  showButton2: true
+                  onesentence: results.rows.item(0).onesentence
                 })
             } else {  
               this.setState({
                 Comment: "",
-                onesentence: "",
-                showButton1: false,
-                showButton2: false
+                onesentence: ""
               })                                
             }
           }
@@ -90,8 +85,7 @@ componentWillMount(){
                 js1:results.rows.item(0).js1,
                 js2:results.rows.item(0).js2,
                 onesentence: results.rows.item(0).onesentence,
-                showButton1: true,
-                showButton2: true
+                initialLoading:false
               })
             } else {          
               this.setState({
@@ -102,12 +96,11 @@ componentWillMount(){
                 sum2:"",
                 js1:"",
                 js2:"",
-                showButton3: false
+                initialLoading:false
               })        
               if(this.state.Comment == ""){
                 this.setState({
-                  onesentence: "",
-                  showButton1: false
+                  onesentence: ""
                 })     
               }                
             }
@@ -171,15 +164,13 @@ componentWillMount(){
                   this.setState({
                     Comment: results.rows.item(0).comment,
                     onesentence: results.rows.item(0).onesentence,
-                    showButton1: true,
-                    showButton2: true
+                    initialLoading:false
                   })
               } else {  
                 this.setState({
                   Comment: "",
                   onesentence: "",
-                  showButton1: false,
-                  showButton2: false
+                  initialLoading:false
                 })                                
               }
             }
@@ -202,8 +193,7 @@ componentWillMount(){
                   js1:results.rows.item(0).js1,
                   js2:results.rows.item(0).js2,
                   onesentence: results.rows.item(0).onesentence,
-                  showButton1: true,
-                  showButton2: true
+                  initialLoading:false
                 })
               } else {          
                 this.setState({
@@ -214,12 +204,11 @@ componentWillMount(){
                   sum2:"",
                   js1:"",
                   js2:"",
-                  showButton3: false
+                  initialLoading:false
                 })        
                 if(this.state.Comment == ""){
                   this.setState({
-                    onesentence: "",
-                    showButton1: false
+                    onesentence: ""
                   })     
                 }                
               }
@@ -241,7 +230,9 @@ componentWillMount(){
                     selectedDay:true
                   })
                 } else {          
-                            
+                  this.setState({
+                    selectedDay:true
+                  })         
                 }
               }
             );
@@ -259,7 +250,24 @@ componentWillMount(){
 
  
   render() {
-    return ( 
+    return (this.state.initialLoading)
+    ? (    
+        <View style={styles.loadingContainer}>
+        <NavigationEvents
+        onWillFocus={payload => {
+          this.refreshContents()
+        }}
+        />
+        <ActivityIndicator
+          animating
+          size="large"
+          color="#C8C8C8"
+          {...this.props}
+        />
+      </View>
+      )
+ 
+    : (
       <ScrollView>   
       <NavigationEvents
         onWillFocus={payload => {
@@ -269,7 +277,22 @@ componentWillMount(){
          <TouchableOpacity
               activeOpacity = {0.9}
               style={{backgroundColor: '#01579b', padding: 10}}
-              onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+              onPress={() =>  [this.setState({ selectedDate: "",
+              selectedDay: false, 
+              selectedDate_format: "",// 요일
+              onesentence: "",
+              Comment: "",
+              bg1:"",
+              bg2:"",
+              bg3:"",
+              sum1:"",
+              sum1:"",
+              js1:"",
+              js2:"",
+              mysentence: "",
+              mythought: "",
+              buttonStatus: "sentence",
+              initialLoading: true}),this.props.navigation.navigate('나의기록', {otherParamFromSub5: this.state.selectedDate})]} 
               >
               <Text style={{color:"#FFF", textAlign:'left'}}>
                   {"<"} BACK
@@ -314,7 +337,7 @@ componentWillMount(){
          </View>
          <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
 
-           <View style={!this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
+           <View style={!this.state.selectedDay && this.state.js2!="" ? {} : {display:'none'}}>
            <TouchableOpacity 
                activeOpacity = {0.9}
                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
@@ -325,7 +348,7 @@ componentWillMount(){
                </Text>
            </TouchableOpacity>          
           </View>
-           <View style={this.state.selectedDay && this.state.bg1!="" ? {} : {display:'none'}}>
+           <View style={this.state.selectedDay && this.state.js2!="" ? {} : {display:'none'}}>
            <TouchableOpacity 
                activeOpacity = {0.9}
                style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
@@ -350,7 +373,7 @@ componentWillMount(){
                  </Text>
              </TouchableOpacity> 
              </View>      
-             <View style={!this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+             <View style={!this.state.selectedDay && this.state.js2=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}
                  style={{backgroundColor: '#01579b', padding: 10}}
@@ -361,7 +384,7 @@ componentWillMount(){
                  </Text>
              </TouchableOpacity> 
              </View>
-             <View style={this.state.selectedDay && this.state.bg1=="" ? {} : {display:'none'}}>
+             <View style={this.state.selectedDay && this.state.js2=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}
                  style={{backgroundColor: '#01579b', padding: 10}}
