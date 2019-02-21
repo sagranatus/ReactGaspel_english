@@ -34,7 +34,7 @@ constructor(props) {
                 []
               );
               txn.executeSql(
-                'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, mysentence TEXT NOT NULL, mythought TEXT NOT NULL)',
+                'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER NOT NULL, date TEXT NOT NULL, mysentence TEXT NOT NULL, mythought TEXT NOT NULL, question TEXT NULL, answer TEXT NULL)',
                 []
               );
             }

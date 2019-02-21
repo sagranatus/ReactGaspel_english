@@ -27,6 +27,8 @@ constructor(props) {
         js2:"",
         mysentence: "",
         mythought: "",
+        question: "",
+        background: "",
         start: false,
         praying: false,
         Weekenddate:"",
@@ -83,7 +85,7 @@ setChange(){
         
             // 데이터 가져오기
             this.props.getGaspel(todaydate) 
-
+            this.props.getWeekendMore(todaydate) 
              //Weekend DB 있는지 확인        
             const loginId = this.props.status.loginId;
             db.transaction(tx => {
@@ -161,7 +163,7 @@ moveFinal(){
     // weekend server
     if(this.state.Weekendupdate){
          
-        this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought)
+        this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought, this.state.question, this.state.answer)
         const loginId = this.props.status.loginId;
         const date = this.state.Weekenddate;
         const bg1 = this.state.bg1
@@ -173,6 +175,8 @@ moveFinal(){
         const js2 = this.state.js2
         const mysentence = this.state.mysentence
         const mythought = this.state.mythought
+        const question = this.state.question
+        const answer = this.state.answer
         // lectio DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
@@ -188,8 +192,8 @@ moveFinal(){
         );
 
         tx.executeSql(
-            'UPDATE weekend set mysentence=?, mythought=? where uid=? and date=?',
-            [mysentence, mythought, loginId, date],
+            'UPDATE weekend set mysentence=?, mythought=?, question=?, answer=? where uid=? and date=?',
+            [mysentence, mythought, question, answer, loginId, date],
             (tx, results) => {
             if (results.rowsAffected > 0) {
                 console.log('Main4 - weekend data updated : ', "success")               
@@ -206,7 +210,7 @@ moveFinal(){
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }     
-        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought)
+        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought, this.state.question, this.state.answer)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
         const date = this.state.Weekenddate;
@@ -219,7 +223,8 @@ moveFinal(){
         const js2 = this.state.js2
         const mysentence = this.state.mysentence
         const mythought = this.state.mythought
-       
+        const question = this.state.question
+        const answer = this.state.answer
       
         // 값이 있는지 확인하고 없는 경우 Weekend DB에 삽입한다 
         db.transaction(tx => {
@@ -261,8 +266,8 @@ moveFinal(){
                   } else {
                     db.transaction(function(tx) {
                       tx.executeSql(
-                        'INSERT INTO weekend (uid, date, mysentence, mythought) VALUES (?,?,?,?)',
-                        [loginId,date,mysentence, mythought],
+                        'INSERT INTO weekend (uid, date, mysentence, mythought, question, answer) VALUES (?,?,?,?,?,?)',
+                        [loginId,date,mysentence, mythought, question, answer],
                         (tx, results) => {                            
                           if (results.rowsAffected > 0) {
                             console.log('Main4 - weekend data inserted : ', "success") 
@@ -324,7 +329,7 @@ transitionToNextPanel(nextIndex){
 
     // 데이터 가져오기
     this.props.getGaspel(today) 
-
+    this.props.getWeekendMore(today) 
     //Weekend DB 있는지 확인        
     const loginId = this.props.status.loginId;
     db.transaction(tx => {
@@ -365,7 +370,9 @@ transitionToNextPanel(nextIndex){
                 console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
                       mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought
+                      mythought : results.rows.item(0).mythought,
+                      answer:  results.rows.item(0).answer,
+                      question: results.rows.item(0).question
                   })
               } else {                                     
               }
@@ -510,6 +517,15 @@ transitionToNextPanel(nextIndex){
           
     }
 
+    if(nextProps.weekend.background != null){ 
+      console.log("Main4 - weekend More get") 
+      this.setState({
+        question : nextProps.weekend.question,
+        background:  nextProps.weekend.background
+    })  
+   // alert(nextProps.weekend.question)
+     }
+
   }
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
@@ -577,7 +593,7 @@ transitionToNextPanel(nextIndex){
                </View>
                 
                 <OnboardingButton
-                    totalItems={8}
+                    totalItems={9}
                     currentIndex={this.state.currentIndex}
                     movePrevious={this.movePrevious}
                     moveNext={this.moveNext}
@@ -656,8 +672,20 @@ transitionToNextPanel(nextIndex){
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />                           
                     </View>
-
+                    
                     <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                        <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
+                        <TextInput
+                        multiline = {true}
+                        placeholder="여기에 적어봅시다"
+                        value={this.state.answer}        
+                        onChangeText={answer => this.setState({answer})}        
+                        // Making the Under line Transparent.
+                        underlineColorAndroid='transparent'        
+                        style={styles.TextInputStyleClass} />                           
+                        </View>
+
+                    <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                     <TextInput
                     multiline = {true}
@@ -669,7 +697,7 @@ transitionToNextPanel(nextIndex){
                     style={styles.TextInputStyleClass} />                           
                     </View>
 
-                    <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
+                    <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                     <TextInput
                     multiline = {true}
@@ -721,8 +749,12 @@ transitionToNextPanel(nextIndex){
                 <Text style={styles.TextResultStyleClass}>{this.state.sum1}</Text>  
                 <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
                 <Text style={styles.TextResultStyleClass}>{this.state.sum2}</Text>   
-                <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>                
                 <Text style={styles.TextResultStyleClass}>{this.state.js1}</Text>   
+                <View style={this.state.question != "" ? {} : {display:'none'}}>
+                <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
+                <Text style={styles.TextResultStyleClass}>{this.state.answer}</Text>  
+                </View>
                 <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.js2}</Text>        
                 <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
@@ -826,13 +858,13 @@ transitionToNextPanel(nextIndex){
                         </TouchableOpacity>
                     </View>
                     <OnboardingButton
-                        totalItems={10}
+                        totalItems={12}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                   <KeyboardAvoidingView style={{height:130}}>
+                   <KeyboardAvoidingView style={{height:150}}>
                        <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                      
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
@@ -864,10 +896,14 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
+                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다</Text> 
+                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>{this.state.background}</Text>                                             
+                        </View>
+                        <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                         <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
                         </View>
 
-                        <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                         <TextInput
                         multiline = {true}
@@ -879,7 +915,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass}  />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
                         <TextInput
                         multiline = {true}
@@ -891,7 +927,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
                         <TextInput
                         multiline = {true}
@@ -903,7 +939,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
                         <TextInput
                         multiline = {true}
@@ -915,7 +951,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
                         <TextInput
                         multiline = {true}
@@ -927,7 +963,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                         <TextInput
                         multiline = {true}
@@ -939,7 +975,19 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 9 ? {} : {display:'none'}}>
+                        <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
+                        <TextInput
+                        multiline = {true}
+                        placeholder="여기에 적어봅시다"
+                        value={this.state.answer}        
+                        onChangeText={answer => this.setState({answer})}        
+                        // Making the Under line Transparent.
+                        underlineColorAndroid='transparent'        
+                        style={styles.TextInputStyleClass} />                           
+                        </View>
+
+                        <View style={this.state.currentIndex == 10 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <TextInput
                         multiline = {true}
@@ -951,7 +999,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 9 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 11 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                         <TextInput
                         multiline = {true}
@@ -966,7 +1014,7 @@ transitionToNextPanel(nextIndex){
                     </KeyboardAvoidingView>
 
                  
-                    <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>         
+                    <ScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:430}}>         
                    
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -982,7 +1030,7 @@ transitionToNextPanel(nextIndex){
                              <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >
                                         
-                        <View style={{height:60}} />    
+                        <View style={{height:90}} />    
                     </ScrollView>  
                 </View>
             </View>   
@@ -991,6 +1039,7 @@ transitionToNextPanel(nextIndex){
 }
 Main4.propTypes = {
     getGaspel: PropTypes.func,
+    getWeekendMore: PropTypes.func,
     getThreeGaspel: PropTypes.func,
     insertWeekend: PropTypes.func,   
     updateWeekend: PropTypes.func, 

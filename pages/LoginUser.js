@@ -205,16 +205,18 @@ getAllWeekends(id){
            {
               const stack = responseJson.stack
               console.log("LoginUser - stacks in getAllWeekends : ", stack)
-              var date, id, mysentence, mythought;
+              var date, id, mysentence, mythought, question, answer;
                for(var i=0; i<stack.length; i++){
                 console.log("LoginUser - stacks in getAllWeekends : ", i+stack[i][1]+stack[i][0])
                 date = stack[i][1]
                 id = stack[i][0]
                 mysentence = stack[i][2]
                 mythought = stack[i][3]
-                console.log("LoginUser - value of stacks in getAllWeekends : ",date+"/"+id+"/"+mysentence+"/"+mythought)    
+                question = stack[i][4]
+                answer = stack[i][5]
+                console.log("LoginUser - value of stacks in getAllWeekends : ",date+"/"+id+"/"+mysentence+"/"+mythought+"/"+answer)    
                            
-                this.getWeekends(date, id, mysentence, mythought)              
+                this.getWeekends(date, id, mysentence, mythought, question, answer)              
                }
              
            }else{
@@ -289,7 +291,7 @@ getLectios(date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2){
   }); 
 }
 
-getWeekends(date, id, mysentence, mythought){
+getWeekends(date, id, mysentence, mythought, question, answer){
   db.transaction(tx => {
     tx.executeSql(
       'SELECT * FROM weekend where date = ? and uid = ?',
@@ -304,8 +306,8 @@ getWeekends(date, id, mysentence, mythought){
           console.log('LoginUser - Weekend DB', date+"inserting!") 
           db.transaction(function(tx) {
             tx.executeSql(
-              'INSERT INTO weekend (uid, date, mysentence, mythought) VALUES (?,?,?,?)',
-              [id, date, mysentence, mythought],
+              'INSERT INTO weekend (uid, date, mysentence, mythought, question, answer) VALUES (?,?,?,?,?,?)',
+              [id, date, mysentence, mythought, question, answer],
               (tx, results) => {
                 if (results.rowsAffected > 0) {
                   console.log('LoginUser - Weekend DB', date+" insert done")                   

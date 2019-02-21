@@ -175,7 +175,7 @@ constructor(props) {
         console.log("today is different")
         try {
             AsyncStorage.setItem('today1', today);
-            var changed = this.changeDateFormat(today)
+            var changed = this.changeDateFormat(date)
             this.getData(changed)
             this.setState({today: today})
             this.props.getGaspel(today)

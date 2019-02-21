@@ -97,7 +97,8 @@ const weekendReducer = (state = {}, action) => { // action에 따라 이벤트 �
       return action.payload2; 
     case 'UPDATEWEEKEND': 
       return action.payload;
-   
+    case 'GET_WEEKEND_MORE': 
+      return action.payload;
     default:
       return state;
   }
@@ -112,7 +113,8 @@ const weekend2Reducer = (state = {}, action) => { // action에 따라 이벤트 
       return action.payload2; 
     case 'UPDATEWEEKEND2': 
       return action.payload;
-   
+    case 'GET_WEEKEND_MORE2': 
+     return action.payload;
     default:
       return state;
   }

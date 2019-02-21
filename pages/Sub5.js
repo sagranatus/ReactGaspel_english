@@ -24,6 +24,8 @@ constructor(props) {
   js1:"",
   js2:"",
   mysentence: "",
+  question:"",
+  answer:"",
   mythought: "",
   buttonStatus: "sentence",
   initialLoading: true
@@ -42,6 +44,7 @@ componentWillMount(){
     }
 
     const date = params.otherParam
+    console.log("!!date", date)
     const date2= params.otherParam2
     console.log("date2", date2)
     this.setState({selectedDate_format: date, selectedDate: date2})
@@ -119,6 +122,8 @@ componentWillMount(){
               this.setState({
                   mysentence:results.rows.item(0).mysentence,
                   mythought:results.rows.item(0).mythought,
+                  question: results.rows.item(0).question,
+                  answer: results.rows.item(0).answer,
                   selectedDay:true
                 })
               } else {          
@@ -130,6 +135,8 @@ componentWillMount(){
           this.setState({
             mysentence:"",
             mythought:"",
+            question:"",
+            answer:"",
             selectedDay:false
           })  
         }
@@ -227,6 +234,8 @@ componentWillMount(){
                 this.setState({
                     mysentence:results.rows.item(0).mysentence,
                     mythought:results.rows.item(0).mythought,
+                    question: results.rows.item(0).question,
+                    answer: results.rows.item(0).answer,
                     selectedDay:true
                   })
                 } else {          
@@ -240,6 +249,8 @@ componentWillMount(){
             this.setState({
               mysentence:"",
               mythought:"",
+              question:"",
+              answer:"",
               selectedDay:false
             })  
           }
@@ -291,6 +302,8 @@ componentWillMount(){
               js2:"",
               mysentence: "",
               mythought: "",
+              question:"",
+              answer:"",
               buttonStatus: "sentence",
               initialLoading: true}),this.props.navigation.navigate('나의기록', {otherParamFromSub5: this.state.selectedDate})]} 
               >
@@ -333,10 +346,11 @@ componentWillMount(){
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
+          <Text style={this.state.question !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>{this.state.question}</Text> {this.state.answer}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
          </View>
          <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
-
+         
            <View style={!this.state.selectedDay && this.state.js2!="" ? {} : {display:'none'}}>
            <TouchableOpacity 
                activeOpacity = {0.9}
