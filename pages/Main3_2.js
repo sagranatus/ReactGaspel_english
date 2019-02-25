@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -53,7 +53,6 @@ constructor(props) {
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
-        isDone:false,
         initialLoading: true
      }
      
@@ -238,7 +237,6 @@ transitionToNextPanel(nextIndex){
             Lectioupdate: false,
             Lectioediting: false,
             currentIndex:0,
-            isDone:false,
             initialLoading: true})
     const { params } = this.props.navigation.state;
     // console.log(params.otherParam)
@@ -302,40 +300,7 @@ transitionToNextPanel(nextIndex){
 
 
 componentWillReceiveProps(nextProps){
-    /* console.log("awdadw", nextProps.lectios.bg1)
-     // comment 가져올때
-     if(nextProps.lectios.bg1 != null){   
-         alert(nextProps.lectios.bg1+" is inserted")
-          //lectio insert 후에 update로 변하도록 하기 위함 
-         var today_comment_date = this.state.Lectiodate
-         var loginId = this.props.status.loginId
-         db.transaction(tx => {
-             tx.executeSql(
-             'SELECT * FROM lectio where date = ? and uid = ?',
-             [today_comment_date,loginId],
-             (tx, results) => {
-                 var len = results.rows.length;
-             //  값이 있는 경우에 
-                 if (len > 0) {                  
-                     console.log('Message', results.rows.item(0).bg1)   
-                     this.setState({
-                         bg1 : results.rows.item(0).bg1,
-                         bg2 : results.rows.item(0).bg2,
-                         bg3 : results.rows.item(0).bg3,
-                         sum1 : results.rows.item(0).sum1,
-                         sum2 : results.rows.item(0).sum2,
-                         js1 : results.rows.item(0).js1,
-                         js2 : results.rows.item(0).js2,
-                         Lectioupdate: true
-                     })
-                 } else {                                  
-                 }
-             }
-             );
-         });           
-      }
-      */
-     
+   
        // 이는 getGaspel에서 받아오는 경우
        if(nextProps.lectios.sentence != null){
          console.log('Main3_2 - get Gaspel Data')  
@@ -361,11 +326,7 @@ componentWillReceiveProps(nextProps){
             pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
         }
          var chapter = pos[0].substring(0,pos[0].indexOf(","))
-         //console.log("saea",pos[0].length)
-         //console.log("saea",pos.index)
          contents_ = contents.substring(pos.index+pos[0].length)
-         var length = pos.index+pos[0].length;
-         //console.log(contents_)
  
          // 여기서 각 절 번호 가져옴
          pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
@@ -467,7 +428,7 @@ componentWillReceiveProps(nextProps){
                                 onPress: () => console.log('Cancel Pressed'),
                                 style: 'cancel',
                               },
-                              {text: 'OK', onPress: () =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                              {text: 'OK', onPress: () =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                             ],
                             {cancelable: false},
                           )}
@@ -573,7 +534,7 @@ componentWillReceiveProps(nextProps){
                             </View>
                             
                         </KeyboardAvoidingView>                    
-                        <ScrollView style={{marginBottom:200}}>              
+                        <ScrollView style={{marginBottom:210}}>              
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}
                             underlayColor = {"#fff"}
@@ -602,19 +563,21 @@ componentWillReceiveProps(nextProps){
                      <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  Alert.alert(
-                            '정말 끝내시겠습니까?',
-                            '확인을 누르면 쓴 내용이 저장되지 않습니다.',
-                            [                                 
-                              {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                              {text: 'OK', onPress: () =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
-                            ],
-                            {cancelable: false},
-                          )}
+                        onPress={() =>  (!this.state.Lectioediting&&this.state.Lectioupdate)  ? 
+                            this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
+                            : Alert.alert(
+                                '정말 끝내시겠습니까?',
+                                '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                                [                                 
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                {text: 'OK', onPress: () =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                                ],
+                                {cancelable: false},
+                            )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK
@@ -658,19 +621,21 @@ componentWillReceiveProps(nextProps){
                      <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  Alert.alert(
-                            '정말 끝내시겠습니까?',
-                            '확인을 누르면 쓴 내용이 저장되지 않습니다.',
-                            [                                 
-                              {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                              {text: 'OK', onPress: () =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
-                            ],
-                            {cancelable: false},
-                          )}
+                        onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
+                            this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
+                            : Alert.alert(
+                                '정말 끝내시겠습니까?',
+                                '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                                [                                 
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                {text: 'OK', onPress: () =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                                ],
+                                {cancelable: false},
+                            )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
                             {"<"} BACK
@@ -860,7 +825,7 @@ componentWillReceiveProps(nextProps){
                             </View>
                             
                         </KeyboardAvoidingView>                
-                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:340}}>         
+                        <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:380}}>         
                        
                             <TouchableHighlight
                             style={{ justifyContent: 'center', alignItems: 'center'}}

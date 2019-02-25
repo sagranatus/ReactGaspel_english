@@ -54,7 +54,6 @@ constructor(props) {
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
-        isDone:false,
         initialLoading: true
      }
      
@@ -312,7 +311,6 @@ transitionToNextPanel(nextIndex){
       Weekendupdate: false,
       Weekendediting: false,
       currentIndex:0,
-      isDone:false,
       initialLoading: true})
     const { params } = this.props.navigation.state;
  
@@ -397,54 +395,7 @@ transitionToNextPanel(nextIndex){
 
 
 componentWillReceiveProps(nextProps){    
-    /* var today_comment_date = this.state.Weekenddate
-     var loginId = this.props.status.loginId
-      //Weekend DB 있는지 확인    
-      db.transaction(tx => {
-         tx.executeSql(
-           'SELECT * FROM lectio where date = ? and uid = ?',
-           [today_comment_date,loginId],
-           (tx, results) => {
-             var len = results.rows.length;
-           //  값이 있는 경우에 
-             if (len > 0) {                  
-                 console.log('Message', results.rows.item(0).bg1)   
-                 this.setState({
-                     bg1 : results.rows.item(0).bg1,
-                     bg2 : results.rows.item(0).bg2,
-                     bg3 : results.rows.item(0).bg3,
-                     sum1 : results.rows.item(0).sum1,
-                     sum2 : results.rows.item(0).sum2,
-                     js1 : results.rows.item(0).js1,
-                     js2 : results.rows.item(0).js2,
-                     Weekendupdate: true
-                 })
-             } else {       
-                 console.log('Message', "nonono")                              
-             }
-           }
-         );
- 
-         tx.executeSql(
-             'SELECT * FROM weekend where date = ? and uid = ?',
-             [today_comment_date,loginId],
-             (tx, results) => {
-               var len = results.rows.length;
-             //  값이 있는 경우에 
-               if (len > 0) {                  
-                   console.log('Message', results.rows.item(0).mysentence)   
-                   this.setState({
-                       mysentence : results.rows.item(0).mysentence,
-                       mythought : results.rows.item(0).mythought
-                   })
-               } else {       
-                   console.log('Message', "nonono")                              
-               }
-             }
-           );
-       });   
-       
-       */
+   
        // 이는 getGaspel에서 받아오는 경우
        if(nextProps.weekend.sentence != null){
          console.log('Main4_2 - get Gaspel Data')  
@@ -469,15 +420,8 @@ componentWillReceiveProps(nextProps){
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
         }
-         //console.log("saea",pos)
-         //console.log("here", pos[0].indexOf(","))
-         //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
          var chapter = pos[0].substring(0,pos[0].indexOf(","))
-         //console.log("saea",pos[0].length)
-         //console.log("saea",pos.index)
          contents_ = contents.substring(pos.index+pos[0].length)
-         var length = pos.index+pos[0].length;
-         //console.log(contents_)
  
          // 여기서 각 절 번호 가져옴
          pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
@@ -556,6 +500,7 @@ componentWillReceiveProps(nextProps){
  
     render() {
         console.log("Main4_2 - gaspels in render");
+        console.log("Main4_2", this.state.question);
        return (this.state.initialLoading)
        ? (    
            <View style={styles.loadingContainer}>
@@ -589,7 +534,7 @@ componentWillReceiveProps(nextProps){
                               onPress: () => console.log('Cancel Pressed'),
                               style: 'cancel',
                             },
-                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                           ],
                           {cancelable: false},
                         )}
@@ -599,7 +544,7 @@ componentWillReceiveProps(nextProps){
                         </Text>
                     </TouchableOpacity>
                     <OnboardingButton
-                        totalItems={9}
+                        totalItems={this.state.question != null ? 9 : 8}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
@@ -679,7 +624,7 @@ componentWillReceiveProps(nextProps){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 6 && this.state.question != null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
                         <TextInput
                         multiline = {true}
@@ -690,30 +635,30 @@ componentWillReceiveProps(nextProps){
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>
-    
-                        <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
-                        <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
-                        <TextInput
-                        multiline = {true}
-                        placeholder="여기에 적어봅시다"
-                        value={this.state.js2}        
-                        onChangeText={js2 => this.setState({js2})}        
-                        // Making the Under line Transparent.
-                        underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
-                        </View>
-    
-                        <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
-                        <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
-                        <TextInput
-                        multiline = {true}
-                        placeholder="여기에 적어봅시다"
-                        value={this.state.mysentence}        
-                        onChangeText={mysentence => this.setState({mysentence})}        
-                        // Making the Under line Transparent.
-                        underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
-                        </View>      
+
+                    <View style={(this.state.currentIndex == 7 && this.state.question != null) || (this.state.currentIndex == 6 && this.state.question == null) ? {} : {display:'none'}}>
+                    <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.js2}        
+                    onChangeText={js2 => this.setState({js2})}        
+                    // Making the Under line Transparent.
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>
+
+                    <View style={(this.state.currentIndex == 8 && this.state.question != null) || (this.state.currentIndex == 7 && this.state.question == null) ? {} : {display:'none'}}>
+                    <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
+                    <TextInput
+                    multiline = {true}
+                    placeholder="여기에 적어봅시다"
+                    value={this.state.mysentence}        
+                    onChangeText={mysentence => this.setState({mysentence})}        
+                    // Making the Under line Transparent.
+                    underlineColorAndroid='transparent'        
+                    style={styles.TextInputStyleClass} />                           
+                    </View>      
                         
                     </KeyboardAvoidingView>
     
@@ -747,7 +692,9 @@ componentWillReceiveProps(nextProps){
                    <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  Alert.alert(
+                        onPress={() =>  (!this.state.Weekendediting&&this.state.Weekendupdate)  ? 
+                          this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
+                          : Alert.alert(
                           '정말 끝내시겠습니까?',
                           '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                           [                                 
@@ -756,7 +703,7 @@ componentWillReceiveProps(nextProps){
                               onPress: () => console.log('Cancel Pressed'),
                               style: 'cancel',
                             },
-                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                           ],
                           {cancelable: false},
                         )} 
@@ -778,7 +725,7 @@ componentWillReceiveProps(nextProps){
                     <Text style={styles.TextResultStyleClass}>{this.state.sum2}</Text>   
                     <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                     <Text style={styles.TextResultStyleClass}>{this.state.js1}</Text>   
-                    <View style={this.state.question !== "" ? {} : {display:'none'}}>
+                    <View style={this.state.question != null ? {} : {display:'none'}}>
                     <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
                     <Text style={styles.TextResultStyleClass}>{this.state.answer}</Text>    
                     </View>
@@ -811,7 +758,9 @@ componentWillReceiveProps(nextProps){
                    <TouchableOpacity
                         activeOpacity = {0.9}
                         style={{backgroundColor: '#01579b', padding: 10}}
-                        onPress={() =>  Alert.alert(
+                        onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || this.state.currentIndex == 2&&this.state.question || !this.state.start  ? 
+                          this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
+                          : Alert.alert(
                           '정말 끝내시겠습니까?',
                           '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                           [                                 
@@ -820,7 +769,7 @@ componentWillReceiveProps(nextProps){
                               onPress: () => console.log('Cancel Pressed'),
                               style: 'cancel',
                             },
-                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})},
+                            {text: 'OK', onPress:() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                           ],
                           {cancelable: false},
                         )} 
@@ -883,7 +832,7 @@ componentWillReceiveProps(nextProps){
                     <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>                   
     
                         <OnboardingButton
-                            totalItems={12}
+                            totalItems={ this.state.question != null ? 12 : 11}
                             currentIndex={this.state.currentIndex}
                             movePrevious={this.movePrevious}
                             moveNext={this.moveNext}
@@ -1000,7 +949,7 @@ componentWillReceiveProps(nextProps){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 9 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 9 && this.state.question != null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
                         <TextInput
                         multiline = {true}
@@ -1012,7 +961,7 @@ componentWillReceiveProps(nextProps){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 10 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 10 && this.state.question!= null) || (this.state.currentIndex==9 && this.state.question == null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <TextInput
                         multiline = {true}
@@ -1024,7 +973,7 @@ componentWillReceiveProps(nextProps){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 11 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 11 && this.state.question!= null) || (this.state.currentIndex==10 && this.state.question == null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                         <TextInput
                         multiline = {true}
@@ -1035,6 +984,7 @@ componentWillReceiveProps(nextProps){
                         underlineColorAndroid='transparent'        
                         style={styles.TextInputStyleClass} />                           
                         </View>      
+                        
                             
                         </KeyboardAvoidingView>
     

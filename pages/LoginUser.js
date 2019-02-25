@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { StyleSheet, TextInput, View, Alert, Button, Text, AsyncStorage, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -15,10 +15,9 @@ constructor(props) {
   }
 
 // login 클릭시 이벤트
-UserLoginFunction = () =>{ 
+UserLoginFunction = () => { 
  const { UserEmail }  = this.state 
- const { UserPassword }  = this.state 
-
+ const { UserPassword }  = this.state
 
 // server로 값을 전달함
 
@@ -43,6 +42,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
           try {
             AsyncStorage.setItem('login_id', responseJson.id);
             AsyncStorage.setItem('login_name', responseJson.name);
+            AsyncStorage.setItem('login_christ_name', responseJson.christ_name);
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }

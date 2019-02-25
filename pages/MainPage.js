@@ -7,7 +7,6 @@ import Main2 from '../containers/Main2Container'
 import Main3 from '../containers/Main3Container'
 import Main4 from '../containers/Main4Container'
 import Main5 from '../containers/Main5Container'
-import CalendarNav from '../containers/CalendarNavContainer'
 import Sub5 from '../containers/Sub5Container'
 import TabBarComponent from './TabBarComponent.js'
 import Main2_2 from '../containers/Main2_2Container';
@@ -19,38 +18,32 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
 	let iconName;
-	if (routeName === '오늘의복음') {
+	if (routeName === 'Main1') {
 		//console.log(navigation)
 		//console.log(focused)
 		iconName = 'user';
-	//	return  <Image source={require('../resources/bottom0.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	  // We want to add badges to home tab icon
 	//  IconComponent = HomeIconWithBadge;
-	} else if (routeName === '말씀새기기') {
+	} else if (routeName === 'Main2') {
 		iconName = 'comment';
-	//	return  <Image source={require('../resources/bottom1.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
-	} else if (routeName === '거룩한독서') {
+	} else if (routeName === 'Main3') {
 		iconName = 'pencil';
-	//	return  <Image source={require('../resources/bottom2.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
-	} else if (routeName === '주일의독서') {
+	} else if (routeName === 'Main4') {
 		iconName = 'bell';
-	//	return  <Image source={require('../resources/bottom3.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
-	}else if (routeName === '나의기록'){
+	}else if (routeName === 'Main5'){
 		iconName = 'calendar';
-	//	return  <Image source={require('../resources/bottom4.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
 	}else{
 		return  <Image source={require('../resources/bottom4.png')} style={{width: 25, height: 25, justifyContent: 'center'}}/>
 	}
   return <IconComponent name={iconName} size={35} color={tintColor} />;
-//	return  <Image source={require('../resources/bottom0.png')} style={{width: 24, height: 24, justifyContent: 'center'}}/>
   };
 	
   const TabNavigator = createBottomTabNavigator({
-	오늘의복음: { screen: Main1 },
-	말씀새기기: { screen: Main2 },
-	거룩한독서: {screen: Main3 },
-	주일의독서: { screen: Main4 },
-	나의기록: { screen: Main5 },
+	Main1: { screen: Main1 },
+	Main2: { screen: Main2 },
+	Main3: {screen: Main3 },
+	Main4: { screen: Main4 },
+	Main5: { screen: Main5 },
 	Sub5: {screen: Sub5},
 	Main2_2: {screen: Main2_2},
 	Main3_2: {screen: Main3_2},
@@ -58,8 +51,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	},
 	
 	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
-? {
-	
+? {	
 	defaultNavigationOptions: ({ navigation }) => ({
 	  tabBarIcon: ({ focused, tintColor }) =>
 		getTabBarIcon(navigation, focused, tintColor),

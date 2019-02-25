@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator, AsyncStorage} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -12,16 +12,14 @@ var commentDates = new Array()
 var lectioDates = new Array()
 
 export default class Main5 extends Component { 
- // Main5 = Animatable.createAnimatableComponent(Main5);
  
 constructor(props) { 
     super(props)   
     
     this.state = {
         Today : "",
-        selectedDate: "",
-        selectedDay: false, 
-        selectedDate_format: "",// 요일
+        selectedDate: "", //  - - - 
+        selectedDate_format: "",// - -
         onesentence: "",      
         initialLoading: true,
         avatarSource: "",
@@ -102,34 +100,40 @@ constructor(props) {
     } 
     var today = year+"-"+month+"-"+day;
     this.setState({Today: today, selectedDate: today})
-    // 오늘 값을 가져온다
-   // this.onselectDate(null, today)
-
-   db.transaction(tx => {
-    tx.executeSql(
-      'SELECT * FROM users where uid = ?',
-      [this.props.status.loginId],
-      (tx, results) => {
-        var len = results.rows.length;
-      //  값이 있는 경우에 
-        if (len > 0) {                  
-            console.log('Main5 - check user data : ', results.rows.item(0).name)   
-            this.setState({
-                name: results.rows.item(0).name,
-                christname: results.rows.item(0).christ_name
-            })
-        } else {                     
-        }
-      }
-    );
-  });    
+   
+  AsyncStorage.getItem('login_name', (err, result) => {
+    console.log("FirstPage - login_name : ", result)
+    this.setState({
+      name: result
+          });
+  
+  })
+  AsyncStorage.getItem('login_christ_name', (err, result) => {
+    console.log("FirstPage - login_chirst_name : ", result)
+    this.setState({
+      christname: result
+          });
+  
+  })
     this.getAllPoints()   
 }
 
 refreshContents(){
   AsyncStorage.getItem('refreshMain5', (err, result) => {
     console.log("Main5 - get AsyncStorage refresh : ", result)
-    if(result == "refresh"){
+    var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1
+      var day = date.getDate();
+      if(month < 10){
+          month = "0"+month;
+      }
+      if(day < 10){
+          day = "0"+day;
+      } 
+      var today = year+"-"+month+"-"+day;
+      console.log(today + "/" + this.state.Today)
+    if(result == "refresh" || this.state.Today != today){
       try {
           AsyncStorage.setItem('refreshMain5', 'no');
       } catch (error) {
@@ -140,7 +144,6 @@ refreshContents(){
       this.setState({
         Today : "",
         selectedDate: "",
-        selectedDay: false, 
         selectedDate_format: "",// 요일
         onesentence: "",      
         initialLoading: true,
@@ -332,14 +335,15 @@ commentFunc = (commentDates) => {
     for(var k=0; k<7; k++){      
       var date = new Date(monday)
       date.setDate(monday.getDate() + k)
-     // var diff = monday.getDate() + k
-     // var date = new Date(new Date().setDate(diff))
       var year = date.getFullYear();
       var month = date.getMonth()+1
       var day = date.getDate();
       if(month < 10){
           month = "0"+month;
       } 
+      if(day < 10){
+        day = "0"+day
+    }
       var date = year+"-"+month+"-"+day
       console.log(date)
       console.log("countDays", commentDates.includes(date));
@@ -349,6 +353,12 @@ commentFunc = (commentDates) => {
       }else{
       }
     } 
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  if(month < 10){
+    month = "0"+month;
+} 
   var month = year+"-"+month
 
   for(let i=0; i<31; i++){
@@ -375,11 +385,6 @@ commentFunc = (commentDates) => {
  }
  
  onselectDate(day, today){
-//  this.props.navigation.navigate('Sub5', {otherParam: this.state.selectedDate})
-   if(day != null){
-     this.setState({Today: day})
-   }
-  this.setState({buttonStatus: "sentence"})
   console.log("Main5 - onselectDate")
   var date
   if(today != null){  
@@ -397,8 +402,7 @@ commentFunc = (commentDates) => {
     
     var date_format = day.year+"-"+day.month+"-"+day.day;
     this.setState({
-      selectedDate: date_format,
-      selectedDay: this.getTodayLabel( new Date(date_format)) == "일요일" ? true : false
+      selectedDate: date_format
     })
     date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
   }
@@ -415,7 +419,6 @@ commentFunc = (commentDates) => {
     var todayLabel = week[date.getDay()];        
     return todayLabel;
 }
-handleViewRef = ref => this.view = ref;
 
   render() {    
     console.log("Main5 - render")   
@@ -439,7 +442,7 @@ handleViewRef = ref => this.view = ref;
             </View>   
             <NavigationEvents
             onWillFocus={payload => {
-                [this.refreshContents(), console.log("payload",payload)]
+                [this.refreshContents(), console.log("payload", payload)]
             }}
             />
             <View>

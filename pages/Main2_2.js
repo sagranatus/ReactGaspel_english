@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView,  Image, TouchableHighlight, ActivityIndicator, AsyncStorage  } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, TouchableHighlight, ActivityIndicator, AsyncStorage  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -59,8 +59,7 @@ constructor(props) {
         year = params.otherParam.substring(0, 4);
         month = params.otherParam.substring(5, 7);
         day = params.otherParam.substring(8, 10);
-    }
-    
+    }   
 
     var today = year+"-"+month+"-"+day;
     var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
@@ -86,13 +85,9 @@ constructor(props) {
                 console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
                 this.setState({
                     Comment: results.rows.item(0).comment,
-                    Commentupdate: true,
-                    initialLoading: false
+                    Commentupdate: true
                 })
-            } else {       
-                this.setState({
-                    initialLoading: false
-                })                             
+            } else {                     
             }
           }
         );
@@ -221,7 +216,8 @@ constructor(props) {
             Firstverse: first_verse - 3,
             Lastverse: parseInt(last_verse) + 3,
             Person: today_person,
-            Chapter: chapter
+            Chapter: chapter,
+            initialLoading: false
 
         });   
       }
@@ -289,34 +285,7 @@ constructor(props) {
         );
         }); 
         Alert.alert("수정 하였습니다.")
-      /*  if(this.state.Commentupdate == true){
-          Alert.alert("수정 하였습니다.")
-      }
-       //comment insert 후에 update로 변하도록 하기 위함
-       var today_comment_date = this.state.Commentdate
-       var loginId = this.props.status.loginId
-           
-       db.transaction(tx => {
-           tx.executeSql(
-           'SELECT * FROM comment where date = ? and uid = ?',
-           [today_comment_date,loginId],
-           (tx, results) => {
-               var len = results.rows.length;
-           //  값이 있는 경우에 
-               if (len > 0) {                  
-                   console.log('Main2_2 - check Comment data : ', results.rows.item(0).comment)   
-                   this.setState({
-                       Comment: results.rows.item(0).comment,
-                       Commentupdate: true
-                   })
-                 //  const main5 =  new Main5()
-                //   main5.getAllPoints()
-               } else {                                  
-               }
-           }
-           );
-       });    */
-              
+     
     }else{
         try {
           AsyncStorage.setItem('refreshMain5', 'refresh');
@@ -394,7 +363,7 @@ constructor(props) {
                <TouchableOpacity
               activeOpacity = {0.9}
               style={{backgroundColor: '#01579b', padding: 10}}
-              onPress={() =>  this.props.navigation.navigate('나의기록', {otherParam: this.state.selectedDate})} 
+              onPress={() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})} 
               >
               <Text style={{color:"#FFF", textAlign:'left'}}>
                   {"<"} BACK
@@ -442,7 +411,7 @@ constructor(props) {
                 </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
-                <ScrollView style={{marginBottom:320}}>                     
+                <ScrollView style={{marginBottom:390}}>                     
                 <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
@@ -457,7 +426,8 @@ constructor(props) {
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >                 
+                </TouchableHighlight >   
+                <View style={{height:40}} />                 
             </ScrollView>  
             </View>
             </View>   

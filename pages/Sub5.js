@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, View, Button, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -11,29 +11,27 @@ export default class Sub5 extends Component {
 constructor(props) { 
     super(props) 
     this.state = {
-  selectedDate: "",
-  selectedDay: false, 
-  selectedDate_format: "",// 요일
-  onesentence: "",
-  Comment: "",
-  bg1:"",
-  bg2:"",
-  bg3:"",
-  sum1:"",
-  sum1:"",
-  js1:"",
-  js2:"",
-  mysentence: "",
-  question:"",
-  answer:"",
-  mythought: "",
-  buttonStatus: "sentence",
-  initialLoading: true
-  }
+      selectedDate: "", // - - 
+      selectedDay: false, // 일요일 여부
+      selectedDate_format: "",// 요일
+      onesentence: "",
+      Comment: "",
+      bg1:"",
+      bg2:"",
+      bg3:"",
+      sum1:"",
+      sum1:"",
+      js1:"",
+      js2:"",
+      mysentence: "",
+      question:"",
+      answer:"",
+      mythought: "",
+      initialLoading: true
+      }
   }
 
-componentWillMount(){
- 
+componentWillMount(){ 
 
   console.log("Sub5 - componentWillMount")
     const { params } = this.props.navigation.state;
@@ -304,8 +302,7 @@ componentWillMount(){
               mythought: "",
               question:"",
               answer:"",
-              buttonStatus: "sentence",
-              initialLoading: true}),this.props.navigation.navigate('나의기록', {otherParamFromSub5: this.state.selectedDate})]} 
+              initialLoading: true}),this.props.navigation.navigate('Main5', {otherParamFromSub5: this.state.selectedDate})]} 
               >
               <Text style={{color:"#FFF", textAlign:'left'}}>
                   {"<"} BACK
@@ -321,7 +318,7 @@ componentWillMount(){
          <View>   
            
            <View style={!this.state.selectedDay && this.state.Comment!="" ? {marginTop:20} : {display:'none'}}>
-           <Text style={styles.smallText}>말씀새기기</Text>   
+           <Text style={styles.smallText}>간단한 독서</Text>   
            <Text style={{ fontSize: 14, color: "#000", marginTop: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.Comment}</Text>
            <TouchableOpacity 
              activeOpacity = {0.9}
@@ -329,7 +326,7 @@ componentWillMount(){
              onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
              >
              <Text style={{color:"#fff", textAlign:'center'}}>
-             말씀새기기 편집
+             간단한독서 편집
              </Text>
            </TouchableOpacity>
            </View>    
@@ -346,7 +343,7 @@ componentWillMount(){
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
-          <Text style={this.state.question !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>{this.state.question}</Text> {this.state.answer}</Text>
+          <Text style={this.state.question !== null ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>{this.state.question}</Text> {this.state.answer}</Text>
           <Text style={styles.lectioText}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
          </View>
          <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
@@ -383,7 +380,7 @@ componentWillMount(){
                  onPress={() => this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
                  >
                  <Text style={{color:"#fff", textAlign:'center'}}>
-                 말씀새기기 하러가기
+                 간단한 독서 하러가기
                  </Text>
              </TouchableOpacity> 
              </View>      

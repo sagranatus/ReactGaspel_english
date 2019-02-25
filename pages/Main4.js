@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, ImageBackground, Alert, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, ImageBackground, Alert, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {NavigationEvents} from 'react-navigation'
@@ -28,6 +28,7 @@ constructor(props) {
         mysentence: "",
         mythought: "",
         question: "",
+        answer:"",
         background: "",
         start: false,
         praying: false,
@@ -35,7 +36,6 @@ constructor(props) {
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
-        isDone:false,
         initialLoading: true
      }
      
@@ -45,109 +45,6 @@ constructor(props) {
      this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
   }
 
-setChange(){
-    // 이번주 일요일 계산
-    var date = new Date()
-    console.log(date)
-    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-        var lastday = date.getDate() - (date.getDay() - 1) + 6;
-        date = new Date(date.setDate(lastday));
-    }    
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var todaydate = year+"-"+month+"-"+day;
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate))
-    console.log(todaydate)
-    AsyncStorage.getItem('thisweekend', (err, result) => {
-        console.log("Main4 - get AsyncStorage thisweekend : ", result)
-        if(result == todaydate){
-          console.log("thisweekend is same")
-        }else{
-          console.log("thisweekend is different")    
-            // 이번주일요일 날짜를 설정 
-            try {
-                AsyncStorage.setItem('thisweekend', todaydate);
-            } catch (error) {
-                console.error('AsyncStorage error: ' + error.message);
-            }
-
-            this.setState({
-                Date: todaydate,
-                Weekenddate: today_comment_date
-            })
-        
-            // 데이터 가져오기
-            this.props.getGaspel(todaydate) 
-            this.props.getWeekendMore(todaydate) 
-             //Weekend DB 있는지 확인        
-            const loginId = this.props.status.loginId;
-            db.transaction(tx => {
-                tx.executeSql(
-                'SELECT * FROM lectio where date = ? and uid = ?',
-                [today_comment_date,loginId],
-                (tx, results) => {
-                    var len = results.rows.length;
-                //  값이 있는 경우에 
-                    if (len > 0) {                  
-                        console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
-                        this.setState({
-                            bg1 : results.rows.item(0).bg1,
-                            bg2 : results.rows.item(0).bg2,
-                            bg3 : results.rows.item(0).bg3,
-                            sum1 : results.rows.item(0).sum1,
-                            sum2 : results.rows.item(0).sum2,
-                            js1 : results.rows.item(0).js1,
-                            js2 : results.rows.item(0).js2,
-                            Weekendupdate: true
-                        })
-                    } else {                        
-                        this.setState({
-                            bg1 : "",
-                            bg2 : "",
-                            bg3 : "",
-                            sum1 : "",
-                            sum2 : "",
-                            js1 : "",
-                            js2 : "",
-                            Weekendupdate: false
-                        })            
-                    }
-                }
-                );
-
-                tx.executeSql(
-                    'SELECT * FROM weekend where date = ? and uid = ?',
-                    [today_comment_date,loginId],
-                    (tx, results) => {
-                    var len = results.rows.length;
-                    //  값이 있는 경우에 
-                    if (len > 0) {                  
-                        console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
-                        this.setState({
-                            mysentence : results.rows.item(0).mysentence,
-                            mythought : results.rows.item(0).mythought
-                        })
-                    } else {     
-                        this.setState({
-                            mysentence : "",
-                            mythought : ""
-                        })                                
-                    }
-                    }
-                );
-            });    
-
-        }    
-      })    
-   
-}
   movePrevious(){
     this.transitionToNextPanel(this.state.currentIndex -1);
 }
@@ -162,7 +59,11 @@ moveFinal(){
     //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2+this.state.mysentence+this.state.mythought);
     // weekend server
     if(this.state.Weekendupdate){
-         
+      try {
+        AsyncStorage.setItem('refreshMain1', "refresh");
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }             
         this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought, this.state.question, this.state.answer)
         const loginId = this.props.status.loginId;
         const date = this.state.Weekenddate;
@@ -207,6 +108,7 @@ moveFinal(){
     }else{
         try {
             AsyncStorage.setItem('refreshMain5', 'refresh');
+            AsyncStorage.setItem('refreshMain1', "refresh");
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }     
@@ -388,54 +290,7 @@ transitionToNextPanel(nextIndex){
 }
 
   componentWillReceiveProps(nextProps){    
-   /* var today_comment_date = this.state.Weekenddate
-    var loginId = this.props.status.loginId
-     //Weekend DB 있는지 확인    
-     db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [today_comment_date,loginId],
-          (tx, results) => {
-            var len = results.rows.length;
-          //  값이 있는 경우에 
-            if (len > 0) {                  
-                console.log('Message', results.rows.item(0).bg1)   
-                this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
-                    js2 : results.rows.item(0).js2,
-                    Weekendupdate: true
-                })
-            } else {       
-                console.log('Message', "nonono")                              
-            }
-          }
-        );
-
-        tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Message', results.rows.item(0).mysentence)   
-                  this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought
-                  })
-              } else {       
-                  console.log('Message', "nonono")                              
-              }
-            }
-          );
-      });   
-      
-      */
+  
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.weekend.sentence != null){
         console.log('Main4 - get Gaspel Data')  
@@ -460,15 +315,8 @@ transitionToNextPanel(nextIndex){
         if(pos == null){
             pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
         }
-        //console.log("saea",pos)
-        //console.log("here", pos[0].indexOf(","))
-        //console.log("here", pos[0].substring(0,pos[0].indexOf(","))) // 장 
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        //console.log("saea",pos[0].length)
-        //console.log("saea",pos.index)
         contents_ = contents.substring(pos.index+pos[0].length)
-        var length = pos.index+pos[0].length;
-        //console.log(contents_)
 
         // 여기서 각 절 번호 가져옴
         pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
@@ -523,10 +371,114 @@ transitionToNextPanel(nextIndex){
         question : nextProps.weekend.question,
         background:  nextProps.weekend.background
     })  
-   // alert(nextProps.weekend.question)
+  
      }
 
   }
+
+  setChange(){
+    // 이번주 일요일 계산
+    var date = new Date()
+    console.log(date)
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+        var lastday = date.getDate() - (date.getDay() - 1) + 6;
+        date = new Date(date.setDate(lastday));
+    }    
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var todaydate = year+"-"+month+"-"+day;
+    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate))
+    console.log(todaydate)
+    AsyncStorage.getItem('thisweekend', (err, result) => {
+        console.log("Main4 - get AsyncStorage thisweekend : ", result)
+        if(result == todaydate){
+          console.log("thisweekend is same")
+        }else{
+          console.log("thisweekend is different")    
+            // 이번주일요일 날짜를 설정 
+            try {
+                AsyncStorage.setItem('thisweekend', todaydate);
+            } catch (error) {
+                console.error('AsyncStorage error: ' + error.message);
+            }
+
+            this.setState({
+                Date: todaydate,
+                Weekenddate: today_comment_date
+            })
+        
+            // 데이터 가져오기
+            this.props.getGaspel(todaydate) 
+            this.props.getWeekendMore(todaydate) 
+             //Weekend DB 있는지 확인        
+            const loginId = this.props.status.loginId;
+            db.transaction(tx => {
+                tx.executeSql(
+                'SELECT * FROM lectio where date = ? and uid = ?',
+                [today_comment_date,loginId],
+                (tx, results) => {
+                    var len = results.rows.length;
+                //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
+                        this.setState({
+                            bg1 : results.rows.item(0).bg1,
+                            bg2 : results.rows.item(0).bg2,
+                            bg3 : results.rows.item(0).bg3,
+                            sum1 : results.rows.item(0).sum1,
+                            sum2 : results.rows.item(0).sum2,
+                            js1 : results.rows.item(0).js1,
+                            js2 : results.rows.item(0).js2,
+                            Weekendupdate: true
+                        })
+                    } else {                        
+                        this.setState({
+                            bg1 : "",
+                            bg2 : "",
+                            bg3 : "",
+                            sum1 : "",
+                            sum2 : "",
+                            js1 : "",
+                            js2 : "",
+                            Weekendupdate: false
+                        })            
+                    }
+                }
+                );
+
+                tx.executeSql(
+                    'SELECT * FROM weekend where date = ? and uid = ?',
+                    [today_comment_date,loginId],
+                    (tx, results) => {
+                    var len = results.rows.length;
+                    //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
+                        this.setState({
+                            mysentence : results.rows.item(0).mysentence,
+                            mythought : results.rows.item(0).mythought
+                        })
+                    } else {     
+                        this.setState({
+                            mysentence : "",
+                            mythought : ""
+                        })                                
+                    }
+                    }
+                );
+            });    
+
+        }    
+      })    
+   
+}
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
     this.props.getThreeGaspel("prev", this.state.Person, this.state.Chapter, this.state.Firstverse)    
@@ -593,7 +545,7 @@ transitionToNextPanel(nextIndex){
                </View>
                 
                 <OnboardingButton
-                    totalItems={9}
+                    totalItems={this.state.question != null ? 9 : 8}
                     currentIndex={this.state.currentIndex}
                     movePrevious={this.movePrevious}
                     moveNext={this.moveNext}
@@ -673,7 +625,7 @@ transitionToNextPanel(nextIndex){
                     style={styles.TextInputStyleClass} />                           
                     </View>
                     
-                    <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                    <View style={(this.state.currentIndex == 6 && this.state.question != null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
                         <TextInput
                         multiline = {true}
@@ -685,7 +637,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                    <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
+                    <View style={(this.state.currentIndex == 7 && this.state.question != null) || (this.state.currentIndex == 6 && this.state.question == null) ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                     <TextInput
                     multiline = {true}
@@ -697,7 +649,7 @@ transitionToNextPanel(nextIndex){
                     style={styles.TextInputStyleClass} />                           
                     </View>
 
-                    <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
+                    <View style={(this.state.currentIndex == 8 && this.state.question != null) || (this.state.currentIndex == 7 && this.state.question == null) ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                     <TextInput
                     multiline = {true}
@@ -751,7 +703,7 @@ transitionToNextPanel(nextIndex){
                 <Text style={styles.TextResultStyleClass}>{this.state.sum2}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>                
                 <Text style={styles.TextResultStyleClass}>{this.state.js1}</Text>   
-                <View style={this.state.question != "" ? {} : {display:'none'}}>
+                <View style={this.state.question != null ? {} : {display:'none'}}>
                 <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
                 <Text style={styles.TextResultStyleClass}>{this.state.answer}</Text>  
                 </View>
@@ -838,7 +790,9 @@ transitionToNextPanel(nextIndex){
                             <TouchableOpacity
                             activeOpacity = {0.9}
                             style={{backgroundColor: '#01579b', padding: 10}}
-                            onPress={() =>  Alert.alert(
+                            onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
+                              this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})
+                              :  Alert.alert(
                                 '정말 끝내시겠습니까?',
                                 '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                                 [                                 
@@ -858,7 +812,7 @@ transitionToNextPanel(nextIndex){
                         </TouchableOpacity>
                     </View>
                     <OnboardingButton
-                        totalItems={12}
+                        totalItems={ this.state.question != null ? 12 : 11}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
@@ -975,7 +929,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 9 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 9 && this.state.question != null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
                         <TextInput
                         multiline = {true}
@@ -987,7 +941,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 10 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 10 && this.state.question!= null) || (this.state.currentIndex==9 && this.state.question == null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <TextInput
                         multiline = {true}
@@ -999,7 +953,7 @@ transitionToNextPanel(nextIndex){
                         style={styles.TextInputStyleClass} />                           
                         </View>
 
-                        <View style={this.state.currentIndex == 11 ? {} : {display:'none'}}>
+                        <View style={(this.state.currentIndex == 11 && this.state.question!= null) || (this.state.currentIndex==10 && this.state.question == null) ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                         <TextInput
                         multiline = {true}

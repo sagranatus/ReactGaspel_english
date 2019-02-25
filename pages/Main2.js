@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button, Image, TouchableHighlight, AsyncStorage, ActivityIndicator, Alert, Keyboard  } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, TouchableHighlight, AsyncStorage, ActivityIndicator, Alert, Keyboard  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
-import Main5 from './Main5';
 import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -174,8 +173,7 @@ constructor(props) {
                         Comment: results.rows.item(0).comment,
                         Commentupdate: true
                     })
-                   // const main5 =  new Main5()    
-                  //  main5.sayHi()
+                  
                 } else {                                  
                 }
             }
@@ -215,7 +213,7 @@ constructor(props) {
         // 여기서 각 절 번호 가져옴
         pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
 
-        // 절 가져옴
+        //  절 가져옴
         var first_verse = pos[0]
         var last_verse = pos[pos.length-1]
 
@@ -281,7 +279,11 @@ constructor(props) {
    insertComment(){
    
     if(this.state.Commentupdate){       
-       
+      try {
+        AsyncStorage.setItem('refreshMain1', "refresh");
+      } catch (error) {
+        console.error('AsyncStorage error: ' + error.message);
+      }    
         this.props.updateComment("update",this.props.status.loginId,this.state.Commentdate,this.state.Sentence, this.state.Comment)
         const loginId = this.props.status.loginId;
         const comment = this.state.Comment;
@@ -306,6 +308,7 @@ constructor(props) {
     }else{
         try {
             AsyncStorage.setItem('refreshMain5', "refresh");
+            AsyncStorage.setItem('refreshMain1', "refresh");
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           } 

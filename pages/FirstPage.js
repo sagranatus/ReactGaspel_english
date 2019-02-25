@@ -1,5 +1,5 @@
 import React, { Component } from 'react' 
-import { StyleSheet, View, Button, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
@@ -46,8 +46,8 @@ constructor(props) {
        isLoggedIn: this.props.status.isLogged | false, 
       // isLoggedIn:true,
        loginId: null,
-        loginName: null,
-        initialLoading: true
+       loginName: null,
+       initialLoading: true
     } 
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
@@ -69,27 +69,20 @@ constructor(props) {
     }    
   })
 
-    AsyncStorage.getItem('login_name', (err, result) => {
-      console.log("FirstPage - login_name : ", result)
-      this.setState({
-        loginName: result
-            });
-    
+  AsyncStorage.getItem('login_name', (err, result) => {
+    console.log("FirstPage - login_name : ", result)
+    this.setState({
+      loginName: result
+          });
+  
   })
  
 
   }
 
- 
-shouldComponentUpdate(nextProps) {
-  if(this.props.status.isLogged !== nextProps.status.isLogged){
-    return false;
-  }
-  return true;
 
-}
 componentWillReceiveProps(nextProps){  
-    // props의 loginId값이 변경될때 적용
+    // props의 loginId값이 변경될때
     console.log("FirstPage - this.props.status.loginId: ", nextProps.status.loginId)  
   
     // setLogin 후에 
@@ -123,10 +116,8 @@ componentWillReceiveProps(nextProps){
                 }
               }
             );
-          });
-          
+          });          
     }
-
 }
   render() {
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)

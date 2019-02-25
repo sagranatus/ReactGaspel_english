@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, Image, ImageBackground, Button, AsyncStorage,TouchableHighlight, ActivityIndicator} from 'react-native';
-import Icon from 'react-native-vector-icons/EvilIcons'
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator} from 'react-native';
+
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
-import ImageSlider from 'react-native-image-slider';
 import Slideshow from 'react-native-image-slider-show';
 
 export default class Main1 extends Component { 
@@ -18,13 +17,8 @@ constructor(props) {
         todayDate: "",
         sentence: "",
         comment:"",
-        bg1:"",
-        bg2:"",
-        bg3:"",
-        sum1:"",
-        sum2:"",
-        js1:"",
         js2:"",
+        js2_weekend:"",
         mysentence:"",
         weekend: false,
         position: 1,
@@ -68,7 +62,7 @@ constructor(props) {
   
   componentWillMount(){
     
-    console.log( this.props.navigation)
+    console.log(this.props.navigation)
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -80,7 +74,6 @@ constructor(props) {
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
-    var todayDate = year+"."+month+"."+day+".";
     console.log(today)
 
     // 오늘날짜를 설정 
@@ -90,9 +83,8 @@ constructor(props) {
       console.error('AsyncStorage error: ' + error.message);
     }
 
-    this.setState({today: today, todayDate: todayDate})
-    this.props.getGaspel(today)
-   
+    this.setState({today: today})
+    this.props.getGaspel(today) 
   
   }
 
@@ -140,7 +132,7 @@ constructor(props) {
       }
          // 우선적으로 asyncstorage에 로그인 상태 저장
          this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate})
-  
+       
       var date = new Date();
       var changed = this.changeDateFormat(date)
       this.getData(changed)  
@@ -159,24 +151,33 @@ constructor(props) {
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
-    var todayDate = year+"."+month+"."+day+".";
     AsyncStorage.getItem('today1', (err, result) => {
       console.log("Main1 - get AsyncStorage today : ", result)
       if(result == today){
         console.log("today is same")
-        AsyncStorage.getItem('sentence', (err, result) => {
-          console.log("Main1 - get AsyncStorage sentence : ", result)
-        //  this.setState({sentence: result})
-          var changed = this.changeDateFormat(date)
-          this.getData(changed)
-        })
+        AsyncStorage.getItem('refreshMain1', (err, result) => {
+          console.log("Main1 - get AsyncStorage refresh : ", result)
+       
+          if(result == "refresh"){
+            try {
+              var changed = this.changeDateFormat(date)
+              this.getData(changed) 
+              AsyncStorage.setItem('refreshMain1', 'no');
+            } catch (error) {
+                console.error('AsyncStorage error: ' + error.message);
+            }
+          }else{
+            this.setState({initialLoading:false})
+
+          }
+        });     
         
       }else{
         console.log("today is different")
         try {
             AsyncStorage.setItem('today1', today);
-            var changed = this.changeDateFormat(date)
-            this.getData(changed)
+           // var changed = this.changeDateFormat(date)
+          //  this.getData(changed)
             this.setState({today: today})
             this.props.getGaspel(today)
         } catch (error) {
@@ -204,9 +205,9 @@ constructor(props) {
     if(day < 10){
         day = "0"+day;
     } 
-    var todaydate = year+"-"+month+"-"+day;
+    var date_weekend = year+"-"+month+"-"+day;
    
-    var weekenddate = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate)) 
+    var weekenddate = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(date_weekend)) 
     console.log("date", weekenddate+"/"+today)
     if(weekenddate == today){
       this.setState({weekend: true})
@@ -239,22 +240,10 @@ constructor(props) {
             if (len > 0) {                  
                 console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
                 this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
                     js2 : results.rows.item(0).js2
                 })
             } else {               
                 this.setState({
-                    bg1 : "",
-                    bg2 : "",
-                    bg3 : "",
-                    sum1 : "",
-                    sum2 : "",
-                    js1 : "",
                     js2 : ""
                 })                   
             }
@@ -269,17 +258,35 @@ constructor(props) {
               if (len > 0) {                  
                   console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      initialLoading:false
+                      mysentence : results.rows.item(0).mysentence
                   })
               } else {               
                   this.setState({
-                      mysentence : "",
-                      initialLoading:false
+                      mysentence : ""
                   })                   
               }
           }
-          );
+          ),
+          tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [weekenddate,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main1 - check Weekend Lectio data : ', results.rows.item(0).js2) 
+                    this.setState({
+                        js2_weekend : results.rows.item(0).js2,
+                        initialLoading:false
+                    })
+                } else {               
+                    this.setState({
+                        mysentence : "",
+                        initialLoading:false
+                    })                   
+                }
+            }
+            );
     });    
      
   }
@@ -299,8 +306,7 @@ constructor(props) {
     return date_changed
   
   }
-
-  
+ 
 
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
@@ -345,49 +351,40 @@ constructor(props) {
            
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.comment == ""  ?{backgroundColor: '#01579b', padding: 10, width:'49%', marginRight:'2%'} : {backgroundColor: '#FFCC33', padding: 10, width:'49%', marginRight:'2%'}}
-                    onPress={this.state.comment == "" ? () =>  this.props.navigation.navigate('말씀새기기') : null}
+                    style={this.state.comment == ""  ?{backgroundColor: '#01579b', padding: 10, width:'49%', marginRight:'2%'} : {display:'none'}}
+                    onPress={this.state.comment == "" ? () =>  this.props.navigation.navigate('Main2') : null}
                     >
                     <View style={this.state.comment != "" || this.state.js2 != "" ? {display:'none'} : {}}>
                       <Text style={{color:"#fff", textAlign:'center'}}>
                           간단한독서하기
                       </Text>
-                    </View>
-                    <View style={this.state.comment == "" || this.state.js2 != "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                         간단한독서 완료
-                      </Text>
-                    </View>
+                    </View>                   
                   </TouchableOpacity>
                 
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.js2 == "" ?{backgroundColor: '#01579b', padding: 10, width:'49%'} : {backgroundColor: '#FFCC33', padding: 10, width:'49%'}}
-                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('거룩한독서')  : null} // insertComment
+                    style={(this.state.js2 == "" && this.state.comment == "") ? {backgroundColor: '#01579b', padding: 10, width:'49%'} : {display:'none'}}
+                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('Main3')  : null} // insertComment
                     >
                     <View style={this.state.js2 != "" ? {display:'none'} : {}}>
                       <Text style={{color:"#fff", textAlign:'center'}}>
                           거룩한독서하기
                       </Text>
                     </View>
-                    <View style={this.state.js2 == "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                        거룩한독서 완료
-                      </Text>
-                    </View>
                   </TouchableOpacity>        
-
-                  </View>
-                  
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.js2 == "" || this.state.weekend ? {display:'none'} : {backgroundColor: '#FFCC33', padding: 10, width:'100%'}}
-                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('거룩한독서')  : null} // insertComment
-                    >        
+                    style={(this.state.js2 == "" && this.state.comment != "") ?{backgroundColor: '#01579b', padding: 10, width:'99%'} : {display:'none'}}
+                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('Main3')  : null} // insertComment
+                    >
+                    <View style={this.state.js2 != "" ? {display:'none'} : {}}>
                       <Text style={{color:"#fff", textAlign:'center'}}>
-                          거룩한독서 완료
+                          거룩한독서하기
                       </Text>
-                  </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>   
+                  </View>
+                  
                   
                             
                   <View style={this.state.comment == "" || this.state.weekend ? {display:'none'} : {}}>
@@ -399,25 +396,20 @@ constructor(props) {
                   <View style={this.state.weekend ? {marginTop:30, marginBottom:30} : {}}>
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.mysentence == "" ?{backgroundColor: '#01579b', padding: 10, width:'100%', marginBottom:10} : {backgroundColor: '#FFCC33', padding: 10, width:'100%', marginBottom:10}}
-                    onPress={this.state.mysentence == "" ? () => this.props.navigation.navigate('주일의독서')  : null} // insertComment
+                    style={this.state.mysentence == "" ?{backgroundColor: '#01579b', padding: 10, marginBottom:5, width:'100%'} : {display:'none'}}
+                    onPress={this.state.mysentence == "" ? () => this.props.navigation.navigate('Main4')  : null} // insertComment
                     >        
                     <View style={this.state.mysentence != "" ? {display:'none'} : {}}>
                       <Text style={{color:"#fff", textAlign:'center'}}>
                           주일의독서하기
                       </Text>
                     </View>
-                    <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                          주일의독서 완료
-                      </Text>
-                    </View>
+                
                   </TouchableOpacity>
                   </View>
                   <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
-                  <Text style={[styles.TextResultStyleClass, {}]}>"{this.state.js2}"</Text>
-                    <Text style={[styles.TextResultStyleClass, {marginTop:-10}]}>{this.state.mysentence}</Text>
-                    
+                  <Text style={[styles.TextResultStyleClass, {}]}>"{this.state.js2_weekend}"</Text>
+                  <Text style={[styles.TextResultStyleClass, {marginTop:-10}]}>{this.state.mysentence}</Text>                    
                   </View>
 
                   <View style={{marginTop:0}}>      

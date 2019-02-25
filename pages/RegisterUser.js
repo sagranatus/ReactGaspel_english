@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Button, Text, TouchableOpacity, Picker } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });

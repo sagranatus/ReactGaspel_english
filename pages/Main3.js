@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Button,Alert, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Alert, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -11,7 +11,7 @@ constructor(props) {
     super(props)      
     this.state = {
         Contents : "",
-        Date: "",
+        Date: "", // - - 
         Sentence : "",
         Person: "",
         Chapter: "",
@@ -27,11 +27,10 @@ constructor(props) {
         js2:"",
         start: false,
         praying: false,
-        Lectiodate:"",
+        Lectiodate:"", // 년 월 일 요일
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
-        isDone:false,
         initialLoading: true
      }
      
@@ -41,77 +40,6 @@ constructor(props) {
      this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
   }
 
-
-  
-setChange(){
-    // 오늘날짜 계산
-   var date = new Date();
-   var year = date.getFullYear();
-   var month = date.getMonth()+1
-   var day = date.getDate();
-   if(month < 10){
-       month = "0"+month;
-   }
-   if(day < 10){
-       day = "0"+day;
-   } 
-   var todaydate = year+"-"+month+"-"+day;
-   var todaydate2 = year+"."+month+"."+day+".";
-   var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
-   AsyncStorage.getItem('today3', (err, result) => {
-     console.log("Main3 - get AsyncStorage today : ", result)
-     if(result == todaydate){
-       console.log("today is same")
-     }else{
-       console.log("today is different")
-          // 오늘날짜를 설정 
-        try {
-            AsyncStorage.setItem('today3', todaydate);
-        } catch (error) {
-            console.error('AsyncStorage error: ' + error.message);
-        }        
-    
-       this.setState({Date: todaydate,  Lectiodate: today_comment_date})
-       this.props.getGaspel(todaydate)
-        //lectio있는지 확인
-        const loginId = this.props.status.loginId;    
-        db.transaction(tx => {
-            tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-                var len = results.rows.length;
-            //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
-                    this.setState({
-                        bg1 : results.rows.item(0).bg1,
-                        bg2 : results.rows.item(0).bg2,
-                        bg3 : results.rows.item(0).bg3,
-                        sum1 : results.rows.item(0).sum1,
-                        sum2 : results.rows.item(0).sum2,
-                        js1 : results.rows.item(0).js1,
-                        js2 : results.rows.item(0).js2,
-                        Lectioupdate: true
-                    })
-                } else {               
-                    this.setState({
-                        bg1 : "",
-                        bg2 : "",
-                        bg3 : "",
-                        sum1 : "",
-                        sum2 : "",
-                        js1 : "",
-                        js2 : "",
-                        Lectioupdate: false
-                    })                   
-                }
-            }
-            );
-        });    
-     }    
-   })
-}
 
 movePrevious(){
     this.transitionToNextPanel(this.state.currentIndex -1);
@@ -126,7 +54,12 @@ moveFinal(){
     
     //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
     // lectio server
-    if(this.state.Lectioupdate){        
+    if(this.state.Lectioupdate){   
+        try {
+            AsyncStorage.setItem('refreshMain1', "refresh");
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          }     
         this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
         const date = this.state.Lectiodate;
@@ -155,6 +88,7 @@ moveFinal(){
     }else{
         try {
             AsyncStorage.setItem('refreshMain5', "refresh");
+            AsyncStorage.setItem('refreshMain1', "refresh");
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }
@@ -278,42 +212,7 @@ transitionToNextPanel(nextIndex){
         return todayLabel;
     }
 
-
-  componentWillReceiveProps(nextProps){
-   /* console.log("awdadw", nextProps.lectios.bg1)
-    // comment 가져올때
-    if(nextProps.lectios.bg1 != null){   
-        alert(nextProps.lectios.bg1+" is inserted")
-         //lectio insert 후에 update로 변하도록 하기 위함 
-        var today_comment_date = this.state.Lectiodate
-        var loginId = this.props.status.loginId
-        db.transaction(tx => {
-            tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-                var len = results.rows.length;
-            //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Message', results.rows.item(0).bg1)   
-                    this.setState({
-                        bg1 : results.rows.item(0).bg1,
-                        bg2 : results.rows.item(0).bg2,
-                        bg3 : results.rows.item(0).bg3,
-                        sum1 : results.rows.item(0).sum1,
-                        sum2 : results.rows.item(0).sum2,
-                        js1 : results.rows.item(0).js1,
-                        js2 : results.rows.item(0).js2,
-                        Lectioupdate: true
-                    })
-                } else {                                  
-                }
-            }
-            );
-        });           
-     }
-     */
-    
+  componentWillReceiveProps(nextProps){    
       // 이는 getGaspel에서 받아오는 경우
       if(nextProps.lectios.sentence != null){
         console.log('Main3 - get Gaspel Data')  
@@ -339,11 +238,7 @@ transitionToNextPanel(nextIndex){
             pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
         }
         var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        //console.log("saea",pos[0].length)
-        //console.log("saea",pos.index)
         contents_ = contents.substring(pos.index+pos[0].length)
-        var length = pos.index+pos[0].length;
-        //console.log(contents_)
 
         // 여기서 각 절 번호 가져옴
         pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
@@ -389,9 +284,77 @@ transitionToNextPanel(nextIndex){
                 Contents : this.state.Contents+"\n"+nextProps.lectios.threegaspels
             })    
         }          
-    }
-     
+    }     
   }
+  
+setChange(){
+    // 오늘날짜 계산
+   var date = new Date();
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+   var todaydate = year+"-"+month+"-"+day;
+   var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+   AsyncStorage.getItem('today3', (err, result) => {
+     console.log("Main3 - get AsyncStorage today : ", result)
+     if(result == todaydate){
+       console.log("today is same")
+     }else{
+       console.log("today is different")
+          // 오늘날짜를 설정 
+        try {
+            AsyncStorage.setItem('today3', todaydate);
+        } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+        }        
+    
+       this.setState({Date: todaydate,  Lectiodate: today_comment_date})
+       this.props.getGaspel(todaydate)
+        //lectio있는지 확인
+        const loginId = this.props.status.loginId;    
+        db.transaction(tx => {
+            tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                    this.setState({
+                        bg1 : results.rows.item(0).bg1,
+                        bg2 : results.rows.item(0).bg2,
+                        bg3 : results.rows.item(0).bg3,
+                        sum1 : results.rows.item(0).sum1,
+                        sum2 : results.rows.item(0).sum2,
+                        js1 : results.rows.item(0).js1,
+                        js2 : results.rows.item(0).js2,
+                        Lectioupdate: true
+                    })
+                } else {               
+                    this.setState({
+                        bg1 : "",
+                        bg2 : "",
+                        bg3 : "",
+                        sum1 : "",
+                        sum2 : "",
+                        js1 : "",
+                        js2 : "",
+                        Lectioupdate: false
+                    })                   
+                }
+            }
+            );
+        });    
+     }    
+   })
+}
   // 이전 3절 가져오기
   getPrevMoreGaspel(){
     this.props.getThreeGaspel("prev", this.state.Person, this.state.Chapter, this.state.Firstverse)    
@@ -669,7 +632,9 @@ transitionToNextPanel(nextIndex){
                             <TouchableOpacity
                             activeOpacity = {0.9}
                             style={{backgroundColor: '#01579b', padding: 10}}
-                            onPress={() =>  Alert.alert(
+                            onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
+                                this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0})
+                                :  Alert.alert(
                                 '정말 끝내시겠습니까?',
                                 '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                                 [                                 
