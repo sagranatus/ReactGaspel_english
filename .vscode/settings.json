@@ -1,4 +1,5 @@
 {"files.associations": {
     "*.js": "javascriptreact"
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "automatic"
     }

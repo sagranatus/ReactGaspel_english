@@ -27,6 +27,8 @@ export default class TabBarComponent extends React.Component {
     if (!this.state.visible) {
       return null;
     } else {
+      console.log("jasub", this.props.navigation.state.index)
+      if(this.props.navigation.state.index == 5 || this.props.navigation.state.index == 6 || this.props.navigation.state.index == 7 || this.props.navigation.state.index == 8 || this.props.navigation.state.index == 9){return null}
       return (
         <BottomTabBar {...this.props} />
       );

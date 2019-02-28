@@ -7,12 +7,39 @@ import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
+import * as globalStyles from '../etc/global';
+import ReactNativeAN from 'react-native-alarm-notification';
+const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
+const alarmNotifData = {
+  id: "12345",                                  // Required
+  title: "My Notification Title",               // Required
+  message: "My Notification Message",           // Required
+  channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
+  ticker: "My Notification Ticker",
+  auto_cancel: true,                            // default: true
+  vibrate: true,
+  vibration: 100,                               // default: 100, no vibration if vibrate: false
+  small_icon: "ic_launcher",                    // Required
+  large_icon: "ic_launcher",
+  play_sound: true,
+  sound_name: null,                             // Plays custom notification ringtone if sound_name: null
+  color: "red",
+  schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
+  tag: 'some_tag',
+  fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+
+  // You can add any additional data that is important for the notification
+  // It will be added to the PendingIntent along with the rest of the bundle.
+  // e.g.
+  data: { foo: "bar" },
+};
 
 export default class Main1 extends Component { 
 
 constructor(props) { 
     super(props)  
     this.state = {
+        textSize: "",
         today : "",
         todayDate: "",
         sentence: "",
@@ -59,8 +86,22 @@ constructor(props) {
     }
    
   }
-  
   componentWillMount(){
+       
+  //  ReactNativeAN.removeAllFiredNotifications()
+  //  ReactNativeAN.removeFiredNotification("12345")
+   // ReactNativeAN.cancelAllNotifications()
+   // ReactNativeAN.sendNotification(alarmNotifData);
+    try {
+      AsyncStorage.setItem('textSize', 'normal');
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal"){
+        this.setState({textSize:"normal"})
+      }
+    })
     
     console.log(this.props.navigation)
     var date = new Date();
@@ -328,7 +369,7 @@ constructor(props) {
       )
 
     : (   
-            <View>
+            <View style={{flex:1}}>
              
                <NavigationEvents
                 onWillFocus={payload => {
@@ -343,9 +384,9 @@ constructor(props) {
                   </View>
                   
                 
-                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, marginBottom:10}}>                  
-                      <Text style= {{color:'#000', textAlign: 'center', fontSize: 15, width:'100%',marginBottom:5}}>{this.state.todayDate}</Text>                         
-                      <Text style={{color:'#000', textAlign: 'center', fontSize: 15, width:'100%'}}>{this.state.sentence}</Text>   
+                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: '2%', marginBottom:'2%'}}>                  
+                      <Text style={this.state.textSize == 'normal' ? [{fontSize: globalStyles.SmallFont[0]}, styles.TextStyle] : [{fontSize: globalStyles.SmallFont[1]}]}>{this.state.todayDate}</Text>                         
+                      <Text style={this.state.textSize == 'normal' ? [{fontSize: globalStyles.MediumFont[0]}, styles.TextStyle] : [{fontSize: globalStyles.MediumFont[1]}]}>{this.state.sentence}</Text>   
                   </View>
                   <View style={this.state.js2!="" || this.state.weekend ? {display:'none'} :{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, marginBottom: 10}}>
            
@@ -388,9 +429,11 @@ constructor(props) {
                   
                             
                   <View style={this.state.comment == "" || this.state.weekend ? {display:'none'} : {}}>
+                    <Text style={styles.smallText}>간단한 독서</Text>
                     <Text style={[styles.TextResultStyleClass, {}]}>{this.state.comment}</Text>
                   </View>
                   <View style={this.state.js2 == "" || this.state.weekend ? {display:'none'} : {}}>
+                    <Text style={styles.smallText}>거룩한 독서</Text>
                     <Text style={styles.TextResultStyleClass}>"{this.state.js2}"</Text>
                   </View>
                   <View style={this.state.weekend ? {marginTop:30, marginBottom:30} : {}}>
@@ -408,11 +451,24 @@ constructor(props) {
                   </TouchableOpacity>
                   </View>
                   <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
+                  <Text style={styles.smallText}>주일의 독서</Text>
                   <Text style={[styles.TextResultStyleClass, {}]}>"{this.state.js2_weekend}"</Text>
                   <Text style={[styles.TextResultStyleClass, {marginTop:-10}]}>{this.state.mysentence}</Text>                    
                   </View>
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10, marginBottom:5, width:'100%', position: 'absolute', bottom:150}}
+                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                    >        
+                    <View>
+                      <Text style={{color:"#fff", textAlign:'center',}}>
+                          오늘의 복음 가이드 보러가기
+                      </Text>
+                    </View>
+                
+                  </TouchableOpacity>
 
-                  <View style={{marginTop:0}}>      
+                  <View style={{marginTop:0,position: 'absolute', bottom:0,}}>      
                    <Slideshow 
                     height={150}
                     dataSource={this.state.dataSource2}
@@ -437,11 +493,10 @@ Main1.propTypes = {
   };
   
 const styles = StyleSheet.create({
- 
     MainContainer :{     
     justifyContent: 'center'
     },
-     
+    TextStyle:{color:'#000', textAlign: 'center', width:'100%',marginBottom:3},
     TextInputStyleClass: {     
     textAlign: 'center',
     marginBottom: 7,
@@ -455,14 +510,6 @@ const styles = StyleSheet.create({
      
     },
      
-     TextComponentStyle: {
-       fontSize: 17,
-      color: "#000",
-      textAlign: 'center', 
-      marginBottom: 15
-     },
-
-
     container: {
     flex: 1,
     backgroundColor:"#fff"
@@ -517,5 +564,13 @@ const styles = StyleSheet.create({
           marginBottom: 0,
           marginHorizontal: 0,
           paddingHorizontal: 10
-        }
+        },
+        smallText: {
+          color: "#01579b",
+          textAlign: 'center', 
+          fontSize: 11,
+          margin:  5,
+          marginTop: 0,
+          marginBottom: -5
+         },
     });

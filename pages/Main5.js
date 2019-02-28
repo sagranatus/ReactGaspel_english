@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -8,14 +8,21 @@ var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
 import ImagePicker from 'react-native-image-picker';
+
+import Menu from '../etc/Menu';
+import SideMenu from 'react-native-side-menu';
+
 var commentDates = new Array()
 var lectioDates = new Array()
+
 
 export default class Main5 extends Component { 
  
 constructor(props) { 
     super(props)   
-    
+    this.toggle = this.toggle.bind(this);
+
+  
     this.state = {
         Today : "",
         selectedDate: "", //  - - - 
@@ -27,10 +34,31 @@ constructor(props) {
         weekcount: 0,
         monthcount: 0,
         name: "",
-        christname: ""
+        christname: "",
+        isOpen: false,
+        selectedItem: 'About',
     }
     this.onselectDate= this.onselectDate.bind(this);
    
+  }
+  toggle() {
+    this.setState({
+      isOpen: !this.state.isOpen,
+    });
+  }
+
+  updateMenuState(isOpen) {
+    this.setState({ isOpen });
+  }
+
+  onMenuItemSelected = item =>{
+    this.setState({
+      isOpen: false,
+      selectedItem: item,
+    });
+    if(item == 'About'){
+      this.props.navigation.navigate("Main1")
+    }
   }
   
   pickImage(){
@@ -119,6 +147,7 @@ constructor(props) {
 }
 
 refreshContents(){
+  Keyboard.dismiss()
   AsyncStorage.getItem('refreshMain5', (err, result) => {
     console.log("Main5 - get AsyncStorage refresh : ", result)
     var date = new Date();
@@ -421,9 +450,11 @@ commentFunc = (commentDates) => {
 }
 
   render() {    
-    console.log("Main5 - render")   
+    const menu = <Menu onItemSelected={this.onMenuItemSelected} />;
+    console.log("Main5 - render")  
     return (this.state.initialLoading)
     ? (    
+      
         <View style={styles.loadingContainer}>
         <ActivityIndicator
           animating
@@ -435,10 +466,16 @@ commentFunc = (commentDates) => {
       )
  
     : (
-          
-          <View>
+      <SideMenu
+      menuPosition={"right"}
+      menu={menu}
+      isOpen={this.state.isOpen}
+      onChange={isOpen => this.updateMenuState(isOpen)}
+       >
+          <View style={{flex:1, backgroundColor:'#fff'}}>
+        
              <View style={{width:'100%', backgroundColor: '#F9F9F9', padding: 2, borderBottomWidth: 1, borderBottomColor: '#d8d8d8', marginBottom:10}}>  
-                <Icon style={{textAlign:'right'}} name={"navicon"} size={40} color={"#d8d8d8"} onPress={() =>  this.props.setLogout()}/>    
+                <Icon style={{textAlign:'right'}} name={"navicon"} size={40} color={"#d8d8d8"} onPress={this.toggle}/>   
             </View>   
             <NavigationEvents
             onWillFocus={payload => {
@@ -514,6 +551,7 @@ commentFunc = (commentDates) => {
 
           
         </View>
+        </SideMenu>
       )
    
     

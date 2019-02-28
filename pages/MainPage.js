@@ -12,6 +12,7 @@ import TabBarComponent from './TabBarComponent.js'
 import Main2_2 from '../containers/Main2_2Container';
 import Main3_2 from '../containers/Main3_2Container';
 import Main4_2 from '../containers/Main4_2Container';
+import GuidePage from './GuidePage';
 
 const getTabBarIcon = (navigation, focused, tintColor) => {
 
@@ -47,7 +48,8 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	Sub5: {screen: Sub5},
 	Main2_2: {screen: Main2_2},
 	Main3_2: {screen: Main3_2},
-	Main4_2: {screen: Main4_2}
+	Main4_2: {screen: Main4_2},
+	Guide: {screen: GuidePage }
 	},
 	
 	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
@@ -66,7 +68,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
     tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
     navigation={{
 			...navigation,
-			state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2')}}} 
+			state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide')}}} 
 			/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
     tabBarPosition: 'bottom'
    }

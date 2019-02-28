@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, TouchableHighlight, ActivityIndicator, AsyncStorage  } from 'react-native';
+import { StyleSheet, TextInput, View, Image, ImageBackground, Alert, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, TouchableHighlight, ActivityIndicator, AsyncStorage  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -42,7 +42,9 @@ constructor(props) {
         Comment:"",
         Commentdate:"",
         Commentupdate: false,
-        initialLoading: true
+        initialLoading: true,
+        start:false,
+        praying:false
      }
   }
 
@@ -95,7 +97,7 @@ constructor(props) {
   }
 
   refreshContents(){
-    this.setState({Commentupdate: false, Comment:""})
+    this.setState({Commentupdate: false, Comment:"", praying:false, start:false, initialLoading:true})
     const { params } = this.props.navigation.state;
     // console.log(params.otherParam)
     
@@ -363,16 +365,58 @@ constructor(props) {
                <TouchableOpacity
               activeOpacity = {0.9}
               style={{backgroundColor: '#01579b', padding: 10}}
-              onPress={() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})} 
+              onPress={() =>  this.state.Comment != "" && this.state.start == true && this.state.praying ==false ? Alert.alert(
+                '정말 끝내시겠습니까?',
+                '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                [                                 
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {text: 'OK', onPress: () => this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                ],
+                {cancelable: false},
+              )  : this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})} 
               >
               <Text style={{color:"#FFF", textAlign:'left'}}>
                   {"<"} BACK
               </Text>
           </TouchableOpacity>        
-            <View style={styles.MainContainer}> 
+          <View style={this.state.start == false && this.state.Commentupdate == false ? {} : {display:'none'}}>                       
+                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
+                  <Text style={{color:'#01579b', textAlign: 'right', fontSize: 16, marginRight:10, marginTop:20}}>간단한 독서</Text>
+                  <Text style={{color:'#01579b', textAlign: 'right', marginRight:10}}>Lectio Divina</Text>
+
+                  <Text style={{color:'#000', margin:10, lineHeight: 25}}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
+                  <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
+                
+                  <TouchableOpacity
+                    activeOpacity = {0.9}
+                    style={{backgroundColor: '#01579b', padding: 10, marginTop:20}}
+                    onPress={() =>  this.setState({start: true})} 
+                    >
+                    <Text style={{color:"#FFF", textAlign:'center'}}>
+                        START
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            <View style={this.state.start == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}> 
+           
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={{ paddingVertical: 8,
+                  paddingHorizontal: 15}}
+                  onPress={() => [this.insertComment(), this.setState({praying:true, Commentupdate: true})]} 
+              >
+                  <Text style={{color:"#000", textAlign:'right'}}>
+                      Next
+                  </Text>
+              </TouchableOpacity>
+          
                 <KeyboardAvoidingView >
-                <View style={this.state.Commentupdate == false ? {} : {display:'none'}}>
-                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절을 적어 봅시다.</Text>
+                <View>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
                     multiline = {true}
@@ -380,19 +424,63 @@ constructor(props) {
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
                     style={styles.TextInputStyleClass} />     
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10}}
-                    onPress={() => this.insertComment()} // insertComment
-                    >
-                    <Text style={{color:"#fff", textAlign:'center'}}>
-                        저장
-                    </Text>
-                  </TouchableOpacity>
                 </View>
+                </KeyboardAvoidingView>
+                <ScrollView style={{marginBottom:390}}>                     
+                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getPrevMoreGaspel()}>
+                    <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
+                </TouchableHighlight >         
+                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+               
+                <TouchableHighlight
+                style={{ justifyContent: 'center', alignItems: 'center'}}
+                underlayColor = {"#fff"}
+                onPress={() => this.getNextMoreGaspel()}>
+                    <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
+                </TouchableHighlight >     
+                <View style={{height:40}} />                  
+            </ScrollView>  
+            </View>
+            <View style={this.state.praying == true ? {} : {display:'none'}}>                 
+              <View style = {styles.container}>
+              <TouchableOpacity
+              activeOpacity={0.7}
+              style={{ paddingVertical: 8,
+                  paddingHorizontal: 15}}
+              onPress={() =>  this.setState({praying: false, start: false, Commentupdate: true}) }
+              >
+                  <Text style={{color:"#000", textAlign:'right'}}>
+                      Next
+                  </Text>
+              </TouchableOpacity>             
+              </View>  
+              <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
+                      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+          
+                      <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
+                      
+                          "{this.state.Comment}"
+                          {"\n"}{"\n"}
+                          주님 제가 이 말씀을 깊이 새기고{"\n"}
+                          하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                          {"\n"}
+                          (세번 반복한다){"\n"}
+                      </Text>                                
+                      </View>
+                  
+                  </ImageBackground>
+                  
+              </View>
 
-                <View style={this.state.Commentupdate == true ? {} : {display:'none'}}>
-                    <Text style={styles.TextQuestionStyleClass}>오늘 복음에서 가장 마음에 드는 구절</Text>
+
+              <View style={this.state.Commentupdate == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}>
+                <KeyboardAvoidingView >
+                <View>
+                    <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상할 구절은</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
                     multiline = {true}
@@ -417,7 +505,7 @@ constructor(props) {
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
-                   <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
+                    <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
                 <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
                
@@ -426,11 +514,12 @@ constructor(props) {
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >   
-                <View style={{height:40}} />                 
+                </TouchableHighlight >     
+                <View style={{height:40}} />             
             </ScrollView>  
             </View>
             </View>   
+            
         )       
   }
 }
