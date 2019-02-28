@@ -16,7 +16,16 @@ const loginReducer = (state = initialState_Login, action) => { // action에 따�
       return {
            isLogged: false,
            loginId: null
-      };        
+      };   
+    default:
+      return state;
+  }
+};
+
+const userupdateReducer = (state = {}, action) => { // action에 따라 이벤트 발생
+  switch (action.type) {
+    case 'UPDATEUSER':
+    return action.payload;
     default:
       return state;
   }
@@ -121,6 +130,6 @@ const weekend2Reducer = (state = {}, action) => { // action에 따라 이벤트 
 };
 
 export default createStore(
-  combineReducers({status:loginReducer, gaspels: gaspelReducer, lectios: lectioReducer, gaspels2: gaspel2Reducer, lectios2: lectio2Reducer, weekend: weekendReducer, weekend2: weekend2Reducer}),
+  combineReducers({status:loginReducer, results:userupdateReducer, gaspels: gaspelReducer, lectios: lectioReducer, gaspels2: gaspel2Reducer, lectios2: lectio2Reducer, weekend: weekendReducer, weekend2: weekend2Reducer}),
   applyMiddleware(promiseMiddleware)
 );

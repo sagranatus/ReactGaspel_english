@@ -6,6 +6,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' });
 
+var normalSize;
+var largeSize;
 
 export default class Main2 extends Component { 
 
@@ -30,6 +32,16 @@ constructor(props) {
   }
 
   componentWillMount(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal"){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else{
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }
+    })
+    
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -427,7 +439,7 @@ constructor(props) {
         </View>
                 <KeyboardAvoidingView >
                 <View>
-                    <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
+                    <Text style={[styles.TextQuestionStyleClass, normalSize]}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
                     multiline = {true}
@@ -438,21 +450,22 @@ constructor(props) {
                 </View>
                 </KeyboardAvoidingView>
                 <ScrollView style={{marginBottom:320}}>                     
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+                <Text style= {[styles.TextComponentStyle, largeSize]}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
                     <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+                <Text style=  {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >                 
+                </TouchableHighlight >        
+                <View style={{height:40}} />                   
             </ScrollView>  
             </View>
 
@@ -511,21 +524,22 @@ constructor(props) {
                 </View>
                 </KeyboardAvoidingView>
                 <ScrollView style={{marginBottom:320}}>                     
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+                <Text style= {[styles.TextComponentStyle, largeSize]}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
                     <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+                <Text style= {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >                 
+                </TouchableHighlight >  
+                <View style={{height:40}} />                         
             </ScrollView>  
             </View>
             </View>   

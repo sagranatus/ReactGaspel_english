@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-picker'; 
+import RNFetchBlob from 'rn-fetch-blob';
 
 import Menu from '../etc/Menu';
 import SideMenu from 'react-native-side-menu';
@@ -29,7 +30,7 @@ constructor(props) {
         selectedDate_format: "",// - -
         onesentence: "",      
         initialLoading: true,
-        avatarSource: "",
+        avatarSource:  {uri: 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg'},
         todaycount: 0,
         weekcount: 0,
         monthcount: 0,
@@ -56,8 +57,12 @@ constructor(props) {
       isOpen: false,
       selectedItem: item,
     });
-    if(item == 'About'){
-      this.props.navigation.navigate("Main1")
+    if(item == 'Setting'){
+      this.props.navigation.navigate("Setting")
+    }else if(item == 'Logout'){
+      this.props.setLogout()
+    }else if(item == 'Profile'){
+      this.props.navigation.navigate("Profile")
     }
   }
   
@@ -85,22 +90,45 @@ constructor(props) {
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
         console.log("source", response.uri)
-        try {
-          AsyncStorage.setItem('profile', response.uri);
-        } catch (error) {
-          console.error('AsyncStorage error: ' + error.message);
-        }
+        
         this.setState({
           avatarSource: source,
+          data: response.data,
+          Image_TAG: this.props.status.loginId
         });
+        this.uploadImageToServer()
       }
     });
   }
+  uploadImageToServer = () => {
+ 
+    RNFetchBlob.fetch('POST', 'https://sssagranatus.cafe24.com/servertest/upload_image.php', {
+      Authorization: "Bearer access-token",
+      otherHeader: "foo",
+      'Content-Type': 'multipart/form-data',
+    }, [
+        { name: 'image', filename: 'image.png', type: 'image/png', data: this.state.data },
+        { name: 'image_tag', data: this.state.Image_TAG }
+      ]).then((resp) => {
+ 
+        var tempMSG = resp.data;
+ 
+        tempMSG = tempMSG.replace(/^"|"$/g, '');
+        console.log(tempMSG)
+      //  Alert.alert(tempMSG);
+ 
+      }).catch((err) => {
+        console.log(err)
+        // ...
+      })
+ 
+  }
+ 
   componentWillMount(){
     AsyncStorage.getItem('profile', (err, result) => {
       console.log("Main1 - get AsyncStorage today : ", result)
       this.setState({
-        avatarSource:  { uri: result }
+      //  avatarSource:  { uri: result }
       })
       
     })
@@ -573,6 +601,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex:1,
     margin: 10,
+    borderWidth: 0.5,
+    borderColor: '#d8d8d8'
     },
      
     TextInputStyleClass: {     

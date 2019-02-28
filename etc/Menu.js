@@ -7,22 +7,22 @@ import {
   View,
   Image,
   Text,
+  AsyncStorage
 } from 'react-native';
 
 const window = Dimensions.get('window');
-const uri = 'https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png';
-
 const styles = StyleSheet.create({
   menu: {
     flex: 1,
     width: window.width,
     height: window.height,
-    backgroundColor: 'gray',
-    padding: 20,
+    backgroundColor: '#fff',
+    borderWidth: 0.5,
+    borderColor: '#d8d8d8'
   },
   avatarContainer: {
     marginBottom: 20,
-    marginTop: 20,
+
   },
   avatar: {
     width: 48,
@@ -31,40 +31,53 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    position: 'absolute',
-    left: 70,
-    top: 20,
+    marginTop:7,
+    paddingBottom:9,
+    paddingLeft: 20,
+    borderBottomWidth: 0.5,
+    borderColor: '#d8d8d8'
   },
   item: {
     fontSize: 14,
     fontWeight: '300',
-    paddingTop: 5,
+    paddingTop: 25,
+    paddingLeft: 20,
   },
 });
-
+var name, christname;
 export default function Menu({ onItemSelected }) {
+  AsyncStorage.getItem('login_name', (err, result) => {
+    console.log("FirstPage - login_name : ", result)
+    name = result;
+  
+  })
+  AsyncStorage.getItem('login_christ_name', (err, result) => {
+    console.log("FirstPage - login_chirst_name : ", result)
+    christname = result
+  })
   return (
     <ScrollView scrollsToTop={false} style={styles.menu}>
-      <View style={styles.avatarContainer}>
-        <Image
-          style={styles.avatar}
-          source={{ uri }}
-        />
-        <Text style={styles.name}>Your name</Text>
-      </View>
+          
+        <Text style={styles.name}>{name} {christname}</Text>
 
       <Text
-        onPress={() => onItemSelected('About')}
+        onPress={() => onItemSelected('Setting')}
         style={styles.item}
       >
-        About
+        환경설정
       </Text>
 
       <Text
-        onPress={() => onItemSelected('Contacts')}
+        onPress={() => onItemSelected('Profile')}
         style={styles.item}
       >
-        Contacts
+        프로필 수정
+      </Text>
+      <Text
+        onPress={() => onItemSelected('Logout')}
+        style={styles.item}
+      >
+        로그아웃
       </Text>
     </ScrollView>
   );

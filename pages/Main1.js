@@ -34,6 +34,8 @@ const alarmNotifData = {
   data: { foo: "bar" },
 };
 
+var normalSize;
+var largeSize;
 export default class Main1 extends Component { 
 
 constructor(props) { 
@@ -92,14 +94,17 @@ constructor(props) {
   //  ReactNativeAN.removeFiredNotification("12345")
    // ReactNativeAN.cancelAllNotifications()
    // ReactNativeAN.sendNotification(alarmNotifData);
-    try {
-      AsyncStorage.setItem('textSize', 'normal');
-    } catch (error) {
-      console.error('AsyncStorage error: ' + error.message);
-    }
+   
     AsyncStorage.getItem('textSize', (err, result) => {
-      if(result == "normal"){
-        this.setState({textSize:"normal"})
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
       }
     })
     
@@ -180,6 +185,20 @@ constructor(props) {
   }
 
    setChange(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
+
     this.setState({initialLoading:true})
     var date = new Date();
     var year = date.getFullYear();
@@ -254,7 +273,7 @@ constructor(props) {
       this.setState({weekend: true})
     }
     db.transaction(tx => {
-      tx.executeSql(
+    /*  tx.executeSql(
         'SELECT * FROM comment where date = ? and uid = ?',
         [today, loginId],
         (tx, results) => {
@@ -289,7 +308,7 @@ constructor(props) {
                 })                   
             }
         }
-        ),
+        ), */
         tx.executeSql(
           'SELECT * FROM weekend where date = ? and uid = ?',
           [weekenddate,loginId],
@@ -299,16 +318,18 @@ constructor(props) {
               if (len > 0) {                  
                   console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
-                      mysentence : results.rows.item(0).mysentence
+                      mysentence : results.rows.item(0).mysentence,
+                      initialLoading:false
                   })
               } else {               
                   this.setState({
-                      mysentence : ""
+                      mysentence : "",
+                      initialLoading:false
                   })                   
               }
           }
-          ),
-          tx.executeSql(
+          )
+      /*    tx.executeSql(
             'SELECT * FROM lectio where date = ? and uid = ?',
             [weekenddate,loginId],
             (tx, results) => {
@@ -327,7 +348,7 @@ constructor(props) {
                     })                   
                 }
             }
-            );
+            ); */
     });    
      
   }
@@ -384,58 +405,11 @@ constructor(props) {
                   </View>
                   
                 
-                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: '2%', marginBottom:'2%'}}>                  
-                      <Text style={this.state.textSize == 'normal' ? [{fontSize: globalStyles.SmallFont[0]}, styles.TextStyle] : [{fontSize: globalStyles.SmallFont[1]}]}>{this.state.todayDate}</Text>                         
-                      <Text style={this.state.textSize == 'normal' ? [{fontSize: globalStyles.MediumFont[0]}, styles.TextStyle] : [{fontSize: globalStyles.MediumFont[1]}]}>{this.state.sentence}</Text>   
+                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: '6%', marginBottom:'2%'}}>                  
+                      <Text style={[{fontSize:14}, styles.TextStyle]}>{this.state.todayDate}</Text>                         
+                      <Text style={[normalSize, styles.TextStyle]}>{this.state.sentence}</Text>   
                   </View>
-                  <View style={this.state.js2!="" || this.state.weekend ? {display:'none'} :{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, marginBottom: 10}}>
-           
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={this.state.comment == ""  ?{backgroundColor: '#01579b', padding: 10, width:'49%', marginRight:'2%'} : {display:'none'}}
-                    onPress={this.state.comment == "" ? () =>  this.props.navigation.navigate('Main2') : null}
-                    >
-                    <View style={this.state.comment != "" || this.state.js2 != "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                          간단한독서하기
-                      </Text>
-                    </View>                   
-                  </TouchableOpacity>
-                
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={(this.state.js2 == "" && this.state.comment == "") ? {backgroundColor: '#01579b', padding: 10, width:'49%'} : {display:'none'}}
-                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('Main3')  : null} // insertComment
-                    >
-                    <View style={this.state.js2 != "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                          거룩한독서하기
-                      </Text>
-                    </View>
-                  </TouchableOpacity>        
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={(this.state.js2 == "" && this.state.comment != "") ?{backgroundColor: '#01579b', padding: 10, width:'99%'} : {display:'none'}}
-                    onPress={this.state.js2 == "" ? () => this.props.navigation.navigate('Main3')  : null} // insertComment
-                    >
-                    <View style={this.state.js2 != "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                          거룩한독서하기
-                      </Text>
-                    </View>
-                  </TouchableOpacity>   
-                  </View>
-                  
-                  
-                            
-                  <View style={this.state.comment == "" || this.state.weekend ? {display:'none'} : {}}>
-                    <Text style={styles.smallText}>간단한 독서</Text>
-                    <Text style={[styles.TextResultStyleClass, {}]}>{this.state.comment}</Text>
-                  </View>
-                  <View style={this.state.js2 == "" || this.state.weekend ? {display:'none'} : {}}>
-                    <Text style={styles.smallText}>거룩한 독서</Text>
-                    <Text style={styles.TextResultStyleClass}>"{this.state.js2}"</Text>
-                  </View>
+
                   <View style={this.state.weekend ? {marginTop:30, marginBottom:30} : {}}>
                   <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -444,16 +418,16 @@ constructor(props) {
                     >        
                     <View style={this.state.mysentence != "" ? {display:'none'} : {}}>
                       <Text style={{color:"#fff", textAlign:'center'}}>
-                          주일의독서하기
+                          주일의독서하러가기
                       </Text>
                     </View>
                 
                   </TouchableOpacity>
                   </View>
+
                   <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
-                  <Text style={styles.smallText}>주일의 독서</Text>
-                  <Text style={[styles.TextResultStyleClass, {}]}>"{this.state.js2_weekend}"</Text>
-                  <Text style={[styles.TextResultStyleClass, {marginTop:-10}]}>{this.state.mysentence}</Text>                    
+                  <Text style={styles.smallText}>한주간 묵상할 구절</Text>
+                  <Text style={[styles.TextResultStyleClass]}>{this.state.mysentence}</Text>                    
                   </View>
                   <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -461,7 +435,7 @@ constructor(props) {
                     onPress={() => this.props.navigation.navigate('Guide')} // insertComment
                     >        
                     <View>
-                      <Text style={{color:"#fff", textAlign:'center',}}>
+                      <Text style={[{color:"#fff", textAlign:'center',}, {fontSize:14}]}>
                           오늘의 복음 가이드 보러가기
                       </Text>
                     </View>

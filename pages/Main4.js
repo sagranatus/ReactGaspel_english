@@ -90,8 +90,7 @@ moveFinal(){
                 console.log('Main4 - lectio data updated : ', "failed")   
             }
             }
-        );
-
+        ),
         tx.executeSql(
             'UPDATE weekend set mysentence=?, mythought=?, question=?, answer=? where uid=? and date=?',
             [mysentence, mythought, question, answer, loginId, date],
