@@ -4,6 +4,7 @@ import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
 import MainPage from './MainPage'
+import ReactNativeAN from 'react-native-alarm-notification';
 
 export default class FirstPage extends Component { 
 
@@ -52,6 +53,8 @@ constructor(props) {
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
 
+  
+  
   componentWillMount(){
   // 로그인 상태값 가져오기
   AsyncStorage.getItem('login_id', (err, result) => {

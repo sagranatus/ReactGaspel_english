@@ -9,8 +9,11 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
-const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
 import DateTimePicker from 'react-native-modal-datetime-picker';
+
+var PushNotification = require('react-native-push-notification');
+
+const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
 const alarmNotifData = {
   id: "12345",                                  // Required
   title: "거룩한 독서를 할 시간입니다.",               // Required
@@ -35,6 +38,8 @@ const alarmNotifData = {
   data: { foo: "bar" },
 };
 
+
+
 var textSize;
 AsyncStorage.getItem('textSize', (err, result) => {
  
@@ -53,6 +58,8 @@ constructor(props) {
     this.state = {
       time: "",
       isDateTimePickerVisible: false,
+      time2: "",
+      isDateTimePickerVisible2: false,
       fireDate: '',
 			update: '',
 			futureFireDate: '0'
@@ -63,11 +70,64 @@ constructor(props) {
   }
   
   setAlarm = () => {
+    var date = new Date()
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    console.log(month+'/'+day+'/'+year+' '+this.state.time)
+    if(new Date(month+'/'+day+'/'+year+' '+this.state.time) - new Date() < 0){
+      day = date.getDate()+1;
+    }
+    PushNotification.localNotificationSchedule({
+      id: '123',
+      //... You can use all the options from localNotifications
+      message: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+      date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
+      vibrate: true, // (optional) default: true
+      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+      playSound: true, // (optional) default: true
+      repeatType: 'day'
+    });
+
+	//	const { fireDate } = this.state;
+	//	const details  = { ...alarmNotifData, fire_date: fireDate };
+	//	console.log(`alarm set: ${fireDate}`);
+	//	this.setState({ update: `alarm set: ${fireDate}` });
+	//	ReactNativeAN.scheduleAlarm(details);
+  };
+  
+  
+  setAlarm2 = () => {
+    var date = new Date()
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+      var lastday = date.getDate() - (date.getDay() - 1) + 6;
+      console.log(lastday)
+      date = new Date(date.setDate(lastday));
+  }    
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    console.log(month+'/'+day+'/'+year+' '+this.state.time2)
+    if(new Date(month+'/'+day+'/'+year+' '+this.state.time2) - new Date() < 0){
+      day = date.getDate()+7;
+    }
+    PushNotification.localNotificationSchedule({
+      id: '123',
+      //... You can use all the options from localNotifications
+      message: "주일의 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+      date: new Date(month+'/'+day+'/'+year+' '+this.state.time2), // in 60 secs
+      vibrate: true, // (optional) default: true
+      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+      playSound: true, // (optional) default: true
+      soundName:'alarm.mp3',
+      repeatType: 'week'
+    });
+
 		const { fireDate } = this.state;
 		const details  = { ...alarmNotifData, fire_date: fireDate };
 		console.log(`alarm set: ${fireDate}`);
 		this.setState({ update: `alarm set: ${fireDate}` });
-		ReactNativeAN.scheduleAlarm(details);
+	//	ReactNativeAN.scheduleAlarm(details);
 	};
 	stopAlarm = () => {
 		this.setState({ update: '' });
@@ -89,7 +149,13 @@ constructor(props) {
   
 
   componentWillMount(){
-   
+    AsyncStorage.getItem('alarm1', (err, result) => {
+      this.setState({time:result})
+    })
+
+    AsyncStorage.getItem('alarm2', (err, result) => {
+      this.setState({time2:result})
+    })
   }
  
   componentWillReceiveProps(nextProps){
@@ -103,14 +169,70 @@ constructor(props) {
   _handleDatePicked = (date) => {
     console.log('A date has been picked: ', date);
    // alert(date.getHours() +"시 "+ date.getMinutes() +"분")
-    this.setState({time:date.getHours() +":"+ date.getMinutes() +":00",  fireDate:"01-03-2019 "+date.getHours() +":"+ date.getMinutes() +":00"})
+
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   var hour = date.getHours()
+   var minutes = date.getMinutes()
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+   if(hour < 10){
+    hour = "0"+hour
+  }
+  if(minutes < 10){
+    minutes = "0"+minutes
+  }
+  console.log(day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00")
+  this.setState({time:hour +":"+ minutes +":00",  fireDate:day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00"})
     this.setAlarm()
     try {
-      AsyncStorage.setItem('alarmTime', date.getHours() +":"+ date.getMinutes() +":00");      
+      AsyncStorage.setItem('alarm1', hour +":"+ minutes +":00");      
     } catch (error) {
       console.error('AsyncStorage error: ' + error.message);
     }
     this._hideDateTimePicker();
+  };
+
+
+  _showDateTimePicker2 = () => this.setState({ isDateTimePickerVisible2: true });
+
+  _hideDateTimePicker2 = () => this.setState({ isDateTimePickerVisible2: false });
+
+  _handleDatePicked2 = (date) => {
+    console.log('A date has been picked: ', date);
+   // alert(date.getHours() +"시 "+ date.getMinutes() +"분")
+
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   var hour = date.getHours()
+   var minutes = date.getMinutes()
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+   if(hour < 10){
+    hour = "0"+hour
+  }
+  if(minutes < 10){
+    minutes = "0"+minutes
+  }
+  console.log(day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00")
+  this.setState({time2:hour +":"+ minutes +":00"})
+    this.setAlarm2()    
+    try {
+      AsyncStorage.setItem('alarm2', hour +":"+ minutes +":00");      
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+    this._hideDateTimePicker2();
   };
 
   setChange(selectedValues){    
@@ -166,7 +288,7 @@ constructor(props) {
                         {"<"} BACK
                     </Text>
                 </TouchableOpacity>  
-                <Text style={{margin:20}}>글씨크기</Text>
+                <Text style={{margin:20, fontSize:16, textAlign:'center'}}>글씨크기 선택</Text>
                
         <SelectMultipleGroupButton
           multiple={false}
@@ -177,15 +299,18 @@ constructor(props) {
           defaultSelectedIndexes={textSize}
           buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
           highLightStyle={{
-            borderColor: 'green', textColor: 'green', backgroundColor: '#fff',
-            borderTintColor: 'green', textTintColor: 'white', backgroundTintColor: 'green'
+            borderColor: '#01579b', textColor: '#01579b', backgroundColor: '#fff',
+            borderTintColor: '#01579b', textTintColor: 'white', backgroundTintColor: '#01579b'
           }}
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
 
-        <TouchableOpacity onPress={this._showDateTimePicker}>
-          <Text style={{margin:20}}>주중 렉시오 디비나 알람 세팅 클릭</Text>
+        <TouchableOpacity 
+         style={[styles.Button, {marginTop:20}]}
+        onPress={this._showDateTimePicker}>
+          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>거룩한독서(평일) 알람 세팅 클릭</Text>         
         </TouchableOpacity>
+        <Text style={{margin:2, fontSize:14}}>* 오전에 거룩한 독서를 하면 하루동안 하느님의 말씀을 가지고 평온히 지낼 수 있습니다.</Text>
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this._handleDatePicked}
@@ -195,7 +320,24 @@ constructor(props) {
           datePickerModeAndroid	={'spinner'}
         />
          <Text style={{margin:20}}>알람시간 : {this.state.time}</Text>
-            </View>
+
+
+         <TouchableOpacity 
+        style={[styles.Button, {marginTop:20}]}
+        onPress={this._showDateTimePicker2}>
+          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>주일의독서 알람 세팅 클릭</Text>         
+        </TouchableOpacity>
+        <Text style={{margin:2, fontSize:14}}>* 일요일 밤에 주일의독서를 하면 한주간 말씀을 묵상할 수 있습니다.</Text>
+        <DateTimePicker
+          isVisible={this.state.isDateTimePickerVisible2}
+          onConfirm={this._handleDatePicked2}
+          onCancel={this._hideDateTimePicker2}
+          mode={'time'}
+          is24Hour={false}
+          datePickerModeAndroid	={'spinner'}
+        />
+         <Text style={{margin:20}}>알람시간 : {this.state.time2}</Text>
+      </View>
         )
        
   }
@@ -234,52 +376,17 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       flexDirection: 'row',
     },
-    button: {
-      margin: 3,
-      width: 15,
-      height: 15,
-      opacity: 0.9,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    buttonSelected: {
-      opacity: 1,
-      color: 'red',
-    },
-    customSlide: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    customImage: {
-      flex:1,
-      width: '100%',
-      height: 80,
-      resizeMode: 'contain'
-      
-    },
-    TextResultStyleClass: { 
-      textAlign: 'center',
-      color: "#000",
-      margin:5,
-      marginBottom: 7,
-       fontSize:14 
+    Button:{
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginBottom:5, 
+      width:'100%'},
+    smallText: {
+      color: "#01579b",
+      textAlign: 'center', 
+      fontSize: 11,
+      margin:  5,
+      marginTop: 0,
+      marginBottom: -5
       },
-      loadingContainer: {
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-          marginTop: 0,
-          paddingTop: 20,
-          marginBottom: 0,
-          marginHorizontal: 0,
-          paddingHorizontal: 10
-        },
-        smallText: {
-          color: "#01579b",
-          textAlign: 'center', 
-          fontSize: 11,
-          margin:  5,
-          marginTop: 0,
-          marginBottom: -5
-         },
     });

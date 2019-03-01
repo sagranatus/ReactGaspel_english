@@ -12,7 +12,29 @@ import ReactNativeAN from 'react-native-alarm-notification';
 
 var normalSize;
 var largeSize;
+var date = new Date();
+const alarmNotifData = {
+  id: date,                                  // Required
+  title: "거룩한 독서를 할 시간입니다.",               // Required
+  message: "주님의 말씀을 듣는 시간입니다. 놓치지 마세요.",           // Required
+  channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
+  ticker: "My Notification Ticker",
+  auto_cancel: true,                            // default: true
+  vibrate: true,
+  vibration: 100,                               // default: 100, no vibration if vibrate: false
+  small_icon: "ic_launcher",                    // Required
+  large_icon: "ic_launcher",
+  play_sound: true,
+  sound_name: null,                             // Plays custom notification ringtone if sound_name: null
+  color: "red",
+  schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
+  tag: 'some_tag'  ,                  // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
 
+  // You can add any additional data that is important for the notification
+  // It will be added to the PendingIntent along with the rest of the bundle.
+  // e.g.
+  data: { foo: "bar" },
+};
 export default class Main1 extends Component { 
 
 constructor(props) { 
@@ -69,9 +91,7 @@ constructor(props) {
   }
 
   componentWillMount(){
-    ReactNativeAN.stopAlarm();
-
-  //  ReactNativeAN.removeAllFiredNotifications()
+     //  ReactNativeAN.removeAllFiredNotifications()
   //  ReactNativeAN.removeFiredNotification("12345")
    // ReactNativeAN.cancelAllNotifications()
    // ReactNativeAN.sendNotification(alarmNotifData);
@@ -165,11 +185,7 @@ constructor(props) {
       this.getData(changed)  
   }
 
-   setChange(){
-    ReactNativeAN.stopAlarm();
-    AsyncStorage.getItem('alarmTime', (err, result) => {
-      console.log("alarmTime", result)
-    })
+   setChange(){  
     AsyncStorage.getItem('textSize', (err, result) => {
 
       if(result == "normal" || result == null){
@@ -360,9 +376,31 @@ constructor(props) {
     var todayLabel = week[date.getDay()];        
     return todayLabel;
 }
-  render() {
+setAlarm = () => {
+  AsyncStorage.getItem('alarmTime', (err, result) => {
+    console.log("alarmTime", result)
+    if(result !== null){
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1
+      var day = date.getDate()+1;
+      if(month < 10){
+          month = "0"+month;
+      }
+      if(day < 10){
+          day = "0"+day;
+      } 
+      const details  = { ...alarmNotifData, fire_date: day+"-"+month+"-"+year+" "+result };     
+      ReactNativeAN.scheduleAlarm(details);
+    }
+  })
+
+};
+
+  render() {    
+   // ReactNativeAN.stopAlarm();    
+    //this.setAlarm()
     
-    ReactNativeAN.stopAlarm();
     return (this.state.initialLoading)
     ? (    
 
