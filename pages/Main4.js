@@ -6,6 +6,9 @@ import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
+var normalSize;
+var largeSize;
+
 export default class Main4 extends Component { 
 constructor(props) { 
     super(props)      
@@ -194,6 +197,18 @@ transitionToNextPanel(nextIndex){
 
 
   componentWillMount(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
    // var date = new Date(2019, 1, 10, 14, 52, 10);
     var date = new Date()
     console.log(date.getDay())
@@ -376,6 +391,19 @@ transitionToNextPanel(nextIndex){
   }
 
   setChange(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
+
     // 이번주 일요일 계산
     var date = new Date()
     console.log(date)
@@ -399,6 +427,7 @@ transitionToNextPanel(nextIndex){
         console.log("Main4 - get AsyncStorage thisweekend : ", result)
         if(result == todaydate){
           console.log("thisweekend is same")
+          this.setState({reload:true})
         }else{
           console.log("thisweekend is different")    
             // 이번주일요일 날짜를 설정 
@@ -550,8 +579,7 @@ transitionToNextPanel(nextIndex){
                     moveNext={this.moveNext}
                     moveFinal={this.moveFinal}
                 />
-               <KeyboardAvoidingView style={{height:130}}>                  
-
+               <KeyboardAvoidingView style={{height:150}}>  
                     <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                     <TextInput
@@ -561,7 +589,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={bg1 => this.setState({bg1})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass}  />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                           
                     </View>
 
                     <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
@@ -573,7 +601,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={bg2 => this.setState({bg2})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                                  
                     </View>
 
                     <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
@@ -585,7 +613,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={bg3 => this.setState({bg3})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                                   
                     </View>
 
                     <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
@@ -597,7 +625,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={sum1 => this.setState({sum1})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                                 
                     </View>
 
                     <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
@@ -609,7 +637,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={sum2 => this.setState({sum2})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                               
                     </View>
 
                     <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
@@ -621,7 +649,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={js1 => this.setState({js1})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                                   
                     </View>
                     
                     <View style={(this.state.currentIndex == 6 && this.state.question != null) ? {} : {display:'none'}}>
@@ -633,7 +661,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={answer => this.setState({answer})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                               
                         </View>
 
                     <View style={(this.state.currentIndex == 7 && this.state.question != null) || (this.state.currentIndex == 6 && this.state.question == null) ? {} : {display:'none'}}>
@@ -645,7 +673,7 @@ transitionToNextPanel(nextIndex){
                     onChangeText={js2 => this.setState({js2})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
+                    style={[styles.TextInputStyleClass, normalSize]}  />                           
                     </View>
 
                     <View style={(this.state.currentIndex == 8 && this.state.question != null) || (this.state.currentIndex == 7 && this.state.question == null) ? {} : {display:'none'}}>
@@ -657,28 +685,25 @@ transitionToNextPanel(nextIndex){
                     onChangeText={mysentence => this.setState({mysentence})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />                           
-                    </View>      
-                    
+                    style={[styles.TextInputStyleClass, normalSize]}  />                                   
+                    </View>                          
                 </KeyboardAvoidingView>
 
-             
-                <ScrollView style={{marginBottom:230}}>              
-                        <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
-                        underlayColor = {"#fff"}
-                        onPress={() => this.getPrevMoreGaspel()}>
-                            <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
-                        </TouchableHighlight >                                       
-                        <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-                        <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
-                        underlayColor = {"#fff"}
-                        onPress={() => this.getNextMoreGaspel()}>
-                            <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                        </TouchableHighlight >
-                                        
-                    </ScrollView>  
+                <ScrollView style={{marginBottom:230, marginTop:10}}>              
+                  <TouchableHighlight
+                  style={{ justifyContent: 'center', alignItems: 'center'}}
+                  underlayColor = {"#fff"}
+                  onPress={() => this.getPrevMoreGaspel()}>
+                      <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
+                  </TouchableHighlight >                                       
+                  <Text style= {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
+                  <TouchableHighlight
+                  style={{ justifyContent: 'center', alignItems: 'center'}}
+                  underlayColor = {"#fff"}
+                  onPress={() => this.getNextMoreGaspel()}>
+                      <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
+                  </TouchableHighlight >                                      
+                </ScrollView>  
             </View>
             )
          :
@@ -689,27 +714,27 @@ transitionToNextPanel(nextIndex){
                         this.setChange();
                     }}
                     />
-                <Text style={{color:'#01579b', textAlign: 'center', fontSize: 16, marginTop: 30, marginBottom: 20}}>{this.state.Sentence}</Text> 
+                <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
-                <Text  style={styles.TextResultStyleClass}>{this.state.bg1}</Text>   
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
-                <Text style={styles.TextResultStyleClass}>{this.state.bg2}</Text>   
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg2}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>배경시간 혹은 상황은?</Text>
-                <Text style={styles.TextResultStyleClass}>{this.state.bg3}</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg3}</Text>
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
-                <Text style={styles.TextResultStyleClass}>{this.state.sum1}</Text>  
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum1}</Text>  
                 <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
-                <Text style={styles.TextResultStyleClass}>{this.state.sum2}</Text>   
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum2}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>                
-                <Text style={styles.TextResultStyleClass}>{this.state.js1}</Text>   
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
                 <View style={this.state.question != null ? {} : {display:'none'}}>
-                <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
-                <Text style={styles.TextResultStyleClass}>{this.state.answer}</Text>  
+                  <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
+                  <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.answer}</Text>  
                 </View>
                 <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
-                <Text style={styles.TextResultStyleClass}>{this.state.js2}</Text>        
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
                 <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
-                <Text style={styles.TextResultStyleClass}>{this.state.mysentence}</Text>     
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.mysentence}</Text>     
 
                 <TouchableOpacity
                     activeOpacity = {0.9}
@@ -734,15 +759,15 @@ transitionToNextPanel(nextIndex){
                 />
                  <View style={this.state.start == false ? {} : {display:'none'}}>                 
                  <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />       
-                   <Text style={{color:'#01579b', textAlign: 'right', fontSize: 16, marginRight:10, marginTop:20}}>주일의 독서</Text>
-                   <Text style={{color:'#01579b', textAlign: 'right', marginRight:10}}>Lectio Divina(dies dominica)</Text>
+                   <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>주일의 독서</Text>
+                   <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
 
-                   <Text style={{color:'#000', margin:10, lineHeight: 25}}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
+                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
                    <Image source={require('../resources/weekend_img2.png')} style={{width: '100%', height: 100}} />  
                  
                    <TouchableOpacity
                     activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10, marginTop:20}}
+                    style={styles.Button}
                     onPress={() =>  this.setState({start: true})} 
                     >
                     <Text style={{color:"#FFF", textAlign:'center'}}>
@@ -765,26 +790,23 @@ transitionToNextPanel(nextIndex){
                     </TouchableOpacity>             
                     </View>  
                     <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
-                            <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
-                
-                            <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
-                            주님께서 나에게 말씀하셨다.{"\n"}
-                            "{this.state.mysentence}"{"\n"}
-                            "{this.state.js2}"
-                                {"\n"}{"\n"}
-                                주님 제가 이 말씀을 깊이 새기고{"\n"}
-                                하루를 살아가도록 이끄소서. 아멘.{"\n"}
-                                {"\n"}
-                                (세번 반복한다){"\n"}
-                            </Text>                                
-                            </View>
-                        
-                    </ImageBackground>         
-                  
+                      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+          
+                      <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                      주님께서 나에게 말씀하셨다.{"\n"}
+                      "{this.state.mysentence}"{"\n"}
+                      "{this.state.js2}"
+                          {"\n"}{"\n"}
+                          주님 제가 이 말씀을 깊이 새기고{"\n"}
+                          하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                          {"\n"}
+                          (세번 반복한다){"\n"}
+                      </Text>                                
+                      </View>                        
+                    </ImageBackground> 
                 </View>
 
-                <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>                   
-
+                <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>       
                     <View style={this.state.start == true ? {} : {display:'none'}} >
                             <TouchableOpacity
                             activeOpacity = {0.9}
@@ -823,14 +845,14 @@ transitionToNextPanel(nextIndex){
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
                         <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
             
-                        <Text style={{textAlign:'center', color:'#fff', paddingTop:'30%', lineHeight: 25, fontSize:15}}> 빛이신 우리 아버지 하느님, {"\n"}
+                        <Text style={[{textAlign:'center', color:'#fff', paddingTop:'30%', lineHeight: 25}, normalSize]}> 빛이신 우리 아버지 하느님, {"\n"}
                              하느님께서는 세상에 아드님을 보내셨으니, {"\n"}
                              그분은 우리 사람들에게 보여주시기 위해 몸이 되신 {"\n"}
                              말씀이시옵니다.{"\n"}
                              이제 주님의 성령을 제 위에 보내시어{"\n"}
                              주님께로부터 오는 이 말씀 안에서 {"\n"}
                              예수 그리스도를 만나뵈옵게 하소서.{"\n"}
-                             그리고 그분은 더 깊이 알게 해주시어, {"\n"}
+                             그리고 그분을 더 깊이 알게 해주시어, {"\n"}
                              그분을 더 깊이 사랑할 수 있게 해 주시고,{"\n"}
                              주님 나라의 참된 행복에 이르게 하소서.{"\n"}
                              아멘.{"\n"}</Text>          
@@ -841,11 +863,11 @@ transitionToNextPanel(nextIndex){
                         </View>
 
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다</Text> 
-                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>{this.state.background}</Text>                                             
+                          <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다</Text> 
+                          <Text style={[{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}, normalSize]}>{this.state.background}</Text>                                             
                         </View>
                         <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
+                         <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
                         </View>
 
                         <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
@@ -857,7 +879,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={bg1 => this.setState({bg1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass}  />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                           
                         </View>
 
                         <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
@@ -869,7 +891,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={bg2 => this.setState({bg2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                         
                         </View>
 
                         <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
@@ -881,7 +903,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={bg3 => this.setState({bg3})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                             
                         </View>
 
                         <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
@@ -893,7 +915,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={sum1 => this.setState({sum1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                            
                         </View>
 
                         <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
@@ -905,7 +927,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={sum2 => this.setState({sum2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                            
                         </View>
 
                         <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
@@ -917,7 +939,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={js1 => this.setState({js1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                            
                         </View>
 
                         <View style={(this.state.currentIndex == 9 && this.state.question != null) ? {} : {display:'none'}}>
@@ -929,7 +951,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={answer => this.setState({answer})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                             
                         </View>
 
                         <View style={(this.state.currentIndex == 10 && this.state.question!= null) || (this.state.currentIndex==9 && this.state.question == null) ? {} : {display:'none'}}>
@@ -941,7 +963,7 @@ transitionToNextPanel(nextIndex){
                         onChangeText={js2 => this.setState({js2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                          
                         </View>
 
                         <View style={(this.state.currentIndex == 11 && this.state.question!= null) || (this.state.currentIndex==10 && this.state.question == null) ? {} : {display:'none'}}>
@@ -953,28 +975,26 @@ transitionToNextPanel(nextIndex){
                         onChangeText={mysentence => this.setState({mysentence})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={styles.TextInputStyleClass} />                           
+                        style={[styles.TextInputStyleClass, normalSize]}  />                           
                         </View>      
                         
                     </KeyboardAvoidingView>
 
                  
-                    <ScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:430}}>         
-                   
+                    <ScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:430, marginTop:10}}>         
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
                            <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >     
-                        <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
+                        <Text style={[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                         <TouchableHighlight
                         style={{ justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
                              <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                        </TouchableHighlight >
-                                        
+                        </TouchableHighlight >                                        
                         <View style={{height:90}} />    
                     </ScrollView>  
                 </View>
@@ -1000,58 +1020,57 @@ const styles = StyleSheet.create({
     MainContainer :{  
         marginBottom:150
     },
-          
-     TextComponentStyle: {
-       fontSize: 17,
+    DescriptionComponentStyle: {
+      fontSize: 15,
+      lineHeight:25,
+      padding:1,
       color: "#000",
-      textAlign: 'center'
-     },
-     DescriptionComponentStyle: {
-        fontSize: 15,
-        lineHeight:25,
-        padding:1,
-        color: "#000",
-        marginBottom: 1
-     },
-
-     TextInputStyleClass: { 
+      marginBottom: 1
+    },
+    TextInputStyleClass: { 
+      textAlign: 'center',
+      margin:5,
+      marginBottom: 7,
+      height: 90,
+      borderWidth: 1,
+        borderColor: '#01579b',
+        borderRadius: 5 
+      },
+    TextResultStyleClass: { 
         textAlign: 'center',
+        color: "#000",
         margin:5,
         marginBottom: 7,
-        height: 90,
         borderWidth: 1,
-         borderColor: '#01579b',
-         borderRadius: 5 
+          borderColor: '#01579b',
+          borderRadius: 5,
+          fontSize:14 
         },
-        TextResultStyleClass: { 
-            textAlign: 'center',
-            color: "#000",
-            margin:5,
-            marginBottom: 7,
-            borderWidth: 1,
-             borderColor: '#01579b',
-             borderRadius: 5,
-             fontSize:14 
-            },
-        UpdateQuestionStyleClass: {
-            textAlign: 'center',
-            color: '#000',
-            fontSize:14
-        },
-        TextQuestionStyleClass: {
-            textAlign:'center', 
-            fontSize:15, 
-            color: "#01579b", 
-            marginBottom:10
-        },
-        loadingContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            marginTop: 0,
-            paddingTop: 20,
-            marginBottom: 0,
-            marginHorizontal: 0,
-            paddingHorizontal: 10
-          }
+    UpdateQuestionStyleClass: {
+        textAlign: 'center',
+        color: '#000',
+        fontSize:14
+    },
+    TextQuestionStyleClass: {
+        textAlign:'center', 
+        fontSize:15, 
+        color: "#01579b", 
+        marginBottom:10
+    },
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      },
+      Button:{
+        backgroundColor: '#01579b', 
+        padding: 10, 
+        marginTop:10,
+        marginBottom:5, 
+        width:'100%'}
     });

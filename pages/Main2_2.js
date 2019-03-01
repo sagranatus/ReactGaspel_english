@@ -6,8 +6,10 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
 
 var db = openDatabase({ name: 'UserDatabase.db' });
-
 var date;
+
+var normalSize;
+var largeSize;
 export default class Main2_2 extends Component { 
 
 static navigationOptions =  ({ navigation }) => {
@@ -50,6 +52,20 @@ constructor(props) {
 
   componentWillMount(){
     console.log("Main2_2 - componentWillMount")
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
+
+
     const { params } = this.props.navigation.state;
    // console.log(params.otherParam)
    
@@ -97,6 +113,19 @@ constructor(props) {
   }
 
   refreshContents(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
+
     this.setState({Commentupdate: false, Comment:"", praying:false, start:false, initialLoading:true})
     const { params } = this.props.navigation.state;
     // console.log(params.otherParam)
@@ -384,67 +413,67 @@ constructor(props) {
               </Text>
           </TouchableOpacity>        
           <View style={this.state.start == false && this.state.Commentupdate == false ? {} : {display:'none'}}>                       
-                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
-                  <Text style={{color:'#01579b', textAlign: 'right', fontSize: 16, marginRight:10, marginTop:20}}>간단한 독서</Text>
-                  <Text style={{color:'#01579b', textAlign: 'right', marginRight:10}}>Lectio Divina</Text>
+              <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
+              <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>간단한 독서</Text>
+              <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
-                  <Text style={{color:'#000', margin:10, lineHeight: 25}}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
-                  <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
-                
-                  <TouchableOpacity
-                    activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10, marginTop:20}}
-                    onPress={() =>  this.setState({start: true})} 
-                    >
-                    <Text style={{color:"#FFF", textAlign:'center'}}>
-                        START
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            <View style={this.state.start == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}> 
-           
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={{ paddingVertical: 8,
-                  paddingHorizontal: 15}}
-                  onPress={() => [this.insertComment(), this.setState({praying:true, Commentupdate: true})]} 
-              >
-                  <Text style={{color:"#000", textAlign:'right'}}>
-                      Next
-                  </Text>
+              <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
+              <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
+              <TouchableOpacity
+                activeOpacity = {0.9}
+                style={styles.Button}
+                onPress={() =>  this.setState({start: true})} 
+                >
+                <Text style={{color:"#FFF", textAlign:'center'}}>
+                    START
+                </Text>
               </TouchableOpacity>
-          
-                <KeyboardAvoidingView >
+            </View>
+
+
+            <View style={this.state.start == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}>                       
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{ paddingVertical: 8,
+                    paddingHorizontal: 15}}
+                    onPress={() => [this.insertComment(), this.setState({praying:true, Commentupdate: true})]} 
+                >
+                <Text style={{color:"#000", textAlign:'right'}}>
+                    Next
+                </Text>
+              </TouchableOpacity>          
+              <KeyboardAvoidingView >
                 <View>
-                    <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
+                    <Text style={[styles.TextQuestionStyleClass]}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
                     <TextInput
                     placeholder="여기에 작성하세요"
                     multiline = {true}
                     value={this.state.Comment}        
                     onChangeText={Comment => this.setState({Comment})}     
                     underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />     
+                    style={[styles.TextInputStyleClass, normalSize]} />     
                 </View>
-                </KeyboardAvoidingView>
-                <ScrollView style={{marginBottom:390}}>                     
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+              </KeyboardAvoidingView>                
+              <ScrollView style={{marginBottom:390}}>                     
+                <Text style= {[styles.TextComponentStyle, largeSize]}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
                     <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-               
+                <Text style=  {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
+              
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >     
-                <View style={{height:40}} />                  
-            </ScrollView>  
+                </TouchableHighlight >        
+                <View style={{height:40}} />                   
+              </ScrollView>  
             </View>
+
             <View style={this.state.praying == true ? {} : {display:'none'}}>                 
               <View style = {styles.container}>
               <TouchableOpacity
@@ -459,66 +488,63 @@ constructor(props) {
               </TouchableOpacity>             
               </View>  
               <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
-                      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
-          
-                      <Text style={{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22, fontSize:15}}> 
-                      
-                          "{this.state.Comment}"
-                          {"\n"}{"\n"}
-                          주님 제가 이 말씀을 깊이 새기고{"\n"}
-                          하루를 살아가도록 이끄소서. 아멘.{"\n"}
-                          {"\n"}
-                          (세번 반복한다){"\n"}
-                      </Text>                                
-                      </View>
-                  
-                  </ImageBackground>
-                  
-              </View>
+                <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>    
+                  <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}>                   
+                      "{this.state.Comment}"
+                      {"\n"}{"\n"}
+                      주님 제가 이 말씀을 깊이 새기고{"\n"}
+                      하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                      {"\n"}
+                      (세번 반복한다){"\n"}
+                  </Text>                                
+                </View>                  
+              </ImageBackground>                  
+            </View>
 
 
-              <View style={this.state.Commentupdate == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}>
-                <KeyboardAvoidingView >
-                <View>
-                    <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상할 구절은</Text>
-                    <TextInput
-                    placeholder="여기에 작성하세요"
-                    multiline = {true}
-                    value={this.state.Comment}        
-                    onChangeText={Comment => this.setState({Comment})}   
-                    underlineColorAndroid='transparent'        
-                    style={styles.TextInputStyleClass} />     
-                     <TouchableOpacity
-                    activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10}}
-                    onPress={() => this.insertComment()} // insertComment - update
-                    >
-                    <Text style={{color:"#FFF", textAlign:'center'}}>
-                        수정
-                    </Text>
-                </TouchableOpacity>
-                </View>
-                </KeyboardAvoidingView>
-                <ScrollView style={{marginBottom:390}}>                     
-                <Text style= {styles.TextComponentStyle}>{this.state.Sentence}</Text>  
+
+            <View style={this.state.Commentupdate == true && this.state.praying == false ? styles.MainContainer : {display:'none'}}>
+              <KeyboardAvoidingView >
+                <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상할 구절은</Text>
+                <TextInput
+                placeholder="여기에 작성하세요"
+                multiline = {true}
+                value={this.state.Comment}        
+                onChangeText={Comment => this.setState({Comment})}   
+                underlineColorAndroid='transparent'        
+                style={[styles.TextInputStyleClass, normalSize]} />     
+
+                  <TouchableOpacity
+                activeOpacity = {0.9}
+                style={{backgroundColor: '#01579b', padding: 10}}
+                onPress={() => this.insertComment()} // insertComment - update
+                >
+                  <Text style={{color:"#FFF", textAlign:'center'}}>
+                      수정
+                  </Text>
+                </TouchableOpacity>            
+              </KeyboardAvoidingView>
+
+              <ScrollView style={{marginBottom:390}}>                     
+                <Text style= {[styles.TextComponentStyle, largeSize]}>{this.state.Sentence}</Text>  
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getPrevMoreGaspel()}>
                     <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >         
-                <Text style= {styles.DescriptionComponentStyle}>{this.state.Contents}</Text>        
-               
+                <Text style=  {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
+              
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                </TouchableHighlight >     
-                <View style={{height:40}} />             
-            </ScrollView>  
+                </TouchableHighlight >        
+                <View style={{height:40}} />                   
+              </ScrollView>  
             </View>
-            </View>   
+          </View>   
             
         )       
   }
@@ -537,7 +563,8 @@ Main2_2.propTypes = {
   
 const styles = StyleSheet.create({
  
-    MainContainer :{     
+   
+  MainContainer :{     
     marginBottom: 30
     },     
   
@@ -575,7 +602,7 @@ const styles = StyleSheet.create({
     TextQuestionStyleClass: {
         textAlign: 'center',
         color: '#000',
-        fontSize:14,
+        fontSize:15,
         margin:15
     },
     loadingContainer: {
@@ -587,5 +614,11 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         marginHorizontal: 0,
         paddingHorizontal: 10
-      }
+      },
+    Button:{
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginBottom:5,
+      marginTop:10, 
+      width:'100%'}
     });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  TextInput, Button,  DeviceEventEmitter } from 'react-native';
 import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -9,12 +9,12 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
-import DateTimePicker from 'react-native-modal-datetime-picker';
 const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
+import DateTimePicker from 'react-native-modal-datetime-picker';
 const alarmNotifData = {
   id: "12345",                                  // Required
-  title: "My Notification Title",               // Required
-  message: "My Notification Message",           // Required
+  title: "거룩한 독서를 할 시간입니다.",               // Required
+  message: "주님의 말씀을 듣는 시간입니다. 놓치지 마세요.",           // Required
   channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
   ticker: "My Notification Ticker",
   auto_cancel: true,                            // default: true
@@ -34,6 +34,7 @@ const alarmNotifData = {
   // e.g.
   data: { foo: "bar" },
 };
+
 var textSize;
 AsyncStorage.getItem('textSize', (err, result) => {
  
@@ -51,10 +52,42 @@ constructor(props) {
     super(props)  
     this.state = {
       time: "",
-      isDateTimePickerVisible: false
+      isDateTimePickerVisible: false,
+      fireDate: '',
+			update: '',
+			futureFireDate: '0'
     }
+    this.setAlarm = this.setAlarm.bind(this);
+		this.stopAlarm = this.stopAlarm.bind(this);
    
   }
+  
+  setAlarm = () => {
+		const { fireDate } = this.state;
+		const details  = { ...alarmNotifData, fire_date: fireDate };
+		console.log(`alarm set: ${fireDate}`);
+		this.setState({ update: `alarm set: ${fireDate}` });
+		ReactNativeAN.scheduleAlarm(details);
+	};
+	stopAlarm = () => {
+		this.setState({ update: '' });
+		ReactNativeAN.stopAlarm();
+	};
+
+  
+	componentDidMount() {
+		DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
+			const obj = JSON.parse(e);
+			console.log(`Notification ${obj.id} dismissed`);
+		});
+		
+		DeviceEventEmitter.addListener('OnNotificationOpened', async function(e) {
+			const obj = JSON.parse(e);
+			console.log(obj);
+		});
+  }
+  
+
   componentWillMount(){
    
   }
@@ -70,12 +103,17 @@ constructor(props) {
   _handleDatePicked = (date) => {
     console.log('A date has been picked: ', date);
    // alert(date.getHours() +"시 "+ date.getMinutes() +"분")
-    this.setState({time:date.getHours() +"시 "+ date.getMinutes() +"분"})
+    this.setState({time:date.getHours() +":"+ date.getMinutes() +":00",  fireDate:"01-03-2019 "+date.getHours() +":"+ date.getMinutes() +":00"})
+    this.setAlarm()
+    try {
+      AsyncStorage.setItem('alarmTime', date.getHours() +":"+ date.getMinutes() +":00");      
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
     this._hideDateTimePicker();
   };
 
-  setChange(selectedValues){
-    
+  setChange(selectedValues){    
     try {
       if(selectedValues == "보통"){
         AsyncStorage.setItem('textSize', 'normal');
@@ -84,6 +122,8 @@ constructor(props) {
       }else if(selectedValues == "매우크게"){
         AsyncStorage.setItem('textSize', 'larger');
       }
+      
+    
     //  AsyncStorage.getItem('textSize', (err, result) => {
        // alert("change"+result) 
      // })
@@ -93,6 +133,8 @@ constructor(props) {
   }
 
   render() {
+    
+    const { update, fireDate, futureFireDate } = this.state;
     return (this.state.initialLoading)
     ? (    
 
@@ -108,6 +150,13 @@ constructor(props) {
 
     : (   
             <View style={{flex:1}}>
+             
+             <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();   
+                }}
+                /> 
+        
                     <TouchableOpacity
                     activeOpacity = {0.9}
                     style={{backgroundColor: '#01579b', padding: 10}}

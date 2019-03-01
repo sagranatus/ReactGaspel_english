@@ -139,24 +139,24 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 placeholder="이름"        
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%', paddingRight:'0.5%'}]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
                 />
                  <TextInput                
                 placeholder="나이"        
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%', paddingLeft:'0.5%'}]}
                 />
                 
                 <Picker
                   selectedValue={this.state.UserRegion}
-                  style={{width:'48%'}}
+                  style={{width:'48%', padding:'1%'}}
                   onValueChange={(itemValue, itemIndex) =>
                     this.setState({UserRegion: itemValue})
                   }>
@@ -201,7 +201,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 <View style={{width:'100%', marginTop:10, marginBottom: 20, padding:10}}>                
                 <TouchableOpacity 
                   activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
+                  style={styles.Button}
                   onPress={this.UserRegistrationFunction} 
                   >
                   <Text style={{color:"#fff", textAlign:'center'}}>
@@ -258,7 +258,12 @@ borderWidth: 1,
  
 // Set border Radius.
  //borderRadius: 10 ,
-}
+},
+Button:{
+  backgroundColor: '#01579b', 
+  padding: 10, 
+  marginBottom:5, 
+  width:'100%'} 
  
 });
  

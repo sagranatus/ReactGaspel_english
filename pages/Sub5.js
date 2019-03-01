@@ -1,10 +1,12 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, AsyncStorage } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
+var normalSize;
+var largeSize;
 
 export default class Sub5 extends Component {
 
@@ -32,6 +34,18 @@ constructor(props) {
   }
 
 componentWillMount(){ 
+  AsyncStorage.getItem('textSize', (err, result) => {
+    if(result == "normal" || result == null){
+      normalSize = {fontSize:15}
+      largeSize = {fontSize:17}
+    }else if(result == "large"){
+      normalSize = {fontSize:17}
+      largeSize = {fontSize:19}
+    }else if(result == "larger"){
+      normalSize = {fontSize:19}
+      largeSize = {fontSize:21}
+    }
+  })
 
   console.log("Sub5 - componentWillMount")
     const { params } = this.props.navigation.state;
@@ -125,7 +139,13 @@ componentWillMount(){
                   selectedDay:true
                 })
               } else {          
-                          
+                this.setState({
+                  mysentence:"",
+                  mythought:"",
+                  question: "",
+                  answer: "",
+                  selectedDay:true
+                })          
               }
             }
           );
@@ -145,10 +165,23 @@ componentWillMount(){
     }
 
     refreshContents(){
+      AsyncStorage.getItem('textSize', (err, result) => {
+        if(result == "normal" || result == null){
+          normalSize = {fontSize:15}
+          largeSize = {fontSize:17}
+        }else if(result == "large"){
+          normalSize = {fontSize:17}
+          largeSize = {fontSize:19}
+        }else if(result == "larger"){
+          normalSize = {fontSize:19}
+          largeSize = {fontSize:21}
+        }
+        this.setState({reload:true})
+      })
       console.log("Sub5 - componentWillMount")
       const { params } = this.props.navigation.state;
      // console.log(params.otherParam)
-    
+      
       if(params != null){
           console.log("Sub5 - params : ", params.otherParam )      
       }
@@ -238,8 +271,12 @@ componentWillMount(){
                   })
                 } else {          
                   this.setState({
+                    mysentence:"",
+                    mythought:"",
+                    question: "",
+                    answer: "",
                     selectedDay:true
-                  })         
+                  })               
                 }
               }
             );
@@ -262,17 +299,17 @@ componentWillMount(){
     return (this.state.initialLoading)
     ? (    
         <View style={styles.loadingContainer}>
-        <NavigationEvents
-        onWillFocus={payload => {
-          this.refreshContents()
-        }}
-        />
-        <ActivityIndicator
-          animating
-          size="large"
-          color="#C8C8C8"
-          {...this.props}
-        />
+          <NavigationEvents
+          onWillFocus={payload => {
+            this.refreshContents()
+          }}
+          />
+          <ActivityIndicator
+            animating
+            size="large"
+            color="#C8C8C8"
+            {...this.props}
+          />
       </View>
       )
  
@@ -312,17 +349,17 @@ componentWillMount(){
          
          <View>   
            <Text style={this.state.onesentence !== "" ? styles.smallText : {display:'none'}}>그날의 복음 말씀</Text>     
-           <Text style={{color: "#01579b", textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginTop:10}}>{this.state.onesentence}</Text>              
+           <Text style={[{color: "#01579b", textAlign: 'center', fontWeight: 'bold', marginTop:10}, largeSize]}>{this.state.onesentence}</Text>              
          </View>
 
          <View>   
            
-           <View style={!this.state.selectedDay && this.state.Comment!="" ? {marginTop:20} : {display:'none'}}>
+           <View style={!this.state.selectedDay && this.state.Comment!="" ? {marginTop:10} : {display:'none'}}>
            <Text style={styles.smallText}>간단한 독서</Text>   
-           <Text style={{ fontSize: 14, color: "#000", marginTop: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.Comment}</Text>
+           <Text style={[{ color: "#000", marginTop: 10, marginBottom: 10, textAlign: 'center'}, normalSize]}>{this.state.Comment}</Text>
            <TouchableOpacity 
              activeOpacity = {0.9}
-             style={{backgroundColor: '#01579b', padding: 10}}
+             style={styles.Button}
              onPress={() =>  this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
              >
              <Text style={{color:"#fff", textAlign:'center'}}>
@@ -337,21 +374,21 @@ componentWillMount(){
          <Text style={this.state.js2!=""&&this.state.selectedDay==false ? styles.smallText : {display:'none'}}>거룩한 독서</Text> 
          <Text style={this.state.js2!=""&&this.state.selectedDay==true ? styles.smallText : {display:'none'}}>주일의 독서</Text>  
          <View style={this.state.js2 !== "" ? {marginTop:10} : {display:'none'}}>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 등장인물은</Text> {this.state.bg1}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>장소는</Text> {this.state.bg2}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>시간은</Text> {this.state.bg3}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>이 복음의 등장인물은</Text> {this.state.bg1}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>장소는</Text> {this.state.bg2}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>시간은</Text> {this.state.bg3}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>이 복음의 내용을 간추리면</Text> {this.state.sum1}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>특별히 눈에 띄는 부분은</Text> {this.state.sum2}</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>이 복음에서 보여지는 예수님은</Text> {this.state.js1}</Text>
           <Text style={this.state.question !== null ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>{this.state.question}</Text> {this.state.answer}</Text>
-          <Text style={styles.lectioText}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
+          <Text style={[styles.lectioText, normalSize]}><Text style={{color:"#495057"}}>결과적으로 이 복음을 통해 예수님께서 내게 해주시는 말씀은</Text> "{this.state.js2}"</Text>
          </View>
-         <Text style={this.state.mysentence !== "" ? styles.lectioText : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
+         <Text style={this.state.mysentence !== "" ? [styles.lectioText, normalSize] : {display:'none'}}><Text style={{color:"#495057"}}>주일 복음에서 묵상한 구절은</Text> {this.state.mysentence}</Text>
          
            <View style={!this.state.selectedDay && this.state.js2!="" ? {} : {display:'none'}}>
            <TouchableOpacity 
                activeOpacity = {0.9}
-               style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
+               style={styles.Button}
                onPress={() =>  this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
                >
                <Text style={{color:"#fff", textAlign:'center'}}>
@@ -362,7 +399,7 @@ componentWillMount(){
            <View style={this.state.selectedDay && this.state.js2!="" ? {} : {display:'none'}}>
            <TouchableOpacity 
                activeOpacity = {0.9}
-               style={{backgroundColor: '#01579b', padding: 10, marginTop: 20}}
+               style={styles.Button}
                onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
                >
                <Text style={{color:"#fff", textAlign:'center'}}>
@@ -376,7 +413,7 @@ componentWillMount(){
              <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}
-                 style={{backgroundColor: '#01579b', padding: 10}}
+                 style={styles.Button}
                  onPress={() => this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
                  >
                  <Text style={{color:"#fff", textAlign:'center'}}>
@@ -387,7 +424,7 @@ componentWillMount(){
              <View style={!this.state.selectedDay && this.state.js2=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}
-                 style={{backgroundColor: '#01579b', padding: 10}}
+                 style={styles.Button}
                  onPress={() => this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate}) } 
                  >
                  <Text style={{color:"#fff", textAlign:'center'}}>
@@ -398,7 +435,7 @@ componentWillMount(){
              <View style={this.state.selectedDay && this.state.js2=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}
-                 style={{backgroundColor: '#01579b', padding: 10}}
+                 style={styles.Button}
                  onPress={() => this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) } 
                  >
                  <Text style={{color:"#fff", textAlign:'center'}}>
@@ -443,19 +480,11 @@ const styles = StyleSheet.create({
     // Set border Radius.
     borderRadius: 5 ,
     
-   },
-    
-    TextComponentStyle: {
-      fontSize: 20,
-     color: "#000",
-     textAlign: 'center', 
-     marginBottom: 15
-    },
-     
+   },     
     smallText: {
      color: "#01579b",
      textAlign: 'center', 
-     fontSize: 11,
+     fontSize: 12,
      margin:  5,
      marginTop: 20
     },
@@ -472,5 +501,11 @@ const styles = StyleSheet.create({
        marginBottom: 0,
        marginHorizontal: 0,
        paddingHorizontal: 10
-     }
+     },
+     Button:{
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginTop:10,
+      marginBottom:5, 
+      width:'100%'}
    });

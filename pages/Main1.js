@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -9,33 +9,10 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
-const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
-const alarmNotifData = {
-  id: "12345",                                  // Required
-  title: "My Notification Title",               // Required
-  message: "My Notification Message",           // Required
-  channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
-  ticker: "My Notification Ticker",
-  auto_cancel: true,                            // default: true
-  vibrate: true,
-  vibration: 100,                               // default: 100, no vibration if vibrate: false
-  small_icon: "ic_launcher",                    // Required
-  large_icon: "ic_launcher",
-  play_sound: true,
-  sound_name: null,                             // Plays custom notification ringtone if sound_name: null
-  color: "red",
-  schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
-  tag: 'some_tag',
-  fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
-
-  // You can add any additional data that is important for the notification
-  // It will be added to the PendingIntent along with the rest of the bundle.
-  // e.g.
-  data: { foo: "bar" },
-};
 
 var normalSize;
 var largeSize;
+
 export default class Main1 extends Component { 
 
 constructor(props) { 
@@ -83,13 +60,17 @@ constructor(props) {
           caption: 'Caption 3',
           url: 'http://placeimg.com/640/130/any',
         },
+        
       ],
-      initialLoading: true
+      initialLoading: true,
+    
     }
-   
+ 
   }
+
   componentWillMount(){
-       
+    ReactNativeAN.stopAlarm();
+
   //  ReactNativeAN.removeAllFiredNotifications()
   //  ReactNativeAN.removeFiredNotification("12345")
    // ReactNativeAN.cancelAllNotifications()
@@ -185,6 +166,10 @@ constructor(props) {
   }
 
    setChange(){
+    ReactNativeAN.stopAlarm();
+    AsyncStorage.getItem('alarmTime', (err, result) => {
+      console.log("alarmTime", result)
+    })
     AsyncStorage.getItem('textSize', (err, result) => {
 
       if(result == "normal" || result == null){
@@ -376,6 +361,8 @@ constructor(props) {
     return todayLabel;
 }
   render() {
+    
+    ReactNativeAN.stopAlarm();
     return (this.state.initialLoading)
     ? (    
 
@@ -390,13 +377,12 @@ constructor(props) {
       )
 
     : (   
-            <View style={{flex:1}}>
-             
-               <NavigationEvents
+            <View style={styles.MainContainer}>
+             <NavigationEvents
                 onWillFocus={payload => {
-                    this.setChange();   
+                    this.setChange();
                 }}
-                /> 
+                />
                    <View>      
                    <Slideshow 
                     dataSource={this.state.dataSource}
@@ -410,10 +396,9 @@ constructor(props) {
                       <Text style={[normalSize, styles.TextStyle]}>{this.state.sentence}</Text>   
                   </View>
 
-                  <View style={this.state.weekend ? {marginTop:30, marginBottom:30} : {}}>
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.mysentence == "" ?{backgroundColor: '#01579b', padding: 10, marginBottom:5, width:'100%'} : {display:'none'}}
+                    style={this.state.mysentence == "" ?styles.Button : {display:'none'}}
                     onPress={this.state.mysentence == "" ? () => this.props.navigation.navigate('Main4')  : null} // insertComment
                     >        
                     <View style={this.state.mysentence != "" ? {display:'none'} : {}}>
@@ -423,15 +408,14 @@ constructor(props) {
                     </View>
                 
                   </TouchableOpacity>
-                  </View>
-
+               
                   <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
                   <Text style={styles.smallText}>한주간 묵상할 구절</Text>
-                  <Text style={[styles.TextResultStyleClass]}>{this.state.mysentence}</Text>                    
+                  <Text style={[normalSize, styles.TextStyle]}>{this.state.mysentence}</Text>                    
                   </View>
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={{backgroundColor: '#01579b', padding: 10, marginBottom:5, width:'100%', position: 'absolute', bottom:150}}
+                    style={[styles.Button, {position: 'absolute', bottom:150}]}
                     onPress={() => this.props.navigation.navigate('Guide')} // insertComment
                     >        
                     <View>
@@ -468,83 +452,34 @@ Main1.propTypes = {
   
 const styles = StyleSheet.create({
     MainContainer :{     
-    justifyContent: 'center'
-    },
-    TextStyle:{color:'#000', textAlign: 'center', width:'100%',marginBottom:3},
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
-    container: {
-    flex: 1,
-    backgroundColor:"#fff"
-    },
-    slider: { height: 120 },
-    contentText: { color: '#fff' },
-    buttons: {
-      zIndex: 1,
-      height: 15,
-      marginTop: -25,
-      marginBottom: 10,
       justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    button: {
-      margin: 3,
-      width: 15,
-      height: 15,
-      opacity: 0.9,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    buttonSelected: {
-      opacity: 1,
-      color: 'red',
-    },
-    customSlide: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    customImage: {
       flex:1,
-      width: '100%',
-      height: 80,
-      resizeMode: 'contain'
-      
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      margin: 0
     },
-    TextResultStyleClass: { 
-      textAlign: 'center',
-      color: "#000",
-      margin:5,
-      marginBottom: 7,
-       fontSize:14 
+    TextStyle:{color:'#000', textAlign: 'center', width:'100%',marginBottom:3},        
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
       },
-      loadingContainer: {
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-          marginTop: 0,
-          paddingTop: 20,
-          marginBottom: 0,
-          marginHorizontal: 0,
-          paddingHorizontal: 10
+      smallText: {
+        color: "#01579b",
+        textAlign: 'center', 
+        fontSize: 11,
+        margin:  5,
+        marginTop: 0,
+        marginBottom: -5
         },
-        smallText: {
-          color: "#01579b",
-          textAlign: 'center', 
-          fontSize: 11,
-          margin:  5,
-          marginTop: 0,
-          marginBottom: -5
-         },
+        Button:{
+          backgroundColor: '#01579b', 
+          padding: 10, 
+          marginBottom:5, 
+          width:'100%'}
     });

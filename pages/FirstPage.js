@@ -187,21 +187,7 @@ const styles = StyleSheet.create({
     flex:1,
     margin: 0,
     color:"#fff"
-    },
-     
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
+    },          
      TextComponentStyle: {
        fontSize: 16,
       color: "#fff",

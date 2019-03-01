@@ -15,7 +15,8 @@ import SideMenu from 'react-native-side-menu';
 
 var commentDates = new Array()
 var lectioDates = new Array()
-
+var normalSize;
+var largeSize;
 
 export default class Main5 extends Component { 
  
@@ -125,13 +126,19 @@ constructor(props) {
   }
  
   componentWillMount(){
-    AsyncStorage.getItem('profile', (err, result) => {
-      console.log("Main1 - get AsyncStorage today : ", result)
-      this.setState({
-      //  avatarSource:  { uri: result }
-      })
-      
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
     })
+   
     commentDates = Array()
     lectioDates = Array()
     console.log("Main5 - componentWillMount")
@@ -176,6 +183,18 @@ constructor(props) {
 
 refreshContents(){
   Keyboard.dismiss()
+  AsyncStorage.getItem('textSize', (err, result) => {
+    if(result == "normal" || result == null){
+      normalSize = {fontSize:15}
+      largeSize = {fontSize:17}
+    }else if(result == "large"){
+      normalSize = {fontSize:17}
+      largeSize = {fontSize:19}
+    }else if(result == "larger"){
+      normalSize = {fontSize:19}
+      largeSize = {fontSize:21}
+    }
+  })
   AsyncStorage.getItem('refreshMain5', (err, result) => {
     console.log("Main5 - get AsyncStorage refresh : ", result)
     var date = new Date();
@@ -233,7 +252,7 @@ refreshContents(){
      // this.onselectDate(null, today)
       this.getAllPoints()  
     }else{
-      
+      this.setState({reload:true})
     }
   })
   
@@ -510,49 +529,48 @@ commentFunc = (commentDates) => {
                 [this.refreshContents(), console.log("payload", payload)]
             }}
             />
-            <View>
-          
+                   
           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 150}}>
-          <TouchableOpacity 
-              activeOpacity = {0.9}
-              style={{
-                borderWidth:1,
-                borderColor:'rgba(0,0,0,0.2)',
-                alignItems:'center',
-                justifyContent:'center',
-                width:100,
-                height:100,
-                backgroundColor:'#000',
-                borderRadius:100,
-                overflow: 'hidden',
-                marginLeft:10
-              }}
-              onPress={() => this.pickImage() } 
-              >
-              <Image source={this.state.avatarSource} style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
-          </TouchableOpacity> 
-          <Text style={{textAlign: 'center', fontSize: 14, marginTop:10, color:'#000', fontWeight:'400', marginLeft:10}}>{this.state.name} {this.state.christname}</Text>     
-          </View>
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
-          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.todaycount}</Text>      
-          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>오늘</Text>     
-          </View>
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 150}}>
+              <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  style={{
+                    borderWidth:1,
+                    borderColor:'rgba(0,0,0,0.2)',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    width:100,
+                    height:100,
+                    backgroundColor:'#000',
+                    borderRadius:100,
+                    overflow: 'hidden',
+                    marginLeft:10
+                  }}
+                  onPress={() => this.pickImage() } 
+                  >
+                  <Image source={this.state.avatarSource} style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
+              </TouchableOpacity> 
+              <Text style={[{textAlign: 'center', marginTop:10, color:'#000', fontWeight:'400', marginLeft:10}, normalSize]}>{this.state.name} {this.state.christname}</Text>     
+            </View>
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
+              <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.todaycount}</Text>      
+              <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>오늘</Text>     
+            </View>
+          
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
+              <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.weekcount}</Text>  
+              <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번주</Text>          
+            </View>
         
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
-          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.weekcount}</Text>  
-          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번주</Text>          
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
+              <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.monthcount}</Text>   
+              <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번달</Text>       
+            </View>  
           </View>
-      
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
-          <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.monthcount}</Text>   
-          <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번달</Text>       
-          </View>  
-          </View>
-         </View>
+         
           <View>
             <Calendar
-            markingType={'custom'}
+              markingType={'custom'}
               firstDay={1}
               hideExtraDays={true}
               current={this.state.Today}
@@ -560,15 +578,8 @@ commentFunc = (commentDates) => {
               futureScrollRange={24}
               horizontal
               pagingEnabled
-            // onDayPress={this.onModalClose}
-            onDayPress={day=>this.onselectDate(day, null)}
+              onDayPress={day=>this.onselectDate(day, null)}
               style={{borderTopWidth: 1, borderTopColor: '#d8d8d8'}}
-            /*  markedDates={{
-              // '2019-01-16': {selected: true, marked: true, selectedColor: 'blue'},
-              //  '2019-01-17': {marked: true},
-                '2019-01-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-              // '2019-01-19': {disabled: true, disableTouchEvent: true}
-              }}*/
               markedDates={this.state.Marked}             
               onPressArrowLeft={substractMonth => substractMonth()}
               onPressArrowRight={addMonth => addMonth()}
@@ -596,45 +607,6 @@ Main5.propTypes = {
   };
   
 const styles = StyleSheet.create({
- 
-    MainContainer :{     
-    justifyContent: 'center',
-    flex:1,
-    margin: 10,
-    borderWidth: 0.5,
-    borderColor: '#d8d8d8'
-    },
-     
-    TextInputStyleClass: {     
-    textAlign: 'center',
-    marginBottom: 7,
-    height: 40,
-    borderWidth: 1,
-    // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
-     // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
-     TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
-      textAlign: 'center', 
-      marginBottom: 15
-     },
-      
-     smallText: {
-      color: "#01579b",
-      textAlign: 'center', 
-      fontSize: 11,
-      margin:  5
-     },
-     lectioText:{
-       color: "#000", 
-       fontSize: 14,
-       padding: 5},
     loadingContainer: {
         alignItems: 'center',
         justifyContent: 'center',

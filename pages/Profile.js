@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
  
 import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, TextInput, Picker,  Keyboard} from 'react-native';
-
+import {NavigationEvents} from 'react-navigation'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import ReactNativeAN from 'react-native-alarm-notification';
 const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
-
+var normalSize;
+var largeSize;
 export default class Profile extends Component { 
 
 constructor(props) { 
@@ -23,6 +24,18 @@ constructor(props) {
    
   }
   componentWillMount(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM users where uid = ?',
@@ -85,6 +98,24 @@ constructor(props) {
     });          
   }
 
+  setChange(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+      
+      this.setState({reload:true})
+    })
+   
+  }
+
 
   render() {
     return (this.state.initialLoading)
@@ -102,6 +133,11 @@ constructor(props) {
 
     : (   
       <View style={styles.MainContainer}>
+      <NavigationEvents
+        onWillFocus={payload => {
+          this.setChange()
+        }}
+        />
         <View style={{width:'100%'}}>          
           <TouchableOpacity
           activeOpacity = {0.9}
@@ -120,7 +156,7 @@ constructor(props) {
                 value={this.state.UserEmail}
                 editable={false}
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}]}
+                style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}, normalSize]}
                 />       
                 
                  <TextInput                
@@ -128,21 +164,21 @@ constructor(props) {
                 value={this.state.UserName} 
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 value={this.state.UserCatholicName}
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
                 />
                  <TextInput                
                 placeholder="나이"    
                 value={this.state.UserAge}    
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}]}
+                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
                 />
                 
                 <Picker
@@ -174,13 +210,13 @@ constructor(props) {
                 value={this.state.UserCathedral}       
                 onChangeText={UserCathedral => this.setState({UserCathedral})}
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'48%'}]}
+                style={[styles.TextInputStyleClass, {width:'48%'}, normalSize]}
                 />
     
      <View style={{width:'100%', marginTop:10, marginBottom: 20, padding:10}}>                
       <TouchableOpacity 
         activeOpacity = {0.9}
-        style={{backgroundColor: '#01579b', padding: 10}}
+        style={styles.Button}
         onPress={()=> this.UpdateUserFunction()} 
         >
         <Text style={{color:"#fff", textAlign:'center'}}>
@@ -225,5 +261,11 @@ const styles = StyleSheet.create({
       
     // Set border Radius.
       //borderRadius: 10 ,
-    }
+    },
+    Button:{
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginTop:10,
+      marginBottom:5, 
+      width:'100%'}
     });

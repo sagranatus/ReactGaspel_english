@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {NavigationEvents} from 'react-navigation'
 import {
   Dimensions,
   StyleSheet,
@@ -9,6 +10,8 @@ import {
   Text,
   AsyncStorage
 } from 'react-native';
+var normalSize;
+var largeSize;
 
 const window = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -38,7 +41,6 @@ const styles = StyleSheet.create({
     borderColor: '#d8d8d8'
   },
   item: {
-    fontSize: 14,
     fontWeight: '300',
     paddingTop: 25,
     paddingLeft: 20,
@@ -55,27 +57,48 @@ export default function Menu({ onItemSelected }) {
     console.log("FirstPage - login_chirst_name : ", result)
     christname = result
   })
+
+  function setChange(){
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+    })
+  }
+
+
   return (
     <ScrollView scrollsToTop={false} style={styles.menu}>
-          
-        <Text style={styles.name}>{name} {christname}</Text>
+            <NavigationEvents
+            onWillFocus={payload => {
+                setChange()
+            }}
+            />
+        <Text style={[styles.name, normalSize]}>{name} {christname}</Text>
 
       <Text
         onPress={() => onItemSelected('Setting')}
-        style={styles.item}
+        style={[styles.item, normalSize]}
       >
         환경설정
       </Text>
 
       <Text
         onPress={() => onItemSelected('Profile')}
-        style={styles.item}
+        style={[styles.item, normalSize]}
       >
         프로필 수정
       </Text>
       <Text
         onPress={() => onItemSelected('Logout')}
-        style={styles.item}
+        style={[styles.item, normalSize]}
       >
         로그아웃
       </Text>

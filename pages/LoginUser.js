@@ -357,7 +357,7 @@ GoRegisterFunction = () =>{
               />
              <TouchableOpacity 
                   activeOpacity = {0.9}
-                  style={{backgroundColor: '#01579b', padding: 10}}
+                  style={styles.Button}
                   onPress={this.UserLoginFunction} 
                   >
                   <Text style={{color:"#fff", textAlign:'center'}}>
@@ -405,17 +405,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     // Set border Hex Color Code Here.
-     borderColor: '#2196F3',
-     
+     borderColor: '#2196F3',     
      // Set border Radius.
-     borderRadius: 5 ,
-     
-    },
-     
-     TextComponentStyle: {
-       fontSize: 20,
-      color: "#000",
-      textAlign: 'center', 
-      marginBottom: 15
-     }
+     borderRadius: 5 ,     
+    } ,
+    Button:{
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginBottom:5, 
+      width:'100%'}    
     });
