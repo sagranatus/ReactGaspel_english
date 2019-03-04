@@ -486,8 +486,12 @@ commentFunc = (commentDates) => {
     date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
   }
 
-  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
-
+//  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
+if(date.includes("일요일")){
+  this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
+}else{
+  this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
+}
   this.setState({
     selectedDate_format: date
   }) 

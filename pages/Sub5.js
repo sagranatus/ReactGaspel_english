@@ -409,18 +409,7 @@ componentWillMount(){
            </View>            
          
          
-           <View>
-             <View style={!this.state.selectedDay && this.state.Comment=="" ? {} : {display:'none'}}>
-             <TouchableOpacity 
-                 activeOpacity = {0.9}
-                 style={styles.Button}
-                 onPress={() => this.props.navigation.navigate('Main2_2', {otherParam: this.state.selectedDate}) } 
-                 >
-                 <Text style={{color:"#fff", textAlign:'center'}}>
-                 간단한 독서 하러가기
-                 </Text>
-             </TouchableOpacity> 
-             </View>      
+           <View>   
              <View style={!this.state.selectedDay && this.state.js2=="" ? {} : {display:'none'}}>
              <TouchableOpacity 
                  activeOpacity = {0.9}

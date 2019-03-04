@@ -41,6 +41,7 @@ const alarmNotifData = {
 
 
 var textSize;
+var course;
 AsyncStorage.getItem('textSize', (err, result) => {
  
   if(result == "normal" || result == null){
@@ -49,6 +50,16 @@ AsyncStorage.getItem('textSize', (err, result) => {
     textSize = [1]
   }else if(result == "larger"){
     textSize = [2]
+  }
+})
+AsyncStorage.getItem('course', (err, result) => {
+ 
+  if(result == "notselected" || result == null){
+    course = [0]
+  }else if(result == "basic"){
+    course = [1]
+  }else if(result == "advanced"){
+    course = [2]
   }
 })
 export default class Main1 extends Component { 
@@ -261,6 +272,12 @@ constructor(props) {
         AsyncStorage.setItem('textSize', 'large');
       }else if(selectedValues == "매우크게"){
         AsyncStorage.setItem('textSize', 'larger');
+      }else if(selectedValues == "기본"){
+        AsyncStorage.setItem('course', 'basic');
+      }else if(selectedValues == "심화"){
+        AsyncStorage.setItem('course', 'advanced');
+      }else if(selectedValues == "미선택"){
+        AsyncStorage.setItem('course', 'notselected');
       }
       
     
@@ -315,6 +332,22 @@ constructor(props) {
             { value: '크게' },
             { value: '매우크게' }]}
           defaultSelectedIndexes={textSize}
+          buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
+          highLightStyle={{
+            borderColor: '#01579b', textColor: '#01579b', backgroundColor: '#fff',
+            borderTintColor: '#01579b', textTintColor: 'white', backgroundTintColor: '#01579b'
+          }}
+          onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
+        />
+
+       <Text style={{margin:20, fontSize:16, textAlign:'center'}}>거룩한독서 기본/심화 선택</Text>
+        <SelectMultipleGroupButton
+          multiple={false}
+          group={[
+            { value: '미선택' },
+            { value: '기본' },
+            { value: '심화' }]}
+          defaultSelectedIndexes={course}
           buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
           highLightStyle={{
             borderColor: '#01579b', textColor: '#01579b', backgroundColor: '#fff',

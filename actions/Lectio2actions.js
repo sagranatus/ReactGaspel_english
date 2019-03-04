@@ -104,3 +104,55 @@ export const updateLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1,
       return action;
     };
 
+
+ 
+
+    export const insertComment = (status, id, date, onesentence, comment) => { 
+      console.log("Gaspel2actions : ", "inserted")
+      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          status: status,
+          id: id,
+          date: date,
+          onesentence: onesentence,
+          comment: comment
+        }) 
+      })
+        
+          const action = {
+            type: 'INSERTCOMMENT2',
+            payload: req.then((response) => response.json())
+          };
+          return action;
+        };
+    
+    export const updateComment = (status, id, date, onesentence, comment) => { 
+      console.log("Gaspel2actions : ", "updated")
+      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          status: status,
+          id: id,
+          date: date,
+          onesentence: onesentence,
+          comment: comment
+        }) 
+      })
+        
+          const action = {
+            type: 'UPDATECOMMENT2',
+            payload: req.then((response) => response.json())
+          };
+          return action;
+        };
+    
+    

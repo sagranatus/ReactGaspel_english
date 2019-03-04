@@ -9,7 +9,7 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
-
+import Icon from 'react-native-vector-icons/FontAwesome'
 var normalSize;
 var largeSize;
 var date = new Date();
@@ -43,6 +43,7 @@ constructor(props) {
         textSize: "",
         today : "",
         todayDate: "",
+        todayDate_show: "",
         sentence: "",
         comment:"",
         js2:"",
@@ -122,7 +123,9 @@ constructor(props) {
     } 
     var today = year+"-"+month+"-"+day;
     console.log(today)
-
+    var todayShow =  year+"년"+month+"월"+day+"일";
+  
+    
     // 오늘날짜를 설정 
     try {
       AsyncStorage.setItem('today1', today);
@@ -130,9 +133,9 @@ constructor(props) {
       console.error('AsyncStorage error: ' + error.message);
     }
 
-    this.setState({today: today})
+    this.setState({today: today, todayDate_show:todayShow})
     this.props.getGaspel(today) 
-  
+
   }
 
   componentDidMount(){
@@ -160,7 +163,8 @@ constructor(props) {
       monthData: "",
       today_count: 0,
       weekend_count: 0,
-      month_count: 0
+      month_count: 0,
+      place:""
     })
     clearInterval(this.state.interval);
   }
@@ -172,14 +176,41 @@ constructor(props) {
     if(nextProps.gaspels.comment != this.props.gaspels.comment){}else{
       console.log(nextProps.gaspels.sentence) 
       console.log(nextProps.gaspels.thisdate) 
-      try {
+      var contents = nextProps.gaspels.contents
+      var start = contents.indexOf("✠");
+      var end = contents.indexOf("◎ 그리스도님 찬미합니다");
+      contents = contents.substring(start, end);
+       // 몇장 몇절인지 찾기
+       var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
+       if(pos == null){
+           pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
+       }
+       if(pos == null){
+           pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+       }
+                 
+       // 복음사가 가져옴
+       var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
+       var today_person;
+       if(idx_today == -1){
+           idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
+           today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+       }else{
+           today_person = contents.substring(2,idx_today-2);
+       }
+
+       var place = today_person+" "+pos
+       console.log("place", place)
+
+      /*try {
         AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
         AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
+        AsyncStorage.setItem('place', place);
       } catch (error) {
         console.error('AsyncStorage error: ' + error.message);
-      }
+      } */
          // 우선적으로 asyncstorage에 로그인 상태 저장
-         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate})
+         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
        
       var date = new Date();
       var changed = this.changeDateFormat(date)
@@ -256,8 +287,11 @@ constructor(props) {
     var date = new Date()
     console.log(date)
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-        var lastday = date.getDate() - (date.getDay() - 1) + 6;
+        var lastday = date.getDate() - (date.getDay() - 1) - 1;
         date = new Date(date.setDate(lastday));
+    }else{
+      var lastday = date.getDate() - (date.getDay() - 1) + 6;
+      date = new Date(date.setDate(lastday));
     }    
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -276,7 +310,7 @@ constructor(props) {
       this.setState({weekend: true})
     }
     db.transaction(tx => {
-    /*  tx.executeSql(
+      tx.executeSql(
         'SELECT * FROM comment where date = ? and uid = ?',
         [today, loginId],
         (tx, results) => {
@@ -311,7 +345,7 @@ constructor(props) {
                 })                   
             }
         }
-        ), */
+        ), 
         tx.executeSql(
           'SELECT * FROM weekend where date = ? and uid = ?',
           [weekenddate,loginId],
@@ -418,6 +452,24 @@ setAlarm = () => {
 
     : (   
             <View style={styles.MainContainer}>
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
+                  <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left'}]}>오늘의 복음</Text>
+                </View>
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'0%'}}>
+                  <TouchableOpacity 
+                          activeOpacity = {0.9}
+                          onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                          >        
+                          <View>
+                            <Text style={[{color:"#000", textAlign:'right'}, {fontSize:14}]}>
+                                가이드 보러가기
+                            </Text>
+                          </View>
+                      
+                    </TouchableOpacity>
+                  </View>
+                </View>
              <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();
@@ -431,42 +483,66 @@ setAlarm = () => {
                   </View>
                   
                 
-                  <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: '6%', marginBottom:'2%'}}>                  
-                      <Text style={[{fontSize:14}, styles.TextStyle]}>{this.state.todayDate}</Text>                         
-                      <Text style={[normalSize, styles.TextStyle]}>{this.state.sentence}</Text>   
-                  </View>
+                  <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.mysentence == "" ?styles.Button : {display:'none'}}
-                    onPress={this.state.mysentence == "" ? () => this.props.navigation.navigate('Main4')  : null} // insertComment
-                    >        
-                    <View style={this.state.mysentence != "" ? {display:'none'} : {}}>
-                      <Text style={{color:"#fff", textAlign:'center'}}>
-                          주일의독서하러가기
-                      </Text>
-                    </View>
-                
-                  </TouchableOpacity>
+                    style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:70} : {display:'none'}}
+                    onPress = {() => this.props.navigation.navigate('Main3')}
+                    >    
+                      <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
+                  </TouchableOpacity>      
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.comment !== "" || this.state.js2 !=="" ? {position: 'absolute', right:10, top:70} : {display:'none'}}
+                    onPress = {() => this.props.navigation.navigate('Main3')}
+                    >    
+                       <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
+                  </TouchableOpacity>    
+                 
                
-                  <View style={this.state.mysentence == "" ? {display:'none'} : {}}>
-                  <Text style={styles.smallText}>한주간 묵상할 구절</Text>
-                  <Text style={[normalSize, styles.TextStyle]}>{this.state.mysentence}</Text>                    
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
+                    </View>      
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
+                    </View>                         
+                    
+                      <Icon name={'quote-left'} size={15} color={"#000"} />
+                      <Text style={[largeSize, styles.TextStyle,{marginTop:10}]}>{this.state.sentence}</Text>   
+                      <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:5}]}>{this.state.place}</Text>   
                   </View>
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={[styles.Button, {position: 'absolute', bottom:150}]}
-                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
-                    >        
-                    <View>
-                      <Text style={[{color:"#fff", textAlign:'center',}, {fontSize:14}]}>
-                          오늘의 복음 가이드 보러가기
-                      </Text>
-                    </View>
-                
-                  </TouchableOpacity>
 
-                  <View style={{marginTop:0,position: 'absolute', bottom:0,}}>      
+                  <View style={{flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+                    <TouchableOpacity 
+                      activeOpacity = {0.9}
+                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:90} : {display:'none'}}
+                      onPress = {() => this.props.navigation.navigate('Main4')}
+                      >    
+                        <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
+                    </TouchableOpacity>      
+                    <TouchableOpacity 
+                      activeOpacity = {0.9}
+                      style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:90} : {display:'none'}}
+                      onPress = {() => this.props.navigation.navigate('Main4')}
+                      >    
+                        <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
+                    </TouchableOpacity>    
+
+
+                      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
+                      <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+                      </View>      
+                      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
+                      <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
+                      </View>                         
+                      
+                        <Icon name={'quote-right'} size={15} color={"#000"} />
+                        <Text style={[largeSize, styles.TextStyle,{marginTop:10}]}>{this.state.mysentence}</Text>   
+                  </View>
+
+                 
+                  <View>      
                    <Slideshow 
                     height={150}
                     dataSource={this.state.dataSource2}

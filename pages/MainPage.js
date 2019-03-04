@@ -42,12 +42,12 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	
   const TabNavigator = createBottomTabNavigator({
 	Main1: { screen: Main1 },
-	Main2: { screen: Main2 },
+//Main2: { screen: Main2 },
 	Main3: {screen: Main3 },
 	Main4: { screen: Main4 },
 	Main5: { screen: Main5 },
 	Sub5: {screen: Sub5},
-	Main2_2: {screen: Main2_2},
+//	Main2_2: {screen: Main2_2},
 	Main3_2: {screen: Main3_2},
 	Main4_2: {screen: Main4_2},
 	Guide: { screen: GuidePage },

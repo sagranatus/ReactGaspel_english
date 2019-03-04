@@ -43,7 +43,7 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
     };
 
  
-
+/*
 export const insertComment = (status, id, date, onesentence, comment) => { 
   console.log("Gaspelactions : ", "inserted")
   req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
@@ -92,3 +92,4 @@ export const updateComment = (status, id, date, onesentence, comment) => {
       return action;
     };
 
+*/

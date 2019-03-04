@@ -37,10 +37,10 @@ const gaspelReducer = (state = {}, action) => { // action에 따라 이벤트 �
       return action.payload;      
     case 'GETTHREEGASPEL': 
       return action.payload;   
-    case 'INSERTCOMMENT': 
+  /*  case 'INSERTCOMMENT': 
       return action.payload; 
     case 'UPDATECOMMENT': 
-      return action.payload;
+      return action.payload; */
    
     default:
       return state;
@@ -53,10 +53,7 @@ const gaspel2Reducer = (state = {}, action) => { // action에 따라 이벤트 �
       return action.payload;      
     case 'GETTHREEGASPEL2': 
       return action.payload;   
-    case 'INSERTCOMMENT2': 
-      return action.payload; 
-    case 'UPDATECOMMENT2': 
-      return action.payload;
+ 
    
     default:
       return state;
@@ -74,7 +71,10 @@ const lectioReducer = (state = {}, action) => { // action에 따라 이벤트 �
       return action.payload; 
     case 'UPDATELECTIO': 
       return action.payload;
-   
+    case 'INSERTCOMMENT': 
+      return action.payload; 
+    case 'UPDATECOMMENT': 
+      return action.payload;
     default:
       return state;
   }
@@ -90,7 +90,10 @@ const lectio2Reducer = (state = {}, action) => { // action에 따라 이벤트 �
       return action.payload; 
     case 'UPDATELECTIO2': 
       return action.payload;
-   
+    case 'INSERTCOMMENT2': 
+      return action.payload; 
+    case 'UPDATECOMMENT2': 
+      return action.payload;
     default:
       return state;
   }

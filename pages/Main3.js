@@ -34,7 +34,10 @@ constructor(props) {
         Lectioupdate: false,
         Lectioediting: false,
         currentIndex:0,
-        initialLoading: true
+        initialLoading: true,
+        basic: null,
+        comment: null,
+        doMore: false
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -45,11 +48,11 @@ constructor(props) {
 
 
 movePrevious(){
-    this.transitionToNextPanel(this.state.currentIndex -1);
+    this.transitionToNextPanel("prev", this.state.currentIndex -1);
 }
 
 moveNext(){
-    this.transitionToNextPanel(this.state.currentIndex +1);
+    this.transitionToNextPanel("next", this.state.currentIndex +1);
 }
 
 moveFinal(){
@@ -58,12 +61,7 @@ moveFinal(){
     //alert(this.state.bg1+this.state.bg2+this.state.bg3+this.state.sum1+this.state.sum2+this.state.js1+this.state.js2);
     // lectio server
     if(this.state.Lectioupdate){   
-        try {
-            AsyncStorage.setItem('refreshMain1', "refresh");
-          } catch (error) {
-            console.error('AsyncStorage error: ' + error.message);
-          }     
-        this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
+        
         const loginId = this.props.status.loginId;
         const date = this.state.Lectiodate;
         const bg1 = this.state.bg1
@@ -73,20 +71,48 @@ moveFinal(){
         const sum2 = this.state.sum2
         const js1 = this.state.js1
         const js2 = this.state.js2
-        // comment DB를 업데이트한다.
-        db.transaction(function(tx) {
-        tx.executeSql(
-            'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
-            [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
-            (tx, results) => {
-            if (results.rowsAffected > 0) {
-                console.log('Main3 - lectio data updated : ', "success")                       
-            } else {
-                console.log('Main3 - lectio data updated : ', "success")     
-            }
-            }
-        );
-        }); 
+        const comment = this.state.comment
+        try {
+            AsyncStorage.setItem('refreshMain1', "refresh");
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          }     
+        if(this.state.basic){
+            this.props.updateComment("update",this.props.status.loginId,this.state.Lectiodate,this.state.Sentence, this.state.comment)
+             // comment DB를 업데이트한다.
+            db.transaction(function(tx) {
+                tx.executeSql(
+                    'UPDATE comment set comment=? where uid=? and date=?',
+                    [comment, loginId, date],
+                    (tx, results) => {
+                //  console.log('Results', 'done');
+                    if (results.rowsAffected > 0) {
+                        console.log('Main3 - comment data updated : ', "update success")        
+                        Alert.alert("수정 하였습니다.")           
+                    } else {
+                        console.log('Main3 - comment data updated : ', "update fail")  
+                    }
+                    }
+                );
+                }); 
+        }else{
+            this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
+              // comment DB를 업데이트한다.
+            db.transaction(function(tx) {
+                tx.executeSql(
+                    'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
+                    [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
+                    (tx, results) => {
+                    if (results.rowsAffected > 0) {
+                        console.log('Main3 - lectio data updated : ', "success")                       
+                    } else {
+                        console.log('Main3 - lectio data updated : ', "success")     
+                    }
+                    }
+                );
+                }); 
+        }
+      
         this.setState({ Lectioediting: false });
     }else{
         try {
@@ -95,7 +121,6 @@ moveFinal(){
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }
-        this.props.insertLectio("insert", this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
         const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
         const date = this.state.Lectiodate;
@@ -106,43 +131,88 @@ moveFinal(){
         const sum2 = this.state.sum2
         const js1 = this.state.js1
         const js2 = this.state.js2
-
-        // 값이 있는지 확인하고 없는 경우 lectio DB에 삽입한다 
-        db.transaction(tx => {
-            tx.executeSql(
-              'SELECT * FROM lectio where date = ? and uid = ?',
-              [date, loginId],
-              (tx, results) => {
-                var len = results.rows.length;
-              //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main3 - lectio data', "existed")        
-                } else {
-                  db.transaction(function(tx) {
+        const comment = this.state.comment
+        if(this.state.basic){
+            this.props.insertComment("insert", this.props.status.loginId,this.state.Lectiodate,this.state.Sentence, this.state.comment)
+                // 값이 있는지 확인하고 없는 경우 lectio DB에 삽입한다 
+            db.transaction(tx => {
+                db.transaction(function(tx) {
                     tx.executeSql(
-                      'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                      [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
-                      (tx, results) => {
+                    'INSERT INTO comment (uid, date, onesentence, comment) VALUES (?,?,?,?)',
+                    [loginId,date,sentence, comment],
+                    (tx, results) => {
                         if (results.rowsAffected > 0) {
-                            console.log('Main3 - lectio data inserted : ', "success")                 
+                            console.log('Main3 - comment data inserted : ', "success")                 
                         } else {
-                            console.log('Main3 - lectio data inserted : ', "failed")       
+                            console.log('Main3 - comment data inserted : ', "failed") 
                         }
-                      }
+                    }
                     );
-                  });                             
+                }); 
+            });
+            this.setState({ praying : true });
+         }else{
+             
+            this.props.insertLectio("insert", this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
+    
+                // 값이 있는지 확인하고 없는 경우 lectio DB에 삽입한다 
+            db.transaction(tx => {
+                tx.executeSql(
+                'SELECT * FROM lectio where date = ? and uid = ?',
+                [date, loginId],
+                (tx, results) => {
+                    var len = results.rows.length;
+                //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main3 - lectio data', "existed")        
+                    } else {
+                    db.transaction(function(tx) {
+                        tx.executeSql(
+                        'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                        [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+                        (tx, results) => {
+                            if (results.rowsAffected > 0) {
+                                console.log('Main3 - lectio data inserted : ', "success")                 
+                            } else {
+                                console.log('Main3 - lectio data inserted : ', "failed")       
+                            }
+                        }
+                        );
+                    });                             
+                    }
                 }
-              }
-            );
-          });    
-          this.setState({ praying : true });
+                );
+            });    
+            this.setState({praying : true});
+            }
+      
+        
     }
 }
 
-transitionToNextPanel(nextIndex){      
-    this.setState({
-        currentIndex: nextIndex
-    });    
+
+
+transitionToNextPanel(from, nextIndex){   
+    if(this.state.currentIndex == 1 && this.state.basic == null && from=="next"){
+        Alert.alert(
+            '거룩한 독서 기본/심화를 선택하세요.',
+            '설정화면에서 선택하시면 매번 선택하지 않으셔도 됩니다.',
+            [
+              {text: '기본', onPress: () => this.setState({
+                basic:true, currentIndex: nextIndex})
+               },
+              {text: '심화', onPress: () => this.setState({
+                basic:false, currentIndex: nextIndex})  
+               },
+            ],
+            {cancelable: false},
+          );
+    }else{
+        this.setState({
+            currentIndex: nextIndex
+        });   
+    }   
+  
 }
 
 
@@ -157,6 +227,14 @@ transitionToNextPanel(nextIndex){
         }else if(result == "larger"){
           normalSize = {fontSize:19}
           largeSize = {fontSize:21}
+        }
+      })
+
+      AsyncStorage.getItem('course', (err, result) => {
+        if(result == "basic"){
+            this.setState({basic:true})
+        }else if(result == "advanced"){          
+            this.setState({basic:false})
         }
       })
 
@@ -192,33 +270,69 @@ transitionToNextPanel(nextIndex){
     //lectio있는지 확인
     const loginId = this.props.status.loginId;    
     db.transaction(tx => {
+       
+          //comment있는지 확인    
+   
         tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [today_comment_date,loginId],
+          'SELECT * FROM comment where date = ? and uid = ?',
+          [today_comment_date, loginId],
           (tx, results) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
                 this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
-                    js2 : results.rows.item(0).js2,
+                    comment: results.rows.item(0).comment,
                     Lectioupdate: true,
-                    initialLoading: false
+                    initialLoading: false,
+                    basic: true
                 })
-            } else {
-                this.setState({          
+            } else {     
+                this.setState({
                     initialLoading: false
-                })                        
+                })                             
             }
           }
-        );
+        ),
+        tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+              var len = results.rows.length;
+            //  값이 있는 경우에 
+              if (len > 0) {                  
+                  console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                  this.setState({
+                      bg1 : results.rows.item(0).bg1,
+                      bg2 : results.rows.item(0).bg2,
+                      bg3 : results.rows.item(0).bg3,
+                      sum1 : results.rows.item(0).sum1,
+                      sum2 : results.rows.item(0).sum2,
+                      js1 : results.rows.item(0).js1,
+                      js2 : results.rows.item(0).js2,
+                      Lectioupdate: true,
+                      initialLoading: false,
+                      comment:null,
+                      basic: false
+                  })
+              } else {
+                  this.setState({          
+                      initialLoading: false
+                  })                        
+              }
+            }
+          )
       });    
+  }
+
+  getBasicInfo(){
+    AsyncStorage.getItem('course', (err, result) => {
+        if(result == "basic"){
+            this.setState({basic:true})
+        }else if(result == "advanced"){          
+            this.setState({basic:false})
+        }
+      })
   }
 
     getTodayLabel() {        
@@ -316,6 +430,18 @@ setChange(){
             largeSize = {fontSize:21}
         }
         })
+       if(!this.state.Lectioupdate) {
+      
+        AsyncStorage.getItem('course', (err, result) => {
+            if(result == "basic"){
+                this.setState({basic:true})
+            }else if(result == "advanced"){          
+                this.setState({basic:false})
+            }else if(result == "notselected"){          
+                this.setState({basic:null})
+            }
+          })
+        }
         
     // 오늘날짜 계산
    var date = new Date();
@@ -350,37 +476,54 @@ setChange(){
         const loginId = this.props.status.loginId;    
         db.transaction(tx => {
             tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-                var len = results.rows.length;
-            //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
-                    this.setState({
-                        bg1 : results.rows.item(0).bg1,
-                        bg2 : results.rows.item(0).bg2,
-                        bg3 : results.rows.item(0).bg3,
-                        sum1 : results.rows.item(0).sum1,
-                        sum2 : results.rows.item(0).sum2,
-                        js1 : results.rows.item(0).js1,
-                        js2 : results.rows.item(0).js2,
-                        Lectioupdate: true
-                    })
-                } else {               
-                    this.setState({
-                        bg1 : "",
-                        bg2 : "",
-                        bg3 : "",
-                        sum1 : "",
-                        sum2 : "",
-                        js1 : "",
-                        js2 : "",
-                        Lectioupdate: false
-                    })                   
+                'SELECT * FROM comment where date = ? and uid = ?',
+                [today_comment_date, loginId],
+                (tx, results) => {
+                  var len = results.rows.length;
+                //  값이 있는 경우에 
+                  if (len > 0) {                  
+                      console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
+                      this.setState({
+                          comment: results.rows.item(0).comment,
+                          Lectioupdate: true,
+                          initialLoading: false,
+                          basic: true
+                      })
+                  } else {     
+                      this.setState({
+                          initialLoading: false
+                      })                             
+                  }
                 }
-            }
-            );
+              ),
+              tx.executeSql(
+                  'SELECT * FROM lectio where date = ? and uid = ?',
+                  [today_comment_date,loginId],
+                  (tx, results) => {
+                    var len = results.rows.length;
+                  //  값이 있는 경우에 
+                    if (len > 0) {                  
+                        console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                        this.setState({
+                            bg1 : results.rows.item(0).bg1,
+                            bg2 : results.rows.item(0).bg2,
+                            bg3 : results.rows.item(0).bg3,
+                            sum1 : results.rows.item(0).sum1,
+                            sum2 : results.rows.item(0).sum2,
+                            js1 : results.rows.item(0).js1,
+                            js2 : results.rows.item(0).js2,
+                            Lectioupdate: true,
+                            initialLoading: false,
+                            comment:null,
+                            basic: false
+                        })
+                    } else {
+                        this.setState({          
+                            initialLoading: false
+                        })                        
+                    }
+                  }
+                )
         });    
      }    
    })
@@ -451,20 +594,31 @@ setChange(){
                     </TouchableOpacity>        
                </View>
                <OnboardingButton
-                        totalItems={7}
+                        totalItems={this.state.basic ? 1 : 7}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                 />
                 <KeyboardAvoidingView style={{height:130}}>                    
-                    <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
+                    <View style={this.state.currentIndex == 0 && !this.state.basic ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                         <TextInput
                         multiline = {true}
                         placeholder="여기에 적어봅시다"
                         value={this.state.bg1}        
                         onChangeText={bg1 => this.setState({bg1})}        
+                        // Making the Under line Transparent.
+                        underlineColorAndroid='transparent'        
+                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                    </View>
+                    <View style={this.state.currentIndex == 0 && this.state.basic ? {} : {display:'none'}}>
+                        <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
+                        <TextInput
+                        multiline = {true}
+                        placeholder="여기에 적어봅시다"
+                        value={this.state.comment}        
+                        onChangeText={comment => this.setState({comment})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
                         style={[styles.TextInputStyleClass, normalSize]}  />                           
@@ -555,7 +709,8 @@ setChange(){
            )
          :
             (
-            <ScrollView> 
+                <View>
+            <ScrollView style={!this.state.basic ? {} : {display:'none'}}> 
                  <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();
@@ -587,6 +742,38 @@ setChange(){
                     </Text>
                 </TouchableOpacity>
             </ScrollView>
+
+            <ScrollView style={this.state.basic ? {} : {display:'none'}}> 
+            <NavigationEvents
+            onWillFocus={payload => {
+            this.setChange();
+            }}
+            />
+            <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
+            <Text style={styles.UpdateQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절</Text>
+            <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.comment}</Text>   
+
+            <TouchableOpacity
+            activeOpacity = {0.9}
+            style={styles.Button}
+            onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+            >
+            <Text style={{color:"#FFF", textAlign:'center'}}>
+                수정
+            </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            activeOpacity = {0.9}
+            style={styles.Button}
+            onPress={() => this.setState({ Lectioupdate: false, start:true, currentIndex: 0, basic:false, doMore:true })}
+            >
+            <Text style={{color:"#FFF", textAlign:'center'}}>
+                심화과정 이어서 하기 
+            </Text>
+            </TouchableOpacity>
+            </ScrollView>
+            </View>
          )        
         :
          (  
@@ -602,7 +789,7 @@ setChange(){
                    <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
                    <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
-                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 평일에 하는 고급 과정의 독서입니다. 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
+                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
                    <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
                  
                    <TouchableOpacity
@@ -616,7 +803,7 @@ setChange(){
                 </TouchableOpacity>
                 </View>
 
-                <View style={this.state.praying == true ? {} : {display:'none'}}>   
+                <View style={this.state.praying == true && !this.state.basic ? {} : {display:'none'}}>   
                                    
                     <View style = {styles.container}>
                     <TouchableOpacity
@@ -647,6 +834,38 @@ setChange(){
                         </ImageBackground>
                         
                     </View>
+
+                    <View style={this.state.praying == true && this.state.basic ? {} : {display:'none'}}>   
+                                   
+                        <View style = {styles.container}>
+                        <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{ paddingVertical: 8,
+                            paddingHorizontal: 15}}
+                        onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
+                        >
+                            <Text style={{color:"#000", textAlign:'right'}}>
+                                Next
+                            </Text>
+                        </TouchableOpacity>             
+                        </View>  
+                        <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
+                                <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+                    
+                                <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                                주님께서 나에게 말씀하셨다.{"\n"}
+                                    "{this.state.comment}"
+                                    {"\n"}{"\n"}
+                                    주님 제가 이 말씀을 깊이 새기고{"\n"}
+                                    하루를 살아가도록 이끄소서. 아멘.{"\n"}
+                                    {"\n"}
+                                    (세번 반복한다){"\n"}
+                                </Text>                                
+                                </View>
+                            
+                            </ImageBackground>
+                            
+                        </View>
                 
                 <View style={this.state.start == true && this.state.praying ==false ? {} : {display:'none'}}>     
                     <View style={this.state.start == true ? {} : {display:'none'}} >
@@ -654,7 +873,7 @@ setChange(){
                             activeOpacity = {0.9}
                             style={{backgroundColor: '#01579b', padding: 10}}
                             onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
-                                this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0})
+                                this.state.doMore ? this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:true, Lectioupdate: true}) : [this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:null}), this.getBasicInfo()]
                                 :  Alert.alert(
                                 '정말 끝내시겠습니까?',
                                 '확인을 누르면 쓴 내용이 저장되지 않습니다.',
@@ -664,7 +883,7 @@ setChange(){
                                     onPress: () => console.log('Cancel Pressed'),
                                     style: 'cancel',
                                   },
-                                  {text: 'OK', onPress: () =>  this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0})},
+                                  {text: 'OK', onPress: () =>  this.state.doMore ? this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:true, Lectioupdate: true}) : [this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:null}),this.getBasicInfo()]},
                                 ],
                                 {cancelable: false},
                               )}  
@@ -676,7 +895,7 @@ setChange(){
                     </View>
                    
                     <OnboardingButton
-                        totalItems={9}
+                        totalItems={this.state.basic ? 3 : 9}
                         currentIndex={this.state.currentIndex}
                         movePrevious={this.movePrevious}
                         moveNext={this.moveNext}
@@ -707,13 +926,25 @@ setChange(){
                             <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
                         </View>
 
-                        <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
+                        <View style={this.state.currentIndex == 2 && !this.state.basic ? {} : {display:'none'}}>
                             <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                             <TextInput
                             multiline = {true}
                             placeholder="여기에 적어봅시다"
                             value={this.state.bg1}        
                             onChangeText={bg1 => this.setState({bg1})}        
+                            // Making the Under line Transparent.
+                            underlineColorAndroid='transparent'        
+                            style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        </View>
+
+                        <View style={this.state.currentIndex == 2 && this.state.basic ? {} : {display:'none'}}>
+                            <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
+                            <TextInput
+                            multiline = {true}
+                            placeholder="여기에 적어봅시다"
+                            value={this.state.comment}        
+                            onChangeText={comment => this.setState({comment})}        
                             // Making the Under line Transparent.
                             underlineColorAndroid='transparent'        
                             style={[styles.TextInputStyleClass, normalSize]}  />                           
