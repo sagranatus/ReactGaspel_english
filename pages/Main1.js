@@ -169,6 +169,7 @@ constructor(props) {
   }
 
   componentWillReceiveProps(nextProps){
+    if(nextProps.gaspels.comment != this.props.gaspels.comment){}else{
       console.log(nextProps.gaspels.sentence) 
       console.log(nextProps.gaspels.thisdate) 
       try {
@@ -183,6 +184,7 @@ constructor(props) {
       var date = new Date();
       var changed = this.changeDateFormat(date)
       this.getData(changed)  
+    }
   }
 
    setChange(){  

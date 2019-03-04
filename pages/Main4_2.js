@@ -807,7 +807,7 @@ componentWillReceiveProps(nextProps){
                         <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>주일의 독서</Text>
                         <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
 
-                        <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
+                        <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 반드시 하셔야 하는 고급 과정의 독서입니다. 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원) 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도하며(기도) 한 주간 말씀을 마음에 품고 살아가는 연습(관상)을 할 수 있습니다.</Text>
                         <Image source={require('../resources/weekend_img2.png')} style={{width: '100%', height: 100}} />  
                       
                         <TouchableOpacity

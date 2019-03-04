@@ -112,7 +112,7 @@ constructor(props) {
       day = date.getDate()+7;
     }
     PushNotification.localNotificationSchedule({
-      id: '123',
+      id: '456',
       //... You can use all the options from localNotifications
       message: "주일의 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
       date: new Date(month+'/'+day+'/'+year+' '+this.state.time2), // in 60 secs
@@ -235,6 +235,24 @@ constructor(props) {
     this._hideDateTimePicker2();
   };
 
+  stopAlarm1(){
+    PushNotification.cancelLocalNotifications({id: '123'})
+    this.setState({ time: '' });
+    try{
+    AsyncStorage.setItem('alarm1', "")
+   } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+  }
+  stopAlarm2(){
+    PushNotification.cancelLocalNotifications({id: '456'})
+    this.setState({ time2: '' });
+    try{
+    AsyncStorage.setItem('alarm2', "")
+   } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+  }
   setChange(selectedValues){    
     try {
       if(selectedValues == "보통"){
@@ -306,7 +324,7 @@ constructor(props) {
         />
 
         <TouchableOpacity 
-         style={[styles.Button, {marginTop:20}]}
+         style={[styles.Button, {marginTop:40}]}
         onPress={this._showDateTimePicker}>
           <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>거룩한독서(평일) 알람 세팅 클릭</Text>         
         </TouchableOpacity>
@@ -319,8 +337,12 @@ constructor(props) {
           is24Hour={false}
           datePickerModeAndroid	={'spinner'}
         />
-         <Text style={{margin:20}}>알람시간 : {this.state.time}</Text>
-
+         <Text style={{marginTop:20}}>알람시간 : {this.state.time}</Text>
+         <TouchableOpacity 
+        style={{marginTop:20}}
+        onPress={()=>this.stopAlarm1()}>
+          <Text style={{fontSize:15}}>거룩한독서 알람 해제</Text>         
+        </TouchableOpacity>
 
          <TouchableOpacity 
         style={[styles.Button, {marginTop:20}]}
@@ -336,7 +358,12 @@ constructor(props) {
           is24Hour={false}
           datePickerModeAndroid	={'spinner'}
         />
-         <Text style={{margin:20}}>알람시간 : {this.state.time2}</Text>
+         <Text style={{marginTop:20}}>알람시간 : {this.state.time2}</Text>
+         <TouchableOpacity   
+        style={{marginTop:20}}
+        onPress={()=>this.stopAlarm2()}>
+          <Text style={{fontSize:15}}>주일의독서 알람 해제</Text>         
+        </TouchableOpacity>
       </View>
         )
        

@@ -663,7 +663,7 @@ componentWillReceiveProps(nextProps){
                    <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
                    <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
-                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님의 말씀인 성경을 깊이 읽고 묵상하는 수행이다. 이는 단순하고 정감적인 마음으로 성경을 읽고 맛들임으로써 궁극적으로 하느님과 관상적 일치를 이루고자 하는 인간적 활동이면서 성령에 의한 초자연적 활동이다.</Text>
+                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 평일에 하는 고급 과정의 독서입니다. 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
                    <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
                  
                    <TouchableOpacity
