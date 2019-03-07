@@ -64,7 +64,7 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
   
 
 export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence, mythought,question, answer) => { 
-  console.log("Weekend2actions : ", "inserted")
+  console.log("Weekend2actions : ", "inserted"+status+id+date+mysentence+mythought+question+answer)
   req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
     method: 'POST',
     headers: {

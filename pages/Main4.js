@@ -763,7 +763,7 @@ transitionToNextPanel(nextIndex){
                     this.setChange();
                 }}
                 />
-                 <View style={this.state.start == false ? {} : {display:'none'}}>                 
+                 <ScrollView style={this.state.start == false ? {} : {display:'none'}}>                 
                  <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />       
                    <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>주일의 독서</Text>
                    <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
@@ -780,7 +780,7 @@ transitionToNextPanel(nextIndex){
                         START
                     </Text>
                 </TouchableOpacity>
-                </View>
+                </ScrollView>
                 
                 <View style={this.state.praying == true ? {} : {display:'none'}}>        
                     <View style = {styles.container}>
@@ -873,7 +873,7 @@ transitionToNextPanel(nextIndex){
                           <Text style={[{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}, normalSize]}>{this.state.background}</Text>                                             
                         </View>
                         <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                         <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
+                          <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                               
                         </View>
 
                         <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
@@ -989,14 +989,14 @@ transitionToNextPanel(nextIndex){
                  
                     <ScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:430, marginTop:10}}>         
                         <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                        style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
                            <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >     
                         <Text style={[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                         <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                        style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
                              <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 

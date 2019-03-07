@@ -84,6 +84,7 @@ export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1
       sum2: sum2,
       js1: js1,
       js2: js2
+
     }) 
   })
 

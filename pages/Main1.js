@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -245,6 +245,8 @@ constructor(props) {
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
+    var changed = this.changeDateFormat(date)
+    this.getData(changed) 
     AsyncStorage.getItem('today1', (err, result) => {
       console.log("Main1 - get AsyncStorage today : ", result)
       if(result == today){
@@ -283,6 +285,7 @@ constructor(props) {
   }
 
   getData(today){
+    console.log("test")
     const loginId = this.props.status.loginId 
     var date = new Date()
     console.log(date)
@@ -451,7 +454,7 @@ setAlarm = () => {
       )
 
     : (   
-            <View style={styles.MainContainer}>
+            <ScrollView >
               <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
                   <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left'}]}>오늘의 복음</Text>
@@ -487,43 +490,49 @@ setAlarm = () => {
 
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:70} : {display:'none'}}
+                    style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
                     onPress = {() => this.props.navigation.navigate('Main3')}
                     >    
                       <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
                   </TouchableOpacity>      
                   <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.comment !== "" || this.state.js2 !=="" ? {position: 'absolute', right:10, top:70} : {display:'none'}}
+                    style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+                    onPress = {() => this.props.navigation.navigate('Main3')}
+                    >    
+                       <Icon name={'check-circle'} size={30} color={"#87CEEB"} /> 
+                  </TouchableOpacity>    
+                  <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={this.state.js2 !=="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
                     onPress = {() => this.props.navigation.navigate('Main3')}
                     >    
                        <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
-                  </TouchableOpacity>    
-                 
+                  </TouchableOpacity>   
                
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
-                    </View>      
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
+                    </View>       
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
                     </View>                         
                     
-                      <Icon name={'quote-left'} size={15} color={"#000"} />
-                      <Text style={[largeSize, styles.TextStyle,{marginTop:10}]}>{this.state.sentence}</Text>   
-                      <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:5}]}>{this.state.place}</Text>   
+                      <Icon name={'quote-left'} size={13} color={"#000"} />
+                      <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.sentence}</Text>   
+                      <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>   
                   </View>
 
                   <View style={{flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
                     <TouchableOpacity 
                       activeOpacity = {0.9}
-                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:90} : {display:'none'}}
+                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
                       onPress = {() => this.props.navigation.navigate('Main4')}
                       >    
                         <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
                     </TouchableOpacity>      
                     <TouchableOpacity 
                       activeOpacity = {0.9}
-                      style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:90} : {display:'none'}}
+                      style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
                       onPress = {() => this.props.navigation.navigate('Main4')}
                       >    
                         <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
@@ -531,14 +540,15 @@ setAlarm = () => {
 
 
                       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
-                      <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+                      <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
                       </View>      
                       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
                       <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
                       </View>                         
                       
-                        <Icon name={'quote-right'} size={15} color={"#000"} />
-                        <Text style={[largeSize, styles.TextStyle,{marginTop:10}]}>{this.state.mysentence}</Text>   
+                        <Icon  style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
+                        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text>   
+                        <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-10}] : {display:'none'}}>주일의 독서를 해보세요.</Text>   
                   </View>
 
                  
@@ -551,7 +561,7 @@ setAlarm = () => {
                     
                   </View>
              
-            </View>
+            </ScrollView>
         )
        
   }

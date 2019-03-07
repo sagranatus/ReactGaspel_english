@@ -770,7 +770,7 @@ componentWillReceiveProps(nextProps){
                             {"<"} BACK
                         </Text>
                     </TouchableOpacity>
-                    <ScrollView style={!this.state.basic ? {} : {display:'none'}}>                        
+                    <ScrollView style={!this.state.basic ? {marginBottom:40} : {display:'none'}}>                        
                         <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
                         <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                         <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -857,25 +857,25 @@ componentWillReceiveProps(nextProps){
                             {"<"} BACK
                         </Text>
                     </TouchableOpacity>             
-                    <View style={this.state.start == false ? {} : {display:'none'}}>                       
+                    <ScrollView style={this.state.start == false ? {} : {display:'none'}}>                     
 
-                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
-                   <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
-                   <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
+                        <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
+                            <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
+                            <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
-                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
-                   <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
-                 
-                   <TouchableOpacity
-                    activeOpacity = {0.9}
-                    style={styles.Button}
-                    onPress={() =>  this.setState({start: true})} 
-                    >
-                    <Text style={{color:"#FFF", textAlign:'center'}}>
-                        START
-                    </Text>
-                </TouchableOpacity>
-                </View>
+                            <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
+                            <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
+                            
+                            <TouchableOpacity
+                            activeOpacity = {0.9}
+                            style={styles.Button}
+                            onPress={() =>  this.setState({start: true})} 
+                            >
+                            <Text style={{color:"#FFF", textAlign:'center'}}>
+                                START
+                            </Text>
+                        </TouchableOpacity>
+                    </ScrollView>
 
 
                 <View style={this.state.praying == true && !this.state.basic ? {} : {display:'none'}}>                       
@@ -971,7 +971,7 @@ componentWillReceiveProps(nextProps){
                     <KeyboardAvoidingView style={{height:130}}>
                         
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                            <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
+                        <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                 
                         </View>
 
                         <View style={this.state.currentIndex == 2 && !this.state.basic ? {} : {display:'none'}}>
@@ -1072,20 +1072,20 @@ componentWillReceiveProps(nextProps){
                     </KeyboardAvoidingView>   
 
                     <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:380}}>                            
-                        <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                       <TouchableHighlight
+                        style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
                             <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >     
                         <Text style= {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                         <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                        style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
                              <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >
-                        <View style={{height:60}} />  
+                        <View style={{height:60}} /> 
                     </ScrollView>                     
                 </View> 
             </View>   

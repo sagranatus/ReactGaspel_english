@@ -470,7 +470,32 @@ setChange(){
             console.error('AsyncStorage error: ' + error.message);
         }        
     
-       this.setState({Date: todaydate,  Lectiodate: today_comment_date})
+       this.setState({
+            Date: todaydate,  
+            Lectiodate: today_comment_date, 
+            Contents : "",           
+            Sentence : "",
+            Person: "",
+            Chapter: "",
+            Firstverse: "",
+            Lastverse: "",
+            Move:"",
+            bg1:"",
+            bg2:"",
+            bg3:"",
+            sum1:"",
+            sum2:"",
+            js1:"",
+            js2:"",
+            start: false,
+            praying: false,
+            Lectioupdate: false,
+            Lectioediting: false,
+            currentIndex:0,
+            initialLoading: true,
+            basic: null,
+            comment: null,
+            doMore: false })
        this.props.getGaspel(todaydate)
         //lectio있는지 확인
         const loginId = this.props.status.loginId;    
@@ -783,7 +808,7 @@ setChange(){
                     this.setChange();
                 }}
                 />
-                <View style={this.state.start == false ? {} : {display:'none'}}>                       
+                <ScrollView style={this.state.start == false ? {} : {display:'none'}}>                       
 
                 <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
                    <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
@@ -801,7 +826,7 @@ setChange(){
                         START
                     </Text>
                 </TouchableOpacity>
-                </View>
+                </ScrollView>
 
                 <View style={this.state.praying == true && !this.state.basic ? {} : {display:'none'}}>   
                                    
@@ -923,7 +948,7 @@ setChange(){
                     <KeyboardAvoidingView style={{height:130}}>
                         
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                            <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀 듣기- 복음 말씀을 잘 듣기 위해 소리내어 읽어 봅시다</Text>                                             
+                            <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                             
                         </View>
 
                         <View style={this.state.currentIndex == 2 && !this.state.basic ? {} : {display:'none'}}>
@@ -1025,14 +1050,14 @@ setChange(){
 
                     <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:430}}>                            
                         <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                        style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getPrevMoreGaspel()}>
                             <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                         </TouchableHighlight >     
                         <Text style= {[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                         <TouchableHighlight
-                        style={{ justifyContent: 'center', alignItems: 'center'}}
+                        style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                         underlayColor = {"#fff"}
                         onPress={() => this.getNextMoreGaspel()}>
                              <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
