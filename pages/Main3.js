@@ -945,7 +945,7 @@ setChange(){
                             </View>
                         </ImageBackground>                               
                      </View>
-                    <KeyboardAvoidingView style={{height:130}}>
+                    <KeyboardAvoidingView style={{height:130, width:'100%'}}>
                         
                         <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
                             <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                             
@@ -959,7 +959,7 @@ setChange(){
                             value={this.state.bg1}        
                             onChangeText={bg1 => this.setState({bg1})}        
                             // Making the Under line Transparent.
-                            underlineColorAndroid='transparent'        
+                            //underlineColorAndroid='transparent'        
                             style={[styles.TextInputStyleClass, normalSize]}  />                           
                         </View>
 

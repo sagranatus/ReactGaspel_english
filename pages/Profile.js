@@ -14,10 +14,11 @@ export default class Profile extends Component {
 constructor(props) { 
     super(props)  
     this.state = {
-      UserEmail: '',
+      UserId: '',
       UserName: '',
       UserCatholicName: '',
       UserAge: '',
+      UserGender: '',
       UserRegion: '',
       UserCathedral: '',
     }
@@ -45,10 +46,11 @@ constructor(props) {
         //  기기 DB에 값이 있는 경우 
           if (len > 0) { 
             this.setState({
-              UserEmail: results.rows.item(0).email,
+              UserId: results.rows.item(0).user_id,
               UserName: results.rows.item(0).name,
               UserCatholicName: results.rows.item(0).christ_name,
               UserAge: results.rows.item(0).age,
+              UserGender: results.rows.item(0).gender,
               UserRegion: results.rows.item(0).region,
               UserCathedral: results.rows.item(0).cathedral,
           })
@@ -62,7 +64,7 @@ constructor(props) {
   }
  
   componentWillReceiveProps(nextProps){
-    if(nextProps.results.id != null){
+    if(nextProps.results.id != null && nextProps.status.isLogged){
       console.log(nextProps.results.id)
       alert("수정하였습니다.") 
     }
@@ -71,19 +73,20 @@ constructor(props) {
   UpdateUserFunction(){
     Keyboard.dismiss()
     var name = this.state.UserName
-    var email = this.state.UserEmail
+    var user_id = this.state.UserId
     var christ_name = this.state.UserCatholicName
     var age = this.state.UserAge
+    var gender = this.state.UserGender
     var region = this.state.UserRegion
     var cathedral = this.state.UserCathedral
     console.log()
-    this.props.updateUser(this.props.status.loginId, name, email, christ_name, age, region, cathedral)
+    this.props.updateUser(this.props.status.loginId, name, user_id, christ_name, age, gender, region, cathedral)
    
     
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE users set name=?, christ_name=?, age=?, region=?, cathedral=? where uid=?',
-        [name, christ_name, age, region, cathedral, this.props.status.loginId],
+        'UPDATE users set name=?, christ_name=?, age=?, gender=?, region=?, cathedral=? where uid=?',
+        [name, christ_name, age, gender, region, cathedral, this.props.status.loginId],
         (tx, results) => {                                   
           var len = results.rows.length;
         //  기기 DB에 값이 있는 경우 
@@ -152,8 +155,8 @@ constructor(props) {
         
          
         <TextInput                
-                placeholder="이메일"        
-                value={this.state.UserEmail}
+                placeholder="아이디"        
+                value={this.state.UserId}
                 editable={false}
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}, normalSize]}
@@ -164,22 +167,32 @@ constructor(props) {
                 value={this.state.UserName} 
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
+                style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 value={this.state.UserCatholicName}
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
+                style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
                 />
                  <TextInput                
-                placeholder="나이"    
+                placeholder="생년월일"    
                 value={this.state.UserAge}    
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%'}, normalSize]}
+                style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
                 />
+                 <Picker
+                  selectedValue={this.state.UserGender}
+                  style={{width:'24%', padding:'1%', marginBottom:7}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({UserGender: itemValue})
+                  }>
+                  <Picker.Item label="성별" value="" />
+                  <Picker.Item label="남자" value="남자" />
+                  <Picker.Item label="여자" value="여자" />
+                </Picker>
                 
                 <Picker
                   selectedValue={this.state.UserRegion}

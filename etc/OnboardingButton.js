@@ -39,11 +39,12 @@ OnboardingButton.propTypes = {
     moveFinal: PropTypes.func.isRequired
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({  
     container:{
         justifyContent: 'space-between',
         flexDirection: 'row',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        
     },
     button:{
         margin:0,

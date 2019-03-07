@@ -154,18 +154,7 @@ constructor(props) {
   }
 
   componentWillUnmount(){
-    this.setState({
-      today : "",
-      todayDate: "",
-      sentence: "",
-      todayData: "",
-      weekData: "",
-      monthData: "",
-      today_count: 0,
-      weekend_count: 0,
-      month_count: 0,
-      place:""
-    })
+    clearInterval(this.state.interval2);
     clearInterval(this.state.interval);
   }
   logOut(){
@@ -174,47 +163,49 @@ constructor(props) {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.gaspels.comment != this.props.gaspels.comment){}else{
-      console.log(nextProps.gaspels.sentence) 
-      console.log(nextProps.gaspels.thisdate) 
-      var contents = nextProps.gaspels.contents
-      var start = contents.indexOf("✠");
-      var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-      contents = contents.substring(start, end);
-       // 몇장 몇절인지 찾기
-       var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-       if(pos == null){
-           pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-       }
-       if(pos == null){
-           pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-       }
-                 
-       // 복음사가 가져옴
-       var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-       var today_person;
-       if(idx_today == -1){
-           idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-           today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
-       }else{
-           today_person = contents.substring(2,idx_today-2);
-       }
+      if(nextProps.status.isLogged == this.props.status.isLogged){
+        console.log(nextProps.gaspels.sentence) 
+        console.log(nextProps.gaspels.thisdate) 
+        var contents = nextProps.gaspels.contents
+        var start = contents.indexOf("✠");
+        var end = contents.indexOf("◎ 그리스도님 찬미합니다");
+        contents = contents.substring(start, end);
+        // 몇장 몇절인지 찾기
+        var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
+        }
+        if(pos == null){
+            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+        }
+                  
+        // 복음사가 가져옴
+        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
+        var today_person;
+        if(idx_today == -1){
+            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
+            today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+        }else{
+            today_person = contents.substring(2,idx_today-2);
+        }
 
-       var place = today_person+" "+pos
-       console.log("place", place)
+        var place = today_person+" "+pos
+        console.log("place", place)
 
-      /*try {
-        AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
-        AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
-        AsyncStorage.setItem('place', place);
-      } catch (error) {
-        console.error('AsyncStorage error: ' + error.message);
-      } */
-         // 우선적으로 asyncstorage에 로그인 상태 저장
-         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
-       
-      var date = new Date();
-      var changed = this.changeDateFormat(date)
-      this.getData(changed)  
+        /*try {
+          AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
+          AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
+          AsyncStorage.setItem('place', place);
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        } */
+          // 우선적으로 asyncstorage에 로그인 상태 저장
+          this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
+        
+        var date = new Date();
+        var changed = this.changeDateFormat(date)
+        this.getData(changed)  
+      }
     }
   }
 
@@ -246,7 +237,17 @@ constructor(props) {
     } 
     var today = year+"-"+month+"-"+day;
     var changed = this.changeDateFormat(date)
-    this.getData(changed) 
+    AsyncStorage.getItem('getAll', (err, result) => {
+      if(result == "start"){
+        try {
+          AsyncStorage.setItem('getAll', 'done');
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        } 
+        this.getData(changed) 
+      }  
+
+    })
     AsyncStorage.getItem('today1', (err, result) => {
       console.log("Main1 - get AsyncStorage today : ", result)
       if(result == today){
@@ -450,6 +451,7 @@ setAlarm = () => {
           color="#C8C8C8"
           {...this.props}
         />
+        
       </View>
       )
 

@@ -258,9 +258,6 @@ refreshContents(){
   
 }
 
-componentWillUnmount(){
-}
-
 getAllPoints(){
  
   console.log("Main5 - getallpoints", this.props.status.loginId)
@@ -340,7 +337,10 @@ componentWillReceiveProps(nextProps){
     if(params.otherParam != null){
       console.log("Main5 - navigation params existed : ",params.otherParam)
    //   this.onselectDate(null, params.otherParam) */
-      this.getAllPoints()
+   if(nextProps.status.isLogged == this.props.status.isLogged){
+    this.getAllPoints()
+   }
+     
      
    // }  
 }

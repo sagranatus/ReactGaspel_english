@@ -23,7 +23,7 @@ constructor(props) {
             if (res.rows.length == 0) {
               txn.executeSql('DROP TABLE IF EXISTS users', []);
               txn.executeSql(
-                'CREATE TABLE IF NOT EXISTS users(uid INTEGER NOT NULL, user_id TEXT NOT NULL, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, christ_name TEXT NOT NULL, age TEXT NOT NULL, region TEXT NOT NULL, cathedral TEXT NULL, created_at TEXT NULL)',
+                'CREATE TABLE IF NOT EXISTS users(uid INTEGER NOT NULL, user_id TEXT NOT NULL, name TEXT NOT NULL, christ_name TEXT NOT NULL, age TEXT NOT NULL, gender TEXT NULL, region TEXT NOT NULL, cathedral TEXT NULL, created_at TEXT NULL)',
                 []
               );
               txn.executeSql(
@@ -90,6 +90,7 @@ componentWillReceiveProps(nextProps){
   
     // setLogin 후에 
     if(this.props.status.loginId !== nextProps.status.loginId){
+    
       console.log("FirstPage - componentWillReceiveProps")
       // 로그인이나 회원가입한 뒤에 DB에서 loginName 찾기    
         db.transaction(tx => {
@@ -100,6 +101,7 @@ componentWillReceiveProps(nextProps){
                 var len = results.rows.length;
               //  값이 있는 경우에 
                 if (len > 0) {
+                  
                   console.log("FirstPage - Message", results.rows.item(0).uid+"is get")
                   this.setState({
                     loginId: results.rows.item(0).uid,
@@ -129,14 +131,10 @@ componentWillReceiveProps(nextProps){
         return (    
           (this.state.initialLoading)
             ? (    
-              <View style={styles.loadingContainer}>
-              <ActivityIndicator
-                animating
-                size="large"
-                color="#C8C8C8"
-                {...this.props}
-              />
-            </View>
+              <View style={styles.MainContainer}> 
+              <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+              <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+              </View>
             ) : (
               (this.state.isLoggedIn)
                 ? (

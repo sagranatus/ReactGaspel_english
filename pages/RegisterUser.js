@@ -11,10 +11,11 @@ export default class RegisterUser extends Component {
 constructor(props) { 
     super(props) 
     this.state = {       
-      UserEmail: '',
+      UserId: '',
       UserName: '',
       UserCatholicName: '',
       UserAge: '',
+      UserGender: '',
       UserRegion: '',
       UserCathedral: '',
       UserId: '',
@@ -26,27 +27,24 @@ constructor(props) {
 // 등록하기 클릭시 이벤트
 UserRegistrationFunction = () =>{
  
- const { UserEmail }  = this.state ;
+ const { UserId }  = this.state ;
  const { UserName }  = this.state ;
  const { UserCatholicName }  = this.state ;
  const { UserAge }  = this.state ;
+ const { UserGender }  = this.state ;
  const { UserRegion }  = this.state ;
  const { UserCathedral }  = this.state ;
  const { UserPassword }  = this.state ; 
  const { UserPassword_confirm }  = this.state ;  
 
- const st = UserEmail.indexOf("@")
- const UserId = UserEmail.substring(0, st)
+ //const st = UserEmail.indexOf("@")
+ //const UserId = UserEmail.substring(0, st)
 
- var exptext = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
-
- if(exptext.test(UserEmail)==false){
-  Alert.alert("이메일 형식이 잘못되었습니다.")
- }else if(UserEmail == "" || UserName == "" || UserCatholicName == "" || UserRegion == "" || UserCathedral == ""){
+ if(UserId == "" || UserName == "" || UserCatholicName == "" || UserRegion == "" || UserCathedral == ""){
   Alert.alert("내용을 모두 입력해주세요")
  }else if(UserPassword !== UserPassword_confirm){
    Alert.alert("비밀번호가 다릅니다")
-   console.log(UserEmail)
+   console.log(UserId)
  }else{
      // 서버에 데이터 전송
 fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
@@ -57,12 +55,12 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
   },
   body: JSON.stringify({ 
     name: UserName,     
-    email: UserEmail,
+    user_id: UserId,
     christ_name: UserCatholicName,
     age: UserAge,
+    gender: UserGender,
     region: UserRegion,
     cathedral: UserCathedral,
-    id: UserId, 
     password: UserPassword 
   })
  
@@ -77,8 +75,8 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
        // 데이터베이스에 삽입!
         db.transaction(function(tx) {
           tx.executeSql(
-            'INSERT INTO users (uid, user_id, email, name, christ_name, age, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
-            [responseJson.id, UserId, UserEmail, UserName, UserCatholicName, UserAge, UserRegion, UserCathedral, "now"],
+            'INSERT INTO users (uid, user_id, name, christ_name, age, gender, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
+            [responseJson.id, UserId, UserName, UserCatholicName, UserAge, UserGender, UserRegion, UserCathedral, "now"],
             (tx, results) => {
              // console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {                
@@ -129,8 +127,8 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
           </TouchableOpacity>   
           </View>
                 <TextInput                
-                placeholder="이메일"        
-                onChangeText={UserEmail => this.setState({UserEmail})}     
+                placeholder="아이디"        
+                onChangeText={UserId => this.setState({UserId})}     
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}]}
                 />       
@@ -139,20 +137,30 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 placeholder="이름"        
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%', paddingRight:'0.5%'}]}
+                style={[styles.TextInputStyleClass, {width:'24%', paddingRight:'1%'}]}
                 />
                  <TextInput                
                 placeholder="세례명"        
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
+                style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
                 />
                  <TextInput                
-                placeholder="나이"        
+                placeholder="생년월일"        
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
-                style={[styles.TextInputStyleClass, {width:'32%', paddingLeft:'0.5%'}]}
+                style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
                 />
+                 <Picker
+                  selectedValue={this.state.UserGender}
+                  style={{width:'24%', paddingLeft:'1%'}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({UserGender: itemValue})
+                  }>
+                  <Picker.Item label="성별" value="" />
+                  <Picker.Item label="남자" value="남자" />
+                  <Picker.Item label="여자" value="여자" />
+                </Picker>
                 
                 <Picker
                   selectedValue={this.state.UserRegion}
@@ -160,7 +168,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                   onValueChange={(itemValue, itemIndex) =>
                     this.setState({UserRegion: itemValue})
                   }>
-                  <Picker.Item label="교구 선택" value="" />
+                  <Picker.Item label="교구" value="" />
                   <Picker.Item label="서울대교구" value="서울대교구" />
                   <Picker.Item label="대전교구" value="대전교구" />
                   <Picker.Item label="수원교구" value="수원교구" />

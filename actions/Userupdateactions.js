@@ -1,5 +1,5 @@
 
-export const updateUser = (loginId, name, email, christ_name, age, region, cathedral) => {
+export const updateUser = (loginId, name, user_id, christ_name, age, gender, region, cathedral) => {
     console.log("Update") 
     req = fetch('https://sssagranatus.cafe24.com/servertest/user_update.php', {
       method: 'POST',
@@ -10,9 +10,10 @@ export const updateUser = (loginId, name, email, christ_name, age, region, cathe
       body: JSON.stringify({ 
         id: loginId,
         name: name,
-        email: email,
+        user_id: user_id,
         christ_name: christ_name,
         age: age,
+        gender: gender,
         region: region,
         cathedral: cathedral
       }) 

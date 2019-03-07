@@ -9,14 +9,14 @@ export default class LoginUser extends Component {
 constructor(props) { 
     super(props) 
     this.state = { 
-      UserEmail: '',
+      UserId: '',
       UserPassword: '' 
     } 
   }
 
 // login 클릭시 이벤트
 UserLoginFunction = () => { 
- const { UserEmail }  = this.state 
+ const { UserId }  = this.state 
  const { UserPassword }  = this.state
 
 // server로 값을 전달함
@@ -28,7 +28,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({ 
-    email: UserEmail, 
+    user_id: UserId, 
     password: UserPassword 
   })
  
@@ -71,8 +71,8 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                   } else {
                     db.transaction(function(tx) {
                       tx.executeSql(
-                        'INSERT INTO users (uid, user_id, email, name, christ_name, age, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
-                        [responseJson.id, responseJson.user_id, responseJson.email, responseJson.name, responseJson.christ_name, responseJson.age, responseJson.region, responseJson.cathedral, responseJson.created_at],
+                        'INSERT INTO users (uid, user_id, name, christ_name, age, gender, region, cathedral, created_at) VALUES (?,?,?,?,?,?,?,?,?)',
+                        [responseJson.id, responseJson.user_id, responseJson.name, responseJson.christ_name, responseJson.age, responseJson.gender, responseJson.region, responseJson.cathedral, responseJson.created_at],
                         (tx, results) => {
                         //  console.log('Results', results.rowsAffected)
                           if (results.rowsAffected > 0) {                            
@@ -105,6 +105,11 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
  
   }
 getAllComments(id){    
+    try {
+      AsyncStorage.setItem('getAll', 'start');
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    } 
   fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
     method: 'POST',
     headers: {
@@ -343,8 +348,8 @@ GoRegisterFunction = () =>{
         </View> 
               <View style={{width:'100%', marginTop:170, padding:10}}>
               <TextInput        
-                placeholder="이메일"      
-                onChangeText={UserEmail => this.setState({UserEmail})}  
+                placeholder="아이디"      
+                onChangeText={UserId => this.setState({UserId})}  
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}
               />      
