@@ -10,6 +10,7 @@ import Slideshow from 'react-native-image-slider-show';
 import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon2 from 'react-native-vector-icons/EvilIcons'
 var normalSize;
 var largeSize;
 var date = new Date();
@@ -86,6 +87,8 @@ constructor(props) {
         
       ],
       initialLoading: true,
+      showfirst: false,
+      showsecond: false
     
     }
  
@@ -359,18 +362,16 @@ constructor(props) {
               if (len > 0) {                  
                   console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      initialLoading:false
+                      mysentence : results.rows.item(0).mysentence
                   })
               } else {               
                   this.setState({
-                      mysentence : "",
-                      initialLoading:false
+                      mysentence : ""
                   })                   
               }
           }
           )
-      /*    tx.executeSql(
+          tx.executeSql(
             'SELECT * FROM lectio where date = ? and uid = ?',
             [weekenddate,loginId],
             (tx, results) => {
@@ -384,12 +385,12 @@ constructor(props) {
                     })
                 } else {               
                     this.setState({
-                        mysentence : "",
+                        js2_weekend : "",
                         initialLoading:false
                     })                   
                 }
             }
-            ); */
+            ); 
     });    
      
   }
@@ -488,7 +489,7 @@ setAlarm = () => {
                   </View>
                   
                 
-                  <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+                  <View style={this.state.showfirst ? {flexDirection: "row", height:210, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6} : {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
                   <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -496,21 +497,7 @@ setAlarm = () => {
                     onPress = {() => this.props.navigation.navigate('Main3')}
                     >    
                       <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
-                  </TouchableOpacity>      
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-                    onPress = {() => this.props.navigation.navigate('Main3')}
-                    >    
-                       <Icon name={'check-circle'} size={30} color={"#87CEEB"} /> 
                   </TouchableOpacity>    
-                  <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={this.state.js2 !=="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-                    onPress = {() => this.props.navigation.navigate('Main3')}
-                    >    
-                       <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
-                  </TouchableOpacity>   
                
                     <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
                     <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
@@ -522,34 +509,73 @@ setAlarm = () => {
                       <Icon name={'quote-left'} size={13} color={"#000"} />
                       <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.sentence}</Text>   
                       <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>   
+                      <TouchableOpacity 
+                      activeOpacity = {0.9}
+                      style={this.state.showfirst || (this.state.comment == "" && this.state.js2 == "") ? {display:'none'} : {width:'100%',alignItems: 'center'}}
+                      onPress = {() => this.setState({showfirst:true})}
+                      >       
+                      <Icon2 name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
+                      </TouchableOpacity> 
+                      
+                      <View style={this.state.showfirst ? {backgroundColor:"#fff", width:'100%', height:100, zIndex:0} : {display:'none'}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        style={!this.state.showfirst ? {display:'none'} : {width:'100%',alignItems: 'center', height:25}}
+                        onPress = {() => this.setState({showfirst:false})}
+                        >       
+                        <Icon2 name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
+                        </TouchableOpacity> 
+                        <Text style={this.state.js2 != "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.comment}</Text> 
+                        <Text style={this.state.js2 == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.js2}</Text>   
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        style={this.state.js2 != "" ? {display:'none'} : {alignItems: 'center', marginTop:10}}
+                        onPress = {() => this.props.navigation.navigate('Main3')}
+                        >       
+                        <Text>심화과정하러가기</Text>
+                        </TouchableOpacity>                     
+                      </View>
                   </View>
 
-                  <View style={{flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+                  <View style={this.state.showsecond ? {flexDirection: "row", height:200,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6} : {flexDirection: "row", height:130,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
                     <TouchableOpacity 
                       activeOpacity = {0.9}
-                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:80} : {display:'none'}}
                       onPress = {() => this.props.navigation.navigate('Main4')}
                       >    
                         <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
                     </TouchableOpacity>      
-                    <TouchableOpacity 
-                      activeOpacity = {0.9}
-                      style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-                      onPress = {() => this.props.navigation.navigate('Main4')}
-                      >    
-                        <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
-                    </TouchableOpacity>    
-
 
                       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
                       <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
-                      </View>      
+                      </View>   
+                     
                       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
                       <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
-                      </View>                         
+                      </View>      
+                                       
                       
-                        <Icon  style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
-                        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text>   
+                        <Icon style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
+                        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text> 
+
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        style={this.state.showsecond || this.state.mysentence == "" ? {display:'none'} : {width:'100%',alignItems: 'center'}}
+                        onPress = {() => this.setState({showsecond:true})}
+                        >       
+                        <Icon2 name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
+                        </TouchableOpacity> 
+
+                        <View style={this.state.showsecond ? {backgroundColor:"#fff", width:'100%', height:100} : {display:'none'}}>  
+                          <TouchableOpacity 
+                          activeOpacity = {0.9}
+                          style={!this.state.showsecond ? {display:'none'} : {width:'100%',alignItems: 'center', height:25}}
+                          onPress = {() => this.setState({showsecond: false})}
+                          >       
+                          <Icon2 name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
+                          </TouchableOpacity> 
+                          <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.js2_weekend}</Text> 
+                        </View>
                         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-10}] : {display:'none'}}>주일의 독서를 해보세요.</Text>   
                   </View>
 

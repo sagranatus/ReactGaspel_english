@@ -45,14 +45,17 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
   
 
 export const insertLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) => { 
+  var year = date.substring(0,4)
+  console.log("year", year)
   console.log("Lectio2actions : ", "inserted")
-  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year:year,
       status: status,
       id: id,
       date: date,
@@ -75,14 +78,17 @@ export const insertLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1,
     };
 
 export const updateLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) => { 
+  var year = date.substring(0,4)
+  console.log("year", year)
   console.log("Lectio2actions : ", "updated")
-  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year: year,
       status: status,
       id: id,
       date: date,
@@ -108,14 +114,17 @@ export const updateLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1,
  
 
     export const insertComment = (status, id, date, onesentence, comment) => { 
+      var year = date.substring(0,4)
+      console.log("year", year)
       console.log("Gaspel2actions : ", "inserted")
-      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData_ori.php', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
+          year:year,
           status: status,
           id: id,
           date: date,
@@ -132,14 +141,17 @@ export const updateLectio = (status, id, date, onesentence, bg1, bg2, bg3, sum1,
         };
     
     export const updateComment = (status, id, date, onesentence, comment) => { 
+      var year = date.substring(0,4)
+      console.log("year", year)
       console.log("Gaspel2actions : ", "updated")
-      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+      req = fetch('https://sssagranatus.cafe24.com/servertest/commentData_ori.php', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
+          year:year,
           status: status,
           id: id,
           date: date,

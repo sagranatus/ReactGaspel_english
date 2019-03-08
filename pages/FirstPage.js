@@ -83,6 +83,14 @@ constructor(props) {
 
   }
 
+  setStart(results){
+    this.setState({
+      loginId: results.rows.item(0).uid,
+      loginName: results.rows.item(0).name,
+      isLoggedIn: true,
+      initialLoading: false
+    });
+  }
 
 componentWillReceiveProps(nextProps){  
     // props의 loginId값이 변경될때
@@ -100,15 +108,13 @@ componentWillReceiveProps(nextProps){
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
+              const setStart = (results) => this.setStart(results)
                 if (len > 0) {
-                  
                   console.log("FirstPage - Message", results.rows.item(0).uid+"is get")
-                  this.setState({
-                    loginId: results.rows.item(0).uid,
-                    loginName: results.rows.item(0).name,
-                    isLoggedIn: true,
-                    initialLoading: false
-                  });
+                  setTimeout(function() {
+                    setStart(results)
+                  }, 500);            
+                 
                                
                 } else {
                   // 로그아웃시에 
@@ -126,7 +132,7 @@ componentWillReceiveProps(nextProps){
 }
   render() {
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
-    
+      
    
         return (    
           (this.state.initialLoading)

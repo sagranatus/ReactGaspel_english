@@ -41,6 +41,7 @@ OnboardingButton.propTypes = {
 
 const styles = StyleSheet.create({  
     container:{
+        width:'100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
         backgroundColor: '#fff',

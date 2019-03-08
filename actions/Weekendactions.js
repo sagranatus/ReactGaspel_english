@@ -66,13 +66,16 @@ export const getThreeGaspel = (status, person, chapter, verse) => {
 
 export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence, mythought, question, answer) => { 
   console.log("Weekendactions : ", "inserted")
-  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+  var year = date.substring(0,4)
+  console.log("year", year)
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year: year,
       status: status,
       id: id,
       date: date,
@@ -88,13 +91,14 @@ export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1
     }) 
   })
 
-  req2 = fetch('https://sssagranatus.cafe24.com/servertest/weekendData.php', {
+  req2 = fetch('https://sssagranatus.cafe24.com/servertest/weekendData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year: year,
       status: status,
       id: id,
       date: date,
@@ -114,14 +118,17 @@ export const insertWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1
     };
 
 export const updateWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence, mythought, question, answer) => { 
+  var year = date.substring(0,4)
+  console.log("year", year)
   console.log("Weekendactions : ", "updated")
-  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+  req = fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year: year,
       status: status,
       id: id,
       date: date,
@@ -136,13 +143,14 @@ export const updateWeekend = (status, id, date, onesentence, bg1, bg2, bg3, sum1
     }) 
   })
 
-  req2 = fetch('https://sssagranatus.cafe24.com/servertest/weekendData.php', {
+  req2 = fetch('https://sssagranatus.cafe24.com/servertest/weekendData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ 
+      year: year,
       status: status,
       id: id,
       date: date,

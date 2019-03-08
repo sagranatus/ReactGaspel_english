@@ -796,7 +796,7 @@ transitionToNextPanel(nextIndex){
                     </TouchableOpacity>             
                     </View>  
                     <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
-                      <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+                      <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
           
                       <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
                       주님께서 나에게 말씀하셨다.{"\n"}
@@ -808,7 +808,7 @@ transitionToNextPanel(nextIndex){
                           {"\n"}
                           (세번 반복한다){"\n"}
                       </Text>                                
-                      </View>                        
+                      </ScrollView>                        
                     </ImageBackground> 
                 </View>
 
@@ -849,7 +849,7 @@ transitionToNextPanel(nextIndex){
                        <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                      
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
-                        <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,}}>
+                        <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
             
                         <Text style={[{textAlign:'center', color:'#fff', paddingTop:'30%', lineHeight: 25}, normalSize]}> 빛이신 우리 아버지 하느님, {"\n"}
                              하느님께서는 세상에 아드님을 보내셨으니, {"\n"}
@@ -863,7 +863,7 @@ transitionToNextPanel(nextIndex){
                              주님 나라의 참된 행복에 이르게 하소서.{"\n"}
                              아멘.{"\n"}</Text>          
                      
-                        </View>
+                        </ScrollView>
                          </ImageBackground>
                                   
                         </View>
@@ -1024,6 +1024,8 @@ Main4.propTypes = {
 const styles = StyleSheet.create({
  
     MainContainer :{  
+      width:'100%',
+      margin:10,
         marginBottom:150
     },
     DescriptionComponentStyle: {
@@ -1038,9 +1040,9 @@ const styles = StyleSheet.create({
       margin:5,
       marginBottom: 7,
       height: 90,
-      borderWidth: 1,
-        borderColor: '#01579b',
-        borderRadius: 5 
+      borderWidth: 0.5,
+      borderColor: '#01579b',
+      borderRadius: 5 
       },
     TextResultStyleClass: { 
         textAlign: 'center',

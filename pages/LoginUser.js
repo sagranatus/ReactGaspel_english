@@ -110,7 +110,7 @@ getAllComments(id){
     } catch (error) {
       console.error('AsyncStorage error: ' + error.message);
     } 
-  fetch('https://sssagranatus.cafe24.com/servertest/commentData.php', {
+  fetch('https://sssagranatus.cafe24.com/servertest/commentData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -148,7 +148,7 @@ getAllComments(id){
 } 
 
 getAllLectios(id){      
-  fetch('https://sssagranatus.cafe24.com/servertest/lectioData.php', {
+  fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -193,7 +193,7 @@ getAllLectios(id){
 
 getAllWeekends(id){    
   // console.log("hahaha", id)    
-   fetch('https://sssagranatus.cafe24.com/servertest/weekendData.php', {
+   fetch('https://sssagranatus.cafe24.com/servertest/weekendData_ori.php', {
      method: 'POST',
      headers: {
        'Accept': 'application/json',
