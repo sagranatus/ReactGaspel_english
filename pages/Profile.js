@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 7,
     margin:1,
-    height: 40,
+    height: 50,
     borderWidth: 1,
     // Set border Hex Color Code Here.
       borderColor: '#2196F3',

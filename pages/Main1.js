@@ -46,6 +46,7 @@ constructor(props) {
         todayDate: "",
         todayDate_show: "",
         sentence: "",
+        sentence_weekend: "",
         comment:"",
         js2:"",
         js2_weekend:"",
@@ -86,9 +87,7 @@ constructor(props) {
         },
         
       ],
-      initialLoading: true,
-      showfirst: false,
-      showsecond: false
+      initialLoading: true
     
     }
  
@@ -129,15 +128,38 @@ constructor(props) {
     var todayShow =  year+"년"+month+"월"+day+"일";
   
     
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+      var lastday = date.getDate() - (date.getDay() - 1) - 1;
+      date = new Date(date.setDate(lastday));
+    }else{
+      var lastday = date.getDate() - (date.getDay() - 1);
+      date = new Date(date.setDate(lastday));
+    }   
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var weekend = year+"-"+month+"-"+day;
+
+
     // 오늘날짜를 설정 
     try {
       AsyncStorage.setItem('today1', today);
+      AsyncStorage.setItem('weekend1', weekend);
     } catch (error) {
       console.error('AsyncStorage error: ' + error.message);
     }
 
     this.setState({today: today, todayDate_show:todayShow})
-    this.props.getGaspel(today) 
+    this.props.getGaspel(today)  
+ 
+   
+    this.props.getGaspel(weekend) 
 
   }
 
@@ -169,45 +191,75 @@ constructor(props) {
       if(nextProps.status.isLogged == this.props.status.isLogged){
         console.log(nextProps.gaspels.sentence) 
         console.log(nextProps.gaspels.thisdate) 
-        var contents = nextProps.gaspels.contents
-        var start = contents.indexOf("✠");
-        var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-        contents = contents.substring(start, end);
-        // 몇장 몇절인지 찾기
-        var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-        }
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-        }
-                  
-        // 복음사가 가져옴
-        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-        var today_person;
-        if(idx_today == -1){
-            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-            today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+        if(nextProps.gaspels.created_at == this.state.today){
+          var contents = nextProps.gaspels.contents
+          var start = contents.indexOf("✠");
+          var end = contents.indexOf("◎ 그리스도님 찬미합니다");
+          contents = contents.substring(start, end);
+          // 몇장 몇절인지 찾기
+          var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
+          if(pos == null){
+              pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
+          }
+          if(pos == null){
+              pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+          }
+                    
+          // 복음사가 가져옴
+          var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
+          var today_person;
+          if(idx_today == -1){
+              idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
+              today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+          }else{
+              today_person = contents.substring(2,idx_today-2);
+          }
+  
+          var place = today_person+" "+pos
+          console.log("place", place)
+  
+          /*try {
+            AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
+            AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
+            AsyncStorage.setItem('place', place);
+          } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+          } */
+            // 우선적으로 asyncstorage에 로그인 상태 저장
+            this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
+          
+          var date = new Date();
+          var changed = this.changeDateFormat(date)
+          this.getData(changed)  
         }else{
-            today_person = contents.substring(2,idx_today-2);
+            var contents = nextProps.gaspels.contents
+            var start = contents.indexOf("✠");
+            var end = contents.indexOf("◎ 그리스도님 찬미합니다");
+            contents = contents.substring(start, end);
+            // 몇장 몇절인지 찾기
+            var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
+            if(pos == null){
+                pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
+            }
+            if(pos == null){
+                pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
+            }
+                      
+            // 복음사가 가져옴
+            var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
+            var today_person;
+            if(idx_today == -1){
+                idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
+                today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
+            }else{
+                today_person = contents.substring(2,idx_today-2);
+            }
+    
+            var place = today_person+" "+pos
+            console.log("place", place)
+            this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
         }
-
-        var place = today_person+" "+pos
-        console.log("place", place)
-
-        /*try {
-          AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
-          AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
-          AsyncStorage.setItem('place', place);
-        } catch (error) {
-          console.error('AsyncStorage error: ' + error.message);
-        } */
-          // 우선적으로 asyncstorage에 로그인 상태 저장
-          this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
-        
-        var date = new Date();
-        var changed = this.changeDateFormat(date)
-        this.getData(changed)  
+      
       }
     }
   }
@@ -239,6 +291,26 @@ constructor(props) {
         day = "0"+day;
     } 
     var today = year+"-"+month+"-"+day;
+
+    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+      var lastday = date.getDate() - (date.getDay() - 1) - 1;
+      date = new Date(date.setDate(lastday));
+    }else{
+      var lastday = date.getDate() - (date.getDay() - 1);
+      date = new Date(date.setDate(lastday));
+    }   
+    var year = date.getFullYear();
+    var month = date.getMonth()+1
+    var day = date.getDate();
+    if(month < 10){
+        month = "0"+month;
+    }
+    if(day < 10){
+        day = "0"+day;
+    } 
+    var weekend = year+"-"+month+"-"+day;
+
+
     var changed = this.changeDateFormat(date)
     AsyncStorage.getItem('getAll', (err, result) => {
       if(result == "start"){
@@ -256,10 +328,10 @@ constructor(props) {
       if(result == today){
         console.log("today is same")
         AsyncStorage.getItem('refreshMain1', (err, result) => {
-          console.log("Main1 - get AsyncStorage refresh : ", result)
-       
+          console.log("Main1 - get AsyncStorage refresh : ", result)       
           if(result == "refresh"){
             try {
+              var date = new Date();
               var changed = this.changeDateFormat(date)
               this.getData(changed) 
               AsyncStorage.setItem('refreshMain1', 'no');
@@ -285,6 +357,25 @@ constructor(props) {
         }
       }
     })
+
+    AsyncStorage.getItem('weekend1', (err, result) => {
+      console.log("Main1 - get AsyncStorage weekend : ", result)
+      if(result == weekend){
+        console.log("weekend is same")        
+      }else{
+        console.log("weekend is different")
+        try {
+            AsyncStorage.setItem('weekend1', weekend);          
+            this.props.getGaspel(weekend)
+        } catch (error) {
+            console.error('AsyncStorage error: ' + error.message);
+        }
+      }
+    })
+
+
+   
+
    
   }
 
@@ -297,7 +388,7 @@ constructor(props) {
         var lastday = date.getDate() - (date.getDay() - 1) - 1;
         date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1) + 6;
+      var lastday = date.getDate() - (date.getDay() - 1);
       date = new Date(date.setDate(lastday));
     }    
     var year = date.getFullYear();
@@ -457,139 +548,123 @@ setAlarm = () => {
       )
 
     : (   
-            <ScrollView >
-              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
-                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
-                  <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left'}]}>오늘의 복음</Text>
-                </View>
-                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'0%'}}>
-                  <TouchableOpacity 
-                          activeOpacity = {0.9}
-                          onPress={() => this.props.navigation.navigate('Guide')} // insertComment
-                          >        
-                          <View>
-                            <Text style={[{color:"#000", textAlign:'right'}, {fontSize:14}]}>
-                                가이드 보러가기
-                            </Text>
-                          </View>
-                      
-                    </TouchableOpacity>
-                  </View>
-                </View>
-             <NavigationEvents
-                onWillFocus={payload => {
-                    this.setChange();
-                }}
-                />
-                   <View>      
-                   <Slideshow 
-                    dataSource={this.state.dataSource}
-                    position={this.state.position}
-                    onPositionChanged={position => this.setState({ position })} />                    
-                  </View>
-                  
-                
-                  <View style={this.state.showfirst ? {flexDirection: "row", height:210, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6} : {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
-
-                  <TouchableOpacity 
+      <ScrollView >
+        <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
+            <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left'}]}>오늘의 복음</Text>
+          </View>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'0%'}}>
+            <TouchableOpacity 
                     activeOpacity = {0.9}
-                    style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-                    onPress = {() => this.props.navigation.navigate('Main3')}
-                    >    
-                      <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
-                  </TouchableOpacity>    
-               
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
-                    </View>       
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
-                    </View>                         
-                    
-                      <Icon name={'quote-left'} size={13} color={"#000"} />
-                      <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.sentence}</Text>   
-                      <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>   
-                      <TouchableOpacity 
-                      activeOpacity = {0.9}
-                      style={this.state.showfirst || (this.state.comment == "" && this.state.js2 == "") ? {display:'none'} : {width:'100%',alignItems: 'center'}}
-                      onPress = {() => this.setState({showfirst:true})}
-                      >       
-                      <Icon2 name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                      </TouchableOpacity> 
-                      
-                      <View style={this.state.showfirst ? {backgroundColor:"#fff", width:'100%', height:100, zIndex:0} : {display:'none'}}>
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        style={!this.state.showfirst ? {display:'none'} : {width:'100%',alignItems: 'center', height:25}}
-                        onPress = {() => this.setState({showfirst:false})}
-                        >       
-                        <Icon2 name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
-                        </TouchableOpacity> 
-                        <Text style={this.state.js2 != "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.comment}</Text> 
-                        <Text style={this.state.js2 == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.js2}</Text>   
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        style={this.state.js2 != "" ? {display:'none'} : {alignItems: 'center', marginTop:10}}
-                        onPress = {() => this.props.navigation.navigate('Main3')}
-                        >       
-                        <Text>심화과정하러가기</Text>
-                        </TouchableOpacity>                     
-                      </View>
-                  </View>
+                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                    >        
+                    <View>
+                      <Text style={[{color:"#000", textAlign:'right'}, {fontSize:14}]}>
+                          가이드 보러가기
+                      </Text>
+                    </View>
+                
+              </TouchableOpacity>
+            </View>
+          </View>
+      <NavigationEvents
+          onWillFocus={payload => {
+              this.setChange();
+          }}
+          />
+            <View>      
+            <Slideshow 
+              dataSource={this.state.dataSource}
+              position={this.state.position}
+              onPositionChanged={position => this.setState({ position })} />                    
+            </View>
+            
+          
+            <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
-                  <View style={this.state.showsecond ? {flexDirection: "row", height:200,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6} : {flexDirection: "row", height:130,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
-                    <TouchableOpacity 
-                      activeOpacity = {0.9}
-                      style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:80} : {display:'none'}}
-                      onPress = {() => this.props.navigation.navigate('Main4')}
-                      >    
-                        <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
-                    </TouchableOpacity>      
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+              onPress = {() => this.props.navigation.navigate('Main3')}
+              >    
+                <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
+            </TouchableOpacity>      
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+              onPress = {() => this.props.navigation.navigate('Main3')}
+              >    
+                <Icon name={'check-circle'} size={30} color={"#87CEEB"} /> 
+            </TouchableOpacity>    
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.js2 !=="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+              onPress = {() => this.props.navigation.navigate('Main3')}
+              >    
+                <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
+            </TouchableOpacity>   
+        
+              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+              <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
+              </View>       
+              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+              <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
+              </View>                         
 
-                      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
-                      <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
-                      </View>   
-                     
-                      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
-                      <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
-                      </View>      
-                                       
-                      
-                        <Icon style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
-                        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text> 
+                <Icon name={'quote-left'} size={13} color={"#000"} />
+                <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.sentence}</Text>   
+                  <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>
+                </View> 
+                <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%'}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:20, paddingLeft:30, paddingRight:30}]}>{this.state.comment}</Text>   
+                </View>  
+                <View style={this.state.js2 !== "" ? {width:'100%'}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.js2}</Text>   
+                </View>  
+            </View>
 
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        style={this.state.showsecond || this.state.mysentence == "" ? {display:'none'} : {width:'100%',alignItems: 'center'}}
-                        onPress = {() => this.setState({showsecond:true})}
-                        >       
-                        <Icon2 name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
-                        </TouchableOpacity> 
+            <View style={{flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+              <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+                onPress = {() => this.props.navigation.navigate('Main4')}
+                >    
+                  <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
+              </TouchableOpacity>      
+              <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+                onPress = {() => this.props.navigation.navigate('Main4')}
+                >    
+                  <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
+              </TouchableOpacity>    
 
-                        <View style={this.state.showsecond ? {backgroundColor:"#fff", width:'100%', height:100} : {display:'none'}}>  
-                          <TouchableOpacity 
-                          activeOpacity = {0.9}
-                          style={!this.state.showsecond ? {display:'none'} : {width:'100%',alignItems: 'center', height:25}}
-                          onPress = {() => this.setState({showsecond: false})}
-                          >       
-                          <Icon2 name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
-                          </TouchableOpacity> 
-                          <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:10, paddingRight:10}]}>{this.state.js2_weekend}</Text> 
-                        </View>
-                        <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-10}] : {display:'none'}}>주일의 독서를 해보세요.</Text>   
-                  </View>
 
-                 
-                  <View>      
-                   <Slideshow 
-                    height={150}
-                    dataSource={this.state.dataSource2}
-                    position={this.state.position2}
-                    onPositionChanged={position2 => this.setState({ position2 })} />
-                    
-                  </View>
-             
-            </ScrollView>
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+                </View>      
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
+                </View>                         
+                
+                  <Icon  style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text>   
+                  <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-10}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
+                  <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
+            </View>
+
+          
+            <View>      
+            <Slideshow 
+              height={150}
+              dataSource={this.state.dataSource2}
+              position={this.state.position2}
+              onPositionChanged={position2 => this.setState({ position2 })} />
+              
+            </View>
+      
+      </ScrollView>
         )
        
   }

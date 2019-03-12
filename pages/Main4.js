@@ -217,7 +217,7 @@ transitionToNextPanel(nextIndex){
         console.log(lastday)
         date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1) + 6;
+      var lastday = date.getDate() - (date.getDay() - 1);
       date = new Date(date.setDate(lastday));
     }       
     console.log(date)
@@ -414,7 +414,7 @@ transitionToNextPanel(nextIndex){
         var lastday = date.getDate() - (date.getDay() - 1) - 1;
         date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1) + 6;
+      var lastday = date.getDate() - (date.getDay() - 1);
       date = new Date(date.setDate(lastday));
     }    
     var year = date.getFullYear();
@@ -585,7 +585,7 @@ transitionToNextPanel(nextIndex){
                     moveNext={this.moveNext}
                     moveFinal={this.moveFinal}
                 />
-               <KeyboardAvoidingView style={{height:150}}>  
+               <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>  
                     <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                     <TextInput
@@ -798,7 +798,7 @@ transitionToNextPanel(nextIndex){
                     <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                       <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
           
-                      <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                      <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                       주님께서 나에게 말씀하셨다.{"\n"}
                       "{this.state.mysentence}"{"\n"}
                       "{this.state.js2}"
@@ -845,7 +845,7 @@ transitionToNextPanel(nextIndex){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                   <KeyboardAvoidingView style={{height:150}}>
+                   <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>
                        <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                      
                         <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>

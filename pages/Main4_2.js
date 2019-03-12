@@ -57,7 +57,8 @@ constructor(props) {
         Weekendupdate: false,
         Weekendediting: false,
         currentIndex:0,
-        initialLoading: true
+        initialLoading: true,
+        selectedDate: ""
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -242,6 +243,7 @@ transitionToNextPanel(nextIndex){
     console.log('Main4_2 - today date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
+        selectedDate: year+"-"+month,
         Weekenddate: today_comment_date
     })
 
@@ -357,6 +359,7 @@ transitionToNextPanel(nextIndex){
     console.log('Main4_2 - today date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
+        selectedDate: year+"-"+month,
         Weekenddate: today_comment_date
     })
 
@@ -578,7 +581,7 @@ componentWillReceiveProps(nextProps){
                         moveNext={this.moveNext}
                         moveFinal={this.moveFinal}
                     />
-                   <KeyboardAvoidingView style={{height:150}}>  
+                   <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>  
                       <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                       <TextInput
@@ -708,7 +711,7 @@ componentWillReceiveProps(nextProps){
                 )
              :
             (
-                <ScrollView> 
+                <View> 
                   <NavigationEvents
                     onWillFocus={payload => {
                     this.refreshContents()
@@ -737,6 +740,7 @@ componentWillReceiveProps(nextProps){
                             {"<"} BACK
                         </Text>
                     </TouchableOpacity>
+                    <ScrollView style={{marginBottom:40}}>   
                     <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -768,7 +772,8 @@ componentWillReceiveProps(nextProps){
                             수정
                         </Text>
                     </TouchableOpacity>
-                </ScrollView>
+                    </ScrollView> 
+                </View>
                
              )
             
@@ -803,7 +808,7 @@ componentWillReceiveProps(nextProps){
                             {"<"} BACK
                         </Text>
                     </TouchableOpacity>
-                    <ScrollView style={this.state.start == false ? {} : {display:'none'}}>                 
+                    <ScrollView style={this.state.start == false ? {marginBottom:40} : {display:'none'}}>                 
                       <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />       
                         <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>주일의 독서</Text>
                         <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
@@ -838,7 +843,7 @@ componentWillReceiveProps(nextProps){
                         <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                           <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
               
-                          <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                          <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                           주님께서 나에게 말씀하셨다.{"\n"}
                           "{this.state.mysentence}"{"\n"}
                           "{this.state.js2}"
@@ -860,7 +865,7 @@ componentWillReceiveProps(nextProps){
                             moveNext={this.moveNext}
                             moveFinal={this.moveFinal}
                         />
-                      <KeyboardAvoidingView style={{height:150}}>
+                      <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>
                           <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                         
                             <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>

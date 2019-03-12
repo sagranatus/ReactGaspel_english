@@ -12,7 +12,8 @@ import ReactNativeAN from 'react-native-alarm-notification';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 var PushNotification = require('react-native-push-notification');
-
+var normalSize;
+var largeSize;
 const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 10000)); 
 const alarmNotifData = {
   id: "12345",                                  // Required
@@ -69,8 +70,6 @@ constructor(props) {
     this.state = {
       time: "",
       isDateTimePickerVisible: false,
-      time2: "",
-      isDateTimePickerVisible2: false,
       fireDate: '',
 			update: '',
 			futureFireDate: '0'
@@ -108,38 +107,6 @@ constructor(props) {
   };
   
   
-  setAlarm2 = () => {
-    var date = new Date()
-    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-      var lastday = date.getDate() - (date.getDay() - 1) + 6;
-      console.log(lastday)
-      date = new Date(date.setDate(lastday));
-  }    
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    console.log(month+'/'+day+'/'+year+' '+this.state.time2)
-    if(new Date(month+'/'+day+'/'+year+' '+this.state.time2) - new Date() < 0){
-      day = date.getDate()+7;
-    }
-    PushNotification.localNotificationSchedule({
-      id: '456',
-      //... You can use all the options from localNotifications
-      message: "주일의 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
-      date: new Date(month+'/'+day+'/'+year+' '+this.state.time2), // in 60 secs
-      vibrate: true, // (optional) default: true
-      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      playSound: true, // (optional) default: true
-      soundName:'alarm.mp3',
-      repeatType: 'week'
-    });
-
-		const { fireDate } = this.state;
-		const details  = { ...alarmNotifData, fire_date: fireDate };
-		console.log(`alarm set: ${fireDate}`);
-		this.setState({ update: `alarm set: ${fireDate}` });
-	//	ReactNativeAN.scheduleAlarm(details);
-	};
 	stopAlarm = () => {
 		this.setState({ update: '' });
 		ReactNativeAN.stopAlarm();
@@ -160,13 +127,28 @@ constructor(props) {
   
 
   componentWillMount(){
-    AsyncStorage.getItem('alarm1', (err, result) => {
-      this.setState({time:result})
+    AsyncStorage.getItem('textSize', (err, result) => {
+      if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+      this.setState({reload:true})
     })
 
-    AsyncStorage.getItem('alarm2', (err, result) => {
-      this.setState({time2:result})
+    AsyncStorage.getItem('alarm1', (err, result) => {
+      console.log(result)
+      if(result != null){
+        this.setState({time:result})
+      }
+     
     })
+
   }
  
   componentWillReceiveProps(nextProps){
@@ -210,42 +192,6 @@ constructor(props) {
   };
 
 
-  _showDateTimePicker2 = () => this.setState({ isDateTimePickerVisible2: true });
-
-  _hideDateTimePicker2 = () => this.setState({ isDateTimePickerVisible2: false });
-
-  _handleDatePicked2 = (date) => {
-    console.log('A date has been picked: ', date);
-   // alert(date.getHours() +"시 "+ date.getMinutes() +"분")
-
-   var year = date.getFullYear();
-   var month = date.getMonth()+1
-   var day = date.getDate();
-   var hour = date.getHours()
-   var minutes = date.getMinutes()
-   if(month < 10){
-       month = "0"+month;
-   }
-   if(day < 10){
-       day = "0"+day;
-   } 
-   if(hour < 10){
-    hour = "0"+hour
-  }
-  if(minutes < 10){
-    minutes = "0"+minutes
-  }
-  console.log(day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00")
-  this.setState({time2:hour +":"+ minutes +":00"})
-    this.setAlarm2()    
-    try {
-      AsyncStorage.setItem('alarm2', hour +":"+ minutes +":00");      
-    } catch (error) {
-      console.error('AsyncStorage error: ' + error.message);
-    }
-    this._hideDateTimePicker2();
-  };
-
   stopAlarm1(){
     PushNotification.cancelLocalNotifications({id: '123'})
     this.setState({ time: '' });
@@ -255,15 +201,7 @@ constructor(props) {
       console.error('AsyncStorage error: ' + error.message);
     }
   }
-  stopAlarm2(){
-    PushNotification.cancelLocalNotifications({id: '456'})
-    this.setState({ time2: '' });
-    try{
-    AsyncStorage.setItem('alarm2', "")
-   } catch (error) {
-      console.error('AsyncStorage error: ' + error.message);
-    }
-  }
+ 
   setChange(selectedValues){    
     try {
       if(selectedValues == "보통"){
@@ -279,7 +217,19 @@ constructor(props) {
       }else if(selectedValues == "미선택"){
         AsyncStorage.setItem('course', 'notselected');
       }
-      
+      var result  = selectedValues;
+      if(result == "보통" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+      }else if(result == "크게"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+      }else if(result == "매우크게"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+      }
+     
+      this.setState({reload:true})
     
     //  AsyncStorage.getItem('textSize', (err, result) => {
        // alert("change"+result) 
@@ -323,7 +273,7 @@ constructor(props) {
                         {"<"} BACK
                     </Text>
                 </TouchableOpacity>  
-                <Text style={{margin:20, fontSize:16, textAlign:'center'}}>글씨크기 선택</Text>
+                <Text style={[{margin:20, textAlign:'center'},normalSize]}>글씨크기 선택</Text>
                
         <SelectMultipleGroupButton
           multiple={false}
@@ -340,7 +290,8 @@ constructor(props) {
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
 
-       <Text style={{margin:20, fontSize:16, textAlign:'center'}}>거룩한독서 기본/심화 선택</Text>
+       <Text style={[{margin:20, textAlign:'center'},normalSize]}>거룩한독서 기본/심화 선택</Text>
+     
         <SelectMultipleGroupButton
           multiple={false}
           group={[
@@ -355,11 +306,13 @@ constructor(props) {
           }}
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
+        <Text style={{margin:2, fontSize:14}}>* 기본/심화를 선택하시면 거룩한 독서를 할때 선택창이 뜨지 않습니다.</Text>
 
+        <Text style={[{margin:20, textAlign:'center'},normalSize]}>거룩한독서 알람 세팅</Text>
         <TouchableOpacity 
-         style={[styles.Button, {marginTop:40}]}
+         style={[styles.Button, {marginTop:0}]}
         onPress={this._showDateTimePicker}>
-          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>거룩한독서(평일) 알람 세팅 클릭</Text>         
+          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>알람 설정 하기</Text>         
         </TouchableOpacity>
         <Text style={{margin:2, fontSize:14}}>* 오전에 거룩한 독서를 하면 하루동안 하느님의 말씀을 가지고 평온히 지낼 수 있습니다.</Text>
         <DateTimePicker
@@ -370,33 +323,14 @@ constructor(props) {
           is24Hour={false}
           datePickerModeAndroid	={'spinner'}
         />
-         <Text style={{marginTop:20}}>알람시간 : {this.state.time}</Text>
+         <Text style={{marginTop:20, textAlign:'center', fontSize:17, color:'#000'}}>{this.state.time}</Text>
+        <View style={this.state.time !=="" ? {marginTop:10} : {display:'none'}}> 
          <TouchableOpacity 
-        style={{marginTop:20}}
         onPress={()=>this.stopAlarm1()}>
-          <Text style={{fontSize:15}}>거룩한독서 알람 해제</Text>         
-        </TouchableOpacity>
-
-         <TouchableOpacity 
-        style={[styles.Button, {marginTop:20}]}
-        onPress={this._showDateTimePicker2}>
-          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>주일의독서 알람 세팅 클릭</Text>         
-        </TouchableOpacity>
-        <Text style={{margin:2, fontSize:14}}>* 일요일 밤에 주일의독서를 하면 한주간 말씀을 묵상할 수 있습니다.</Text>
-        <DateTimePicker
-          isVisible={this.state.isDateTimePickerVisible2}
-          onConfirm={this._handleDatePicked2}
-          onCancel={this._hideDateTimePicker2}
-          mode={'time'}
-          is24Hour={false}
-          datePickerModeAndroid	={'spinner'}
-        />
-         <Text style={{marginTop:20}}>알람시간 : {this.state.time2}</Text>
-         <TouchableOpacity   
-        style={{marginTop:20}}
-        onPress={()=>this.stopAlarm2()}>
-          <Text style={{fontSize:15}}>주일의독서 알람 해제</Text>         
-        </TouchableOpacity>
+          <Text style={{fontSize:15, textAlign:'center'}}>거룩한독서 알람 해제</Text>         
+         </TouchableOpacity>
+        </View>
+     
       </View>
         )
        

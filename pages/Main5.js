@@ -178,11 +178,14 @@ constructor(props) {
           });
   
   })
-    this.getAllPoints()   
+  var year_month = year+"년 "+month;
+    this.getAllPoints(year_month)   
 }
 
 refreshContents(){
   Keyboard.dismiss()
+  const { params } = this.props.navigation.state;
+    
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
       normalSize = {fontSize:15}
@@ -194,8 +197,11 @@ refreshContents(){
       normalSize = {fontSize:19}
       largeSize = {fontSize:21}
     }
+    this.setState({reload:true})
   })
+
   AsyncStorage.getItem('refreshMain5', (err, result) => {
+  
     console.log("Main5 - get AsyncStorage refresh : ", result)
     var date = new Date();
       var year = date.getFullYear();
@@ -209,7 +215,10 @@ refreshContents(){
       } 
       var today = year+"-"+month+"-"+day;
       console.log(today + "/" + this.state.Today)
+     
+      
     if(result == "refresh" || this.state.Today != today){
+      console.log("here1?")
       try {
           AsyncStorage.setItem('refreshMain5', 'no');
       } catch (error) {
@@ -217,16 +226,7 @@ refreshContents(){
       }
       commentDates = Array()
       lectioDates = Array()
-      this.setState({
-        Today : "",
-        selectedDate: "",
-        selectedDate_format: "",// 요일
-        onesentence: "",      
-        initialLoading: true,
-        todaycount: 0,
-        weekcount: 0,
-        monthcount: 0
-      })
+   
       LocaleConfig.locales['kr'] = {
         monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
         monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
@@ -235,6 +235,9 @@ refreshContents(){
       };
       
       LocaleConfig.defaultLocale = 'kr';
+
+
+
       // 오늘 날짜로 캘린더 가져오기
       var date = new Date();
       var year = date.getFullYear();
@@ -245,28 +248,67 @@ refreshContents(){
       }
       if(day < 10){
           day = "0"+day;
-      } 
-      var today = year+"-"+month+"-"+day;
-      this.setState({Today: today, selectedDate: today})
-      // 오늘 값을 가져온다
-     // this.onselectDate(null, today)
-      this.getAllPoints()  
+      }
+     
+      var year_month = year+"년 "+month;
+  
+      const { params } = this.props.navigation.state;
+      if(params != null){
+        console.log("Main5 - navigation params existed : ",params.otherParam)
+        if(params.otherParam != year+"-"+month){
+          console.log("다른 달 ")
+
+          this.setState({
+            selectedDate: "",
+            selectedDate_format: "",// 요일
+            onesentence: "",      
+            initialLoading: true
+          })
+          today = params.otherParam+"-01"
+          this.setState({selectedDate: today})
+          year_month = params.otherParam.substring(0,4)+"년 "+params.otherParam.substring(5,6)
+          this.setState({selectedDate: today})
+          this.getAllPoints(year_month)  
+        }else{
+          console.log("같은 달 ")
+
+          this.setState({
+            Today : "",
+            selectedDate: "",
+            selectedDate_format: "",// 요일
+            onesentence: "",      
+            initialLoading: true,
+            todaycount: 0,
+            weekcount: 0,
+            monthcount: 0
+          })
+          var today = year+"-"+month+"-"+day;
+          this.setState({Today: today, selectedDate: today})
+          // 오늘 값을 가져온다
+         // this.onselectDate(null, today)
+         var year_month = year+"년 "+month;
+          this.getAllPoints(year_month)  
+        }
+      //   this.onselectDate(null, params.otherParam)
+        };
+    
+    
     }else{
-      this.setState({reload:true})
+    // this.setState({reload:true})    
     }
   })
   
 }
 
-getAllPoints(){
+getAllPoints(year_month){
  
   console.log("Main5 - getallpoints", this.props.status.loginId)
    // 날짜에 맞는 Comment값 모두 가져오기
      //comment있는지 확인    
      db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM comment where uid = ?',
-        [this.props.status.loginId],
+        'SELECT * FROM comment where uid = ? and date LIKE ?',
+        [this.props.status.loginId, year_month+"%"],
         (tx, results) => {
           var len = results.rows.length;
         //  값이 있는 경우에 
@@ -284,13 +326,21 @@ getAllPoints(){
                 day = results.rows.item(i).date.substring(month_site+2, day_site);
                 
                 date = year+"-"+month+"-"+day
+               if(commentDates.indexOf(date) < 0 ){
                 commentDates.push(date);
+                } 
+              
               }
+            /*  commentDates = commentDates.reduce(( a, b ) => {
+                if( a.indexOf(b) < 0 ) a.push(b) ;
+                return a ;
+              }, [])  */
               console.log('Main5 - get Comments data : ', commentDates)
               this.commentFunc(commentDates)             
                          
           } else {                  
-            console.log('Main5 - get Comments data : ', "no value")            
+            console.log('Main5 - get Comments data : ', "no value")    
+            this.commentFunc(commentDates)              
           }
         }
       );
@@ -299,8 +349,8 @@ getAllPoints(){
      //lectio있는지 확인    
    db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM lectio where uid = ?',
-      [this.props.status.loginId],
+      'SELECT * FROM lectio where uid = ?  and date LIKE ?',
+      [this.props.status.loginId, year_month+"%"],
       (tx, results) => {
         var len = results.rows.length;
       //  값이 있는 경우에 
@@ -317,15 +367,18 @@ getAllPoints(){
               day = results.rows.item(i).date.substring(month_site+2, day_site);
              
               date = year+"-"+month+"-"+day
-              lectioDates.push(date);
+              if(lectioDates.indexOf(date) < 0 ){
+                lectioDates.push(date);
+                } 
             } 
+            
             console.log('Main5 - get Lectios data : ',lectioDates) 
             this.lectioFunc(lectioDates)            
          
             
         } else {
           console.log('Main5 - get Lectios data : ', "no value")   
-          this.lectioFunc("")                        
+          this.lectioFunc(lectioDates)                          
         }
       }
     );
@@ -338,7 +391,8 @@ componentWillReceiveProps(nextProps){
       console.log("Main5 - navigation params existed : ",params.otherParam)
    //   this.onselectDate(null, params.otherParam) */
    if(nextProps.status.isLogged == this.props.status.isLogged){
-    this.getAllPoints()
+     console.log("here2?")
+  
    }
      
      
@@ -378,7 +432,21 @@ commentFunc = (commentDates) => {
   } 
   this.setState({ Marked : result, initialLoading: false});
 
-  this.countDays()
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  var day = date.getDate();
+  if(month < 10){
+      month = "0"+month;
+  }
+  if(day < 10){
+      day = "0"+day;
+  } 
+  var today = year+"-"+month+"-"+day;
+  if(this.state.selectedDate == today){
+    this.countDays()
+  }
+  
 }
  countDays(){
   var todaycount = 0
@@ -503,6 +571,16 @@ if(date.includes("일요일")){
     return todayLabel;
 }
 
+changeMonth(year, month){
+  if(month < 10){
+      month = "0"+month;
+  }
+  var today = year+"-"+month+"-01";
+  var year_month = year+"년 "+month; 
+  this.setState({selectedDate: today})
+  this.getAllPoints(year_month)   
+}
+
   render() {    
     const menu = <Menu onItemSelected={this.onMenuItemSelected} />;
     console.log("Main5 - render")  
@@ -580,7 +658,7 @@ if(date.includes("일요일")){
               markingType={'custom'}
               firstDay={1}
               hideExtraDays={true}
-              current={this.state.Today}
+              current={this.state.selectedDate}
               pastScrollRange={24}
               futureScrollRange={24}
               horizontal
@@ -588,8 +666,10 @@ if(date.includes("일요일")){
               onDayPress={day=>this.onselectDate(day, null)}
               style={{borderTopWidth: 1, borderTopColor: '#d8d8d8'}}
               markedDates={this.state.Marked}             
-              onPressArrowLeft={substractMonth => substractMonth()}
-              onPressArrowRight={addMonth => addMonth()}
+             // onPressArrowLeft={substractMonth => this.substractMonth()}
+           //   onPressArrowRight={addMonth => this.addMonth()}
+              onMonthChange={(changed) => {console.log('month changed', changed.year + "년 "+ changed.month), this.changeMonth(changed.year, changed.month)
+            }}
             />
           </View>        
          

@@ -43,11 +43,13 @@ const styles = StyleSheet.create({
   item: {
     fontWeight: '300',
     paddingTop: 25,
+    paddingBottom: 10,
     paddingLeft: 20,
   },
 });
 var name, christname;
 export default function Menu({ onItemSelected }) {
+  
   AsyncStorage.getItem('login_name', (err, result) => {
     console.log("FirstPage - login_name : ", result)
     name = result;
@@ -72,7 +74,6 @@ export default function Menu({ onItemSelected }) {
       }
     })
   }
-
 
   return (
     <ScrollView scrollsToTop={false} style={styles.menu}>

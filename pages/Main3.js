@@ -845,7 +845,7 @@ setChange(){
                     <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                             <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
                 
-                            <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                            <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                             주님께서 나에게 말씀하셨다.{"\n"}
                                 "{this.state.js2}"
                                 {"\n"}{"\n"}
@@ -877,7 +877,7 @@ setChange(){
                         <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                                 <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
                     
-                                <Text style={[{textAlign:'center', color:'#fff', paddingTop:300, lineHeight: 22}, normalSize]}> 
+                                <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                                 주님께서 나에게 말씀하셨다.{"\n"}
                                     "{this.state.comment}"
                                     {"\n"}{"\n"}
@@ -1137,7 +1137,6 @@ const styles = StyleSheet.create({
       Button:{
         backgroundColor: '#01579b', 
         padding: 10, 
-        marginTop:10,
-        marginBottom:5, 
+        marginTop:10, 
         width:'100%'}
     });

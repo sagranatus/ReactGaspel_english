@@ -13,23 +13,6 @@ var normalSize;
 var largeSize;
 export default class Main3_2 extends Component { 
 
-static navigationOptions =  ({ navigation }) => {
-    return {
-    headerLeft: (
-      
-        <TouchableOpacity
-        activeOpacity = {0.9}
-        style={{backgroundColor: '#01579b', padding: 10}}
-        onPress={() =>{
-            navigation.navigate('Main5', {otherParam: date});} } 
-        >
-        <Text style={{color:"#FFF", textAlign:'left'}}>
-           {"<"} BACK
-        </Text>
-    </TouchableOpacity>
-    ),
-    }
-};
 
 constructor(props) { 
     super(props)      
@@ -58,7 +41,8 @@ constructor(props) {
         initialLoading: true,
         basic: null,
         comment: null,
-        doMore: false
+        doMore: false,
+        selectedDate: ""
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -273,6 +257,7 @@ transitionToNextPanel(from, nextIndex){
     console.log('Main3_2 - today date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
+        selectedDate: year+"-"+month,
         Lectiodate: today_comment_date
     })
 
@@ -415,7 +400,8 @@ transitionToNextPanel(from, nextIndex){
     console.log('Main3_2 - today date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
-        Lectiodate: today_comment_date
+        Lectiodate: today_comment_date,
+        selectedDate: year+"-"+month
     })
 
     this.props.getGaspel(today) // 데이터 가져오기
@@ -862,7 +848,7 @@ componentWillReceiveProps(nextProps){
                             {"<"} BACK
                         </Text>
                     </TouchableOpacity>             
-                    <ScrollView style={this.state.start == false ? {} : {display:'none'}}>                     
+                    <ScrollView style={this.state.start == false ? {marginBottom:40} : {display:'none'}}>                     
 
                         <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
                             <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
@@ -899,7 +885,7 @@ componentWillReceiveProps(nextProps){
                     <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                             <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
                 
-                            <Text style={[{textAlign:'center', color:'#fff', paddingTop:320, lineHeight: 22}, normalSize]}> 
+                            <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                             주님께서 나에게 말씀하셨다.{"\n"}
                                 "{this.state.js2}"
                                 {"\n"}{"\n"}
@@ -931,7 +917,7 @@ componentWillReceiveProps(nextProps){
                         <ImageBackground source={require('../resources/pray2_img.png')} style={{width: '100%', height: 600}}>
                                 <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
                     
-                                <Text style={[{textAlign:'center', color:'#fff', paddingTop:300, lineHeight: 22}, normalSize]}> 
+                                <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
                                 주님께서 나에게 말씀하셨다.{"\n"}
                                     "{this.state.comment}"
                                     {"\n"}{"\n"}
@@ -1165,6 +1151,5 @@ componentWillReceiveProps(nextProps){
             backgroundColor: '#01579b', 
             padding: 10, 
             marginTop:10,
-            marginBottom:5, 
             width:'100%'}
         });
