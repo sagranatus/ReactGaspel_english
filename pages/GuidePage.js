@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, StyleSheet, Dimensions, Text, TouchableOpacity, AsyncStorage, ScrollView } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import {NavigationEvents} from 'react-navigation'
+import Icon from 'react-native-vector-icons/AntDesign'
 var normalSize;
 var largeSize;
 AsyncStorage.getItem('textSize', (err, result) => {
@@ -15,7 +16,7 @@ AsyncStorage.getItem('textSize', (err, result) => {
     normalSize = {fontSize:19}
     largeSize = {fontSize:21}
   }
-})
+}) 
 
 const FirstRoute = () => (
   <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
@@ -193,13 +194,13 @@ export default class GuidePage extends React.Component {
                
             <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서{"\n"}</Text> 
             <Text style={[styles.textStyle, normalSize]}>       
-          - 기본 : 성령청원기도 -> 독서 -> 간단한 묵상 -> 기도 {"\n"}
-          - 심화 : 성령청원기도 -> 독서(세밀하고, 반복적인 독서) -> 묵상(예수님 모습 찾기, 내게 해주시는 말씀 듣기) -> 기도{"\n"}{"\n"}
+          - 기본 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  간단한 묵상 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도 {"\n"}
+          - 심화 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 (세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도{"\n"}{"\n"}
           </Text>
           <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>주일의 독서{"\n"}</Text> 
           <Text style={[styles.textStyle, normalSize]}>       
           *거룩한 독서와 같은 방법이나 좀 더 심화된 과정입니다.{"\n"}
-          성령청원기도 -> 독서(배경지식 공부 / 세밀하고, 반복적인 독서) -> 묵상(예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) -> 기도 -> 관상(한주간 말씀을 품고 살기)
+          성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 (배경지식 공부 / 세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  관상 (한주간 말씀을 품고 살기)
             </Text>
             </ScrollView>
           ),

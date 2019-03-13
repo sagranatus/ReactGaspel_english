@@ -203,7 +203,7 @@ transitionToNextPanel(from, nextIndex){
     if(this.state.currentIndex == 1 && this.state.basic == null && from=="next"){
         Alert.alert(
             '거룩한 독서 기본/심화를 선택하세요.',
-            '설정화면에서 선택하시면 매번 선택하지 않으셔도 됩니다.',
+            '환경설정에서 설정하시면 선택창이 뜨지 않습니다.',
             [
               {text: '기본', onPress: () => this.setState({
                 basic:true, currentIndex: nextIndex})
@@ -777,42 +777,45 @@ componentWillReceiveProps(nextProps){
                         <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
                         <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                         <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
-                   
+                        <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                         <TouchableOpacity
                             activeOpacity = {0.9}
                             style={styles.Button}
                             onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                             >
-                            <Text style={{color:"#FFF", textAlign:'center'}}>
+                            <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
                                 수정
                             </Text>
                         </TouchableOpacity>
+                        </View>
                     </ScrollView>
         
                     <ScrollView style={this.state.basic ? {} : {display:'none'}}>                   
                     <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
                     <Text style={styles.UpdateQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절</Text>
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.comment}</Text>   
-        
+                    <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:0}}>
                     <TouchableOpacity
                     activeOpacity = {0.9}
-                    style={styles.Button}
+                    style={[styles.Button, {backgroundColor:"#87CEEB"}]}
                     onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                     >
-                    <Text style={{color:"#FFF", textAlign:'center'}}>
+                    <Text style={{color:"#FFF", textAlign:'center',fontWeight:'bold'}}>
                         수정
                     </Text>
                     </TouchableOpacity>
-        
+                    </View>
+                    <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:10}}>
                     <TouchableOpacity
                     activeOpacity = {0.9}
-                    style={styles.Button}
+                    style={[styles.Button, {width:200}]}
                     onPress={() => this.setState({ Lectioupdate: false, start:true, currentIndex: 0, basic:false, doMore:true })}
                     >
-                    <Text style={{color:"#FFF", textAlign:'center'}}>
+                    <Text style={{color:"#fff", textAlign:'center',fontWeight:'bold'}}>
                         심화과정 이어서 하기 
                     </Text>
                     </TouchableOpacity>
+                    </View>
                     </ScrollView>
                     </View>
                     
@@ -856,16 +859,17 @@ componentWillReceiveProps(nextProps){
 
                             <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원기도) 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정(기도)을 모두 포함합니다. 이를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
                             <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
-                            
+                            <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:10}}>
                             <TouchableOpacity
                             activeOpacity = {0.9}
                             style={styles.Button}
                             onPress={() =>  this.setState({start: true})} 
                             >
-                            <Text style={{color:"#FFF", textAlign:'center'}}>
-                                START
+                            <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
+                               거룩한 독서 시작하기
                             </Text>
                         </TouchableOpacity>
+                        </View>
                     </ScrollView>
 
 
@@ -1112,7 +1116,7 @@ componentWillReceiveProps(nextProps){
         margin:5,
         marginBottom: 7,
         height: 90,
-        borderWidth: 0.5,
+        borderWidth: 1,
          borderColor: '#01579b', // 이것때문에 .이 보이나 원인을 모르겠다
          borderRadius: 5 
         },
@@ -1148,8 +1152,11 @@ componentWillReceiveProps(nextProps){
             paddingHorizontal: 10
           },
           Button:{
+            textAlign:'center',
             backgroundColor: '#01579b', 
             padding: 10, 
             marginTop:10,
-            width:'100%'}
+            width:200,
+            borderRadius: 10,
+            height:40}
         });

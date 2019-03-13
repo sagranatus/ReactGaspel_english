@@ -273,7 +273,7 @@ constructor(props) {
                         {"<"} BACK
                     </Text>
                 </TouchableOpacity>  
-                <Text style={[{margin:20, textAlign:'center'},normalSize]}>글씨크기 선택</Text>
+                <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>글씨크기 선택</Text>
                
         <SelectMultipleGroupButton
           multiple={false}
@@ -290,7 +290,7 @@ constructor(props) {
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
 
-       <Text style={[{margin:20, textAlign:'center'},normalSize]}>거룩한독서 기본/심화 선택</Text>
+       <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>거룩한독서 기본/심화 선택</Text>
      
         <SelectMultipleGroupButton
           multiple={false}
@@ -308,12 +308,16 @@ constructor(props) {
         />
         <Text style={{margin:2, fontSize:14}}>* 기본/심화를 선택하시면 거룩한 독서를 할때 선택창이 뜨지 않습니다.</Text>
 
-        <Text style={[{margin:20, textAlign:'center'},normalSize]}>거룩한독서 알람 세팅</Text>
+        <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>거룩한독서 알람 세팅</Text>
+
+        <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
         <TouchableOpacity 
          style={[styles.Button, {marginTop:0}]}
         onPress={this._showDateTimePicker}>
-          <Text style={{color:"#fff", textAlign:'center', fontSize:15}}>알람 설정 하기</Text>         
+          <Text style={{color:"#fff", textAlign:'center', fontWeight:'bold'}}>알람 설정 하기</Text>         
         </TouchableOpacity>
+        </View>
+
         <Text style={{margin:2, fontSize:14}}>* 오전에 거룩한 독서를 하면 하루동안 하느님의 말씀을 가지고 평온히 지낼 수 있습니다.</Text>
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
@@ -371,10 +375,13 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
     },
     Button:{
+      textAlign:'center',
       backgroundColor: '#01579b', 
       padding: 10, 
-      marginBottom:5, 
-      width:'100%'},
+      marginTop:10,
+      width:200,
+      borderRadius: 10,
+      height:40},
     smallText: {
       color: "#01579b",
       textAlign: 'center', 

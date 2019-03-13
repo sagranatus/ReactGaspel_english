@@ -502,10 +502,11 @@ componentWillReceiveProps(nextProps){
      }
 
      if(nextProps.weekend.background != null){ 
+       var background = nextProps.weekend.background.replace(/,/gi, "\n\n");
       console.log("Main4 - weekend More get") 
       this.setState({
         question : nextProps.weekend.question,
-        background:  nextProps.weekend.background
+        background:  background
         })  
       //  alert(nextProps.weekend.question)
         }
@@ -762,16 +763,17 @@ componentWillReceiveProps(nextProps){
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
                     <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.mysentence}</Text>     
-
+                    <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                     <TouchableOpacity
                         activeOpacity = {0.9}
-                        style={{backgroundColor: '#01579b', padding: 10, marginTop: 10}}
+                        style={styles.Button}
                         onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
                         >
-                        <Text style={{color:"#FFF", textAlign:'center'}}>
+                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
                             수정
                         </Text>
                     </TouchableOpacity>
+                    </View>
                     </ScrollView> 
                 </View>
                
@@ -815,16 +817,17 @@ componentWillReceiveProps(nextProps){
 
                         <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원) 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도하며(기도) 한 주간 말씀을 마음에 품고 살아가는 연습(관상)을 할 수 있습니다.</Text>
                         <Image source={require('../resources/weekend_img2.png')} style={{width: '100%', height: 100}} />  
-                      
+                        <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:10}}>
                         <TouchableOpacity
                           activeOpacity = {0.9}
                           style={styles.Button}
                           onPress={() =>  this.setState({start: true})} 
                           >
-                          <Text style={{color:"#FFF", textAlign:'center'}}>
-                              START
+                          <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
+                              주일의 독서 시작하기
                           </Text>
                       </TouchableOpacity>
+                      </View>
                       </ScrollView>
                     
                       <View style={this.state.praying == true ? {} : {display:'none'}}>        
@@ -844,14 +847,14 @@ componentWillReceiveProps(nextProps){
                           <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
               
                           <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
-                          주님께서 나에게 말씀하셨다.{"\n"}
-                          "{this.state.mysentence}"{"\n"}
+                          주님께서 나에게 말씀하셨다.{"\n"}                         
                           "{this.state.js2}"
-                              {"\n"}{"\n"}
-                              주님 제가 이 말씀을 깊이 새기고{"\n"}
-                              하루를 살아가도록 이끄소서. 아멘.{"\n"}
-                              {"\n"}
-                              (세번 반복한다){"\n"}
+                            {"\n"}{"\n"}
+                            주님 제가 이 말씀을 깊이 새기고{"\n"}
+                            하루를 살아가도록 이끄소서. {"\n"}
+                            {"\n"}                              
+                            "{this.state.mysentence}"{"\n"}{"\n"}
+                            이 구절을 한주간 묵상하며 살게 하소서. 아멘.{"\n"}
                           </Text>                                
                           </ScrollView>                        
                         </ImageBackground> 
@@ -890,7 +893,7 @@ componentWillReceiveProps(nextProps){
 
                             <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
                               <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다</Text> 
-                              <Text style={[{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}, normalSize]}>{this.state.background}</Text>                                             
+                              <Text style={[{textAlign:'center', paddingTop:40, fontSize:15, color: "#000"}, normalSize]}>{this.state.background}</Text>                                             
                             </View>
                             <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                             <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                                
@@ -1057,7 +1060,7 @@ const styles = StyleSheet.create({
     margin:5,
     marginBottom: 7,
     height: 90,
-    borderWidth: 0.5,
+    borderWidth: 1,
       borderColor: '#01579b',
       borderRadius: 5 
     },
@@ -1093,9 +1096,11 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10
     },
     Button:{
+      textAlign:'center',
       backgroundColor: '#01579b', 
       padding: 10, 
       marginTop:10,
-      marginBottom:5, 
-      width:'100%'}
+      width:200,
+      borderRadius: 10,
+      height:40}
   });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react' 
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator, NetInfo} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
@@ -48,14 +48,35 @@ constructor(props) {
       // isLoggedIn:true,
        loginId: null,
        loginName: null,
-       initialLoading: true
+       initialLoading: true,
+       internet: false
     } 
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
 
-  
-  
+    
   componentWillMount(){
+    
+   const setState = (isConnected) => this.setState({internet : isConnected})
+
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+     // alert('First, is ' +isConnected)
+      setState(isConnected)
+    });
+    function handleFirstConnectivityChange(isConnected) {
+      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+     // alert('Then, is ' +isConnected)
+      setState(isConnected)
+     /* NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange
+      ); */
+    }
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange
+    );
   // 로그인 상태값 가져오기
   AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
@@ -131,17 +152,28 @@ componentWillReceiveProps(nextProps){
     }
 }
   render() {
+  //  alert(this.state.internet)
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
       
    
         return (    
+          !this.state.internet ? 
+          (    
+            <View style={styles.MainContainer}> 
+            <Text style= {styles.TextComponentStyle}>인터넷을 연결해주세요</Text>
+            </View>
+          ) :
+
           (this.state.initialLoading)
-            ? (    
-              <View style={styles.MainContainer}> 
-              <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-              <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
-              </View>
-            ) : (
+            ?            
+            (
+                    <View style={styles.MainContainer}> 
+                    <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+                    <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+                    </View>
+              )
+            
+             : (
               (this.state.isLoggedIn)
                 ? (
                   <MainPage />  

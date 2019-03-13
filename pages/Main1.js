@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -93,7 +93,8 @@ constructor(props) {
  
   }
 
-  componentWillMount(){
+  componentWillMount(){    
+
      //  ReactNativeAN.removeAllFiredNotifications()
   //  ReactNativeAN.removeFiredNotification("12345")
    // ReactNativeAN.cancelAllNotifications()
@@ -132,7 +133,7 @@ constructor(props) {
       var lastday = date.getDate() - (date.getDay() - 1) - 1;
       date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1);
+      var lastday = date.getDate()
       date = new Date(date.setDate(lastday));
     }   
     var year = date.getFullYear();
@@ -158,8 +159,14 @@ constructor(props) {
     this.setState({today: today, todayDate_show:todayShow})
     this.props.getGaspel(today)  
  
+    // 일요일인 경우는 값을 가져오지 않는다. 그리고 weekend true로 준다.
+    var date = new Date();
+    if(date.getDay() !== 0){
+      this.props.getGaspel(weekend) 
+    }else{
+      this.setState({weekend:true})
+    }
    
-    this.props.getGaspel(weekend) 
 
   }
 
@@ -296,7 +303,7 @@ constructor(props) {
       var lastday = date.getDate() - (date.getDay() - 1) - 1;
       date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1);
+      var lastday = date.getDate()
       date = new Date(date.setDate(lastday));
     }   
     var year = date.getFullYear();
@@ -388,7 +395,7 @@ constructor(props) {
         var lastday = date.getDate() - (date.getDay() - 1) - 1;
         date = new Date(date.setDate(lastday));
     }else{
-      var lastday = date.getDate() - (date.getDay() - 1);
+      var lastday = date.getDate()
       date = new Date(date.setDate(lastday));
     }    
     var year = date.getFullYear();
@@ -404,9 +411,7 @@ constructor(props) {
    
     var weekenddate = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(date_weekend)) 
     console.log("date", weekenddate+"/"+today)
-    if(weekenddate == today){
-      this.setState({weekend: true})
-    }
+   
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM comment where date = ? and uid = ?',
@@ -585,7 +590,7 @@ setAlarm = () => {
             <TouchableOpacity 
               activeOpacity = {0.9}
               style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-              onPress = {() => this.props.navigation.navigate('Main3')}
+              onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
               >    
                 <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
             </TouchableOpacity>      
@@ -624,7 +629,7 @@ setAlarm = () => {
                 </View>  
             </View>
 
-            <View style={{flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+            <View style={!this.state.weekend ? { flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
               <TouchableOpacity 
                 activeOpacity = {0.9}
                 style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
