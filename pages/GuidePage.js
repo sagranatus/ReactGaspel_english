@@ -192,16 +192,33 @@ export default class GuidePage extends React.Component {
           third: () => (
             <ScrollView style={[styles.scene, { backgroundColor: '#fff' , paddingTop:10}]}>
                
-            <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서{"\n"}</Text> 
+            <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서</Text> 
             <Text style={[styles.textStyle, normalSize]}>       
-          - 기본 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  간단한 묵상 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도 {"\n"}
-          - 심화 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 (세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도{"\n"}{"\n"}
+          - 기본 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  간단한 묵상 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도 {"\n"}
+          <Text style={[styles.textStyle, {fontSize:13}]}>·오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.(묵상)</Text>
           </Text>
-          <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>주일의 독서{"\n"}</Text> 
+          <Text style={[styles.textStyle, normalSize]}>   
+          - 심화 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#01579b"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도
+          </Text>
+          <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>·복음의 등장 인물은?(독서){"\n"}·복음의 배경장소는?(독서)
+          {"\n"}·배경시간 혹은 상황은?(독서)
+          {"\n"}·복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
+          {"\n"}·특별히 눈에 띄는 부분은?(묵상)
+          {"\n"}·복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
+          {"\n"}·복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
+          {"\n"}</Text>
+          <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 독서</Text> 
           <Text style={[styles.textStyle, normalSize]}>       
-          *거룩한 독서와 같은 방법이나 좀 더 심화된 과정입니다.{"\n"}
-          성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  독서 (배경지식 공부 / 세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  기도 <Icon name={'rightcircleo'} size={15} color={"#2196F3"} />  관상 (한주간 말씀을 품고 살기)
-            </Text>
+          성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (배경지식 공부 / 세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  관상 (한주간 말씀을 품고 살기)
+            </Text>        
+          <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>·말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.(독서){"\n"}·복음의 등장 인물은?(독서){"\n"}·복음의 배경장소는?(독서)
+          {"\n"}·배경시간 혹은 상황은?(독서)
+          {"\n"}·복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
+          {"\n"}·특별히 눈에 띄는 부분은?(묵상)
+          {"\n"}·복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
+          {"\n"}·복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
+          {"\n"}·이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.
+          </Text>
             </ScrollView>
           ),
           fourth: () => (
@@ -209,7 +226,7 @@ export default class GuidePage extends React.Component {
             
             <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>정해진 침묵의 시간</Text> 
             <Text style={[styles.textStyle, normalSize]}>
-           거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 외적 침묵이 없다면 하느님을 기다리는 일은 불가능합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.
+           거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 외적 침묵이 없다면 하느님을 기다리는 일은 불가능합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. {"\n"}* 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.
           {"\n"}
           </Text>
           <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>들을 귀가 있는 마음</Text>

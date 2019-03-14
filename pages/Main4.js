@@ -770,9 +770,9 @@ transitionToNextPanel(nextIndex){
                    <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>주일의 독서</Text>
                    <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
 
-                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고(성령청원) 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고(독서) 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며(묵상) 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도하며(기도) 한 주간 말씀을 마음에 품고 살아가는 연습(관상)을 할 수 있습니다.</Text>
+                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도합니다. 한 주간 선택한 구절을 되새김함으로써 말씀과 함께 살아가는 연습을 할 수 있습니다.</Text>
                    <Image source={require('../resources/weekend_img2.png')} style={{width: '100%', height: 100}} />  
-                   <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:10}}>
+                   <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                    <TouchableOpacity
                     activeOpacity = {0.9}
                     style={styles.Button}

@@ -22,6 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.pgsqlite.SQLitePluginPackage;
 import com.emekalites.react.alarm.notification.ANPackage;
+// Add imports
+import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
+import javax.annotation.Nullable;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -40,14 +44,22 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
             new SQLitePluginPackage(),
-            new ANPackage() 
+            new ANPackage(),
+            new ReactNativeAutoUpdaterPackage()
       );
+    }
+
+    @Nullable
+    @Override
+    protected String getBundleAssetName() {
+        return "main.android.jsbundle";
     }
 
     @Override
     protected String getJSMainModuleName() {
       return "index";
     }
+  
   };
 
   @Override

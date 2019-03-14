@@ -25,7 +25,10 @@ LinkButton.propTypes = {
 
 const styles = StyleSheet.create({
     button:{
-        borderWidth:0
+        margin:0,
+        width:120,
+        height:40,
+        borderWidth:1,
     }
 });
 

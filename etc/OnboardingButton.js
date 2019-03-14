@@ -16,15 +16,15 @@ const OnboardingButton = ({
 }) => (
     <View style = {styles.container}>
         <LinkButton style = {styles.button} onPress={movePrevious} active={currentIndex > 0}>
-            Previous
+            이전
         </LinkButton>
         {currentIndex === totalItems -1 ? (
             <Button style = {styles.button} onPress={moveFinal}>
-                Done
+               완료
             </Button>
         ) : (
             <Button style = {styles.button} onPress={moveNext} active={currentIndex < totalItems - 1}>
-                Next
+               다음
             </Button>
         )}
        
@@ -44,8 +44,7 @@ const styles = StyleSheet.create({
         width:'100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        
+        backgroundColor: '#fff'        
     },
     button:{
         margin:0,

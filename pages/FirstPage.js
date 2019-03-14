@@ -5,7 +5,9 @@ import { openDatabase } from 'react-native-sqlite-storage'
 var db = openDatabase({ name: 'UserDatabase.db' })
 import MainPage from './MainPage'
 import ReactNativeAN from 'react-native-alarm-notification';
+var ReactNativeAutoUpdater = require('react-native-auto-updater');
 
+ReactNativeAutoUpdater.jsCodeVersion() 
 export default class FirstPage extends Component { 
 
  

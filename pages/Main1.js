@@ -102,7 +102,7 @@ constructor(props) {
    
     AsyncStorage.getItem('textSize', (err, result) => {
       if(result == "normal" || result == null){
-        normalSize = {fontSize:15}
+        normalSize = {fontSize:16}
         largeSize = {fontSize:17}
       }else if(result == "large"){
         normalSize = {fontSize:17}
@@ -275,7 +275,7 @@ constructor(props) {
     AsyncStorage.getItem('textSize', (err, result) => {
 
       if(result == "normal" || result == null){
-        normalSize = {fontSize:15}
+        normalSize = {fontSize:16}
         largeSize = {fontSize:17}
       }else if(result == "large"){
         normalSize = {fontSize:17}
@@ -286,7 +286,6 @@ constructor(props) {
       }
     })
 
-    this.setState({initialLoading:true})
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -320,7 +319,9 @@ constructor(props) {
 
     var changed = this.changeDateFormat(date)
     AsyncStorage.getItem('getAll', (err, result) => {
-      if(result == "start"){
+      
+      if(result == "start"){        
+       this.setState({initialLoading:true})
         try {
           AsyncStorage.setItem('getAll', 'done');
         } catch (error) {
@@ -336,7 +337,8 @@ constructor(props) {
         console.log("today is same")
         AsyncStorage.getItem('refreshMain1', (err, result) => {
           console.log("Main1 - get AsyncStorage refresh : ", result)       
-          if(result == "refresh"){
+          if(result == "refresh"){            
+           this.setState({initialLoading:true})
             try {
               var date = new Date();
               var changed = this.changeDateFormat(date)
@@ -346,12 +348,13 @@ constructor(props) {
                 console.error('AsyncStorage error: ' + error.message);
             }
           }else{
-            this.setState({initialLoading:false})
+           // this.setState({initialLoading:false})
 
           }
         });     
         
-      }else{
+      }else{        
+        this.setState({initialLoading:true})
         console.log("today is different")
         try {
             AsyncStorage.setItem('today1', today);
@@ -585,29 +588,10 @@ setAlarm = () => {
             </View>
             
           
-            <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+            <View style={{flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
-            <TouchableOpacity 
-              activeOpacity = {0.9}
-              style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-              onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
-              >    
-                <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
-            </TouchableOpacity>      
-            <TouchableOpacity 
-              activeOpacity = {0.9}
-              style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-              onPress = {() => this.props.navigation.navigate('Main3')}
-              >    
-                <Icon name={'check-circle'} size={30} color={"#87CEEB"} /> 
-            </TouchableOpacity>    
-            <TouchableOpacity 
-              activeOpacity = {0.9}
-              style={this.state.js2 !=="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-              onPress = {() => this.props.navigation.navigate('Main3')}
-              >    
-                <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
-            </TouchableOpacity>   
+          
+           
         
               <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
               <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
@@ -615,48 +599,64 @@ setAlarm = () => {
               <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
               <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
               </View>                         
-
-                <Icon name={'quote-left'} size={13} color={"#000"} />
-                <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.sentence}</Text>   
+              <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
+                <Icon style={{paddingTop:5}} name={'quote-left'} size={13} color={"#000"} />
+                <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center', paddingBottom:5, paddingTop:5}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:5, paddingLeft:20, paddingRight:20}]}>{this.state.sentence}</Text>   
                   <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>
                 </View> 
-                <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%'}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:20, paddingLeft:30, paddingRight:30}]}>{this.state.comment}</Text>   
+                <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:20}]}>{this.state.comment}</Text>   
                 </View>  
-                <View style={this.state.js2 !== "" ? {width:'100%'}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.js2}</Text>   
+                <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10}]}>{this.state.js2}</Text>   
                 </View>  
+              </View>
+
+              <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+              onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
+              >    
+                <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
+            </TouchableOpacity>      
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
+              onPress = {() => this.props.navigation.navigate('Main3')}
+              >    
+                <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />  
+            </TouchableOpacity>    
             </View>
 
-            <View style={!this.state.weekend ? { flexDirection: "row", height:150,  flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
-              <TouchableOpacity 
+            <View style={!this.state.weekend ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+            
+                <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+                </View>    
+                <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>주일의 독서</Text>   
+                </View>  
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
+                </View>    
+                <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
+
+                  <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20}]}>{this.state.mysentence}</Text>   
+                  <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-20, paddingLeft:20, paddingRight:20}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
+                  <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
+                </View>
+                
+
+                <TouchableOpacity 
                 activeOpacity = {0.9}
                 style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
                 onPress = {() => this.props.navigation.navigate('Main4')}
                 >    
-                  <Icon name={'arrow-circle-right'} size={30} color={"#01579b"} />        
+                  <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
               </TouchableOpacity>      
-              <TouchableOpacity 
-                activeOpacity = {0.9}
-                style={this.state.mysentence != "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-                onPress = {() => this.props.navigation.navigate('Main4')}
-                >    
-                  <Icon name={'check-circle'} size={30} color={"#01579b"} /> 
-              </TouchableOpacity>    
 
-
-                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'2%'}}>
-                <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
-                </View>      
-                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginRight:'2%'}}>
-                <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
-                </View>                         
-                
-                  <Icon  style={this.state.mysentence == "" ? {display:'none'} : {}} name={'quote-right'} size={13} color={"#000"} />
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:30, paddingRight:30}]}>{this.state.mysentence}</Text>   
-                  <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-10}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
-                  <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
             </View>
 
           
