@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
- 
+ //test
 import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo,  Modal, WebView, Linking} from 'react-native';
 
 import {PropTypes} from 'prop-types';
