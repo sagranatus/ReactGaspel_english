@@ -210,7 +210,7 @@ transitionToNextPanel(nextIndex){
       }
     })
    // var date = new Date(2019, 1, 10, 14, 52, 10);
-    var date = new Date(2019, 2, 10, 14, 52, 10)
+    var date = new Date()
     console.log(date.getDay())
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
         var lastday = date.getDate() - (date.getDay() - 1) - 1;

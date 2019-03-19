@@ -290,7 +290,24 @@ refreshContents(){
           this.getAllPoints(year_month)  
         }
       //   this.onselectDate(null, params.otherParam)
-        };
+        }else{
+          this.setState({
+            Today : "",
+            selectedDate: "",
+            selectedDate_format: "",// 요일
+            onesentence: "",      
+            initialLoading: true,
+            todaycount: 0,
+            weekcount: 0,
+            monthcount: 0
+          })
+          var today = year+"-"+month+"-"+day;
+          this.setState({Today: today, selectedDate: today})
+          // 오늘 값을 가져온다
+         // this.onselectDate(null, today)
+         var year_month = year+"년 "+month;
+          this.getAllPoints(year_month)  
+        }
     
     
     }else{

@@ -1,4 +1,4 @@
-package com.gaspelapp;
+package com.yellowpg.gaspel;
 
 import com.facebook.react.ReactActivity;
 
@@ -23,7 +23,7 @@ public class MainActivity extends ReactNativeAutoUpdaterActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "GaspelApp";
+        return "Gaspel";
     }
 
     @Override

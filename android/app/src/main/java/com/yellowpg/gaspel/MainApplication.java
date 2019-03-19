@@ -1,5 +1,4 @@
-package com.gaspelapp;
-
+package com.yellowpg.gaspel;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.NotificationChannel;
@@ -31,13 +30,13 @@ public class MainApplication extends Application implements ReactApplication {
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+      return true; //BuildConfig.DEBUG
     }
 
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
+            new MainReactPackage(),
             new ReactNativePushNotificationPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
@@ -52,7 +51,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Nullable
     @Override
     protected String getBundleAssetName() {
-        return "main.android.jsbundle";
+      //  return "main.android.jsbundle";
+      return "index.android.bundle";
     }
 
     @Override

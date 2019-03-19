@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo,  Modal, WebView, Linking} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -11,6 +11,7 @@ import * as globalStyles from '../etc/global';
 import ReactNativeAN from 'react-native-alarm-notification';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
+import Icon3 from 'react-native-vector-icons/Ionicons'
 var normalSize;
 var largeSize;
 var date = new Date();
@@ -36,6 +37,8 @@ const alarmNotifData = {
   // e.g.
   data: { foo: "bar" },
 };
+
+var urls = Array()
 export default class Main1 extends Component { 
 
 constructor(props) { 
@@ -56,49 +59,75 @@ constructor(props) {
         interval: null,
         dataSource: [
         {
-          title: 'Title 1',
-          caption: 'Caption 1',
-          url: 'http://placeimg.com/640/380/beer',
+          url: 'http://sssagranatus.cafe24.com/resource/slide1.png',
         }, {
-          title: 'Title 2',
-          caption: 'Caption 2',
-          url: 'http://placeimg.com/640/380/cat',
+          url: 'http://sssagranatus.cafe24.com/resource/slide2.png'
         }, {
-          title: 'Title 3',
-          caption: 'Caption 3',
-          url: 'http://placeimg.com/640/380/any',
+          url: 'http://sssagranatus.cafe24.com/resource/slide3.png'
         },
       ], 
       position2: 1,
       interval2: null,
       dataSource2: [
         {
-          title: 'Title 1',
-          caption: 'Caption 1',
-          url: 'http://placeimg.com/640/130/beer',
+          url: 'http://sssagranatus.cafe24.com/resource/ad1.png'
         }, {
-          title: 'Title 2',
-          caption: 'Caption 2',
-          url: 'http://placeimg.com/640/130/cat',
-        }, {
-          title: 'Title 3',
-          caption: 'Caption 3',
-          url: 'http://placeimg.com/640/130/any',
-        },
+          url: 'http://sssagranatus.cafe24.com/resource/ad2.png'
+        }
         
       ],
-      initialLoading: true
+      initialLoading: true,
+      url0: "",
+      url1: "",
+      url2: "",
+      modalVisible: false
     
     }
  
+     this.onModalClose = this.onModalClose.bind(this);
+    this.onModalOpen = this.onModalOpen.bind(this);
   }
+  urlSetting(urls){
+    this.setState({reload:true})
+  }
+  componentWillMount(){
+    // slide url 가져오기
+    fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+      })
+    
+    }).then((response) => response.json())
+          .then((responseJson) => {
+            // 성공적으로 값이 있을 경우에 
+          if(responseJson.error == false)
+            {
+              const stack = responseJson.stack
+              console.log("Main1 - stacks in slide url : ", stack)
+              
+                 var id, url;
+                for(var i=0; i<stack.length; i++){
+                 id = stack[i][0]
+                 url = stack[i][1]
+                 console.log("Main1 - stacks in slide url : ",id+"/"+url)  
+                 urls.push(url)
+                }
+                
+                console.log(urls[0])
+                this.urlSetting(urls)
+              
+            }else{
+              console.log("Main1 - stacks in slide url : ", 'failed')
+            }
+          }).catch((error) => {
+            console.error(error);
+          });   
 
-  componentWillMount(){    
-
-     //  ReactNativeAN.removeAllFiredNotifications()
-  //  ReactNativeAN.removeFiredNotification("12345")
-   // ReactNativeAN.cancelAllNotifications()
-   // ReactNativeAN.sendNotification(alarmNotifData);
+    
    
     AsyncStorage.getItem('textSize', (err, result) => {
       if(result == "normal" || result == null){
@@ -176,7 +205,7 @@ constructor(props) {
         this.setState({
           position: this.state.position === this.state.dataSource.length ? 0 : this.state.position + 1
         });
-      }, 3000),
+      }, 5000),
       interval2: setInterval(() => {
         this.setState({
           position2: this.state.position2 === this.state.dataSource2.length ? 0 : this.state.position2 + 1
@@ -353,7 +382,16 @@ constructor(props) {
           }
         });     
         
-      }else{        
+      }else{       
+        // 다시 가져오기      
+        this.setState( {dataSource: [
+          {
+            url: 'http://sssagranatus.cafe24.com/resource/slide1.png',
+          }, {
+            url: 'http://sssagranatus.cafe24.com/resource/slide2.png',
+          }, {
+            url: 'http://sssagranatus.cafe24.com/resource/slide3.png',
+        }]}) 
         this.setState({initialLoading:true})
         console.log("today is different")
         try {
@@ -537,10 +575,28 @@ setAlarm = () => {
 
 };
 
+
+onModalClose() {
+  this.setState({
+    modalVisible: false,
+    modalUrl: undefined
+  });
+}
+
+onModalOpen(url) {
+  console.log("openmodal open", url)
+  if(url != undefined){
+    this.setState({
+      modalVisible: true,
+      modalUrl: url
+    });
+  }
+ 
+}
+
   render() {    
    // ReactNativeAN.stopAlarm();    
     //this.setAlarm()
-    
     return (this.state.initialLoading)
     ? (    
 
@@ -567,8 +623,8 @@ setAlarm = () => {
                     onPress={() => this.props.navigation.navigate('Guide')} // insertComment
                     >        
                     <View>
-                      <Text style={[{color:"#000", textAlign:'right'}, {fontSize:14}]}>
-                          가이드 보러가기
+                      <Text style={[{color:"#000", textAlign:'right', marginRight:10}, {fontSize:14}]}>
+                      <Icon3 style={{textAlign:'right'}} name={'ios-information-circle-outline'} size={25} color={"#01579b"} />  
                       </Text>
                     </View>
                 
@@ -584,15 +640,14 @@ setAlarm = () => {
             <Slideshow 
               dataSource={this.state.dataSource}
               position={this.state.position}
+              indicatorSize={0}
+              arrowSize={0}
+              onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
               onPositionChanged={position => this.setState({ position })} />                    
-            </View>
-            
+            </View>            
           
-            <View style={{flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+            <View style={{flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
-          
-           
-        
               <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
               <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
               </View>       
@@ -629,7 +684,7 @@ setAlarm = () => {
             </TouchableOpacity>    
             </View>
 
-            <View style={!this.state.weekend ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderTopColor:"#E8E8E8", borderTopWidth:6, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+            <View style={!this.state.weekend ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
             
                 <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
                 <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
@@ -659,16 +714,63 @@ setAlarm = () => {
 
             </View>
 
+
+            <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+            
+            <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+            </View>   
+            
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+            <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
+            </View>    
+            <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
+
+              <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
+              <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20}]}>{this.state.mysentence}</Text>    
+            </View>
+           
+        </View>
           
             <View>      
             <Slideshow 
-              height={150}
+              height={70}
+              indicatorSize={0}
+              arrowSize={0}
               dataSource={this.state.dataSource2}
               position={this.state.position2}
+              onPress={(end)=>[console.log(urls[end.index+3]), this.onModalOpen(urls[end.index+3])]}
               onPositionChanged={position2 => this.setState({ position2 })} />
               
             </View>
-      
+            <View style={{flex:1}}>
+            <Modal
+              animationType="slide"
+              visible={this.state.modalVisible}
+              onRequestClose={this.onModalClose}
+            >
+              <View style={styles.modalContent}>
+              <View style={styles.modalButtons}>
+              <TouchableOpacity
+                  onPress={this.onModalClose}
+                  style={styles.closeButton}
+                >
+                  <Text>뒤로</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>Linking.openURL(this.state.modalUrl)}
+                  style={styles.closeButton}
+                >
+                  <Text>웹으로보기</Text>
+                </TouchableOpacity>
+              </View>
+                <WebView
+                  scalesPageToFit
+                  source={{ uri: this.state.modalUrl }}
+                />
+              </View>
+            </Modal>
+        </View>
       </ScrollView>
         )
        
@@ -715,5 +817,22 @@ const styles = StyleSheet.create({
           backgroundColor: '#01579b', 
           padding: 10, 
           marginBottom:5, 
-          width:'100%'}
+          width:'100%'},
+        modalContent: {
+          flex: 1,
+          justifyContent: 'center',
+          paddingTop: 0,
+          backgroundColor: globalStyles.BG_COLOR
+        },
+        closeButton: {
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          flexDirection: 'row'
+        },
+        modalButtons:{
+          paddingVertical:5,
+          paddingHorizontal:10,
+          flexDirection:'row',
+          justifyContent:'space-between'
+        }
     });

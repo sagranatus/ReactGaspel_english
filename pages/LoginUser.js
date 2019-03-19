@@ -346,13 +346,15 @@ GoRegisterFunction = () =>{
             </Text>
           </TouchableOpacity>   
         </View> 
-              <View style={{width:'100%', marginTop:170, padding:10}}>
+              <View style={{width:'100%', marginTop:150, padding:10}}>
+               <Text>* 이메일로 가입하신 분은 @ 앞 부분이 아이디가 됩니다.{"\n"}(예- yellowpage@naver.com -> yellowpage)</Text>
               <TextInput        
                 placeholder="아이디"      
                 onChangeText={UserId => this.setState({UserId})}  
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}
               />      
+             
               <TextInput                
                 placeholder="비밀번호"      
                 onChangeText={UserPassword => this.setState({UserPassword})}      

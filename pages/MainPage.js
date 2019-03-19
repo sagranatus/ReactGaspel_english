@@ -15,8 +15,10 @@ import Main4_2 from '../containers/Main4_2Container';
 import GuidePage from './GuidePage';
 import Profile from '../containers/ProfileContainer'
 import Setting from './Setting'
+var date = new  Date()
+var weekend = date.getDay() == 0
 const getTabBarIcon = (navigation, focused, tintColor) => {
-
+	console.log("tabbar", weekend)
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
 	let iconName;
@@ -40,53 +42,70 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   return <IconComponent name={iconName} size={35} color={tintColor} />;
   };
 	
-  const TabNavigator = createBottomTabNavigator({
-	Main1: { screen: Main1 },
-//Main2: { screen: Main2 },
-	Main3: {screen: Main3 },
-	Main4: { screen: Main4 },
-	Main5: { screen: Main5 },
-	Sub5: {screen: Sub5},
-//	Main2_2: {screen: Main2_2},
-	Main3_2: {screen: Main3_2},
-	Main4_2: {screen: Main4_2},
-	Guide: { screen: GuidePage },
-	Profile: { screen: Profile},
-	Setting: { screen: Setting }
-	},
-	
-	(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
-? {	
-	defaultNavigationOptions: ({ navigation }) => ({
-	  tabBarIcon: ({ focused, tintColor }) =>
-		getTabBarIcon(navigation, focused, tintColor),
+	const TabNavigator = createBottomTabNavigator(
+		weekend = date.getDay() == 0 ? 
+		{
+			Main1: { screen: Main1 },
+		//Main2: { screen: Main2 },
+			Main4: { screen: Main4 },
+			Main5: { screen: Main5 },
+			Sub5: {screen: Sub5},
+		//	Main2_2: {screen: Main2_2},
+			Main3_2: {screen: Main3_2},
+			Main4_2: {screen: Main4_2},
+			Guide: { screen: GuidePage },
+			Profile: { screen: Profile},
+			Setting: { screen: Setting }
 		
-	}),
-	tabBarOptions: {
-		showLabel: false,
-		showIcon: this.state !== '오늘의복음',
-	  activeTintColor: '#01579b',
-	  inactiveTintColor: 'gray',
-	},
-    tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
-    navigation={{
-			...navigation,
-			state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
-			/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
-    tabBarPosition: 'bottom'
-   }
-: 
-  {
-	defaultNavigationOptions: ({ navigation }) => ({
-	  tabBarIcon: ({ focused, tintColor }) =>
-		getTabBarIcon(navigation, focused, tintColor),
-	}),
-	tabBarOptions: {
-	  activeTintColor: 'tomato',
-	  inactiveTintColor: 'gray',
-	},
-	}
-	
-	);
+		} : {
+			Main1: { screen: Main1 },
+			//Main2: { screen: Main2 },
+				Main3: {screen: Main3 },
+				Main4: { screen: Main4 },
+				Main5: { screen: Main5 },
+				Sub5: {screen: Sub5},
+			//	Main2_2: {screen: Main2_2},
+				Main3_2: {screen: Main3_2},
+				Main4_2: {screen: Main4_2},
+				Guide: { screen: GuidePage },
+				Profile: { screen: Profile},
+				Setting: { screen: Setting }
+			
+		},
+		(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
+	? {	
+		
+		defaultNavigationOptions: ({ navigation }) => ({
+			tabBarIcon: ({ focused, tintColor }) =>
+			getTabBarIcon(navigation, focused, tintColor),
+			
+		}),
+		tabBarOptions: {
+			showLabel: false,
+			showIcon: this.state !== '오늘의복음',
+			activeTintColor: '#01579b',
+			inactiveTintColor: 'gray',
+		},
+			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
+			navigation={{
+				...navigation,
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
+				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
+			tabBarPosition: 'bottom'
+		 }
+	: 
+		{
+		defaultNavigationOptions: ({ navigation }) => ({
+			tabBarIcon: ({ focused, tintColor }) =>
+			getTabBarIcon(navigation, focused, tintColor),
+		}),
+		tabBarOptions: {
+			activeTintColor: 'tomato',
+			inactiveTintColor: 'gray',
+		},
+		}
+		
+		);
 
-  export default createAppContainer(TabNavigator);
+	
+  export default  createAppContainer(TabNavigator)
