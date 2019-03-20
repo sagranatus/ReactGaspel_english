@@ -157,6 +157,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-auto-updater')
     compile project(':react-native-push-notification')
     compile project(':rn-fetch-blob')
     compile project(':react-native-alarm-notification')

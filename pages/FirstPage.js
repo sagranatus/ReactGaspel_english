@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator, NetInfo} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
+import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' })
 import MainPage from './MainPage'
 import ReactNativeAN from 'react-native-alarm-notification';
@@ -51,7 +52,7 @@ constructor(props) {
        loginId: null,
        loginName: null,
        initialLoading: true,
-       internet: false
+       internet: true
     } 
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
@@ -106,13 +107,70 @@ constructor(props) {
 
   }
 
+  setChange(){
+    const setStart = (results) => this.setStart(results)
+    setTimeout(function() {
+      setStart("change")
+    }, 500);   
+ 
+ 
+  }
   setStart(results){
+    if(results == "change"){
+
+      const setState = (isConnected) => this.setState({internet : isConnected})
+
+      NetInfo.isConnected.fetch().then(isConnected => {
+        console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+       // alert('First, is ' +isConnected)
+        setState(isConnected)
+      });
+      function handleFirstConnectivityChange(isConnected) {
+        console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+       // alert('Then, is ' +isConnected)
+        setState(isConnected)
+       /* NetInfo.isConnected.removeEventListener(
+          'connectionChange',
+          handleFirstConnectivityChange
+        ); */
+      }
+      NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange
+      );
+       // 로그인 상태값 가져오기
+    AsyncStorage.getItem('login_id', (err, result) => {
+    console.log("FirstPage - login_id : ", result)
+    if(result != null){
+      this.setState({
+        loginId: result,
+        isLoggedIn: true,
+        initialLoading: false 
+      });
+     // this.props.setLogin(result) // 다시 새로고침할때 async값이 있는 경우 login을 해서 props 값을 저장해줘야 한다.
+    }else{
+      this.setState({
+        initialLoading: false 
+      })
+    }    
+  })
+
+  AsyncStorage.getItem('login_name', (err, result) => {
+    console.log("FirstPage - login_name : ", result)
     this.setState({
-      loginId: results.rows.item(0).uid,
-      loginName: results.rows.item(0).name,
-      isLoggedIn: true,
-      initialLoading: false
-    });
+      loginName: result
+          });
+  
+  })
+    }else{
+      this.setState({
+        loginId: results.rows.item(0).uid,
+        loginName: results.rows.item(0).name,
+        isLoggedIn: true,
+        initialLoading: false
+      });
+    }
+   
   }
 
 componentWillReceiveProps(nextProps){  
@@ -162,6 +220,11 @@ componentWillReceiveProps(nextProps){
           !this.state.internet ? 
           (    
             <View style={styles.MainContainer}> 
+            <NavigationEvents
+                      onWillFocus={payload => {
+                          this.setChange();
+                      }}
+                      />
             <Text style= {styles.TextComponentStyle}>인터넷을 연결해주세요</Text>
             </View>
           ) :
@@ -170,6 +233,11 @@ componentWillReceiveProps(nextProps){
             ?            
             (
                     <View style={styles.MainContainer}> 
+                    <NavigationEvents
+                      onWillFocus={payload => {
+                          this.setChange();
+                      }}
+                      />
                     <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
                     <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
                     </View>
@@ -178,7 +246,10 @@ componentWillReceiveProps(nextProps){
              : (
               (this.state.isLoggedIn)
                 ? (
+                  <View style={{flex:1}}> 
+                  
                   <MainPage />  
+                  </View>
                 ) : (
                   <View style={styles.MainContainer}> 
                   <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>

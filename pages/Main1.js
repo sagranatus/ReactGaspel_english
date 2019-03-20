@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
- //test
+
 import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo,  Modal, WebView, Linking} from 'react-native';
 
 import {PropTypes} from 'prop-types';
@@ -38,6 +38,9 @@ const alarmNotifData = {
   data: { foo: "bar" },
 };
 
+export const Fonts = {
+  mn : "mn"
+}
 var urls = Array()
 export default class Main1 extends Component { 
 
@@ -143,6 +146,7 @@ constructor(props) {
     })
     
     console.log(this.props.navigation)
+    // 오늘날짜 구하기
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -153,11 +157,11 @@ constructor(props) {
     if(day < 10){
         day = "0"+day;
     } 
-    var today = year+"-"+month+"-"+day;
+    var today = year+"-"+month+"-"+day; // 오늘날짜 세팅
     console.log(today)
     var todayShow =  year+"년"+month+"월"+day+"일";
   
-    
+    // 일요일날짜 구하기
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
       var lastday = date.getDate() - (date.getDay() - 1) - 1;
       date = new Date(date.setDate(lastday));
@@ -177,7 +181,7 @@ constructor(props) {
     var weekend = year+"-"+month+"-"+day;
 
 
-    // 오늘날짜를 설정 
+    // 오늘날짜와 일요일 날짜를 설정 
     try {
       AsyncStorage.setItem('today1', today);
       AsyncStorage.setItem('weekend1', weekend);
@@ -227,6 +231,8 @@ constructor(props) {
       if(nextProps.status.isLogged == this.props.status.isLogged){
         console.log(nextProps.gaspels.sentence) 
         console.log(nextProps.gaspels.thisdate) 
+
+        // 오늘날짜인 경우에는 값 가져오기
         if(nextProps.gaspels.created_at == this.state.today){
           var contents = nextProps.gaspels.contents
           var start = contents.indexOf("✠");
@@ -345,7 +351,7 @@ constructor(props) {
     } 
     var weekend = year+"-"+month+"-"+day;
 
-
+    var date = new Date();
     var changed = this.changeDateFormat(date)
     AsyncStorage.getItem('getAll', (err, result) => {
       
@@ -428,6 +434,7 @@ constructor(props) {
   }
 
   getData(today){
+    // 오늘 데이터, 일요일 데이터 가져오기
     console.log("test")
     const loginId = this.props.status.loginId 
     var date = new Date()
@@ -615,7 +622,7 @@ onModalOpen(url) {
       <ScrollView >
         <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
-            <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left'}]}>오늘의 복음</Text>
+            <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
           </View>
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'0%'}}>
             <TouchableOpacity 
@@ -663,8 +670,11 @@ onModalOpen(url) {
                 <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
                   <Text style={[normalSize, styles.TextStyle,{marginTop:20}]}>{this.state.comment}</Text>   
                 </View>  
-                <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
+                <View style={this.state.js2 !== "" && !this.state.weekend ? {width:'100%', paddingBottom:5}: {display:'none'}}>
                   <Text style={[normalSize, styles.TextStyle,{marginTop:10}]}>{this.state.js2}</Text>   
+                </View>  
+                <View style={this.state.js2_weekend !== "" && this.state.weekend ? {width:'100%', paddingBottom:5}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10}]}>{this.state.js2_weekend}</Text>   
                 </View>  
               </View>
 

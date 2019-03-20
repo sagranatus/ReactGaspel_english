@@ -17,6 +17,7 @@ import Profile from '../containers/ProfileContainer'
 import Setting from './Setting'
 var date = new  Date()
 var weekend = date.getDay() == 0
+console.log("Mainpage loaded")
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	console.log("tabbar", weekend)
 	const { routeName } = navigation.state;

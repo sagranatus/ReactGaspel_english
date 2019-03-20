@@ -50,5 +50,10 @@
   "globals": {
     "__DEV__": false,
     "__TEST__": true
+  },
+  "rnpm": {
+    "assets": [
+	  "./resources/fonts"
+    ]
   }
 }
