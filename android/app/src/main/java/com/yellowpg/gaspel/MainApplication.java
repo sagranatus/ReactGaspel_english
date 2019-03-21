@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.content.Context;
 
 import com.facebook.react.ReactApplication;
-import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
