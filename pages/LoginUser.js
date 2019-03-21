@@ -342,7 +342,7 @@ GoRegisterFunction = () =>{
                 this.props.navigation.navigate('FirstPage', {});} } 
             >
             <Text style={{color:"#FFF", textAlign:'left'}}>
-              {"<"} BACK
+              {"<"} 뒤로
             </Text>
           </TouchableOpacity>   
         </View> 

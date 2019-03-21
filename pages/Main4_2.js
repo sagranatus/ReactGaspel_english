@@ -22,7 +22,7 @@ static navigationOptions =  ({ navigation }) => {
             navigation.navigate('Main5', {otherParam: date});} } 
         >
         <Text style={{color:"#FFF", textAlign:'left'}}>
-           {"<"} BACK
+           {"<"} 뒤로
         </Text>
     </TouchableOpacity>
     ),
@@ -572,7 +572,7 @@ componentWillReceiveProps(nextProps){
                         )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>
                     <OnboardingButton
@@ -738,7 +738,7 @@ componentWillReceiveProps(nextProps){
                         )} 
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>
                     <ScrollView style={{marginBottom:40}}>   
@@ -807,7 +807,7 @@ componentWillReceiveProps(nextProps){
                         )} 
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>
                     <ScrollView style={this.state.start == false ? {marginBottom:40} : {display:'none'}}>                 
@@ -816,7 +816,7 @@ componentWillReceiveProps(nextProps){
                         <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina(dies dominica)</Text>
 
                         <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도합니다. 한 주간 선택한 구절을 되새김함으로써 말씀과 함께 살아가는 연습을 할 수 있습니다.</Text>
-                        <Image source={require('../resources/weekend_img2.png')} style={{width: '100%', height: 100}} />  
+                        <Image source={require('../resources/weekend_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />   
                         <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                         <TouchableOpacity
                           activeOpacity = {0.9}
@@ -839,7 +839,7 @@ componentWillReceiveProps(nextProps){
                         onPress={() =>  this.setState({praying: false, start: false, Weekendupdate: true}) }
                         >
                             <Text style={{color:"#000", textAlign:'right'}}>
-                                Next
+                                완료
                             </Text>
                         </TouchableOpacity>             
                         </View>  
@@ -1056,6 +1056,7 @@ const styles = StyleSheet.create({
     marginBottom: 1
   },
   TextInputStyleClass: { 
+    padding:5,
     textAlign: 'center',
     margin:5,
     marginBottom: 7,
@@ -1065,6 +1066,7 @@ const styles = StyleSheet.create({
       borderRadius: 5 
     },
   TextResultStyleClass: { 
+     padding:5,
       textAlign: 'center',
       color: "#000",
       margin:5,

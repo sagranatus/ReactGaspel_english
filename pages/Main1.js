@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo,  Modal, WebView, Linking} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, TextInput, Button, ScrollView, NetInfo,  Modal, WebView, Linking, Image} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -55,7 +55,6 @@ constructor(props) {
         sentence_weekend: "",
         comment:"",
         js2:"",
-        js2_weekend:"",
         mysentence:"",
         weekend: false,
         position: 1,
@@ -93,6 +92,7 @@ constructor(props) {
   urlSetting(urls){
     this.setState({reload:true})
   }
+
   componentWillMount(){
     // slide url 가져오기
     fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
@@ -105,30 +105,30 @@ constructor(props) {
       })
     
     }).then((response) => response.json())
-          .then((responseJson) => {
-            // 성공적으로 값이 있을 경우에 
-          if(responseJson.error == false)
-            {
-              const stack = responseJson.stack
-              console.log("Main1 - stacks in slide url : ", stack)
-              
-                 var id, url;
-                for(var i=0; i<stack.length; i++){
-                 id = stack[i][0]
-                 url = stack[i][1]
-                 console.log("Main1 - stacks in slide url : ",id+"/"+url)  
-                 urls.push(url)
-                }
-                
-                console.log(urls[0])
-                this.urlSetting(urls)
-              
-            }else{
-              console.log("Main1 - stacks in slide url : ", 'failed')
+      .then((responseJson) => {
+        // 성공적으로 값이 있을 경우에 
+      if(responseJson.error == false)
+        {
+          const stack = responseJson.stack
+          console.log("Main1 - stacks in slide url : ", stack)
+          
+              var id, url;
+            for(var i=0; i<stack.length; i++){
+              id = stack[i][0]
+              url = stack[i][1]
+              console.log("Main1 - stacks in slide url : ",id+"/"+url)  
+              urls.push(url)
             }
-          }).catch((error) => {
-            console.error(error);
-          });   
+            
+            console.log(urls[0])
+            this.urlSetting(urls)
+          
+        }else{
+          console.log("Main1 - stacks in slide url : ", 'failed')
+        }
+      }).catch((error) => {
+        console.error(error);
+      });   
 
     
    
@@ -145,7 +145,6 @@ constructor(props) {
       }
     })
     
-    console.log(this.props.navigation)
     // 오늘날짜 구하기
     var date = new Date();
     var year = date.getFullYear();
@@ -204,6 +203,7 @@ constructor(props) {
   }
 
   componentDidMount(){
+    // slideshow interval setting
     this.setState({
       interval: setInterval(() => {
         this.setState({
@@ -227,7 +227,9 @@ constructor(props) {
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.gaspels.comment != this.props.gaspels.comment){}else{
+    if(nextProps.gaspels.comment != this.props.gaspels.comment){
+      // comment값이 달라질때는 아무것도 하지 않는다.
+    }else{
       if(nextProps.status.isLogged == this.props.status.isLogged){
         console.log(nextProps.gaspels.sentence) 
         console.log(nextProps.gaspels.thisdate) 
@@ -259,21 +261,15 @@ constructor(props) {
   
           var place = today_person+" "+pos
           console.log("place", place)
-  
-          /*try {
-            AsyncStorage.setItem('sentence', nextProps.gaspels.sentence);
-            AsyncStorage.setItem('thisdate', nextProps.gaspels.thisdate);
-            AsyncStorage.setItem('place', place);
-          } catch (error) {
-            console.error('AsyncStorage error: ' + error.message);
-          } */
-            // 우선적으로 asyncstorage에 로그인 상태 저장
-            this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
+       
+          this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
           
           var date = new Date();
           var changed = this.changeDateFormat(date)
+          // 저장된 값을 가져온다.
           this.getData(changed)  
         }else{
+          // 주일 내용을 가져온다.
             var contents = nextProps.gaspels.contents
             var start = contents.indexOf("✠");
             var end = contents.indexOf("◎ 그리스도님 찬미합니다");
@@ -298,7 +294,7 @@ constructor(props) {
             }
     
             var place = today_person+" "+pos
-            console.log("place", place)
+            console.log("place_weekend", place)
             this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
         }
       
@@ -307,6 +303,7 @@ constructor(props) {
   }
 
    setChange(){  
+     //textSize 바뀌는 경우
     AsyncStorage.getItem('textSize', (err, result) => {
 
       if(result == "normal" || result == null){
@@ -320,7 +317,7 @@ constructor(props) {
         largeSize = {fontSize:21}
       }
     })
-
+    // today, weekend날짜 정함
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1
@@ -353,6 +350,7 @@ constructor(props) {
 
     var date = new Date();
     var changed = this.changeDateFormat(date)
+    // 맨 처음 값 가져온 경우는 무조건 getData() 불러옴
     AsyncStorage.getItem('getAll', (err, result) => {
       
       if(result == "start"){        
@@ -366,6 +364,8 @@ constructor(props) {
       }  
 
     })
+
+    // today1이 변경되거나 refreshMain1인 경우에는 getData()를 다시 불러온다.
     AsyncStorage.getItem('today1', (err, result) => {
       console.log("Main1 - get AsyncStorage today : ", result)
       if(result == today){
@@ -383,7 +383,6 @@ constructor(props) {
                 console.error('AsyncStorage error: ' + error.message);
             }
           }else{
-           // this.setState({initialLoading:false})
 
           }
         });     
@@ -411,7 +410,7 @@ constructor(props) {
         }
       }
     })
-
+    // 마찬가지로 weekend날짜가 같은 경우는 두고, 다른 경우만 주일 값을 가져온다.
     AsyncStorage.getItem('weekend1', (err, result) => {
       console.log("Main1 - get AsyncStorage weekend : ", result)
       if(result == weekend){
@@ -426,16 +425,11 @@ constructor(props) {
         }
       }
     })
-
-
-   
-
-   
   }
 
   getData(today){
     // 오늘 데이터, 일요일 데이터 가져오기
-    console.log("test")
+    console.log("Main1 - getData")
     const loginId = this.props.status.loginId 
     var date = new Date()
     console.log(date)
@@ -506,35 +500,17 @@ constructor(props) {
               if (len > 0) {                  
                   console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
-                      mysentence : results.rows.item(0).mysentence
+                      mysentence : results.rows.item(0).mysentence,
+                      initialLoading:false
                   })
               } else {               
                   this.setState({
-                      mysentence : ""
+                      mysentence : "",
+                      initialLoading:false
                   })                   
               }
           }
           )
-          tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [weekenddate,loginId],
-            (tx, results) => {
-                var len = results.rows.length;
-            //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main1 - check Weekend Lectio data : ', results.rows.item(0).js2) 
-                    this.setState({
-                        js2_weekend : results.rows.item(0).js2,
-                        initialLoading:false
-                    })
-                } else {               
-                    this.setState({
-                        js2_weekend : "",
-                        initialLoading:false
-                    })                   
-                }
-            }
-            ); 
     });    
      
   }
@@ -602,8 +578,6 @@ onModalOpen(url) {
 }
 
   render() {    
-   // ReactNativeAN.stopAlarm();    
-    //this.setAlarm()
     return (this.state.initialLoading)
     ? (    
 
@@ -621,10 +595,11 @@ onModalOpen(url) {
     : (   
       <ScrollView >
         <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'1%'}}>
-            <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'1%'}}>
+            <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />     
+            <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', paddingLeft:3}]}>오늘의복음</Text>
           </View>
-          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:5, marginLeft:'0%'}}>
+          <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:7, marginLeft:'0%'}}>
             <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.props.navigation.navigate('Guide')} // insertComment
@@ -647,36 +622,31 @@ onModalOpen(url) {
             <Slideshow 
               dataSource={this.state.dataSource}
               position={this.state.position}
-              indicatorSize={0}
               arrowSize={0}
               onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
               onPositionChanged={position => this.setState({ position })} />                    
             </View>            
           
-            <View style={{flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+            <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
 
-              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
               <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
               </View>       
-              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+              <View style={{flexDirection: "column", flexWrap: 'wrap', width: '66%', height: 20, marginTop:5, marginRight:'2%'}}>
               <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
               </View>                         
-              <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
+
                 <Icon style={{paddingTop:5}} name={'quote-left'} size={13} color={"#000"} />
-                <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center', paddingBottom:5, paddingTop:5}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:5, paddingLeft:20, paddingRight:20}]}>{this.state.sentence}</Text>   
+                <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{padding:5}]}>{this.state.sentence}</Text>   
                   <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>
                 </View> 
                 <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:20}]}>{this.state.comment}</Text>   
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.comment}</Text>   
                 </View>  
-                <View style={this.state.js2 !== "" && !this.state.weekend ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10}]}>{this.state.js2}</Text>   
-                </View>  
-                <View style={this.state.js2_weekend !== "" && this.state.weekend ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10}]}>{this.state.js2_weekend}</Text>   
-                </View>  
-              </View>
+                <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
+                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
+                </View>     
 
               <TouchableOpacity 
               activeOpacity = {0.9}
@@ -694,7 +664,7 @@ onModalOpen(url) {
             </TouchableOpacity>    
             </View>
 
-            <View style={!this.state.weekend ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+            <View style={!this.state.weekend ? {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
             
                 <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
                 <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
@@ -705,14 +675,12 @@ onModalOpen(url) {
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
                 <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
                 </View>    
-                <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
-
+              
                   <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-                  <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20}]}>{this.state.mysentence}</Text>   
-                  <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{marginTop:-20, paddingLeft:20, paddingRight:20}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
+                  <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
+                  <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
                   <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
-                </View>
-                
+               
 
                 <TouchableOpacity 
                 activeOpacity = {0.9}
@@ -725,7 +693,7 @@ onModalOpen(url) {
             </View>
 
 
-            <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", height:160, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+            <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
             
             <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
             <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
@@ -734,18 +702,17 @@ onModalOpen(url) {
             <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
             <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
             </View>    
-            <View style={{backgroundColor:"rgb(250,250,250)", margin:10, width:'94%', height:105, justifyContent: 'center', flexDirection: "row", flexWrap: 'wrap',  borderRadius: 10}}>
-
-              <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-              <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20}]}>{this.state.mysentence}</Text>    
-            </View>
+    
+            <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
+            <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>    
+        
            
         </View>
           
             <View>      
             <Slideshow 
               height={70}
-              indicatorSize={0}
+            //  indicatorSize={0}
               arrowSize={0}
               dataSource={this.state.dataSource2}
               position={this.state.position2}

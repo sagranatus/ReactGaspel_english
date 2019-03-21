@@ -15,11 +15,9 @@ import Main4_2 from '../containers/Main4_2Container';
 import GuidePage from './GuidePage';
 import Profile from '../containers/ProfileContainer'
 import Setting from './Setting'
-var date = new  Date()
-var weekend = date.getDay() == 0
+
 console.log("Mainpage loaded")
 const getTabBarIcon = (navigation, focused, tintColor) => {
-	console.log("tabbar", weekend)
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
 	let iconName;
@@ -43,22 +41,8 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   return <IconComponent name={iconName} size={35} color={tintColor} />;
   };
 	
-	const TabNavigator = createBottomTabNavigator(
-		weekend = date.getDay() == 0 ? 
+	const TabNavigator = createBottomTabNavigator(		
 		{
-			Main1: { screen: Main1 },
-		//Main2: { screen: Main2 },
-			Main4: { screen: Main4 },
-			Main5: { screen: Main5 },
-			Sub5: {screen: Sub5},
-		//	Main2_2: {screen: Main2_2},
-			Main3_2: {screen: Main3_2},
-			Main4_2: {screen: Main4_2},
-			Guide: { screen: GuidePage },
-			Profile: { screen: Profile},
-			Setting: { screen: Setting }
-		
-		} : {
 			Main1: { screen: Main1 },
 			//Main2: { screen: Main2 },
 				Main3: {screen: Main3 },

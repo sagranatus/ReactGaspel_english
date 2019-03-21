@@ -135,7 +135,7 @@ export default class GuidePage extends React.Component {
           onPress={ () =>  this.props.navigation.navigate('Main1')}
           >
           <Text style={{color:"#FFF", textAlign:'left'}}>
-              {"<"} BACK
+              {"<"} 뒤로
           </Text>
         </TouchableOpacity>   
       <TabView
@@ -194,11 +194,11 @@ export default class GuidePage extends React.Component {
                
             <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서</Text> 
             <Text style={[styles.textStyle, normalSize]}>       
-          - 기본 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  간단한 묵상 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도 {"\n"}
+          - 말씀새기기 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  간단한 묵상 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도 {"\n"}
           <Text style={[styles.textStyle, {fontSize:13}]}>·오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.(묵상)</Text>
           </Text>
           <Text style={[styles.textStyle, normalSize]}>   
-          - 심화 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#01579b"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도
+          - 거룩한독서 : 성령청원기도 <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (세밀하고, 반복적인 독서) <Icon name={'rightcircleo'} size={15} color={"#01579b"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon name={'rightcircleo'} size={15} color={"#01579b"} />  기도
           </Text>
           <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>·복음의 등장 인물은?(독서){"\n"}·복음의 배경장소는?(독서)
           {"\n"}·배경시간 혹은 상황은?(독서)

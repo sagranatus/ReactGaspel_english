@@ -148,7 +148,7 @@ constructor(props) {
           onPress={() =>  this.props.navigation.navigate('Main5')} 
           >
           <Text style={{color:"#FFF", textAlign:'left'}}>
-              {"<"} BACK
+              {"<"} 뒤로
           </Text>
         </TouchableOpacity>  
         </View>
@@ -226,7 +226,7 @@ constructor(props) {
                 style={[styles.TextInputStyleClass, {width:'48%'}, normalSize]}
                 />
     
-     <View style={{width:'100%', marginTop:10, marginBottom: 20, padding:10}}>                
+     <View style={{width:'100%', justifyContent: 'center',  alignItems: 'center', marginTop:10, marginBottom: 20, padding:10}}>                
       <TouchableOpacity 
         activeOpacity = {0.9}
         style={styles.Button}
@@ -276,9 +276,11 @@ const styles = StyleSheet.create({
       //borderRadius: 10 ,
     },
     Button:{
+      textAlign:'center',
       backgroundColor: '#01579b', 
       padding: 10, 
       marginTop:10,
-      marginBottom:5, 
-      width:'100%'}
+      width:200,
+      borderRadius: 10,
+      height:40}
     });

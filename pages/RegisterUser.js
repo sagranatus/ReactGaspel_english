@@ -122,7 +122,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 this.props.navigation.navigate('FirstPage', {});} } 
             >
             <Text style={{color:"#FFF", textAlign:'left'}}>
-              {"<"} BACK
+              {"<"} 뒤로
             </Text>
           </TouchableOpacity>   
           </View>

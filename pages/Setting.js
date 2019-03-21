@@ -210,9 +210,9 @@ constructor(props) {
         AsyncStorage.setItem('textSize', 'large');
       }else if(selectedValues == "매우크게"){
         AsyncStorage.setItem('textSize', 'larger');
-      }else if(selectedValues == "기본"){
+      }else if(selectedValues == "말씀새기기"){
         AsyncStorage.setItem('course', 'basic');
-      }else if(selectedValues == "심화"){
+      }else if(selectedValues == "거룩한독서"){
         AsyncStorage.setItem('course', 'advanced');
       }else if(selectedValues == "미선택"){
         AsyncStorage.setItem('course', 'notselected');
@@ -270,7 +270,7 @@ constructor(props) {
                     onPress={() =>  this.props.navigation.navigate('Main5')} 
                     >
                     <Text style={{color:"#FFF", textAlign:'left'}}>
-                        {"<"} BACK
+                        {"<"} 뒤로
                     </Text>
                 </TouchableOpacity>  
                 <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>글씨크기 선택</Text>
@@ -290,14 +290,14 @@ constructor(props) {
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
 
-       <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>거룩한독서 기본/심화 선택</Text>
+       <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>말씀새기기 / 거룩한독서 선택</Text>
      
         <SelectMultipleGroupButton
           multiple={false}
           group={[
             { value: '미선택' },
-            { value: '기본' },
-            { value: '심화' }]}
+            { value: '말씀새기기' },
+            { value: '거룩한독서' }]}
           defaultSelectedIndexes={course}
           buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
           highLightStyle={{
@@ -306,7 +306,7 @@ constructor(props) {
           }}
           onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
         />
-        <Text style={{margin:2, fontSize:14}}>* 기본/심화를 선택하시면 거룩한 독서를 할때 선택창이 뜨지 않습니다.</Text>
+        <Text style={{margin:2, fontSize:14}}>* 말씀새기기 / 거룩한독서를 선택하시면 거룩한 독서를 할때 선택창이 뜨지 않습니다.</Text>
 
         <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>거룩한독서 알람 세팅</Text>
 

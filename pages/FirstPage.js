@@ -56,20 +56,18 @@ constructor(props) {
     } 
     console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
-
+  
     
   componentWillMount(){
-    
+    // 인터넷 연결
    const setState = (isConnected) => this.setState({internet : isConnected})
 
     NetInfo.isConnected.fetch().then(isConnected => {
       console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-     // alert('First, is ' +isConnected)
       setState(isConnected)
     });
     function handleFirstConnectivityChange(isConnected) {
       console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-     // alert('Then, is ' +isConnected)
       setState(isConnected)
      /* NetInfo.isConnected.removeEventListener(
         'connectionChange',
@@ -80,29 +78,35 @@ constructor(props) {
       'connectionChange',
       handleFirstConnectivityChange
     );
+
   // 로그인 상태값 가져오기
   AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
     if(result != null){
-      this.setState({
-        loginId: result,
-        isLoggedIn: true
-      });
-      this.props.setLogin(result) // 다시 새로고침할때 async값이 있는 경우 login을 해서 props 값을 저장해줘야 한다.
+      // props값을 저장(로그인상태에서 재가동할때)
+      this.props.setLogin(result) 
+
+      // 저장된 값이 있으면 isLoggedIn : true & setLogin해준다.
+      console.log("FirstPage - asyncstrage name exists")
+      AsyncStorage.getItem('login_name', (err, result2) => {
+        console.log("FirstPage - login_name : ", result2)
+        this.setState({
+          loginId: result,
+          isLoggedIn: true,
+          loginName: result2
+              });      
+      })
+  
     }else{
+      console.log("FirstPage - asyncstrage name not exists")
+      //값이 없으면 initialLoading false
       this.setState({
         initialLoading: false 
       })
     }    
   })
 
-  AsyncStorage.getItem('login_name', (err, result) => {
-    console.log("FirstPage - login_name : ", result)
-    this.setState({
-      loginName: result
-          });
-  
-  })
+
  
 
   }
@@ -141,13 +145,17 @@ constructor(props) {
        // 로그인 상태값 가져오기
     AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
-    if(result != null){
-      this.setState({
-        loginId: result,
-        isLoggedIn: true,
-        initialLoading: false 
-      });
-     // this.props.setLogin(result) // 다시 새로고침할때 async값이 있는 경우 login을 해서 props 값을 저장해줘야 한다.
+    if(result != null){          
+      AsyncStorage.getItem('login_name', (err, result2) => {
+        console.log("FirstPage - login_name : ", result2)
+        this.setState({
+          loginId: result,
+          isLoggedIn: true,
+          initialLoading: false,
+          loginName: result2
+          });
+      
+      })
     }else{
       this.setState({
         initialLoading: false 
@@ -155,14 +163,8 @@ constructor(props) {
     }    
   })
 
-  AsyncStorage.getItem('login_name', (err, result) => {
-    console.log("FirstPage - login_name : ", result)
-    this.setState({
-      loginName: result
-          });
-  
-  })
     }else{
+      // user정보를 가져와서 setting 한다.
       this.setState({
         loginId: results.rows.item(0).uid,
         loginName: results.rows.item(0).name,
@@ -177,7 +179,7 @@ componentWillReceiveProps(nextProps){
     // props의 loginId값이 변경될때
     console.log("FirstPage - this.props.status.loginId: ", nextProps.status.loginId)  
   
-    // setLogin 후에 
+    // setLogin 후에(처음로그인시 필요)
     if(this.props.status.loginId !== nextProps.status.loginId){
     
       console.log("FirstPage - componentWillReceiveProps")
@@ -191,7 +193,7 @@ componentWillReceiveProps(nextProps){
               //  값이 있는 경우에 
               const setStart = (results) => this.setStart(results)
                 if (len > 0) {
-                  console.log("FirstPage - Message", results.rows.item(0).uid+"is get")
+                  console.log("FirstPage - Message", results.rows.item(0).uid+" is get")
                   setTimeout(function() {
                     setStart(results)
                   }, 500);            
@@ -212,7 +214,6 @@ componentWillReceiveProps(nextProps){
     }
 }
   render() {
-  //  alert(this.state.internet)
     console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
       
    
@@ -232,22 +233,21 @@ componentWillReceiveProps(nextProps){
           (this.state.initialLoading)
             ?            
             (
-                    <View style={styles.MainContainer}> 
-                    <NavigationEvents
-                      onWillFocus={payload => {
-                          this.setChange();
-                      }}
-                      />
-                    <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-                    <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
-                    </View>
+                <View style={styles.MainContainer}> 
+                <NavigationEvents
+                  onWillFocus={payload => {
+                      this.setChange();
+                  }}
+                  />
+                <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+                <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+                </View>
               )
             
              : (
               (this.state.isLoggedIn)
                 ? (
-                  <View style={{flex:1}}> 
-                  
+                  <View style={{flex:1}}>                   
                   <MainPage />  
                   </View>
                 ) : (

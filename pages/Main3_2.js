@@ -11,6 +11,7 @@ import OnboardingButton from '../etc/OnboardingButton'
 var date;
 var normalSize;
 var largeSize;
+
 export default class Main3_2 extends Component { 
 
 
@@ -202,13 +203,13 @@ moveFinal(){
 transitionToNextPanel(from, nextIndex){   
     if(this.state.currentIndex == 1 && this.state.basic == null && from=="next"){
         Alert.alert(
-            '거룩한 독서 기본/심화를 선택하세요.',
+            '말씀새기기 / 거룩한독서를 선택하세요.',
             '환경설정에서 설정하시면 선택창이 뜨지 않습니다.',
             [
-              {text: '기본', onPress: () => this.setState({
+              {text: '말씀새기기', onPress: () => this.setState({
                 basic:true, currentIndex: nextIndex})
                },
-              {text: '심화', onPress: () => this.setState({
+              {text: '거룩한독서', onPress: () => this.setState({
                 basic:false, currentIndex: nextIndex})  
                },
             ],
@@ -611,7 +612,7 @@ componentWillReceiveProps(nextProps){
                           )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>   
                   
@@ -758,7 +759,7 @@ componentWillReceiveProps(nextProps){
                             )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>
                     <ScrollView style={!this.state.basic ? {marginBottom:40} : {display:'none'}}>                        
@@ -848,7 +849,7 @@ componentWillReceiveProps(nextProps){
                             )}
                         >
                         <Text style={{color:"#FFF", textAlign:'left'}}>
-                            {"<"} BACK
+                            {"<"} 뒤로
                         </Text>
                     </TouchableOpacity>             
                     <ScrollView style={this.state.start == false ? {marginBottom:40} : {display:'none'}}>                     
@@ -858,7 +859,7 @@ componentWillReceiveProps(nextProps){
                             <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
                             <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
-                            <Image source={require('../resources/lectio_img2.png')} style={{width: '100%', height: 100}} />  
+                            <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
                             <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                             <TouchableOpacity
                             activeOpacity = {0.9}
@@ -882,7 +883,7 @@ componentWillReceiveProps(nextProps){
                     onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
                     >
                         <Text style={{color:"#000", textAlign:'right'}}>
-                            Next
+                            완료
                         </Text>
                     </TouchableOpacity>             
                     </View>  
@@ -914,7 +915,7 @@ componentWillReceiveProps(nextProps){
                         onPress={() =>  this.setState({praying: false, start: false, Lectioupdate: true}) }
                         >
                             <Text style={{color:"#000", textAlign:'right'}}>
-                                Next
+                                완료
                             </Text>
                         </TouchableOpacity>             
                         </View>  
@@ -1112,15 +1113,17 @@ componentWillReceiveProps(nextProps){
          },
     
         TextInputStyleClass: { 
-        textAlign: 'center',
-        margin:5,
-        marginBottom: 7,
-        height: 90,
-        borderWidth: 1,
-         borderColor: '#01579b', // 이것때문에 .이 보이나 원인을 모르겠다
-         borderRadius: 5 
+            padding:5,
+            textAlign: 'center',
+            margin:5,
+            marginBottom: 7,
+            height: 90,
+            borderWidth: 1,
+            borderColor: '#01579b', // 이것때문에 .이 보이나 원인을 모르겠다
+            borderRadius: 5 
         },
         TextResultStyleClass: { 
+            padding:5,
             textAlign: 'center',
             color: "#000",
             margin:5,
