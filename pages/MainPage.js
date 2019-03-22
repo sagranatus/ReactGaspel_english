@@ -57,9 +57,11 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 				Setting: { screen: Setting }
 			
 		},
+		
 		(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
 	? {	
 		
+		backBehavior: 'order',
 		defaultNavigationOptions: ({ navigation }) => ({
 			tabBarIcon: ({ focused, tintColor }) =>
 			getTabBarIcon(navigation, focused, tintColor),
@@ -80,6 +82,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 		 }
 	: 
 		{
+		backBehavior: 'order',
 		defaultNavigationOptions: ({ navigation }) => ({
 			tabBarIcon: ({ focused, tintColor }) =>
 			getTabBarIcon(navigation, focused, tintColor),

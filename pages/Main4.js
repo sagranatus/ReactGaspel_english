@@ -721,7 +721,7 @@ transitionToNextPanel(nextIndex){
                         this.setChange();
                     }}
                     />
-                <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
+                <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>

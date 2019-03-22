@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard, Platform} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard, Platform, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
+import Icon2 from 'react-native-vector-icons/EvilIcons'
 import ImagePicker from 'react-native-image-picker'; 
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -39,6 +40,8 @@ constructor(props) {
         christname: "",
         isOpen: false,
         selectedItem: 'About',
+        iconShow:false,
+        selectShow:false
     }
     this.onselectDate= this.onselectDate.bind(this);
    
@@ -165,14 +168,14 @@ constructor(props) {
     this.setState({Today: today, selectedDate: today})
    
   AsyncStorage.getItem('login_name', (err, result) => {
-    console.log("FirstPage - login_name : ", result)
+    console.log("Main5 - login_name : ", result)
     this.setState({
       name: result
           });
   
   })
   AsyncStorage.getItem('login_christ_name', (err, result) => {
-    console.log("FirstPage - login_chirst_name : ", result)
+    console.log("Main5 - login_chirst_name : ", result)
     this.setState({
       christname: result
           });
@@ -548,7 +551,135 @@ commentFunc = (commentDates) => {
   this.setState({todaycount: todaycount, weekcount: weekcount, monthcount: monthcount})
  }
  
+  changeDate(direction){
+   this.state.selectedDate
+   //alert(new Date(this.state.selectedDate))
+   var date = new Date(this.state.selectedDate)
+   if(direction == "left"){
+    date.setDate(date.getDate() - 1);
+   }else{
+    date.setDate(date.getDate() + 1);
+   }
+   var year = date.getFullYear();
+   var month = date.getMonth()+1
+   var day = date.getDate();
+   if(month < 10){
+       month = "0"+month;
+   }
+   if(day < 10){
+       day = "0"+day;
+   } 
+  var date_format = year+"-"+month+"-"+day;
+  
+  date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel( new Date(date_format))       
+  this.setState({
+    selectedDate: date_format,
+    selectedDate_format: date,
+    comment:"",
+    mysentence: "",
+    js2: "",
+    sentence:""
+  })
+const loginId = this.props.status.loginId
+console.log(date+loginId)
+//  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
+  if(date.includes("일요일")){
+    db.transaction(tx => {   
+      tx.executeSql(
+        'SELECT * FROM lectio where date = ? and uid = ?',
+        [date,loginId],
+        (tx, results) => {
+            var len = results.rows.length;
+        //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
+                this.setState({
+                    sentence: results.rows.item(0).onesentence,
+                    js2 : results.rows.item(0).js2
+                })
+            } else {               
+                this.setState({
+                    sentence: "",
+                    js2 : ""
+                })                   
+            }
+        }
+        ), 
+        tx.executeSql(
+          'SELECT * FROM weekend where date = ? and uid = ?',
+          [date,loginId],
+          (tx, results) => {
+              var len = results.rows.length;
+          //  값이 있는 경우에 
+              if (len > 0) {                  
+                  console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
+                  this.setState({
+                      mysentence : results.rows.item(0).mysentence,
+                      initialLoading:false,
+                      selectShow: true
+                  })
+              } else {               
+                  this.setState({
+                      mysentence : "",
+                      initialLoading:false,
+                      selectShow: true
+                  })                   
+              }
+          }
+          )
+    });    
+    //this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
+  }else{
+    console.log("not weekend", date+loginId)
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM comment where date = ? and uid = ?',
+        [date, loginId],
+        (tx, results) => {
+          var len = results.rows.length;
+        //  값이 있는 경우에 
+          if (len > 0) {                  
+              console.log('Main1 - check Comment data : ', results.rows.item(0).comment)   
+              this.setState({
+                  comment: results.rows.item(0).comment,
+                  sentence:  results.rows.item(0).onesentence
+              })
+          } else {     
+              this.setState({
+                  comment: ""
+              })                             
+          }
+        }
+      ),
+      tx.executeSql(
+        'SELECT * FROM lectio where date = ? and uid = ?',
+        [date,loginId],
+        (tx, results) => {
+            var len = results.rows.length;
+        //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
+                this.setState({
+                    sentence :  results.rows.item(0).onesentence,
+                    js2 : results.rows.item(0).js2,
+                    selectShow: true
+                })
+            } else {               
+                this.setState({
+                    js2 : "",
+                    selectShow: true
+                })                   
+            }
+        }
+        )
+    });    
+  // this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
+  } 
+
+ // this.setState({selectedDate: ""})
+ }
  onselectDate(day, today){
+   
   console.log("Main5 - onselectDate")
   var date
   if(today != null){  
@@ -565,17 +696,123 @@ commentFunc = (commentDates) => {
     }   
     
     var date_format = day.year+"-"+day.month+"-"+day.day;
+   // alert(date_format in this.state.Marked)
+    var exist = date_format in this.state.Marked
+    if (!exist){
+      date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
+      if(date.includes("일요일")){
+        this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
+      }else{
+        this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
+      }
+    }else{
+
+   
     this.setState({
-      selectedDate: date_format
+      selectedDate: date_format,
+      comment:"",
+      mysentence: "",
+      js2: "",
+      sentence:""
     })
     date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
+  
+  const loginId = this.props.status.loginId
+  console.log(date+loginId)
+  //  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
+    if(date.includes("일요일")){
+      db.transaction(tx => {   
+        tx.executeSql(
+          'SELECT * FROM lectio where date = ? and uid = ?',
+          [date,loginId],
+          (tx, results) => {
+              var len = results.rows.length;
+          //  값이 있는 경우에 
+              if (len > 0) {                  
+                  console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
+                  this.setState({
+                      sentence: results.rows.item(0).onesentence,
+                      js2 : results.rows.item(0).js2
+                  })
+              } else {               
+                  this.setState({
+                      sentence: "",
+                      js2 : ""
+                  })                   
+              }
+          }
+          ), 
+          tx.executeSql(
+            'SELECT * FROM weekend where date = ? and uid = ?',
+            [date,loginId],
+            (tx, results) => {
+                var len = results.rows.length;
+            //  값이 있는 경우에 
+                if (len > 0) {                  
+                    console.log('Main1 - check Weekend data : ', results.rows.item(0).mysentence) 
+                    this.setState({
+                        mysentence : results.rows.item(0).mysentence,
+                        initialLoading:false,
+                        selectShow: true
+                    })
+                } else {               
+                    this.setState({
+                        mysentence : "",
+                        initialLoading:false,
+                        selectShow: true
+                    })                   
+                }
+            }
+            )
+      });    
+      //this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
+    }else{
+      console.log("not weekend", date+loginId)
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM comment where date = ? and uid = ?',
+          [date, loginId],
+          (tx, results) => {
+            var len = results.rows.length;
+          //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main1 - check Comment data : ', results.rows.item(0).comment)   
+                this.setState({
+                    comment: results.rows.item(0).comment,
+                    sentence:  results.rows.item(0).onesentence
+                })
+            } else {     
+                this.setState({
+                    comment: ""
+                })                             
+            }
+          }
+        ),
+        tx.executeSql(
+          'SELECT * FROM lectio where date = ? and uid = ?',
+          [date,loginId],
+          (tx, results) => {
+              var len = results.rows.length;
+          //  값이 있는 경우에 
+              if (len > 0) {                  
+                  console.log('Main1 - check Lectio data : ', results.rows.item(0).bg1) 
+                  this.setState({
+                      sentence :  results.rows.item(0).onesentence,
+                      js2 : results.rows.item(0).js2,
+                      selectShow: true
+                  })
+              } else {               
+                  this.setState({
+                      js2 : "",
+                      selectShow: true
+                  })                   
+              }
+          }
+          )
+      });    
+    // this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
+    } 
   }
-
-//  this.props.navigation.navigate('Sub5', {otherParam: date, otherParam2: date_format})
-if(date.includes("일요일")){
-  this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
-}else{
-  this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
 }
   this.setState({
     selectedDate_format: date
@@ -599,6 +836,7 @@ changeMonth(year, month){
 }
 
   render() {    
+    console.log(this.state.Marked)
     const menu = <Menu onItemSelected={this.onMenuItemSelected} />;
     console.log("Main5 - render")  
     return (this.state.initialLoading)
@@ -621,6 +859,43 @@ changeMonth(year, month){
       isOpen={this.state.isOpen}
       onChange={isOpen => this.updateMenuState(isOpen)}
        >
+        <View style={this.state.selectShow ? {position: 'absolute', right:'2%', bottom:'10%', width:'96%', height:250, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>       
+          
+          <View style={{marginLeft:20, marginRight:20}}>   
+          <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:13}]}>{this.state.selectedDate_format}</Text>    
+          <Text style={this.state.mysentence!="" ? {display:'none'} : [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]}>{this.state.sentence}</Text>    
+          <Text style={this.state.mysentence!="" ? [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]: {display:'none'}}>{this.state.mysentence}</Text>        
+          <Text style={this.state.js2 != "" ? [normalSize, styles.TextStyle,{marginTop:5, padding:10, color:'#000', textAlign:'center'}]:{display:'none'}}>{this.state.mysentence}{this.state.js2}</Text>           
+          <Text style={this.state.comment != "" && this.state.js2 == "" ? [normalSize, styles.TextStyle,{marginTop:15, padding:10, color:'#000', textAlign:'center'}]: {display:'none'}}>{this.state.comment}</Text>                          
+         
+          </View>
+          <TouchableOpacity 
+          style={{position: 'absolute', right:-5, top:125}}
+          underlayColor = {"#fff"}
+          onPress={() => this.changeDate("right")}>
+              <Icon2 name={"chevron-right"} size={40} color={"#A8A8A8"} /> 
+          </TouchableOpacity  >     
+          <TouchableOpacity 
+          style={{position: 'absolute', left:-5, top:125}}
+          underlayColor = {"#fff"}
+          onPress={() => this.changeDate("left")}>
+              <Icon2 name={"chevron-left"} size={40} color={"#A8A8A8"} /> 
+          </TouchableOpacity  > 
+          <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={{position: 'absolute', right:2, top:2}}
+              onPress={() => this.setState({selectShow:false}) } 
+              >    
+                <Icon2 name={'close'} size={30} color={"#000"} />        
+            </TouchableOpacity>   
+            <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={{position: 'absolute', left:10,bottom:10}}
+              onPress={() => this.state.selectedDate_format.includes("일요일") ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
+              >    
+                <Icon2 name={'arrow-right'} size={30} color={"#01579b"} />
+            </TouchableOpacity>   
+        </View>     
           <View style={{flex:1, backgroundColor:'#fff'}}>
         
              <View style={{width:'100%', backgroundColor: '#F9F9F9', padding: 2, borderBottomWidth: 1, borderBottomColor: '#d8d8d8', marginBottom:10}}>  
@@ -650,8 +925,15 @@ changeMonth(year, month){
                   }}
                   onPress={() => this.pickImage() } 
                   >
-                  <Image source={this.state.avatarSource} style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
+                  <Image source={this.state.avatarSource} onError={(e) => { this.setState({iconShow:true, avatarSource: require('../resources/add_image.png')}) }}  style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
               </TouchableOpacity> 
+              <TouchableOpacity 
+              activeOpacity = {0.9}
+              style={this.state.iconShow ? {position: 'absolute', right:10, top:70} : {display:'none'}}
+              onPress={() => this.pickImage() } 
+              >    
+                <Icon2 name={'plus'} size={30} color={"#01579b"} />        
+            </TouchableOpacity>     
               <Text style={[{textAlign: 'center', marginTop:10, color:'#000', fontWeight:'400', marginLeft:10}, normalSize]}>{this.state.name} {this.state.christname}</Text>     
             </View>
             <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
@@ -720,5 +1002,13 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         marginHorizontal: 0,
         paddingHorizontal: 10
-      }
+      },
+      Button:{
+        textAlign:'center',
+        backgroundColor: '#01579b', 
+        padding: 10, 
+        marginTop:10,
+        width:200,
+        borderRadius: 10,
+        height:40}
     });

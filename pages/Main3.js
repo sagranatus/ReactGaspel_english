@@ -37,7 +37,8 @@ constructor(props) {
         initialLoading: true,
         basic: null,
         comment: null,
-        doMore: false
+        doMore: false,
+        weekend: false
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -248,6 +249,9 @@ transitionToNextPanel(from, nextIndex){
     if(day < 10){
         day = "0"+day;
     } 
+    if(date.getDay() == 0){
+        this.setState({weekend:true})
+    }
     var today = year+"-"+month+"-"+day;
        // 오늘날짜를 설정 
        try {
@@ -469,6 +473,9 @@ setChange(){
         } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
         }        
+        if(date.getDay() == 0){
+            this.setState({weekend:true})
+        }
     
        this.setState({
             Date: todaydate,  
@@ -586,6 +593,16 @@ setChange(){
       )
 
     : 
+    (this.state.weekend) ? 
+        <View style={styles.MainContainer_weekend}> 
+        <NavigationEvents
+                onWillFocus={payload => {
+                    this.setChange();
+                }}
+                />
+        <Text style= {styles.TextComponentStyle}>주일에는 주일의 독서를 해주세요.</Text>
+        </View> 
+    :
     (this.state.Lectioupdate == true) ?
         (this.state.Lectioediting == true) ?
            (
@@ -741,7 +758,7 @@ setChange(){
                     this.setChange();
                 }}
                 />
-                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20}, largeSize]}>{this.state.Sentence}</Text> 
+                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
@@ -1147,5 +1164,19 @@ const styles = StyleSheet.create({
         marginTop:10,
         width:200,
         borderRadius: 10,
-        height:40}
+        height:40},
+    MainContainer_weekend:{
+        backgroundColor:"#01579b",
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex:1,
+        margin: 0,
+        color:"#fff"}, 
+    TextComponentStyle: {
+        fontSize: 16,
+       color: "#fff",
+       textAlign: 'center',
+       marginTop: 3, 
+       marginBottom: 15
+      },
     });

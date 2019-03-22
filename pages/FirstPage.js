@@ -121,7 +121,9 @@ constructor(props) {
   }
   setStart(results){
     if(results == "change"){
-
+      this.setState({
+        internet: true
+      }) // 인터넷바로 못잡는경우에 사용
       const setState = (isConnected) => this.setState({internet : isConnected})
 
       NetInfo.isConnected.fetch().then(isConnected => {
