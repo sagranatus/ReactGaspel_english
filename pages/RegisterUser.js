@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -67,7 +67,14 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
 }).then((response) => response.json())
       .then((responseJson) => {
        if(responseJson.success === 'SUCCESS')
-       {             
+       {   
+        try {
+          AsyncStorage.setItem('login_id', responseJson.id);
+          AsyncStorage.setItem('login_name', UserName);
+          AsyncStorage.setItem('login_christ_name', UserCatholicName);
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }         
          
         console.log('RegisterUser - registration success : ', responseJson.id);
         const setLogin = this.props.setLogin
@@ -81,6 +88,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
              // console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {                
                 console.log('RegisterUser - DB inserted : ', responseJson.id);
+              
                 if(setLogin){
                   setLogin(responseJson.id)
                   }
