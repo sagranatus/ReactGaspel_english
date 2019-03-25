@@ -1176,7 +1176,7 @@ const styles = StyleSheet.create({
         color:"#fff"}, 
     TextComponentStyle: {
         fontSize: 16,
-       color: "#fff",
+       color: "#000",
        textAlign: 'center',
        marginTop: 3, 
        marginBottom: 15

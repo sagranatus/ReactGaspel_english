@@ -3,7 +3,7 @@ import {PropTypes} from 'prop-types';
 import { StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
-
+import {NavigationEvents} from 'react-navigation'
 export default class LoginUser extends Component { 
    
 constructor(props) { 
@@ -12,13 +12,15 @@ constructor(props) {
       UserId: '',
       UserPassword: '' 
     } 
+    this.UserLoginFunction= this.UserLoginFunction.bind(this);
   }
 
 // login 클릭시 이벤트
-UserLoginFunction = () => { 
+UserLoginFunction(){ 
+  
  const { UserId }  = this.state 
  const { UserPassword }  = this.state
-
+ 
 // server로 값을 전달함
 
 fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
@@ -38,14 +40,15 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
         // 성공적으로 값이 있을 경우에 
        if(responseJson.success === 'SUCCESS')
         {               
-          // 우선적으로 asyncstorage에 로그인 상태 저장
-          try {
-            AsyncStorage.setItem('login_id', responseJson.id);
-            AsyncStorage.setItem('login_name', responseJson.name);
-            AsyncStorage.setItem('login_christ_name', responseJson.christ_name);
-          } catch (error) {
-            console.error('AsyncStorage error: ' + error.message);
-          }
+            // 우선적으로 asyncstorage에 로그인 상태 저장        
+            try {
+              AsyncStorage.setItem('login_id', responseJson.id);
+              AsyncStorage.setItem('login_name', responseJson.name);
+              AsyncStorage.setItem('login_christ_name', responseJson.christ_name);      
+                  
+            } catch (error) {
+              console.error('AsyncStorage error: ' + error.message);
+            }
             // 서버 DB의 값을 가져옴
             this.getAllComments(responseJson.id)
             this.getAllLectios(responseJson.id)
@@ -65,9 +68,9 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                     if(setLogin){ 
                       setLogin(responseJson.id)                     
                     }
-                    navigation.navigate('FirstPage', {}); 
+                 
 
-                //  기기 DB에 값이 없는 경우 DB에 삽입후에 firstpage로 이동
+                //  기기 DB에 값이 없는 경우 DB에 삽입후에 setLogin
                   } else {
                     db.transaction(function(tx) {
                       tx.executeSql(
@@ -79,8 +82,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                           console.log('LoginUser - DB user info inserted :', responseJson.id)
                             if(setLogin){ // action setLogin
                               setLogin(responseJson.id) 
-                            }
-                            navigation.navigate('FirstPage', {});                         
+                            }                
                           } else {
                             console.log('LoginUser - DB user info inserting failed :', responseJson.id)
                           }
@@ -104,6 +106,18 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
      
  
   }
+
+  componentWillReceiveProps(nextProps){  
+    // props의 loginId값이 변경될때
+    console.log("LoginUser - this.props.status.loginId: ", nextProps.status.loginId)  
+  
+    // setLogin 후에(처음로그인시 필요)
+    if(this.props.status.loginId !== nextProps.status.loginId){   
+      this.props.navigation.navigate('Main1', {});        
+    } 
+  
+  }
+  
 getAllComments(id){    
     try {
       AsyncStorage.setItem('getAll', 'start');
@@ -331,9 +345,22 @@ GoRegisterFunction = () =>{
   this.props.navigation.navigate('RegisterUser', {});
  }
 
+ setChange(){
+   console.log("userid", this.state.UserId)
+    this.setState({ 
+      UserId: '',
+      UserPassword: '' 
+    })
+ }
+
   render() {
     return (      
       <View style={styles.MainContainer}>      
+         <NavigationEvents
+          onWillFocus={payload => {
+              this.setChange();
+          }}
+          />
        <View style={{width:'100%'}}>          
           <TouchableOpacity
             activeOpacity = {0.9}
@@ -350,13 +377,15 @@ GoRegisterFunction = () =>{
                <Text>* 이메일로 가입하신 분은 @ 앞 부분이 아이디가 됩니다.{"\n"}(예- yellowpage@naver.com -> yellowpage)</Text>
               <TextInput        
                 placeholder="아이디"      
+                value={this.state.UserId}
                 onChangeText={UserId => this.setState({UserId})}  
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}
               />      
              
               <TextInput                
-                placeholder="비밀번호"      
+                placeholder="비밀번호"  
+                value={this.state.UserPassword} 
                 onChangeText={UserPassword => this.setState({UserPassword})}      
                 underlineColorAndroid='transparent'      
                 style={styles.TextInputStyleClass}      
@@ -365,7 +394,7 @@ GoRegisterFunction = () =>{
              <TouchableOpacity 
                   activeOpacity = {0.9}
                   style={styles.Button}
-                  onPress={this.UserLoginFunction} 
+                  onPress={()=>this.UserLoginFunction()} 
                   >
                   <Text style={{color:"#fff", textAlign:'center'}}>
                   로그인

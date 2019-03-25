@@ -166,7 +166,12 @@ constructor(props) {
     } 
     var today = year+"-"+month+"-"+day;
     this.setState({Today: today, selectedDate: today})
-   
+    // 오늘날짜를 설정 
+    try {
+      AsyncStorage.setItem('today5', today);
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
   AsyncStorage.getItem('login_name', (err, result) => {
     console.log("Main5 - login_name : ", result)
     this.setState({
@@ -205,117 +210,141 @@ refreshContents(){
 
   AsyncStorage.getItem('refreshMain5', (err, result) => {
   
-    console.log("Main5 - get AsyncStorage refresh : ", result)
-    var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth()+1
-      var day = date.getDate();
-      if(month < 10){
-          month = "0"+month;
-      }
-      if(day < 10){
-          day = "0"+day;
-      } 
-      var today = year+"-"+month+"-"+day;
-      console.log(today + "/" + this.state.Today)
-     
-      
-    if(result == "refresh" || this.state.Today != today){
-      console.log("here1?")
-      try {
-          AsyncStorage.setItem('refreshMain5', 'no');
-      } catch (error) {
-          console.error('AsyncStorage error: ' + error.message);
-      }
-      commentDates = Array()
-      lectioDates = Array()
-   
-      LocaleConfig.locales['kr'] = {
-        monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-        monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-        dayNames: ['일','월','화','수','목','금','토'],
-        dayNamesShort: ['일','월','화','수','목','금','토']
-      };
-      
-      LocaleConfig.defaultLocale = 'kr';
+    console.log("Main5 - get AsyncStorage refresh : ", result)  
 
-
-
-      // 오늘 날짜로 캘린더 가져오기
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth()+1
-      var day = date.getDate();
-      if(month < 10){
-          month = "0"+month;
-      }
-      if(day < 10){
-          day = "0"+day;
-      }
-     
-      var year_month = year+"년 "+month;
-  
-      const { params } = this.props.navigation.state;
-      if(params != null){
-        console.log("Main5 - navigation params existed : ",params.otherParam)
-        if(params.otherParam != year+"-"+month){
-          console.log("다른 달 ")
-
-          this.setState({
-            selectedDate: "",
-            selectedDate_format: "",// 요일
-            onesentence: "",      
-            initialLoading: true
-          })
-          today = params.otherParam+"-01"
-          this.setState({selectedDate: today})
-          year_month = params.otherParam.substring(0,4)+"년 "+params.otherParam.substring(5,6)
-          this.setState({selectedDate: today})
-          this.getAllPoints(year_month)  
-        }else{
-          console.log("같은 달 ")
-
-          this.setState({
-            Today : "",
-            selectedDate: "",
-            selectedDate_format: "",// 요일
-            onesentence: "",      
-            initialLoading: true,
-            todaycount: 0,
-            weekcount: 0,
-            monthcount: 0
-          })
-          var today = year+"-"+month+"-"+day;
-          this.setState({Today: today, selectedDate: today})
-          // 오늘 값을 가져온다
-         // this.onselectDate(null, today)
-         var year_month = year+"년 "+month;
-          this.getAllPoints(year_month)  
+      AsyncStorage.getItem('today5', (err, result2) => {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1
+        var day = date.getDate();
+        if(month < 10){
+            month = "0"+month;
         }
-      //   this.onselectDate(null, params.otherParam)
-        }else{
-          this.setState({
-            Today : "",
-            selectedDate: "",
-            selectedDate_format: "",// 요일
-            onesentence: "",      
-            initialLoading: true,
-            todaycount: 0,
-            weekcount: 0,
-            monthcount: 0
+        if(day < 10){
+            day = "0"+day;
+        } 
+        var today = year+"-"+month+"-"+day;
+        console.log(today + "/" + this.state.Today)
+        console.log(result2)
+        if(result2 == null){
+          AsyncStorage.getItem('login_name', (err, result) => {
+            console.log("Main5 - login_name : ", result)
+            this.setState({
+              name: result,
+              avatarSource:  {uri: 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg'},
+              iconShow:false
+                  });
+          
           })
-          var today = year+"-"+month+"-"+day;
-          this.setState({Today: today, selectedDate: today})
-          // 오늘 값을 가져온다
-         // this.onselectDate(null, today)
-         var year_month = year+"년 "+month;
-          this.getAllPoints(year_month)  
+          AsyncStorage.getItem('login_christ_name', (err, result) => {
+            console.log("Main5 - login_chirst_name : ", result)
+            this.setState({
+              christname: result
+                  });
+          
+          })
         }
+        if(result == "refresh" || result2 !== today){
+       
+          console.log("here1?")
+          try {
+              AsyncStorage.setItem('refreshMain5', 'no');
+              AsyncStorage.setItem('today5', today);
+          } catch (error) {
+              console.error('AsyncStorage error: ' + error.message);
+          }
+          commentDates = Array()
+          lectioDates = Array()
+       
+          LocaleConfig.locales['kr'] = {
+            monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+            monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+            dayNames: ['일','월','화','수','목','금','토'],
+            dayNamesShort: ['일','월','화','수','목','금','토']
+          };
+          
+          LocaleConfig.defaultLocale = 'kr';
     
     
-    }else{
-    // this.setState({reload:true})    
-    }
+    
+          // 오늘 날짜로 캘린더 가져오기
+          var date = new Date();
+          var year = date.getFullYear();
+          var month = date.getMonth()+1
+          var day = date.getDate();
+          if(month < 10){
+              month = "0"+month;
+          }
+          if(day < 10){
+              day = "0"+day;
+          }
+         
+          var year_month = year+"년 "+month;
+      
+          const { params } = this.props.navigation.state;
+          if(params != null){
+            console.log("Main5 - navigation params existed : ",params.otherParam)
+            if(params.otherParam != year+"-"+month){
+              console.log("다른 달 ")
+    
+              this.setState({
+                selectedDate: "",
+                selectedDate_format: "",// 요일
+                onesentence: "",      
+                initialLoading: true
+              })
+              today = params.otherParam+"-01"
+              this.setState({selectedDate: today})
+              year_month = params.otherParam.substring(0,4)+"년 "+params.otherParam.substring(5,6)
+              this.setState({selectedDate: today})
+              this.getAllPoints(year_month)  
+            }else{
+              console.log("같은 달 ")
+    
+              this.setState({
+                Today : "",
+                selectedDate: "",
+                selectedDate_format: "",// 요일
+                onesentence: "",      
+                initialLoading: true,
+                todaycount: 0,
+                weekcount: 0,
+                monthcount: 0
+              })
+              var today = year+"-"+month+"-"+day;
+              this.setState({Today: today, selectedDate: today})
+              // 오늘 값을 가져온다
+             // this.onselectDate(null, today)
+             var year_month = year+"년 "+month;
+              this.getAllPoints(year_month)  
+            }
+          //   this.onselectDate(null, params.otherParam)
+            }else{
+              this.setState({
+                Today : "",
+                selectedDate: "",
+                selectedDate_format: "",// 요일
+                onesentence: "",      
+                initialLoading: true,
+                todaycount: 0,
+                weekcount: 0,
+                monthcount: 0
+              })
+              var today = year+"-"+month+"-"+day;
+              this.setState({Today: today, selectedDate: today})
+              // 오늘 값을 가져온다
+             // this.onselectDate(null, today)
+             var year_month = year+"년 "+month;
+              this.getAllPoints(year_month)  
+            }
+        
+        
+        }else{
+        // this.setState({reload:true})    
+        }
+      })
+      
+
   })
   
 }
@@ -410,9 +439,9 @@ componentWillReceiveProps(nextProps){
     if(params.otherParam != null){
       console.log("Main5 - navigation params existed : ",params.otherParam)
    //   this.onselectDate(null, params.otherParam) */
-   if(nextProps.status.isLogged == this.props.status.isLogged){
-     console.log("here2?")
-  
+   if(nextProps.status.isLogged == false){  
+    // alert("logout")
+     this.props.navigation.navigate('Main1')  
    }
      
      
@@ -497,7 +526,7 @@ commentFunc = (commentDates) => {
   }
   var date_mon = new Date();
   var day = date_mon.getDay(),
-      diff = date_mon.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+      diff = date_mon.getDate() - day + (day == 0 ? -7:0); // adjust when day is sunday
   var monday = new Date(date_mon.setDate(diff));
     for(var k=0; k<7; k++){      
       var date = new Date(monday)

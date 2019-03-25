@@ -18,7 +18,6 @@ constructor(props) {
       UserGender: '',
       UserRegion: '',
       UserCathedral: '',
-      UserId: '',
       UserPassword: '',
       UserPassword_confirm: ''
     } 
@@ -119,10 +118,31 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
    this.props.navigation.navigate('LoginUser', {});
   }
  
+  setChange(){
+    console.log("userid", this.state.UserId)
+     this.setState({      
+      UserId: '',
+      UserName: '',
+      UserCatholicName: '',
+      UserAge: '',
+      UserGender: '',
+      UserRegion: '',
+      UserCathedral: '',
+      UserPassword: '',
+      UserPassword_confirm: ''       
+     })
+  }
+
+  
   render() {
     return ( 
         <View style={styles.MainContainer}>  
-         <View style={{width:'100%'}}>          
+         <View style={{width:'100%'}}>    
+         <NavigationEvents
+          onWillFocus={payload => {
+              this.setChange();
+          }}
+          />      
           <TouchableOpacity
             activeOpacity = {0.9}
             style={{backgroundColor: '#01579b', padding: 10}}
@@ -136,6 +156,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
           </View>
                 <TextInput                
                 placeholder="아이디"        
+                value={this.state.UserId}
                 onChangeText={UserId => this.setState({UserId})}     
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}]}
@@ -143,18 +164,21 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 
                  <TextInput                
                 placeholder="이름"        
+                value={this.state.UserName}
                 onChangeText={UserName => this.setState({UserName})}  
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'24%', paddingRight:'1%'}]}
                 />
                  <TextInput                
                 placeholder="세례명"        
+                value={this.state.UserCatholicName}
                 onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
                 />
                  <TextInput                
                 placeholder="생년월일"        
+                value={this.state.UserAge}
                 onChangeText={UserAge => this.setState({UserAge})}    
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
@@ -196,12 +220,14 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 </Picker>
                  <TextInput                
                 placeholder="본당"        
+                value={this.state.UserCathedral}
                 onChangeText={UserCathedral => this.setState({UserCathedral})}
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'48%'}]}
                 />
                 <TextInput                
                 placeholder="비밀번호"        
+                value={this.state.UserPassword}
                 onChangeText={UserPassword => this.setState({UserPassword})}     
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'48%'}]}       
@@ -209,6 +235,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_registration.php', {
                 /> 
                 <TextInput                
                 placeholder="비밀번호 확인"        
+                value={this.state.UserPassword_confirm}
                 onChangeText={UserPassword_confirm => this.setState({UserPassword_confirm})}     
                 underlineColorAndroid='transparent'        
                 style={[styles.TextInputStyleClass, {width:'48%'}]}       

@@ -3,19 +3,19 @@ import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
 import { Platform, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container'
-import Main2 from '../containers/Main2Container'
 import Main3 from '../containers/Main3Container'
 import Main4 from '../containers/Main4Container'
 import Main5 from '../containers/Main5Container'
 import Sub5 from '../containers/Sub5Container'
 import TabBarComponent from './TabBarComponent.js'
-import Main2_2 from '../containers/Main2_2Container';
 import Main3_2 from '../containers/Main3_2Container';
 import Main4_2 from '../containers/Main4_2Container';
 import GuidePage from './GuidePage';
 import Profile from '../containers/ProfileContainer'
 import Setting from './Setting'
-
+import RegisterUser from '../containers/RegisterUserContainer';
+import FirstPage from '../containers/FirstPageContainer';
+import LoginUser from '../containers/LoginUserContainer';
 console.log("Mainpage loaded")
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	console.log("navi",navigation)
@@ -45,23 +45,25 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 	const TabNavigator = createBottomTabNavigator(		
 		{
 			Main1: { screen: Main1 },
-			//Main2: { screen: Main2 },
-				Main3: {screen: Main3 },
-				Main4: { screen: Main4 },
-				Main5: { screen: Main5 },
-				Sub5: {screen: Sub5},
-			//	Main2_2: {screen: Main2_2},
-				Main3_2: {screen: Main3_2},
-				Main4_2: {screen: Main4_2},
-				Guide: { screen: GuidePage },
-				Profile: { screen: Profile},
-				Setting: { screen: Setting }
+		//Main2: { screen: Main2 },
+			Main3: {screen: Main3 },
+			Main4: { screen: Main4 },
+			Main5: { screen: Main5 },
+			Sub5: {screen: Sub5},
+		//	Main2_2: {screen: Main2_2},
+			Main3_2: {screen: Main3_2},
+			Main4_2: {screen: Main4_2},
+			Guide: { screen: GuidePage },
+			Profile: { screen: Profile},
+			Setting: { screen: Setting },				
+			RegisterUser: {screen: RegisterUser},
+			LoginUser: {screen: LoginUser},
+			FirstPage : { screen: FirstPage }
 			
 		},
 		
 		(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
 	? {	
-		backBehavior: 'order',
 		defaultNavigationOptions: ({ navigation }) => ({
 			tabBarIcon: ({ focused, tintColor }) =>
 			getTabBarIcon(navigation, focused, tintColor),
@@ -76,13 +78,12 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
-				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'RegisterUser' && r.routeName !== 'LoginUser' && r.routeName !== 'Sub5' && r.routeName !== 'Main2_2'&& r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom'
 		 }
 	: 
 		{
-		backBehavior: 'order',
 		defaultNavigationOptions: ({ navigation }) => ({
 			tabBarIcon: ({ focused, tintColor }) =>
 			getTabBarIcon(navigation, focused, tintColor),
@@ -95,5 +96,10 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 		
 		);
 
-	
-  export default  createAppContainer(TabNavigator)
+const AppContainer = createAppContainer(TabNavigator)
+  
+  export default class App extends React.Component {
+	render() {
+	  return <AppContainer />;
+	}
+}

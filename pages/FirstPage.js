@@ -4,8 +4,6 @@ import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
 import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' })
-import MainPage from './MainPage'
-import ReactNativeAN from 'react-native-alarm-notification';
 var ReactNativeAutoUpdater = require('react-native-auto-updater');
 
 ReactNativeAutoUpdater.jsCodeVersion() 
@@ -14,7 +12,7 @@ export default class FirstPage extends Component {
  
 constructor(props) { 
     super(props) 
-    console.log("FirstPage - this.props.status : ", this.props.status)
+  //  console.log("FirstPage - this.props.status : ", this.props.status)
 
     // DB 테이블 생성
     db.transaction(function(txn) {
@@ -47,14 +45,10 @@ constructor(props) {
       });
 
     this.state = { 
-       isLoggedIn: this.props.status.isLogged | false, 
-      // isLoggedIn:true,
-       loginId: null,
-       loginName: null,
-       initialLoading: true,
-       internet: true
+       internet: true,
+       loginstatus: true
     } 
-    console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
+   // console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
   
     
@@ -83,203 +77,60 @@ constructor(props) {
   AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
     if(result != null){
-      // props값을 저장(로그인상태에서 재가동할때)
-      this.props.setLogin(result) 
-
-      // 저장된 값이 있으면 isLoggedIn : true & setLogin해준다.
-      console.log("FirstPage - asyncstrage name exists")
-      AsyncStorage.getItem('login_name', (err, result2) => {
-        console.log("FirstPage - login_name : ", result2)
-        this.setState({
-          loginId: result,
-          isLoggedIn: true,
-          loginName: result2
-              });      
-      })
-  
+        
     }else{
-      console.log("FirstPage - asyncstrage name not exists")
-      //값이 없으면 initialLoading false
-      this.setState({
-        initialLoading: false 
-      })
+        //값이 없는 경우 회원가입 화면
+      console.log("FirstPage - asyncstrage name not exists")  
+      this.setState({loginstatus: false})   
     }    
-  })
-
-
- 
-
+  }) 
   }
 
-  setChange(){
-    const setStart = (results) => this.setStart(results)
-    setTimeout(function() {
-      setStart("change")
-    }, 500);   
- 
- 
-  }
-  setStart(results){
-    if(results == "change"){
-      this.setState({
-        internet: true
-      }) // 인터넷바로 못잡는경우에 사용
-      const setState = (isConnected) => this.setState({internet : isConnected})
 
-      NetInfo.isConnected.fetch().then(isConnected => {
-        console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-       // alert('First, is ' +isConnected)
-        setState(isConnected)
-      });
-      function handleFirstConnectivityChange(isConnected) {
-        console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-       // alert('Then, is ' +isConnected)
-        setState(isConnected)
-       /* NetInfo.isConnected.removeEventListener(
-          'connectionChange',
-          handleFirstConnectivityChange
-        ); */
-      }
-      NetInfo.isConnected.addEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      );
-       // 로그인 상태값 가져오기
-    AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("FirstPage - login_id : ", result)
-    if(result != null){          
-      AsyncStorage.getItem('login_name', (err, result2) => {
-        console.log("FirstPage - login_name : ", result2)
-        this.setState({
-          loginId: result,
-          isLoggedIn: true,
-          initialLoading: false,
-          loginName: result2
-          });
-      
-      })
-    }else{
-      this.setState({
-        initialLoading: false 
-      })
-    }    
-  })
-
-    }else{
-      // user정보를 가져와서 setting 한다.
-      this.setState({
-        loginId: results.rows.item(0).uid,
-        loginName: results.rows.item(0).name,
-        isLoggedIn: true,
-        initialLoading: false
-      });
-    }
-   
-  }
-
-componentWillReceiveProps(nextProps){  
-    // props의 loginId값이 변경될때
-    console.log("FirstPage - this.props.status.loginId: ", nextProps.status.loginId)  
-  
-    // setLogin 후에(처음로그인시 필요)
-    if(this.props.status.loginId !== nextProps.status.loginId){
-    
-      console.log("FirstPage - componentWillReceiveProps")
-      // 로그인이나 회원가입한 뒤에 DB에서 loginName 찾기    
-        db.transaction(tx => {
-            tx.executeSql(
-              'SELECT * FROM users where uid = ?',
-              [nextProps.status.loginId],
-              (tx, results) => {
-                var len = results.rows.length;
-              //  값이 있는 경우에 
-              const setStart = (results) => this.setStart(results)
-                if (len > 0) {
-                  console.log("FirstPage - Message", results.rows.item(0).uid+" is get")
-                  setTimeout(function() {
-                    setStart(results)
-                  }, 500);            
-                 
-                               
-                } else {
-                  // 로그아웃시에 
-                  this.setState({
-                    loginId: null,
-                    loginName: null,
-                    isLoggedIn: false,
-                    initialLoading: false
-                  });      
-                }
-              }
-            );
-          });          
-    }
-}
-  render() {
-    console.log('FirstPage - Message in render:', this.props.status.isLogged+"."+this.props.status.loginId+"."+this.state.isLoggedIn+"."+this.state.loginId+"."+this.state.loginName)
-      
-   
+  render() {   
         return (    
           !this.state.internet ? 
           (    
-            <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}> 
-            <NavigationEvents
-                      onWillFocus={payload => {
-                          this.setChange();
-                      }}
-                      />
-            <Text style= {styles.TextComponentStyle}>인터넷을 연결해주세요</Text>
+            <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
+            <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
             </View>
           ) :
-
-          (this.state.initialLoading)
-            ?            
-            (
-                <View style={styles.MainContainer}> 
-                <NavigationEvents
-                  onWillFocus={payload => {
-                      this.setChange();
-                  }}
-                  />
-                <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-                <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
-                </View>
-              )
-            
-             : (
-              (this.state.isLoggedIn)
-                ? (
-                  <View style={{flex:1}}>                   
-                  <MainPage />  
-                  </View>
-                ) : (
-                  <View style={styles.MainContainer}> 
-                  <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-                   <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
-                     <View style={{margin:10, marginTop: 40, width:'100%', padding:10}}>  
-                       <TouchableOpacity
-                       activeOpacity = {0.9}
-                       style={{backgroundColor: '#fff', padding: 10}}
-                       onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
-                       >
-                       <Text style={{color:"#01579b", textAlign:'center'}}>
-                       회원가입하고 시작하기
-                       </Text>
-                     </TouchableOpacity> 
-                       <TouchableOpacity 
-                       activeOpacity = {0.9}
-                       style={{backgroundColor: 'transparent', padding: 10}}
-                       onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } 
-                       >
-                       <Text style={{color:"#fff", textAlign:'center'}}>
-                       이미 계정이 있으신가요? 로그인
-                       </Text>
-                    </TouchableOpacity>
-                       
-                   </View>
-                 </View>
-                )
-              )
+          this.state.loginstatus ?
+            <View style={styles.MainContainer}> 
+            <NavigationEvents
+                onWillFocus={payload => {
+                  //  this.setChange();
+                }}
+                />
+            <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+            <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+            </View>
+           : 
+            <View style={styles.MainContainer}> 
+            <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+            <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
+                <View style={{margin:10, marginTop: 40, width:'100%', padding:10}}>  
+                <TouchableOpacity
+                activeOpacity = {0.9}
+                style={{backgroundColor: '#fff', padding: 10}}
+                onPress={() =>  this.props.navigation.navigate('RegisterUser', {}) } 
+                >
+                <Text style={{color:"#01579b", textAlign:'center'}}>
+                회원가입하고 시작하기
+                </Text>
+                </TouchableOpacity> 
+                <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={{backgroundColor: 'transparent', padding: 10}}
+                onPress={() =>  this.props.navigation.navigate('LoginUser', {}) } 
+                >
+                <Text style={{color:"#fff", textAlign:'center'}}>
+                이미 계정이 있으신가요? 로그인
+                </Text>
+            </TouchableOpacity>                
+            </View>
+            </View>
+              
            )              
                   
   }

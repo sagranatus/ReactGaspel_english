@@ -16,6 +16,7 @@ export const setLogin = (loginId) => {
     AsyncStorage.removeItem('today1')
     AsyncStorage.removeItem('today2')
     AsyncStorage.removeItem('today3')
+    AsyncStorage.removeItem('today5')
     AsyncStorage.removeItem('thisweekend')
     AsyncStorage.removeItem('profile')
     const action = {

@@ -12,6 +12,8 @@ import ReactNativeAN from 'react-native-alarm-notification';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
 import Icon3 from 'react-native-vector-icons/Ionicons'
+import { BottomTabBar } from 'react-navigation-tabs'; 
+
 var normalSize;
 var largeSize;
 var date = new Date();
@@ -94,6 +96,17 @@ constructor(props) {
   }
 
   componentWillMount(){
+    console.log("saea", this.props.status.isLogged + this.props.status.loginId)
+     // 로그인 상태값 가져오기
+  AsyncStorage.getItem('login_id', (err, result) => {
+    console.log("FirstPage - login_id : ", result)
+    if(result == null){      
+        this.props.navigation.navigate('FirstPage', {})        
+        return false
+    }else{
+      this.props.setLogin(result)        
+    }
+  })
     // slide url 가져오기
     fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
       method: 'POST',
@@ -298,11 +311,21 @@ constructor(props) {
             this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
         }
       
+      }else{
+        AsyncStorage.getItem('login_id', (err, result) => {
+          console.log("FirstPage - login_id : ", result)
+          if(result == null){      
+              this.props.navigation.navigate('FirstPage', {})        
+              return false
+          }else{
+          }
+        })
       }
     }
   }
 
-   setChange(){  
+   setChange(){    
+    console.log("navi",this.props.navigation)
      //textSize 바뀌는 경우
     AsyncStorage.getItem('textSize', (err, result) => {
 
@@ -595,7 +618,29 @@ onModalOpen(url) {
       )
 
     : (   
-      <ScrollView >
+      /*
+      <View style={{flex:1}}>
+      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', position: 'absolute', bottom:0, width:"100%", backgroundColor:"#fff", height:50, zIndex:1, borderTopWidth:0.5, borderTopColor:"#DCDCDC"}}>
+      <TouchableOpacity 
+      style={{flexDirection: "column", flexWrap: 'wrap', width: '25%', height: 50, alignItems:'center', justifyContent: 'center'}}
+      onPress={() => this.props.navigation.navigate('Main1',{}) } >
+      <Icon2 name={'user'} size={35} color={'#01579b'} />  
+      </TouchableOpacity>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: '25%', height: 50, alignItems:'center', justifyContent: 'center'}}
+      onPress={() => this.props.navigation.navigate('Main3',{}) } >
+      <Icon2 name={'pencil'} size={35} color={'grey'} /> 
+      </TouchableOpacity>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: '25%', height: 50, alignItems:'center', justifyContent: 'center'}}
+      onPress={() => this.props.navigation.navigate('Main4',{}) } >
+      <Icon2 name={'bell'} size={35} color={'grey'} /> 
+      </TouchableOpacity>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: '25%', height: 50, alignItems:'center', justifyContent: 'center'}}
+      onPress={() => this.props.navigation.navigate('Main5',{}) } >
+      <Icon2 name={'calendar'} size={35} color={'grey'} />  
+      </TouchableOpacity>  
+      </View>
+      */
+      <ScrollView>
         <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center'}}>  
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'1%'}}>
             <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />     
@@ -751,6 +796,7 @@ onModalOpen(url) {
             </Modal>
         </View>
       </ScrollView>
+     
         )
        
   }
