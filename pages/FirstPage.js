@@ -222,7 +222,7 @@ componentWillReceiveProps(nextProps){
         return (    
           !this.state.internet ? 
           (    
-            <View style={styles.MainContainer}> 
+            <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}> 
             <NavigationEvents
                       onWillFocus={payload => {
                           this.setChange();

@@ -955,7 +955,7 @@ changeMonth(year, month){
           <View>
             <Calendar
               markingType={'custom'}
-              firstDay={1}
+            //  firstDay={1}
               hideExtraDays={true}
               current={this.state.selectedDate}
               pastScrollRange={24}

@@ -331,9 +331,11 @@ constructor(props) {
     var today = year+"-"+month+"-"+day;
 
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
+      this.setState({weekend:false})
       var lastday = date.getDate() - (date.getDay() - 1) - 1;
       date = new Date(date.setDate(lastday));
-    }else{
+    }else{      
+      this.setState({weekend:true})
       var lastday = date.getDate()
       date = new Date(date.setDate(lastday));
     }   
@@ -418,7 +420,7 @@ constructor(props) {
       }else{
         console.log("weekend is different")
         try {
-            AsyncStorage.setItem('weekend1', weekend);          
+            AsyncStorage.setItem('weekend1', weekend);         
             this.props.getGaspel(weekend)
         } catch (error) {
             console.error('AsyncStorage error: ' + error.message);

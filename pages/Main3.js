@@ -475,6 +475,8 @@ setChange(){
         }        
         if(date.getDay() == 0){
             this.setState({weekend:true})
+        }else{
+            this.setState({weekend:false})
         }
     
        this.setState({
@@ -1166,7 +1168,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         height:40},
     MainContainer_weekend:{
-        backgroundColor:"#01579b",
+        backgroundColor:"#F8F8F8",
         justifyContent: 'center',
         alignItems: 'center',
         flex:1,
