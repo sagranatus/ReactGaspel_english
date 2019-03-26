@@ -1,8 +1,7 @@
 import React, { Component } from 'react' 
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, ActivityIndicator, NetInfo} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, Image, NetInfo} from 'react-native'
 import {PropTypes} from 'prop-types'
 import { openDatabase } from 'react-native-sqlite-storage'
-import {NavigationEvents} from 'react-navigation'
 var db = openDatabase({ name: 'UserDatabase.db' })
 var ReactNativeAutoUpdater = require('react-native-auto-updater');
 
@@ -12,7 +11,6 @@ export default class FirstPage extends Component {
  
 constructor(props) { 
     super(props) 
-  //  console.log("FirstPage - this.props.status : ", this.props.status)
 
     // DB 테이블 생성
     db.transaction(function(txn) {
@@ -45,10 +43,8 @@ constructor(props) {
       });
 
     this.state = { 
-       internet: true,
-       loginstatus: true
+       internet: true
     } 
-   // console.log("FirstPage - this.props.status.isLogged", this.props.status.isLogged);
   }
   
     
@@ -72,7 +68,7 @@ constructor(props) {
       'connectionChange',
       handleFirstConnectivityChange
     );
-
+/*
   // 로그인 상태값 가져오기
   AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
@@ -83,7 +79,7 @@ constructor(props) {
       console.log("FirstPage - asyncstrage name not exists")  
       this.setState({loginstatus: false})   
     }    
-  }) 
+  }) */
   }
 
 
@@ -95,7 +91,7 @@ constructor(props) {
             <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
             </View>
           ) :
-          this.state.loginstatus ?
+      /*    this.state.loginstatus ?
             <View style={styles.MainContainer}> 
             <NavigationEvents
                 onWillFocus={payload => {
@@ -105,7 +101,7 @@ constructor(props) {
             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
             <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
             </View>
-           : 
+           : */
             <View style={styles.MainContainer}> 
             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
             <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
@@ -135,16 +131,16 @@ constructor(props) {
                   
   }
 }
+/*  
 FirstPage.propTypes = { 
-  setLogout: PropTypes.func,
+    setLogout: PropTypes.func,
     status: PropTypes.shape({
         isLogged: PropTypes.bool,
         loginId: PropTypes.string
     })
-  };
+  }; */
   
-const styles = StyleSheet.create({
- 
+const styles = StyleSheet.create({ 
     MainContainer :{     
     backgroundColor:"#01579b",
     justifyContent: 'center',
