@@ -73,6 +73,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
           this.setState({getData:true})
           // asyncstorage에 login_id, login_name, login_christ_name 저장        
           try {
+            AsyncStorage.setItem('today1', 'null');
             AsyncStorage.setItem('login_id', responseJson.id);
             AsyncStorage.setItem('login_name', responseJson.name);
             AsyncStorage.setItem('login_christ_name', responseJson.christ_name);                      

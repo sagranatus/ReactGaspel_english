@@ -19,7 +19,6 @@ export default class Main1 extends Component {
 constructor(props) { 
   super(props)  
   this.state = {
-      internet: true,
       textSize: "",
       today : "",
       todayDate: "",
@@ -68,25 +67,6 @@ urlSetting(){
 }
 
 componentWillMount(){
-   // 인터넷 연결
-   const setState = (isConnected) => this.setState({internet : isConnected})
-
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    });
-    function handleFirstConnectivityChange(isConnected) {
-      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-     /* NetInfo.isConnected.removeEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      ); */
-    }
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
 
   console.log("Main1 - componentWillMount : ", this.props.status.isLogged + this.props.status.loginId)
 
@@ -592,13 +572,7 @@ onModalOpen(url) {
 }
 
 render() {    
-  return !this.state.internet ? 
-  (    
-    <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
-    <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
-    </View>
-  ) :
-  (this.state.initialLoading)
+  return (this.state.initialLoading)
   ? (    
       <View style={styles.loadingContainer}>
         <ActivityIndicator
@@ -769,7 +743,6 @@ Main1.propTypes = {
   
 const styles = StyleSheet.create({
   MainContainer :{     
-    backgroundColor:"#01579b",
     justifyContent: 'center',
     alignItems: 'center',
     flex:1,

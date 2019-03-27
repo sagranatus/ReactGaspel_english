@@ -1,6 +1,6 @@
 import React from 'react'
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
-import { Platform, Image } from 'react-native'
+import { Platform, Image, NetInfo, View, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container'
 import Main3 from '../containers/Main3Container'
@@ -16,6 +16,7 @@ import RegisterUser from '../containers/RegisterUserContainer';
 import FirstPage from '../containers/FirstPageContainer';
 import LoginUser from '../containers/LoginUserContainer';
 console.log("Mainpage loaded")
+ 
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
@@ -87,7 +88,71 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 const AppContainer = createAppContainer(TabNavigator)
   
   export default class App extends React.Component {
-	render() {
-	  return <AppContainer />;
+
+	constructor(props) { 
+		super(props)  
+		this.state = {
+			initialLoading: true,
+			internet: false
+		} 
+	}
+
+	componentWillMount(){
+		const setState1 = (state) => this.setState({initialLoading : state})
+		setTimeout(function() {
+		  setState1(false)
+		}, 500);   
+
+		 // 인터넷 연결
+		 const setState = (isConnected) => this.setState({internet : isConnected})
+		  NetInfo.isConnected.fetch().then(isConnected => {
+			console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+			setState(isConnected)
+		   
+		  });
+		  function handleFirstConnectivityChange(isConnected) {
+			console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+			setState(isConnected)
+		   /* NetInfo.isConnected.removeEventListener(
+			  'connectionChange',
+			  handleFirstConnectivityChange
+			); */
+		  }
+		  NetInfo.isConnected.addEventListener(
+			'connectionChange',
+			handleFirstConnectivityChange
+		  );
+	}
+	render() {	
+	  return this.state.initialLoading ?
+	  <View style={styles.MainContainer}> 
+		<Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
+		<Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+	  </View>
+	  : 
+	  (!this.state.internet) ? 
+	  <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
+		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
+	  </View>
+	  :
+	  <AppContainer />;
 	}
 }
+
+const styles = StyleSheet.create({
+MainContainer :{     
+    backgroundColor:"#01579b",
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex:1,
+    margin: 0,
+    color:"#fff"
+    },          
+     TextComponentStyle: {
+       fontSize: 16,
+      color: "#fff",
+      textAlign: 'center',
+      marginTop: 3, 
+      marginBottom: 15
+	 }
+});

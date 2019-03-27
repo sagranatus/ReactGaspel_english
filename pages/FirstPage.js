@@ -47,61 +47,8 @@ constructor(props) {
     } 
   }
   
-    
-  componentWillMount(){
-    // 인터넷 연결
-   const setState = (isConnected) => this.setState({internet : isConnected})
-
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    });
-    function handleFirstConnectivityChange(isConnected) {
-      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-     /* NetInfo.isConnected.removeEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      ); */
-    }
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
-/*
-  // 로그인 상태값 가져오기
-  AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("FirstPage - login_id : ", result)
-    if(result != null){
-        
-    }else{
-        //값이 없는 경우 회원가입 화면
-      console.log("FirstPage - asyncstrage name not exists")  
-      this.setState({loginstatus: false})   
-    }    
-  }) */
-  }
-
-
   render() {   
-        return (    
-          !this.state.internet ? 
-          (    
-            <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
-            <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
-            </View>
-          ) :
-      /*    this.state.loginstatus ?
-            <View style={styles.MainContainer}> 
-            <NavigationEvents
-                onWillFocus={payload => {
-                  //  this.setChange();
-                }}
-                />
-            <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-            <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
-            </View>
-           : */
+        return ( 
             <View style={styles.MainContainer}> 
             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
             <Text style= {styles.TextComponentStyle}>오늘의 복음</Text>                
