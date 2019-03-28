@@ -283,7 +283,7 @@ componentWillReceiveProps(nextProps){
     }else{
       // 로그인상태가 바뀌는 경우 체크한 후에 First로 보냄
       AsyncStorage.getItem('login_id', (err, result) => {
-        console.log("FirstPage - login_id : ", result)
+        console.log("Main1 - login_id : ", result)
         if(result == null){      
             this.props.navigation.navigate('FirstPage', {})        
             return false
@@ -571,7 +571,8 @@ onModalOpen(url) {
  
 }
 
-render() {    
+render() { 
+  console.log("here!", this.props.status.loginId )   
   return (this.state.initialLoading)
   ? (    
       <View style={styles.loadingContainer}>
@@ -617,7 +618,7 @@ render() {
           onPositionChanged={position => this.setState({ position })} />                    
       </View>            
     
-      <View style={{flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#E8E8E8", borderBottomWidth:6}}>  
+      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
         </View>   
@@ -625,16 +626,27 @@ render() {
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '66%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
         </View>   
+      </View>
+      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+        <View style={this.state.comment == "" && this.state.js2 == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘 해주신 말씀</Text>   
+        </View> 
+        <View style={this.state.comment == "" && this.state.js2 == "" ? {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'} : {display:'none'} }>
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘의 복음 말씀</Text>   
+        </View>  
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+          <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
+        </View>  
         <Icon style={{paddingTop:5}} name={'quote-left'} size={13} color={"#000"} />
         <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
           <Text style={[normalSize, styles.TextStyle,{padding:5}]}>{this.state.sentence}</Text>   
-          <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]}>{this.state.place}</Text>
+          <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0, marginBottom:30}]}>{this.state.place}</Text>
         </View> 
         <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.comment}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:35}]}>{this.state.comment}</Text>   
         </View>  
         <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
         </View> 
 
         <TouchableOpacity 
@@ -653,21 +665,21 @@ render() {
         </TouchableOpacity>    
       </View>
 
-      <View style={!this.state.weekend ? {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+      <View style={!this.state.weekend ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
         <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
         </View>    
         <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>주일의 독서</Text>   
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>주일의 복음 말씀</Text>   
         </View>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
         </View>    
 
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
+        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
-        <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
+        <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0, marginBottom:30}]: {display:'none'}}>{this.state.place_weekend}</Text>   
     
         <TouchableOpacity 
         activeOpacity = {0.9}

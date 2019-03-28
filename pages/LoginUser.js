@@ -186,7 +186,7 @@ getAllComments(id){
 } 
 
 getAllLectios(id){
- // alert("getalllectios") 
+  //alert("getalllectios"+id) 
   fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
@@ -235,7 +235,8 @@ getAllLectios(id){
 } 
 
 getAllWeekends(id){    
- // alert("getallweekends")
+   const setLogin = () => this.props.setLogin(id)
+  
    fetch('https://sssagranatus.cafe24.com/servertest/weekendData_ori.php', {
      method: 'POST',
      headers: {
@@ -267,7 +268,7 @@ getAllWeekends(id){
                 this.getWeekends(i, stack.length, date, id, mysentence, mythought, question, answer)              
                 }
             }else{
-              this.props.setLogin(id)
+              setLogin()
             }
             
           }else{

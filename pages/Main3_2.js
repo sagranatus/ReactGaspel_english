@@ -853,7 +853,7 @@ render() {
                         {"<"} 뒤로
                     </Text>
                 </TouchableOpacity>             
-                <ScrollView style={this.state.start == false ? {marginBottom:40, backgroundColor:"#fff"} : {display:'none'}}>       
+                <ScrollView style={this.state.start == false ? {backgroundColor:"#fff"} : {display:'none'}}>       
                     <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
                         <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
                         <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
@@ -863,10 +863,13 @@ render() {
                         <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                         <TouchableOpacity
                         activeOpacity = {0.9}
-                        style={styles.Button}
+                        style={[styles.Button, {height:60, paddingTop:7}]}
                         onPress={() =>  this.setState({start: true})} 
                         >
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
+                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', lineHeight:20}}>
+                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', fontSize:12}}>                        
+                        {this.state.Lectiodate}{"\n"}
+                        </Text>
                             거룩한 독서 시작하기
                         </Text>
                     </TouchableOpacity>
@@ -1095,7 +1098,7 @@ const styles = StyleSheet.create({
           
     DescriptionComponentStyle: {
         lineHeight:25,
-        padding:1,
+        padding:5,
         color: "#000",
         marginBottom: 1
     },
