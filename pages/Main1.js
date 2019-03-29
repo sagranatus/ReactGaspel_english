@@ -79,111 +79,111 @@ componentWillMount(){
       this.props.setLogin(result) 
     }             
     })
-      // slide url 가져오기
-      fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-        })
+
+  // slide url 가져오기
+  fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+    })
+  
+  }).then((response) => response.json())
+    .then((responseJson) => {
       
-      }).then((response) => response.json())
-        .then((responseJson) => {
-          
-        if(responseJson.error == false)
-          {
-            const stack = responseJson.stack
-            console.log("Main1 - stacks in slide url : ", stack)
-            
-                var id, url;
-              for(var i=0; i<stack.length; i++){
-                id = stack[i][0]
-                url = stack[i][1]
-                console.log("Main1 - stacks in slide url : ",id+"/"+url)  
-                urls.push(url)
-              }
-              
-              console.log(urls[0])
-              this.urlSetting()
-            
-          }else{
-            console.log("Main1 - stacks in slide url : ", 'failed')
+    if(responseJson.error == false)
+      {
+        const stack = responseJson.stack
+        console.log("Main1 - stacks in slide url : ", stack)
+        
+            var id, url;
+          for(var i=0; i<stack.length; i++){
+            id = stack[i][0]
+            url = stack[i][1]
+            console.log("Main1 - stacks in slide url : ",id+"/"+url)  
+            urls.push(url)
           }
-        }).catch((error) => {
-          console.error(error);
-        });   
-      
-      // fontSize 가져오기
-      AsyncStorage.getItem('textSize', (err, result) => {
-        if(result == "normal" || result == null){
-          normalSize = {fontSize:16}
-          largeSize = {fontSize:17}
-        }else if(result == "large"){
-          normalSize = {fontSize:17}
-          largeSize = {fontSize:19}
-        }else if(result == "larger"){
-          normalSize = {fontSize:19}
-          largeSize = {fontSize:21}
-        }
-      })
-      
-      // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기
-      
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth()+1
-      var day = date.getDate();
-      if(month < 10){
-          month = "0"+month;
-      }
-      if(day < 10){
-          day = "0"+day;
-      } 
-      var today = year+"-"+month+"-"+day; // 오늘날짜 세팅
-      var todayShow =  year+"년"+month+"월"+day+"일";
-
-      // 일요일날짜 구하기
-      if(date.getDay() !== 0){ 
-        var lastday = date.getDate() - (date.getDay() - 1) - 1;
-        date = new Date(date.setDate(lastday));
+          
+          console.log(urls[0])
+          this.urlSetting()
+        
       }else{
-        // 일요일인 경우에는 그대로 값을 가져옴 
-        var lastday = date.getDate()
-        date = new Date(date.setDate(lastday));
-      }   
-      var year = date.getFullYear();
-      var month = date.getMonth()+1
-      var day = date.getDate();
-      if(month < 10){
-          month = "0"+month;
+        console.log("Main1 - stacks in slide url : ", 'failed')
       }
-      if(day < 10){
-          day = "0"+day;
-      } 
-      var weekend = year+"-"+month+"-"+day; // 주일날짜 세팅
+    }).catch((error) => {
+      console.error(error);
+    });   
+  
+  // fontSize 가져오기
+  AsyncStorage.getItem('textSize', (err, result) => {
+    if(result == "normal" || result == null){
+      normalSize = {fontSize:16}
+      largeSize = {fontSize:17}
+    }else if(result == "large"){
+      normalSize = {fontSize:17}
+      largeSize = {fontSize:19}
+    }else if(result == "larger"){
+      normalSize = {fontSize:19}
+      largeSize = {fontSize:21}
+    }
+  })
+  
+  // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기
+  
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  var day = date.getDate();
+  if(month < 10){
+      month = "0"+month;
+  }
+  if(day < 10){
+      day = "0"+day;
+  } 
+  var today = year+"-"+month+"-"+day; // 오늘날짜 세팅
+  var todayShow =  year+"년"+month+"월"+day+"일";
+
+  // 일요일날짜 구하기
+  if(date.getDay() !== 0){ 
+    var lastday = date.getDate() - (date.getDay() - 1) - 1;
+    date = new Date(date.setDate(lastday));
+  }else{
+    // 일요일인 경우에는 그대로 값을 가져옴 
+    var lastday = date.getDate()
+    date = new Date(date.setDate(lastday));
+  }   
+  var year = date.getFullYear();
+  var month = date.getMonth()+1
+  var day = date.getDate();
+  if(month < 10){
+      month = "0"+month;
+  }
+  if(day < 10){
+      day = "0"+day;
+  } 
+  var weekend = year+"-"+month+"-"+day; // 주일날짜 세팅
 
 
-      // 오늘날짜와 주일 날짜를 today1, weekend1에 저장 
-      try {
-        AsyncStorage.setItem('today1', today);
-        AsyncStorage.setItem('weekend1', weekend);
-      } catch (error) {
-        console.error('AsyncStorage error: ' + error.message);
-      }
-      
-      this.setState({today: today, todayDate_show:todayShow}) // today, todayDate_show에 값 설정
-      this.props.getGaspel(today) //오늘 gaspel 가져오기 
+  // 오늘날짜와 주일 날짜를 today1, weekend1에 저장 
+  try {
+    AsyncStorage.setItem('today1', today);
+    AsyncStorage.setItem('weekend1', weekend);
+  } catch (error) {
+    console.error('AsyncStorage error: ' + error.message);
+  }
+  
+  this.setState({today: today, todayDate_show:todayShow}) // today, todayDate_show에 값 설정
+  this.props.getGaspel(today) //오늘 gaspel 가져오기 
 
-      // 일요일인 경우는 주일 gaspel을 가져오지 않는다. 그리고 weekend true로 준다.
-      var date = new Date();
-      if(date.getDay() !== 0){
-        this.props.getGaspel(weekend) 
-      }else{
-        this.setState({weekend:true})
-      }  
-   
+
+  this.props.getGaspel(weekend) 
+  // 일요일인 경우 weekend true로 준다.
+  var date = new Date();
+  if(date.getDay() == 0){
+    this.setState({weekend:true})
+  }  
 
 }
 
@@ -212,6 +212,7 @@ componentWillUnmount(){
 
 componentWillReceiveProps(nextProps){
     if(nextProps.status.isLogged == this.props.status.isLogged){
+  
       console.log(nextProps.gaspels.sentence) 
       console.log(nextProps.gaspels.thisdate) 
 
@@ -242,7 +243,7 @@ componentWillReceiveProps(nextProps){
 
         var place = today_person+" "+pos
         console.log("place", place)
-      
+        place = place.replace(/\n/gi, "");   
         // sentence, todayDate, place state setting
         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
         
@@ -278,6 +279,7 @@ componentWillReceiveProps(nextProps){
           var place = today_person+" "+pos
           console.log("place_weekend", place)
           // 주일 sentence, place state setting 
+          place = place.replace(/\n/gi, "");  
           this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
       }    
     }else{
@@ -620,9 +622,8 @@ render() {
     
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
         </View>   
-
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '66%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
         </View>   
@@ -640,7 +641,16 @@ render() {
         <Icon style={{paddingTop:5}} name={'quote-left'} size={13} color={"#000"} />
         <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
           <Text style={[normalSize, styles.TextStyle,{padding:5}]}>{this.state.sentence}</Text>   
-          <Text style={[styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0, marginBottom:30}]}>{this.state.place}</Text>
+          <Text style={[styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]}>{this.state.place}</Text>
+          <View
+          style={{
+            width:90,
+            textAlign:'center',
+            borderBottomColor: 'black',
+            borderBottomWidth: 1,
+            marginBottom:30
+          }}
+        />
         </View> 
         <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
           <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:35}]}>{this.state.comment}</Text>   
@@ -679,8 +689,16 @@ render() {
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
         <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
-        <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, borderBottomColor:'#000', borderBottomWidth:1, width:100, marginTop:0, marginBottom:30}]: {display:'none'}}>{this.state.place_weekend}</Text>   
-    
+        <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
+        <View
+          style={{
+            width:90,
+            textAlign:'center',
+            borderBottomColor: 'black',
+            borderBottomWidth: 1,
+            marginBottom:30
+          }}
+        />
         <TouchableOpacity 
         activeOpacity = {0.9}
         style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}

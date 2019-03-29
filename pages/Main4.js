@@ -46,7 +46,7 @@ constructor(props) {
     this.moveNext = this.moveNext.bind(this);
     this.moveFinal = this.moveFinal.bind(this);
     this.movePrevious = this.movePrevious.bind(this);
-    this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
+    this.transitionToNextPanel = this.transitionToNextPanel.bind(this); 
 }
 
 movePrevious(){
@@ -197,8 +197,8 @@ transitionToNextPanel(nextIndex){
     });    
 }
 
-componentWillMount(){
-   // 인터넷 연결
+componentWillMount(){   
+  // 인터넷 연결
    const setState = (isConnected) => this.setState({internet : isConnected})
 
     NetInfo.isConnected.fetch().then(isConnected => {
@@ -321,7 +321,7 @@ componentWillMount(){
           );
       });    
   }
-
+  
   getTodayLabel(date) {        
     var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
     var todayLabel = week[date.getDay()];        
@@ -615,7 +615,7 @@ componentWillMount(){
                   moveNext={this.moveNext}
                   moveFinal={this.moveFinal}
               />
-              <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>  
+              <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:170} : {height:130}}>  
                   <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                   <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                   <TextInput

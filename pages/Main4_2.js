@@ -48,7 +48,7 @@ constructor(props) {
     this.moveNext = this.moveNext.bind(this);
     this.moveFinal = this.moveFinal.bind(this);
     this.movePrevious = this.movePrevious.bind(this);
-    this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
+    this.transitionToNextPanel = this.transitionToNextPanel.bind(this);  
 }
 
 movePrevious(){
@@ -196,98 +196,98 @@ transitionToNextPanel(nextIndex){
     });    
 }
 
-  componentWillMount(){
-    //textSize 가져옴
-    AsyncStorage.getItem('textSize', (err, result) => {
-      if(result == "normal" || result == null){
-        normalSize = {fontSize:15}
-        largeSize = {fontSize:17}
-      }else if(result == "large"){
-        normalSize = {fontSize:17}
-        largeSize = {fontSize:19}
-      }else if(result == "larger"){
-        normalSize = {fontSize:19}
-        largeSize = {fontSize:21}
-      }
-    })
+componentWillMount(){
+  //textSize 가져옴
+  AsyncStorage.getItem('textSize', (err, result) => {
+    if(result == "normal" || result == null){
+      normalSize = {fontSize:15}
+      largeSize = {fontSize:17}
+    }else if(result == "large"){
+      normalSize = {fontSize:17}
+      largeSize = {fontSize:19}
+    }else if(result == "larger"){
+      normalSize = {fontSize:19}
+      largeSize = {fontSize:21}
+    }
+  })
 
-    // navigation.params 날짜 가져오고 Date,selectedDate,Wekeenddate 세팅
-    const { params } = this.props.navigation.state;
- 
-     var year, month, day
- 
-     if(params != null){
-        console.log("Main4_2 - params : ", params+"existed" )
-         date = params.otherParam
-         year = params.otherParam.substring(0, 4);
-         month = params.otherParam.substring(5, 7);
-         day = params.otherParam.substring(8, 10);
-     }
-     
-    var today = year+"-"+month+"-"+day;
+  // navigation.params 날짜 가져오고 Date,selectedDate,Wekeenddate 세팅
+  const { params } = this.props.navigation.state;
+
+    var year, month, day
+
+    if(params != null){
+      console.log("Main4_2 - params : ", params+"existed" )
+        date = params.otherParam
+        year = params.otherParam.substring(0, 4);
+        month = params.otherParam.substring(5, 7);
+        day = params.otherParam.substring(8, 10);
+    }
     
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
-    console.log('Main4_2 - today date : ', today+"/"+today_comment_date)
-    this.setState({
-        Date: today,
-        selectedDate: year+"-"+month,
-        Weekenddate: today_comment_date
-    })
+  var today = year+"-"+month+"-"+day;
+  
+  var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+  console.log('Main4_2 - today date : ', today+"/"+today_comment_date)
+  this.setState({
+      Date: today,
+      selectedDate: year+"-"+month,
+      Weekenddate: today_comment_date
+  })
 
-    // 데이터 가져오기
-    this.props.getGaspel(today) 
-    this.props.getWeekendMore(today) 
+  // 데이터 가져오기
+  this.props.getGaspel(today) 
+  this.props.getWeekendMore(today) 
 
-    // lectio, Weekend DB 있는지 확인    
-    const loginId = this.props.status.loginId;
-    db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
+  // lectio, Weekend DB 있는지 확인    
+  const loginId = this.props.status.loginId;
+  db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM lectio where date = ? and uid = ?',
+        [today_comment_date,loginId],
+        (tx, results) => {
+          var len = results.rows.length;
+        //  값이 있는 경우에 
+          if (len > 0) {                  
+              console.log('Main4_2 - check Lectio data : ', results.rows.item(0).bg1) 
+              this.setState({
+                  bg1 : results.rows.item(0).bg1,
+                  bg2 : results.rows.item(0).bg2,
+                  bg3 : results.rows.item(0).bg3,
+                  sum1 : results.rows.item(0).sum1,
+                  sum2 : results.rows.item(0).sum2,
+                  js1 : results.rows.item(0).js1,
+                  js2 : results.rows.item(0).js2,
+                  Weekendupdate: true,
+                  initialLoading: false
+              })
+          } else {   
+              this.setState({
+                  initialLoading: false
+              })                                
+          }
+        }
+      );
+
+      tx.executeSql(
+          'SELECT * FROM weekend where date = ? and uid = ?',
           [today_comment_date,loginId],
           (tx, results) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
             if (len > 0) {                  
-                console.log('Main4_2 - check Lectio data : ', results.rows.item(0).bg1) 
+              console.log('Main4_2 - check Weekend data : ', results.rows.item(0).mysentence) 
                 this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
-                    js2 : results.rows.item(0).js2,
-                    Weekendupdate: true,
-                    initialLoading: false
+                    mysentence : results.rows.item(0).mysentence,
+                    mythought : results.rows.item(0).mythought,
+                    answer: results.rows.item(0).answer,
+                    question: results.rows.item(0).question
                 })
-            } else {   
-                this.setState({
-                    initialLoading: false
-                })                                
+            } else {                                     
             }
           }
         );
-
-        tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [today_comment_date,loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                console.log('Main4_2 - check Weekend data : ', results.rows.item(0).mysentence) 
-                  this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought,
-                      answer: results.rows.item(0).answer,
-                      question: results.rows.item(0).question
-                  })
-              } else {                                     
-              }
-            }
-          );
-      });    
-  }
+    });    
+}
 
   refreshContents(){
     // textSize 가져옴
@@ -863,7 +863,7 @@ render() {
                       moveNext={this.moveNext}
                       moveFinal={this.moveFinal}
                   />
-                <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:150} : {height:130}}>
+                <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:170} : {height:130}}>
                     <View style={this.state.currentIndex == 0 ? {} : {display:'none'} }>
                   
                       <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>

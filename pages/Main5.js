@@ -56,7 +56,7 @@ constructor(props) {
     this.setState({ isOpen });
   }
   // 메뉴 선택시 이벤트 실행
-  onMenuItemSelected = item =>{
+  onMenuItemSelected = item => {
     this.setState({
       isOpen: false,
       selectedItem: item,

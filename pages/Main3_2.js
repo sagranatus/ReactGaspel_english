@@ -220,114 +220,114 @@ transitionToNextPanel(from, nextIndex){
     }     
 }
 
-  componentWillMount(){
-    // textSize 가져오기
-    AsyncStorage.getItem('textSize', (err, result) => {
-        if(result == "normal" || result == null){
-          normalSize = {fontSize:15}
-          largeSize = {fontSize:17}
-        }else if(result == "large"){
-          normalSize = {fontSize:17}
-          largeSize = {fontSize:19}
-        }else if(result == "larger"){
-          normalSize = {fontSize:19}
-          largeSize = {fontSize:21}
-        }
-      })
-
-    // navigation params로 날짜 가져와서 today, Lectiodate 설정
-    const { params } = this.props.navigation.state;
-    // console.log(params.otherParam)
- 
-     var year, month, day
- 
-     if(params != null){
-        console.log("Main3_2 - params : ", params+"existed" )
-         date = params.otherParam
-         year = params.otherParam.substring(0, 4);
-         month = params.otherParam.substring(5, 7);
-         day = params.otherParam.substring(8, 10);
-     }
-     
-    var today = year+"-"+month+"-"+day;
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
-    console.log('Main3_2 - today date : ', today+"/"+today_comment_date)
-    this.setState({
-        Date: today,
-        selectedDate: year+"-"+month,
-        Lectiodate: today_comment_date
+componentWillMount(){
+// textSize 가져오기
+AsyncStorage.getItem('textSize', (err, result) => {
+    if(result == "normal" || result == null){
+        normalSize = {fontSize:15}
+        largeSize = {fontSize:17}
+    }else if(result == "large"){
+        normalSize = {fontSize:17}
+        largeSize = {fontSize:19}
+    }else if(result == "larger"){
+        normalSize = {fontSize:19}
+        largeSize = {fontSize:21}
+    }
     })
 
-    // gaspel 데이터 가져오기
-    this.props.getGaspel(today) 
+// navigation params로 날짜 가져와서 today, Lectiodate 설정
+const { params } = this.props.navigation.state;
+// console.log(params.otherParam)
 
-    const loginId = this.props.status.loginId;
-    // comment, lectio DB있는지 확인    
-    db.transaction(tx => {
-        tx.executeSql(
-            'SELECT * FROM comment where date = ? and uid = ?',
-            [today_comment_date, loginId],
-            (tx, results) => {
-              var len = results.rows.length;
-            //  값이 있는 경우에 
-              if (len > 0) {                  
-                  console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
-                  this.setState({
-                      comment: results.rows.item(0).comment,
-                      Lectioupdate: true,
-                      initialLoading: false,
-                      basic: true
-                  })
-              } else {     
-                  this.setState({
-                      initialLoading: false
-                  })                             
-              }
+    var year, month, day
+
+    if(params != null){
+    console.log("Main3_2 - params : ", params+"existed" )
+        date = params.otherParam
+        year = params.otherParam.substring(0, 4);
+        month = params.otherParam.substring(5, 7);
+        day = params.otherParam.substring(8, 10);
+    }
+    
+var today = year+"-"+month+"-"+day;
+var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+console.log('Main3_2 - today date : ', today+"/"+today_comment_date)
+this.setState({
+    Date: today,
+    selectedDate: year+"-"+month,
+    Lectiodate: today_comment_date
+})
+
+// gaspel 데이터 가져오기
+this.props.getGaspel(today) 
+
+const loginId = this.props.status.loginId;
+// comment, lectio DB있는지 확인    
+db.transaction(tx => {
+    tx.executeSql(
+        'SELECT * FROM comment where date = ? and uid = ?',
+        [today_comment_date, loginId],
+        (tx, results) => {
+            var len = results.rows.length;
+        //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
+                this.setState({
+                    comment: results.rows.item(0).comment,
+                    Lectioupdate: true,
+                    initialLoading: false,
+                    basic: true
+                })
+            } else {     
+                this.setState({
+                    initialLoading: false
+                })                             
             }
-          ),
-          tx.executeSql(
-              'SELECT * FROM lectio where date = ? and uid = ?',
-              [today_comment_date,loginId],
-              (tx, results) => {
-                var len = results.rows.length;
-              //  값이 있는 경우에 
-                if (len > 0) {                  
-                    console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
-                    this.setState({
-                        bg1 : results.rows.item(0).bg1,
-                        bg2 : results.rows.item(0).bg2,
-                        bg3 : results.rows.item(0).bg3,
-                        sum1 : results.rows.item(0).sum1,
-                        sum2 : results.rows.item(0).sum2,
-                        js1 : results.rows.item(0).js1,
-                        js2 : results.rows.item(0).js2,
-                        Lectioupdate: true,
-                        initialLoading: false,
-                        comment:null,
-                        basic: false
-                    })
-                } else {
-                    if(this.state.comment == null){
-                        AsyncStorage.getItem('course', (err, result) => {
-                            if(result == "basic"){
-                                this.setState({basic:true, initialLoading: false})
-                            }else if(result == "advanced"){          
-                                this.setState({basic:false, initialLoading: false})
-                            }else{          
-                                this.setState({basic:null, initialLoading: false})
-                            }
-                          })
-                    }else{
-                        this.setState({          
-                            initialLoading: false
-                        })   
-                    }
-                                        
+        }
+        ),
+        tx.executeSql(
+            'SELECT * FROM lectio where date = ? and uid = ?',
+            [today_comment_date,loginId],
+            (tx, results) => {
+            var len = results.rows.length;
+            //  값이 있는 경우에 
+            if (len > 0) {                  
+                console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                this.setState({
+                    bg1 : results.rows.item(0).bg1,
+                    bg2 : results.rows.item(0).bg2,
+                    bg3 : results.rows.item(0).bg3,
+                    sum1 : results.rows.item(0).sum1,
+                    sum2 : results.rows.item(0).sum2,
+                    js1 : results.rows.item(0).js1,
+                    js2 : results.rows.item(0).js2,
+                    Lectioupdate: true,
+                    initialLoading: false,
+                    comment:null,
+                    basic: false
+                })
+            } else {
+                if(this.state.comment == null){
+                    AsyncStorage.getItem('course', (err, result) => {
+                        if(result == "basic"){
+                            this.setState({basic:true, initialLoading: false})
+                        }else if(result == "advanced"){          
+                            this.setState({basic:false, initialLoading: false})
+                        }else{          
+                            this.setState({basic:null, initialLoading: false})
+                        }
+                        })
+                }else{
+                    this.setState({          
+                        initialLoading: false
+                    })   
                 }
-              }
-            )
-        });       
-  }
+                                    
+            }
+            }
+        )
+    });       
+}
 
   getBasicInfo(){
     AsyncStorage.getItem('course', (err, result) => {

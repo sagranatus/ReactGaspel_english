@@ -222,7 +222,7 @@ transitionToNextPanel(from, nextIndex){
 }
 
 
-  componentWillMount(){
+  componentWillMount(){      
     // 인터넷 연결
    const setState = (isConnected) => this.setState({internet : isConnected})
 
