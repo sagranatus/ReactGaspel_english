@@ -16,7 +16,9 @@ import RegisterUser from '../containers/RegisterUserContainer';
 import FirstPage from '../containers/FirstPageContainer';
 import LoginUser from '../containers/LoginUserContainer';
 console.log("Mainpage loaded")
- 
+this.previousRoute = 'Main1'
+this.currentRoute = 'Main1'
+
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
@@ -64,6 +66,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			activeTintColor: '#01579b',
 			inactiveTintColor: 'gray',
 		},
+	//	order: ['Main1', 'Main3', 'Main4', 'Main5'],
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
@@ -84,6 +87,32 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 		}
 		
 		);
+
+const defaultGetStateForAction = TabNavigator.router.getStateForAction
+TabNavigator.router.getStateForAction = (action, state) => {
+  switch (action.type) {
+    case 'Navigation/INIT':
+      this.currentRoute = 'Main1'
+      this.nextRoute = 'Main1'
+      break
+    case 'Navigation/NAVIGATE':
+      this.previousRoute = this.currentRoute
+      this.currentRoute = action.routeName
+      this.nextRoute = action.routeName
+      break
+    case 'Navigation/BACK':
+      this.nextRoute = this.previousRoute
+      this.currentRoute = this.nextRoute
+      this.previousRoute = this.currentRoute
+      const index = state.routes.map(route => route.key).indexOf(this.nextRoute)
+      const newState = {
+        routes: state.routes,
+        index: index
+      }
+      return newState
+  }
+  return defaultGetStateForAction(action, state)
+}
 
 const AppContainer = createAppContainer(TabNavigator)
   

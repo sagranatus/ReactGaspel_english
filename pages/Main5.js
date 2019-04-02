@@ -162,10 +162,14 @@ componentWillMount(){
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth()+1
+  var month_previous = date.getMonth()
   var day = date.getDate();
   if(month < 10){
       month = "0"+month;
   }
+  if(month_previous < 10){
+    month_previous = "0"+month_previous;
+  } 
   if(day < 10){
       day = "0"+day;
   } 
@@ -195,6 +199,10 @@ componentWillMount(){
   // 년월에 대해 getAllPoints로 이번달 달력 DB값 가져오기 
   var year_month = year+"년 "+month;
   this.getAllPoints(year_month)   
+
+  var year_month_previous = year+"년 "+month_previous;
+  this.getAllPoints(year_month_previous)   
+  
 }
 
 refreshContents(){
@@ -282,10 +290,14 @@ refreshContents(){
           var date = new Date();
           var year = date.getFullYear();
           var month = date.getMonth()+1
+          var month_previous = date.getMonth()
           var day = date.getDate();
           if(month < 10){
               month = "0"+month;
           }
+          if(month_previous < 10){
+            month_previous = "0"+month_previous;
+          } 
           if(day < 10){
               day = "0"+day;
           }
@@ -346,9 +358,14 @@ refreshContents(){
               var today = year+"-"+month+"-"+day;
               this.setState({Today: today, selectedDate: today})
             
-             var year_month = year+"년 "+month;
-              this.getAllPoints(year_month)  
-            }        
+              var year_month = year+"년 "+month;
+              this.getAllPoints(year_month)                    
+                           
+            }       
+            
+          // 날짜가 달라지면 전달것도 가져오기
+          var year_month_previous = year+"년 "+month_previous;
+          this.getAllPoints(year_month_previous)   
         
         }else{
 
@@ -535,10 +552,11 @@ commentFunc = (commentDates) => {
   }
   var date_mon = new Date();
   var day = date_mon.getDay(),
-      diff = date_mon.getDate() - day + (day == 0 ? -7:0); // adjust when day is sunday
-
+      diff = date_mon.getDate() - day// + (day == 0 ? -7:0); // adjust when day is sunday
+  
   // 이번주 월요일 찾아서 일주일 계산
   var monday = new Date(date_mon.setDate(diff));
+ // alert(monday)
     for(var k=0; k<7; k++){      
       var date = new Date(monday)
       date.setDate(monday.getDate() + k)
@@ -569,7 +587,7 @@ commentFunc = (commentDates) => {
   } 
   var month = year+"-"+month
 
-  for(let i=0; i<31; i++){
+  for(let i=0; i<32; i++){
     var day;
     if(i.toString().length == 1){
       day = "0"+i;

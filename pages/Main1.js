@@ -178,11 +178,13 @@ componentWillMount(){
   this.props.getGaspel(today) //오늘 gaspel 가져오기 
 
 
-  this.props.getGaspel(weekend) 
+
   // 일요일인 경우 weekend true로 준다.
   var date = new Date();
   if(date.getDay() == 0){
     this.setState({weekend:true})
+  }else{
+    this.props.getGaspel(weekend) 
   }  
 
 }
@@ -248,6 +250,10 @@ componentWillReceiveProps(nextProps){
         this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
         
         var date = new Date();
+        // 일요일인 경우는 today == 주일날짜이므로 여기서 sentence_weekend, place_weekend를 설정해줘야 한다.
+        if(date.getDay() == 0){
+          this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
+        }
         var changed = this.changeDateFormat(date)
         // 오늘 DB값을 가져옴
         this.getData(changed)  
@@ -589,7 +595,7 @@ render() {
   : (   
     <ScrollView style={{backgroundColor:'#fff'}}>          
       <NavigationEvents
-      onWillFocus={payload => {
+      onWillFocus={payload => {console.log(payload),
         this.setChange();
       }} />
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
@@ -648,31 +654,37 @@ render() {
             textAlign:'center',
             borderBottomColor: 'black',
             borderBottomWidth: 1,
-            marginBottom:30
+            marginBottom:5
           }}
         />
         </View> 
         <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:35}]}>{this.state.comment}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:5}]}>{this.state.comment}</Text>   
         </View>  
         <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
           <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
         </View> 
 
-        <TouchableOpacity 
-        activeOpacity = {0.9}
-        style={this.state.comment == "" && this.state.js2 == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-        onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
-        >    
-          <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
-        </TouchableOpacity>      
-        <TouchableOpacity 
+        <View style={this.state.js2 !== ""  ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 15, marginBottom:10, marginLeft:'2%'}}>       
+        </View>  
+        <View style={this.state.js2 !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 15, marginBottom:10, marginRight:'1%'}} >
+          <TouchableOpacity 
           activeOpacity = {0.9}
-          style={this.state.comment !== "" && this.state.js2 =="" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-          onPress = {() => this.props.navigation.navigate('Main3')}
+          style={this.state.comment == "" && this.state.js2 == "" ? {} : {display:'none'}}
+          onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
           >    
-          <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />  
-        </TouchableOpacity>    
+          <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
+          </TouchableOpacity>      
+          <TouchableOpacity 
+            activeOpacity = {0.9}
+            style={this.state.comment !== "" && this.state.js2 =="" ? {} : {display:'none'}}
+            onPress = {() => this.props.navigation.navigate('Main3')}
+            >    
+            <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />  
+          </TouchableOpacity>    
+        </View>         
+      
+       
       </View>
 
       <View style={!this.state.weekend ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
@@ -691,24 +703,29 @@ render() {
         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
         <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
         <View
-          style={{
+          style={this.state.mysentence == "" ? 
+          {
             width:90,
             textAlign:'center',
             borderBottomColor: 'black',
             borderBottomWidth: 1,
-            marginBottom:30
-          }}
+            marginBottom:5
+          } : {display:'none'}
+        }
         />
-        <TouchableOpacity 
-        activeOpacity = {0.9}
-        style={this.state.mysentence == "" ? {position: 'absolute', right:10, top:100} : {display:'none'}}
-        onPress = {() => this.props.navigation.navigate('Main4')}
-        >    
-          <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
-        </TouchableOpacity>      
+        <View style={this.state.mysentence !== ""   ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 15, marginBottom:10, marginLeft:'2%'}}>       
+        </View>  
+        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 15, marginBottom:10, marginRight:'1%'}} >
+          <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress = {() => this.props.navigation.navigate('Main4')}
+          >    
+            <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
+          </TouchableOpacity>     
+        </View>          
       </View>
 
-      <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", height:150, flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#E8E8E8", borderBottomWidth:6}: {display:'none'}}>  
+      <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
         <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
         </View>         

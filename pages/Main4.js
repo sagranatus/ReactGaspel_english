@@ -520,12 +520,14 @@ componentWillMount(){
                         console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                         this.setState({
                             mysentence : results.rows.item(0).mysentence,
-                            mythought : results.rows.item(0).mythought
+                            mythought : results.rows.item(0).mythought,
+                            answer:  results.rows.item(0).answer
                         })
                     } else {     
                         this.setState({
                             mysentence : "",
-                            mythought : ""
+                            mythought : "",
+                            answer: ""
                         })                                
                     }
                     }
