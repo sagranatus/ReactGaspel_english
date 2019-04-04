@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage, NetInfo } from 'react-native';
+import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage, NetInfo, BackHandler } from 'react-native';
 import {PropTypes} from 'prop-types';
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -23,8 +23,15 @@ constructor(props) {
       UserPassword_confirm: ''
     } 
   }
+componentWillUnmount() {
+  BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+}
 
+handleBackPress = () => { 
+  return true;
+}
 componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
    // 인터넷 연결
    const setState = (isConnected) => this.setState({internet : isConnected})
 
@@ -168,7 +175,7 @@ render() {
           activeOpacity = {0.9}
           style={{backgroundColor: '#01579b', padding: 10}}
           onPress={() =>{
-              this.props.navigation.navigate('FirstPage', {});} } 
+              this.props.navigation.navigate('Home', {});} } 
           >
           <Text style={{color:"#FFF", textAlign:'left'}}>
             {"<"} 뒤로

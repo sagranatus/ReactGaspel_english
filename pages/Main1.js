@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, BackHandler, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
 
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -66,15 +66,23 @@ urlSetting(){
   this.setState({reload:true})
 }
 
-componentWillMount(){
+componentWillUnmount() {
+  BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+}
 
+handleBackPress = () => { 
+  return true;
+}
+
+componentWillMount(){
+  BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
   console.log("Main1 - componentWillMount : ", this.props.status.isLogged + this.props.status.loginId)
 
   // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
   AsyncStorage.getItem('login_id', (err, result) => {
     console.log("FirstPage - login_id : ", result)
     if(result == null){      
-      this.props.navigation.navigate('FirstPage', {}) 
+      this.props.navigation.navigate('Home') 
     }else{
       this.props.setLogin(result) 
     }             
@@ -214,7 +222,7 @@ componentWillUnmount(){
 
 componentWillReceiveProps(nextProps){
     if(nextProps.status.isLogged == this.props.status.isLogged){
-  
+      if(nextProps.gaspels.sentence != null){
       console.log(nextProps.gaspels.sentence) 
       console.log(nextProps.gaspels.thisdate) 
 
@@ -287,18 +295,9 @@ componentWillReceiveProps(nextProps){
           // 주일 sentence, place state setting 
           place = place.replace(/\n/gi, "");  
           this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
-      }    
-    }else{
-      // 로그인상태가 바뀌는 경우 체크한 후에 First로 보냄
-      AsyncStorage.getItem('login_id', (err, result) => {
-        console.log("Main1 - login_id : ", result)
-        if(result == null){      
-            this.props.navigation.navigate('FirstPage', {})        
-            return false
-        }else{
-        }
-      })
+      } 
     }
+  }
   
 }
 

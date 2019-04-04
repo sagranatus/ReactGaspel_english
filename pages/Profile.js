@@ -121,7 +121,7 @@ setChange(){
     this.setState({reload:true})
   })  
   AsyncStorage.getItem('profile', (err, result) => {
-    if(result == null){
+   
       // users DB 가져와서 값 세팅
       db.transaction(tx => {
         tx.executeSql(
@@ -146,7 +146,7 @@ setChange(){
           }
         );
       });         
-    }   
+       
   }); 
 }
 

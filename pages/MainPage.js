@@ -1,6 +1,6 @@
 import React from 'react'
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
-import { Platform, Image, NetInfo, View, Text, StyleSheet } from 'react-native'
+import { createBottomTabNavigator, createAppContainer, createStackNavigator } from 'react-navigation'
+import { Platform, Image, NetInfo, View, Text, StyleSheet, AsyncStorage } from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container'
 import Main3 from '../containers/Main3Container'
@@ -49,8 +49,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Profile: { screen: Profile},
 			Setting: { screen: Setting },				
 			RegisterUser: {screen: RegisterUser},
-			LoginUser: {screen: LoginUser},
-			FirstPage : { screen: FirstPage }			
+			LoginUser: {screen: LoginUser}		
 		},
 		
 		(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
@@ -114,19 +113,66 @@ TabNavigator.router.getStateForAction = (action, state) => {
   return defaultGetStateForAction(action, state)
 }
 
+
 const AppContainer = createAppContainer(TabNavigator)
-  
+	
+const RootStack = createStackNavigator({
+  Home: {
+		screen: FirstPage,
+		navigationOptions: {
+			header: null
+		}
+	},
+	Main: {
+		screen: AppContainer,
+		navigationOptions: {
+			header: null
+		}
+	},
+	initialRouteName: 'Home'
+});
+const RootStack2 = createStackNavigator({ 
+	Main: {
+		screen: AppContainer,
+		navigationOptions: {
+			header: null
+		}
+	},
+	Home: {
+		screen: FirstPage,
+		navigationOptions: {
+			header: null
+		}
+	},
+	initialRouteName: 'Main'
+});
+const RootContainer = createAppContainer(RootStack);
+const RootContainer2 = createAppContainer(RootStack2);
+
+
   export default class App extends React.Component {
 
 	constructor(props) { 
 		super(props)  
 		this.state = {
 			initialLoading: true,
-			internet: false
+			internet: false,
+			login: false
 		} 
+		
 	}
 
 	componentWillMount(){
+	
+		
+  // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
+  	AsyncStorage.getItem('login_id', (err, result) => {
+    console.log("MainPage - login_id : ", result)
+    if(result != null){    
+			this.setState({login:true})
+    }           
+    })
+		
 		const setState1 = (state) => this.setState({initialLoading : state})
 		setTimeout(function() {
 		  setState1(false)
@@ -150,7 +196,10 @@ const AppContainer = createAppContainer(TabNavigator)
 		  NetInfo.isConnected.addEventListener(
 			'connectionChange',
 			handleFirstConnectivityChange
-		  );
+			);
+			
+		
+
 	}
 	render() {	
 	  return this.state.initialLoading ?
@@ -163,8 +212,11 @@ const AppContainer = createAppContainer(TabNavigator)
 	  <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
 		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
 	  </View>
-	  :
-	  <AppContainer />;
+		:
+	(this.state.login) ? 
+	<RootContainer2 />
+	: 
+	<RootContainer />
 	}
 }
 
