@@ -4,7 +4,7 @@ import com.facebook.react.ReactActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import com.emekalites.react.alarm.notification.BundleJSONConverter;
+//import com.emekalites.react.alarm.notification.BundleJSONConverter;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import org.json.JSONObject;
 
@@ -25,7 +25,7 @@ public class MainActivity extends ReactNativeAutoUpdaterActivity {
     protected String getMainComponentName() {
         return "Gaspel";
     }
-
+/*
     @Override
     public void onNewIntent(Intent intent) {
         try {
@@ -36,7 +36,7 @@ public class MainActivity extends ReactNativeAutoUpdaterActivity {
             System.err.println("Exception when handling notification openned. " + e);
         }
     }
-
+*/
     	// Add required methods
 	/**
 	*  URL for the metadata of the update.

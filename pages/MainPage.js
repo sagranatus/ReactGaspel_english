@@ -15,9 +15,7 @@ import Setting from './Setting'
 import RegisterUser from '../containers/RegisterUserContainer';
 import FirstPage from '../containers/FirstPageContainer';
 import LoginUser from '../containers/LoginUserContainer';
-console.log("Mainpage loaded")
-this.previousRoute = 'Main1'
-this.currentRoute = 'Main1'
+import { TextInput } from 'react-native-gesture-handler';
 
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
@@ -48,12 +46,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Guide: { screen: GuidePage },
 			Profile: { screen: Profile},
 			Setting: { screen: Setting },
-			RegisterUser: {
-				screen: RegisterUser
-			},
-			LoginUser: {
-				screen: LoginUser						
-			},		
+		
 		},
 		 {	
 		defaultNavigationOptions: ({ navigation }) => ({
@@ -71,89 +64,78 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
-				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'RegisterUser' && r.routeName !== 'LoginUser' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom',
 			backBehavior: 'history'
 		 }	
 		);
 		
-/*
-const defaultGetStateForAction = TabNavigator.router.getStateForAction
-TabNavigator.router.getStateForAction = (action, state) => {
-  switch (action.type) {
-    case 'Navigation/INIT':
-      this.currentRoute = 'Main1'
-      this.nextRoute = 'Main1'
-      break
-    case 'Navigation/NAVIGATE':
-      this.previousRoute = this.currentRoute
-      this.currentRoute = action.routeName
-      this.nextRoute = action.routeName
-      break
-    case 'Navigation/BACK':
-      this.nextRoute = this.previousRoute
-      this.currentRoute = this.nextRoute
-      this.previousRoute = this.currentRoute
-      const index = state.routes.map(route => route.key).indexOf(this.nextRoute)
-      const newState = {
-        routes: state.routes,
-        index: index
-      }
-      return newState
-  }
-  return defaultGetStateForAction(action, state)
-}
-*/
+
+
 const defaultGetStateForAction = TabNavigator.router.getStateForAction;
 TabNavigator.router.getStateForAction = (action, state) => {
-	console.log(action)
-	console.log("changed?")
-	console.log(state)
 	const screen = state ? state.routes[state.index] : null;
-	const tab = screen && screen.routes ? screen.routes[screen.index] : null;
-	const tabScreen = tab && tab.routes ? tab.routes[tab.index] : null;
 	console.log("tab",state)
 	console.log("tab",screen)
 
+	// FirstPage에서 뒤로가기 세팅
 	if (action.type === "Navigation/NAVIGATE" && action.routeName == 'Home') 
 	{
 		console.log("home!!!")
-		// Option 1: will close the application
-		const newRoutes = state.routes.filter(r => r.routeName !== 'auth');
-		const newIndex = newRoutes.length - 1;
-
 		return {
 			...state,
-			routeName : "Home"
-			
-		};
-	
+			routeName : "Home",
+			index: 0			
+		};	
 	}
 
-
+	// Main1, 3, 4, 5 의 경우 LoginUser로 가는 것을 방지하기 위한 세팅 
 	if(screen !== null && state.routeKeyHistory.length !== 0 && state.routeKeyHistory !== 'undefined'){
 	console.log("key",screen.key)
-	console.log("history",state.routeKeyHistory[state.routeKeyHistory.length-2])
-	
-	if (action.type === NavigationActions.BACK && screen.key == 'Main1' && state.routeKeyHistory[state.routeKeyHistory.length-2] == 'LoginUser') 
-	 {
-		console.log("not Move!!!"+screen.key)
-		// Option 1: will close the application
-	//	 return null;
-		
-	 // Option 2: will keep the app open
-	 const newRoutes = state.routes.filter(r => r.routeName !== 'auth');
-	 const newIndex = newRoutes.length - 1;
-	 return {
-		 ...state,
-		 index: 0,
-		 routes: newRoutes
-		 
-	 };
+	console.log("history",state.routeKeyHistory)	
+		if (action.type === NavigationActions.BACK && screen.key == 'Main1' && state.routeKeyHistory.length == 1) 
+		{
+			console.log("not Move!!!"+screen.key)
+			
+		const newRoutes = state.routes;
+		return {
+			...state,
+			index: 0,
+			routes: newRoutes		 
+		};
+		}else if (action.type === NavigationActions.BACK && screen.key == 'Main3' && state.routeKeyHistory.length == 1) 
+		{
+			console.log("not Move!!!"+screen.key)
+			
+			const newRoutes = state.routes;
+			return {
+				...state,
+				index: 1,
+				routes: newRoutes		 
+			};
+		}else if (action.type === NavigationActions.BACK && screen.key == 'Main4' && state.routeKeyHistory.length == 1) 
+			{
+			console.log("not Move!!!"+screen.key)
+			
+			const newRoutes = state.routes;
+			return {
+				...state,
+				index: 2,
+				routes: newRoutes		 
+			};
+		}else if (action.type === NavigationActions.BACK && screen.key == 'Main5' && state.routeKeyHistory.length == 1) 
+		{
+			console.log("not Move!!!"+screen.key)
+			
+			const newRoutes = state.routes;
+			return {
+				...state,
+				index: 3,
+				routes: newRoutes		 
+			};
+		}
 	}
-}
-
 	return defaultGetStateForAction(action, state);
 };
 
@@ -171,6 +153,18 @@ const RootStack = createStackNavigator({
 		navigationOptions: {
 			header: null
 		}
+	},	
+	RegisterUser: {
+		screen: RegisterUser,
+		navigationOptions: {
+			header: null
+		}
+	},
+	LoginUser: {
+		screen: LoginUser,
+		navigationOptions: {
+			header: null
+		}				
 	},				
 
 	initialRouteName: 'Home'
@@ -188,26 +182,40 @@ const RootStack2 = createStackNavigator({
 			header: null
 		}
 	},
+	RegisterUser: {
+		screen: RegisterUser,
+		navigationOptions: {
+			header: null
+		}				
+	},
+	LoginUser: {
+		screen: LoginUser,
+		navigationOptions: {
+			header: null
+		}										
+	},	
 	initialRouteName: 'Main'
 });
+// 로그인상태에 따라 첫번째를 Main1 / Home으로 변경하기 위한 코드
 const RootContainer = createAppContainer(RootStack);
 const RootContainer2 = createAppContainer(RootStack2);
 
 
-  export default class App extends React.Component {
+export default class App extends React.Component {
 
 	constructor(props) { 
 		super(props)  
+		Text.defaultProps = Text.defaultProps || {};
+		Text.defaultProps.allowFontScaling = false;
+
 		this.state = {
 			initialLoading: true,
 			internet: false,
 			login: false
-		} 
-		
+		} 		
 	}
 
-	componentWillMount(){
-	
+	componentWillMount(){	
 		
   // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
   	AsyncStorage.getItem('login_id', (err, result) => {
@@ -226,8 +234,7 @@ const RootContainer2 = createAppContainer(RootStack2);
 		 const setState = (isConnected) => this.setState({internet : isConnected})
 		  NetInfo.isConnected.fetch().then(isConnected => {
 			console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-			setState(isConnected)
-		   
+			setState(isConnected)		   
 		  });
 		  function handleFirstConnectivityChange(isConnected) {
 			console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
@@ -240,9 +247,7 @@ const RootContainer2 = createAppContainer(RootStack2);
 		  NetInfo.isConnected.addEventListener(
 			'connectionChange',
 			handleFirstConnectivityChange
-			);
-			
-		
+			);		
 
 	}
 	render() {	

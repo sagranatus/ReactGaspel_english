@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
+import { PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -9,6 +9,7 @@ var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 
 var normalSize;
+var normalSize_input;
 var largeSize;
 
 export default class Main3_2 extends Component { 
@@ -225,12 +226,15 @@ componentWillMount(){
 AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
         normalSize = {fontSize:15}
+        normalSize_input = 15
         largeSize = {fontSize:17}
     }else if(result == "large"){
         normalSize = {fontSize:17}
+        normalSize_input = 17
         largeSize = {fontSize:19}
     }else if(result == "larger"){
         normalSize = {fontSize:19}
+        normalSize_input = 19
         largeSize = {fontSize:21}
     }
     })
@@ -329,6 +333,7 @@ db.transaction(tx => {
     });       
 }
 
+
   getBasicInfo(){
     AsyncStorage.getItem('course', (err, result) => {
         if(result == "basic"){
@@ -343,14 +348,17 @@ db.transaction(tx => {
       // textSize 가져오기
     AsyncStorage.getItem('textSize', (err, result) => {
         if(result == "normal" || result == null){
-          normalSize = {fontSize:15}
-          largeSize = {fontSize:17}
+            normalSize = {fontSize:15}
+            normalSize_input = 15
+            largeSize = {fontSize:17}
         }else if(result == "large"){
-          normalSize = {fontSize:17}
-          largeSize = {fontSize:19}
+            normalSize = {fontSize:17}
+            normalSize_input = 17
+            largeSize = {fontSize:19}
         }else if(result == "larger"){
-          normalSize = {fontSize:19}
-          largeSize = {fontSize:21}
+            normalSize = {fontSize:19}
+            normalSize_input = 19
+            largeSize = {fontSize:21}
         }
       })
 
@@ -632,7 +640,7 @@ render() {
                     onChangeText={bg1 => this.setState({bg1})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={[styles.TextInputStyleClass, normalSize]}  />                           
+                    style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                 </View>
                 <View style={this.state.currentIndex == 0 && this.state.basic ? {} : {display:'none'}}>
                     <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
@@ -643,7 +651,7 @@ render() {
                     onChangeText={comment => this.setState({comment})}        
                     // Making the Under line Transparent.
                     underlineColorAndroid='transparent'        
-                    style={[styles.TextInputStyleClass, normalSize]}  />                           
+                    style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                 </View>
                     <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
@@ -654,7 +662,7 @@ render() {
                         onChangeText={bg2 => this.setState({bg2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                       
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                       
                     </View>
                     <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
@@ -665,7 +673,7 @@ render() {
                         onChangeText={bg3 => this.setState({bg3})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                         
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
                     <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
@@ -676,7 +684,7 @@ render() {
                         onChangeText={sum1 => this.setState({sum1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                        
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                       
                     </View>
                     <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
@@ -687,7 +695,7 @@ render() {
                         onChangeText={sum2 => this.setState({sum2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
                     <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
@@ -698,7 +706,7 @@ render() {
                         onChangeText={js1 => this.setState({js1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                            
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
                     <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
@@ -709,7 +717,7 @@ render() {
                         onChangeText={js2 => this.setState({js2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>                    
                 </KeyboardAvoidingView>                    
                 <ScrollView style={{marginBottom:210}}>              
@@ -867,7 +875,7 @@ render() {
                         onPress={() =>  this.setState({start: true})} 
                         >
                         <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', lineHeight:20}}>
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', fontSize:12}}>                        
+                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>                        
                         {this.state.Lectiodate}{"\n"}
                         </Text>
                             거룩한 독서 시작하기
@@ -973,7 +981,7 @@ render() {
                         onChangeText={bg1 => this.setState({bg1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                     </View>
 
                     <View style={this.state.currentIndex == 2 && this.state.basic ? {} : {display:'none'}}>
@@ -985,7 +993,7 @@ render() {
                         onChangeText={comment => this.setState({comment})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
 
                     <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
@@ -997,7 +1005,7 @@ render() {
                         onChangeText={bg2 => this.setState({bg2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />            
                     </View>
 
                     <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
@@ -1009,7 +1017,7 @@ render() {
                         onChangeText={bg3 => this.setState({bg3})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
                     </View>
 
                     <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
@@ -1021,7 +1029,7 @@ render() {
                         onChangeText={sum1 => this.setState({sum1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>
 
                     <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
@@ -1033,7 +1041,7 @@ render() {
                         onChangeText={sum2 => this.setState({sum2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
 
                     <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
@@ -1045,7 +1053,7 @@ render() {
                         onChangeText={js1 => this.setState({js1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                         
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                         
                     </View>
 
                     <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
@@ -1057,7 +1065,7 @@ render() {
                         onChangeText={js2 => this.setState({js2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
                     </View>                        
                 </KeyboardAvoidingView>   
 

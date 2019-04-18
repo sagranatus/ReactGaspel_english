@@ -20,7 +20,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 import org.pgsqlite.SQLitePluginPackage;
-import com.emekalites.react.alarm.notification.ANPackage;
+//import com.emekalites.react.alarm.notification.ANPackage;
 // Add imports
 import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return true; //BuildConfig.DEBUG
+      return true; //BuildConfig.DEBUG //saea release시에 false로 변경
     }
 
     @Override
@@ -43,8 +43,8 @@ public class MainApplication extends Application implements ReactApplication {
             new ImagePickerPackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
-            new SQLitePluginPackage(),
-            new ANPackage()
+            new SQLitePluginPackage()
+           // new ANPackage()
       );
     }
 

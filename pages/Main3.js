@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView, Alert, NetInfo, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
+import { PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView, Alert, NetInfo, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -8,6 +8,7 @@ var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 
 var normalSize;
+var normalSize_input;
 var largeSize;
 export default class Main3 extends Component { 
 constructor(props) { 
@@ -45,7 +46,8 @@ constructor(props) {
      this.moveNext = this.moveNext.bind(this);
      this.moveFinal = this.moveFinal.bind(this);
      this.movePrevious = this.movePrevious.bind(this);
-     this.transitionToNextPanel = this.transitionToNextPanel.bind(this);
+     this.transitionToNextPanel = this.transitionToNextPanel.bind(this);    
+     this.getData = this.getData.bind(this);    
   }
 
 
@@ -247,12 +249,15 @@ transitionToNextPanel(from, nextIndex){
     AsyncStorage.getItem('textSize', (err, result) => {
         if(result == "normal" || result == null){
           normalSize = {fontSize:15}
+          normalSize_input = 15
           largeSize = {fontSize:17}
         }else if(result == "large"){
           normalSize = {fontSize:17}
+          normalSize_input = 17
           largeSize = {fontSize:19}
         }else if(result == "larger"){
           normalSize = {fontSize:19}
+          normalSize_input = 19
           largeSize = {fontSize:21}
         }
       })
@@ -354,6 +359,65 @@ transitionToNextPanel(from, nextIndex){
       });    
   }
 
+  getData(){
+    //  alert("awdad")
+       // comment나 lectio DB가 있는지 확인
+       const loginId = this.props.status.loginId;    
+       var today_comment_date =this.state.Lectiodate
+       db.transaction(tx => {       
+           //comment있는지 확인  
+           tx.executeSql(
+             'SELECT * FROM comment where date = ? and uid = ?',
+             [today_comment_date, loginId],
+             (tx, results) => {
+               var len = results.rows.length;
+             //  comment 값이 있는 경우에 가져오기 
+               if (len > 0) {                  
+                   console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
+                   this.setState({
+                       comment: results.rows.item(0).comment,
+                       Lectioupdate: true,
+                       initialLoading: false,
+                       basic: true
+                   })
+               } else {     
+                   this.setState({
+                       initialLoading: false
+                   })                             
+               }
+             }
+           ),
+           tx.executeSql(
+               'SELECT * FROM lectio where date = ? and uid = ?',
+               [today_comment_date,loginId],
+               (tx, results) => {
+                 var len = results.rows.length;
+               //  lectio 값이 있는 경우에 가져오기
+                 if (len > 0) {                  
+                     console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
+                     this.setState({
+                         bg1 : results.rows.item(0).bg1,
+                         bg2 : results.rows.item(0).bg2,
+                         bg3 : results.rows.item(0).bg3,
+                         sum1 : results.rows.item(0).sum1,
+                         sum2 : results.rows.item(0).sum2,
+                         js1 : results.rows.item(0).js1,
+                         js2 : results.rows.item(0).js2,
+                         Lectioupdate: true,
+                         initialLoading: false,
+                         comment:null,
+                         basic: false
+                     })
+                 } else {
+                     this.setState({          
+                         initialLoading: false
+                     })                        
+                 }
+               }
+             )
+         });   
+  }
+
   getBasicInfo(){
     // basic 값 다시 가져옴
     AsyncStorage.getItem('course', (err, result) => {
@@ -451,12 +515,15 @@ setChange(){
     AsyncStorage.getItem('textSize', (err, result) => {
         if(result == "normal" || result == null){
             normalSize = {fontSize:15}
+            normalSize_input = 15
             largeSize = {fontSize:17}
         }else if(result == "large"){
             normalSize = {fontSize:17}
+            normalSize_input = 17
             largeSize = {fontSize:19}
         }else if(result == "larger"){
             normalSize = {fontSize:19}
+            normalSize_input = 19
             largeSize = {fontSize:21}
         }
         })
@@ -662,7 +729,7 @@ setChange(){
                                 onPress: () => console.log('Cancel Pressed'),
                                 style: 'cancel',
                                 },
-                                {text: '끝내기', onPress: () =>  [Keyboard.dismiss(),this.setState({Lectioediting: false})]},
+                                {text: '끝내기', onPress: () =>  [Keyboard.dismiss(),this.setState({Lectioediting: false}), this.getData()]},
                             ],
                             {cancelable: true},
                             )} 
@@ -689,7 +756,7 @@ setChange(){
                         onChangeText={bg1 => this.setState({bg1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>
                     <View style={this.state.currentIndex == 0 && this.state.basic ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.</Text>
@@ -700,7 +767,7 @@ setChange(){
                         onChangeText={comment => this.setState({comment})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}] }  />                           
                     </View>
                     <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
@@ -711,7 +778,7 @@ setChange(){
                         onChangeText={bg2 => this.setState({bg2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                       
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                       
                     </View>
                     <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
@@ -722,7 +789,7 @@ setChange(){
                         onChangeText={bg3 => this.setState({bg3})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                         
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                         
                     </View>
                     <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
@@ -733,7 +800,7 @@ setChange(){
                         onChangeText={sum1 => this.setState({sum1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                        
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                        
                     </View>
                     <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
@@ -744,7 +811,7 @@ setChange(){
                         onChangeText={sum2 => this.setState({sum2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
                     <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
@@ -755,7 +822,7 @@ setChange(){
                         onChangeText={js1 => this.setState({js1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                            
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                     </View>
                     <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
                         <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
@@ -766,7 +833,7 @@ setChange(){
                         onChangeText={js2 => this.setState({js2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>                    
                 </KeyboardAvoidingView>                    
                 <ScrollView style={{marginBottom:230}}>              
@@ -881,7 +948,7 @@ setChange(){
                 onPress={() =>  this.setState({start: true})} 
                 >
                     <Text style={{color:"#FFF", textAlign:'center',fontWeight:'bold', lineHeight:20}}>
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', fontSize:12}}>  
+                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>  
                         오늘{"\n"}
                         </Text> 
                         거룩한 독서 시작하기
@@ -967,7 +1034,7 @@ setChange(){
                             style: 'cancel',
                             },
                             {text: '끝내기', onPress: () => 
-                            [Keyboard.dismiss(), this.state.doMore ? this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:true, Lectioupdate: true}) : [this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:null}),this.getBasicInfo()]]},
+                            [Keyboard.dismiss(), this.state.doMore ? this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:true, Lectioupdate: true}) : [this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", currentIndex: 0, basic:null}),this.getBasicInfo(), this.getData()]]},
                         ],
                         {cancelable: true},
                         )}  
@@ -1019,7 +1086,7 @@ setChange(){
                         onChangeText={bg1 => this.setState({bg1})}        
                         // Making the Under line Transparent.
                         //underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>
 
                     <View style={this.state.currentIndex == 2 && this.state.basic ? {} : {display:'none'}}>
@@ -1031,7 +1098,7 @@ setChange(){
                         onChangeText={comment => this.setState({comment})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>
 
                     <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
@@ -1043,7 +1110,7 @@ setChange(){
                         onChangeText={bg2 => this.setState({bg2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />             
                     </View>
 
                     <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
@@ -1055,7 +1122,7 @@ setChange(){
                         onChangeText={bg3 => this.setState({bg3})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
                     </View>
 
                     <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
@@ -1067,7 +1134,7 @@ setChange(){
                         onChangeText={sum1 => this.setState({sum1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                           
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                     </View>
 
                     <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
@@ -1079,7 +1146,7 @@ setChange(){
                         onChangeText={sum2 => this.setState({sum2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                          
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>
 
                     <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
@@ -1091,7 +1158,7 @@ setChange(){
                         onChangeText={js1 => this.setState({js1})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                         
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                         
                     </View>
 
                     <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
@@ -1103,7 +1170,7 @@ setChange(){
                         onChangeText={js2 => this.setState({js2})}        
                         // Making the Under line Transparent.
                         underlineColorAndroid='transparent'        
-                        style={[styles.TextInputStyleClass, normalSize]}  />                             
+                        style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
                     </View>                        
                 </KeyboardAvoidingView>   
 

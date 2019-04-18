@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, BackHandler, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
+import { PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
 import {Navigation} from 'react-navigation';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -18,6 +18,7 @@ export default class Main1 extends Component {
 
 constructor(props) { 
   super(props)  
+ 
   this.state = {
       textSize: "",
       today : "",
@@ -54,7 +55,8 @@ constructor(props) {
     url0: "",
     url1: "",
     url2: "",
-    modalVisible: false
+    modalVisible: false,
+    selectShow: false
   
   }
  
@@ -66,19 +68,22 @@ urlSetting(){
   this.setState({reload:true})
 }
 
-componentWillUnmount() {
-  BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-}
-
-handleBackPress = () => { 
- // this.props.navigation.goBack()
-//  return true;
-
-}
-
 componentWillMount(){
-   
-  BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+  this._panResponder = PanResponder.create({
+    onMoveShouldSetResponderCapture: () => true,
+    onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderGrant: (e, gestureState) => {
+      this.fScroll.setNativeProps({ scrollEnabled: false })
+    },
+    onPanResponderMove: () => {
+
+    },
+    onPanResponderTerminationRequest: () => true,
+    onPanResponderRelease: () => {
+      this.fScroll.setNativeProps({ scrollEnabled: true })
+    },
+  })
+
   console.log("Main1 - componentWillMount : ", this.props.status.isLogged + this.props.status.loginId)
 
   // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
@@ -231,10 +236,17 @@ componentWillReceiveProps(nextProps){
 
       // 오늘날짜인 경우
       if(nextProps.gaspels.created_at == this.state.today){
-        var contents = nextProps.gaspels.contents
+        var contents = ""+nextProps.gaspels.contents
         var start = contents.indexOf("✠");
         var end = contents.indexOf("◎ 그리스도님 찬미합니다");
         contents = contents.substring(start, end);
+        contents = contents.replace(/&ldquo;/gi, "");
+        contents = contents.replace(/&rdquo;/gi, "");
+        contents = contents.replace(/&lsquo;/gi, "");
+        contents = contents.replace(/&rsquo;/gi, "");
+        contents = contents.replace(/&prime;/gi, "'");
+        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
+
         // 몇장 몇절인지 찾기
         var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
         if(pos == null){
@@ -258,7 +270,7 @@ componentWillReceiveProps(nextProps){
         console.log("place", place)
         place = place.replace(/\n/gi, "");   
         // sentence, todayDate, place state setting
-        this.setState({sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
+        this.setState({contents: contents, sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
         
         var date = new Date();
         // 일요일인 경우는 today == 주일날짜이므로 여기서 sentence_weekend, place_weekend를 설정해줘야 한다.
@@ -305,18 +317,6 @@ componentWillReceiveProps(nextProps){
 }
 
    setChange(){    
-/*
-     // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
-    AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("Main1 - login_id : ", result)
-    if(result == null){      
-      this.props.navigation.navigate('Home') 
-    }else{
-        if(this.props.status.loginId == null || this.props.status.loginId == 0){
-          this.props.setLogin(result)          
-        }       
-    }             
-    }) */
     console.log("Main1 setChange()")
      //textSize 바뀌는 경우
     AsyncStorage.getItem('textSize', (err, result) => {
@@ -606,26 +606,49 @@ render() {
       </View>
     )
   : (   
-    <ScrollView style={{backgroundColor:'#fff'}}>          
+    <ScrollView 
+    style={{backgroundColor:'#fff'}} 
+    ref={(e) => { this.fScroll = e }}>    
+
+     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'10%', width:'96%', height:'80%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+       <ScrollView 
+       style={{flex:1, marginLeft:20, marginRight:20, paddingBottom:200, marginBottom:20}}
+        {...this._panResponder.panHandlers}
+        onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
+          <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:13}]}>{this.state.todayDate_show}</Text>    
+          <Text style={[styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]}>{this.state.sentence}</Text>    
+          <Text style={[styles.TextStyle,{marginTop:5, color:'#000', fontSize:14, textAlign:'left'}]}>{this.state.contents}</Text>           
+        </ScrollView>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          style={{position: 'absolute', right:2, top:2}}
+          onPress={() => this.setState({selectShow:false}) } 
+          >    
+            <Icon2 name={'close'} size={30} color={"#000"} />        
+        </TouchableOpacity>           
+      </View>     
+
       <NavigationEvents
       onWillFocus={payload => {console.log(payload),
         this.setChange();
       }} />
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'1%'}}>
-          <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />     
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.setState({selectShow:true})} // insertComment
+          >  
+          <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />    
+          </TouchableOpacity>          
           <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', paddingLeft:3}]}>오늘의복음</Text>
+           
         </View>
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:7, marginLeft:'0%'}}>
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'0%', paddingLeft:'40%', float:'right'}}>
           <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.props.navigation.navigate('Guide')} // insertComment
-          >        
-            <View>
-              <Text style={[{color:"#000", textAlign:'right', marginRight:10}, {fontSize:14}]}>
-              <Icon3 style={{textAlign:'right'}} name={'ios-information-circle-outline'} size={25} color={"#01579b"} />  
-              </Text>
-            </View>              
+          >      
+          <Image source={require('../resources/info.png')} style={{width: 20, height: 20}} />       
           </TouchableOpacity>
         </View>
       </View>

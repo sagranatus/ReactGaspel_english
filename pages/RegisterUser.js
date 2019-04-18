@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage, NetInfo, BackHandler } from 'react-native';
+import { PixelRatio, StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage } from 'react-native';
 import {PropTypes} from 'prop-types';
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -23,35 +23,7 @@ constructor(props) {
       UserPassword_confirm: ''
     } 
   }
-componentWillUnmount() {
-  BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-}
 
-handleBackPress = () => { 
- // return true;
-}
-componentWillMount(){
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-   // 인터넷 연결
-   const setState = (isConnected) => this.setState({internet : isConnected})
-
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    });
-    function handleFirstConnectivityChange(isConnected) {
-      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-     /* NetInfo.isConnected.removeEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      ); */
-    }
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
-}
 
 // 등록하기 클릭시 이벤트
 UserRegistrationFunction = () =>{
@@ -187,7 +159,7 @@ render() {
       value={this.state.UserId}
       onChangeText={UserId => this.setState({UserId})}     
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}]}
+      style={[styles.TextInputStyleClass, {width:'97%', marginTop:70, fontSize: 15 / PixelRatio.getFontScale()}]}
       />       
       
       <TextInput                
@@ -195,7 +167,7 @@ render() {
       value={this.state.UserName}
       onChangeText={UserName => this.setState({UserName})}  
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingRight:'1%'}]}
+      style={[styles.TextInputStyleClass, {width:'24%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -203,7 +175,7 @@ render() {
       value={this.state.UserCatholicName}
       onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
+      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -211,7 +183,7 @@ render() {
       value={this.state.UserAge}
       onChangeText={UserAge => this.setState({UserAge})}    
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%'}]}
+      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <Picker
@@ -255,7 +227,7 @@ render() {
       value={this.state.UserCathedral}
       onChangeText={UserCathedral => this.setState({UserCathedral})}
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'48%'}]}
+      style={[styles.TextInputStyleClass, {width:'48%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
       
       <TextInput                
@@ -263,7 +235,7 @@ render() {
       value={this.state.UserPassword}
       onChangeText={UserPassword => this.setState({UserPassword})}     
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'48%'}]}       
+      style={[styles.TextInputStyleClass, {width:'48%', fontSize: 15 / PixelRatio.getFontScale()}]}       
       secureTextEntry={true}
       /> 
 
@@ -272,7 +244,7 @@ render() {
       value={this.state.UserPassword_confirm}
       onChangeText={UserPassword_confirm => this.setState({UserPassword_confirm})}     
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'48%'}]}       
+      style={[styles.TextInputStyleClass, {width:'48%', fontSize: 15 / PixelRatio.getFontScale()}]}       
       secureTextEntry={true}
       /> 
 

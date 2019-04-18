@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity, ActivityIndicator, NetInfo, BackHandler } from 'react-native';
+import { PixelRatio, StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
@@ -16,30 +16,8 @@ constructor(props) {
     getData:false 
   }    
 }
-componentWillUnmount() {
-  BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-}
 
-handleBackPress = () => { 
-//  return true;
-}
 componentWillMount(){
-  BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-   // 인터넷 연결
-   const setState = (isConnected) => this.setState({internet : isConnected})
-
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    });
-    function handleFirstConnectivityChange(isConnected) {
-      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    }
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
 
   this.setState({getData:false})
   this.getWeekends= this.getWeekends.bind(this);
@@ -132,9 +110,9 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
   
     // setLogin 후에 실행 (처음로그인시 필요)
     if(nextProps.status.isLogged){         // && nextProps.status.loginId !== undefined
-      console.log("Go Main1 after Login")
-      this.setState({getData:false})
-      this.props.navigation.navigate('Main1', {});        
+      console.log("Go Main1 after Login")      
+      this.props.navigation.navigate('Main1', {});  
+     // this.setState({getData:false})      
     }   
   }
   
@@ -354,7 +332,7 @@ getLectios(i, stacks, date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2
       }
     );
   }); 
-         
+           
 }
 
 getWeekends(i, stacks, date, id, mysentence, mythought, question, answer){
@@ -419,11 +397,16 @@ render() {
   (    
     <View style={[styles.MainContainer_internet, {backgroundColor:'#F8F8F8'}]}>             
     <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
-    </View>
+    </View>    
   ) :     
     (
     this.state.getData ? 
     <View style={styles.loadingContainer}>
+      <NavigationEvents
+      onWillFocus={payload => {
+          this.setChange();
+      }} 
+      />
     <ActivityIndicator
       animating
       size="large"
@@ -458,7 +441,7 @@ render() {
           value={this.state.UserId}
           onChangeText={UserId => this.setState({UserId})}  
           underlineColorAndroid='transparent'      
-          style={styles.TextInputStyleClass}
+          style={[styles.TextInputStyleClass,{fontSize: 15 / PixelRatio.getFontScale()}]}
         />     
 
         <TextInput                
@@ -466,7 +449,7 @@ render() {
           value={this.state.UserPassword} 
           onChangeText={UserPassword => this.setState({UserPassword})}      
           underlineColorAndroid='transparent'      
-          style={styles.TextInputStyleClass}      
+          style={[styles.TextInputStyleClass,{fontSize: 15 / PixelRatio.getFontScale()}]}
           secureTextEntry={true}
         />
         <TouchableOpacity 

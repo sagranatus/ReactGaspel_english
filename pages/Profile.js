@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, TextInput, Picker,  Keyboard} from 'react-native';
+import {PixelRatio, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, TextInput, Picker,  Keyboard, Alert} from 'react-native';
 import {NavigationEvents} from 'react-navigation'
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 var normalSize;
+var normalSize_input;
 var largeSize;
 export default class Profile extends Component { 
 
@@ -26,14 +27,17 @@ componentWillMount(){
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
       normalSize = {fontSize:15}
+      normalSize_input = 15
       largeSize = {fontSize:17}
-    }else if(result == "large"){
+  }else if(result == "large"){
       normalSize = {fontSize:17}
+      normalSize_input = 17
       largeSize = {fontSize:19}
-    }else if(result == "larger"){
+  }else if(result == "larger"){
       normalSize = {fontSize:19}
+      normalSize_input = 19
       largeSize = {fontSize:21}
-    }
+  }
   })
 
   // users DB 가져와서 값 세팅
@@ -71,7 +75,7 @@ componentWillReceiveProps(nextProps){
   // 로그인상태일때 값 수정후 이벤트
   if(nextProps.results.id != null && nextProps.status.isLogged){
     console.log(nextProps.results.id)
-    alert("수정하였습니다.") 
+    Alert.alert("수정하였습니다.") 
   }
 }
 
@@ -110,14 +114,17 @@ setChange(){
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
       normalSize = {fontSize:15}
+      normalSize_input = 15
       largeSize = {fontSize:17}
-    }else if(result == "large"){
+  }else if(result == "large"){
       normalSize = {fontSize:17}
+      normalSize_input = 17
       largeSize = {fontSize:19}
-    }else if(result == "larger"){
+  }else if(result == "larger"){
       normalSize = {fontSize:19}
+      normalSize_input = 19
       largeSize = {fontSize:21}
-    }    
+  }
     this.setState({reload:true})
   })  
   AsyncStorage.getItem('profile', (err, result) => {
@@ -190,7 +197,7 @@ render() {
               value={this.state.UserId}
               editable={false}
               underlineColorAndroid='transparent'        
-              style={[styles.TextInputStyleClass, {width:'97%', marginTop:70}, normalSize]}
+              style={[styles.TextInputStyleClass, {width:'97%', marginTop:70, fontSize: normalSize_input / PixelRatio.getFontScale()}]}
               />       
               
                 <TextInput                
@@ -198,21 +205,21 @@ render() {
               value={this.state.UserName} 
               onChangeText={UserName => this.setState({UserName})}  
               underlineColorAndroid='transparent'        
-              style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
+              style={[styles.TextInputStyleClass, {width:'24%', fontSize: normalSize_input / PixelRatio.getFontScale()}]}
               />
                 <TextInput                
               placeholder="세례명"        
               value={this.state.UserCatholicName}
               onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
               underlineColorAndroid='transparent'        
-              style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
+              style={[styles.TextInputStyleClass, {width:'24%', fontSize: normalSize_input / PixelRatio.getFontScale()}]}
               />
                 <TextInput                
               placeholder="생년월일"    
               value={this.state.UserAge}    
               onChangeText={UserAge => this.setState({UserAge})}    
               underlineColorAndroid='transparent'        
-              style={[styles.TextInputStyleClass, {width:'24%'}, normalSize]}
+              style={[styles.TextInputStyleClass, {width:'24%', fontSize: normalSize_input / PixelRatio.getFontScale()}]}
               />
                 <Picker
                 selectedValue={this.state.UserGender}
@@ -254,7 +261,7 @@ render() {
               value={this.state.UserCathedral}       
               onChangeText={UserCathedral => this.setState({UserCathedral})}
               underlineColorAndroid='transparent'        
-              style={[styles.TextInputStyleClass, {width:'48%'}, normalSize]}
+              style={[styles.TextInputStyleClass, {width:'48%', fontSize: normalSize_input / PixelRatio.getFontScale()}]}
               />
   
     <View style={{width:'100%', justifyContent: 'center',  alignItems: 'center', marginTop:10, marginBottom: 20, padding:10}}>                

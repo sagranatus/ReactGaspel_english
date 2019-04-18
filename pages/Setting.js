@@ -5,7 +5,6 @@ import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
-import ReactNativeAN from 'react-native-alarm-notification';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 var PushNotification = require('react-native-push-notification');
@@ -48,7 +47,6 @@ constructor(props) {
 			futureFireDate: '0'
     }
     this.setAlarm = this.setAlarm.bind(this);
-		this.stopAlarm = this.stopAlarm.bind(this);
    
   }
 
@@ -74,12 +72,6 @@ constructor(props) {
 
   };
   
-  // 알람 멈추기
-	stopAlarm = () => {
-		this.setState({ update: '' });
-		ReactNativeAN.stopAlarm();
-	};
-
   // notification 세팅
 	componentDidMount() {
 		DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
@@ -170,16 +162,21 @@ setChanges(){
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
+      textSize = [0]
       normalSize = {fontSize:15}
-      largeSize = {fontSize:17}
+      largeSize = {fontSize:17}      
+      this.setState({reload:true})
     }else if(result == "large"){
+      textSize = [1]
       normalSize = {fontSize:17}
       largeSize = {fontSize:19}
+      this.setState({reload:true})
     }else if(result == "larger"){
+      textSize = [2]
       normalSize = {fontSize:19}
       largeSize = {fontSize:21}
+      this.setState({reload:true})
     }
-    this.setState({reload:true})
   })
   // alarm1 가져와서 시간 세팅
   AsyncStorage.getItem('alarm1', (err, result) => {
@@ -188,6 +185,22 @@ setChanges(){
       this.setState({time:result})
     }    
   })
+
+  
+// course 값 가져와서 course value 삽입
+AsyncStorage.getItem('course', (err, result) => {
+ 
+  if(result == "notselected" || result == null){
+    course = [0]
+    this.setState({reload:true})
+  }else if(result == "basic"){
+    course = [1]
+    this.setState({reload:true})
+  }else if(result == "advanced"){
+    course = [2]
+    this.setState({reload:true})
+  }
+})
 }
  
 setChange(selectedValues){    
