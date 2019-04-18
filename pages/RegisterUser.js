@@ -28,7 +28,7 @@ componentWillUnmount() {
 }
 
 handleBackPress = () => { 
-  return true;
+ // return true;
 }
 componentWillMount(){
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);

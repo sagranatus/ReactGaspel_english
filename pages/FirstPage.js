@@ -48,6 +48,7 @@ constructor(props) {
   }
   
   render() {   
+    console.log("login_status",this.props.status.isLogged)
         return ( 
             <View style={styles.MainContainer}> 
             <Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>

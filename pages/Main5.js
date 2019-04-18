@@ -461,6 +461,7 @@ getAllPoints(year_month){
 
 componentWillReceiveProps(nextProps){
   if(nextProps.status.isLogged == false){  
+    console.log("after login Go Home")
   // 로그아웃시에 Main1으로 이동
   // alert("logout")
     this.props.navigation.navigate('Home')  

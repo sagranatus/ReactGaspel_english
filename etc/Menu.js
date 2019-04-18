@@ -51,12 +51,12 @@ var name, christname;
 export default function Menu({ onItemSelected }) {
   
   AsyncStorage.getItem('login_name', (err, result) => {
-    console.log("FirstPage - login_name : ", result)
+    console.log("Menu - login_name : ", result)
     name = result;
   
   })
   AsyncStorage.getItem('login_christ_name', (err, result) => {
-    console.log("FirstPage - login_chirst_name : ", result)
+    console.log("Menu - login_chirst_name : ", result)
     christname = result
   })
 

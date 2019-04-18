@@ -1,5 +1,5 @@
 import React from 'react'
-import { createBottomTabNavigator, createAppContainer, createStackNavigator } from 'react-navigation'
+import { createBottomTabNavigator, createAppContainer, createStackNavigator, NavigationActions } from 'react-navigation'
 import { Platform, Image, NetInfo, View, Text, StyleSheet, AsyncStorage } from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container'
@@ -47,13 +47,15 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Main4_2: {screen: Main4_2},
 			Guide: { screen: GuidePage },
 			Profile: { screen: Profile},
-			Setting: { screen: Setting },				
-			RegisterUser: {screen: RegisterUser},
-			LoginUser: {screen: LoginUser}		
+			Setting: { screen: Setting },
+			RegisterUser: {
+				screen: RegisterUser
+			},
+			LoginUser: {
+				screen: LoginUser						
+			},		
 		},
-		
-		(Platform.OS === 'android') // android의 경우에 keyboard 올라올때 bottomtab 안보이게
-	? {	
+		 {	
 		defaultNavigationOptions: ({ navigation }) => ({
 			tabBarIcon: ({ focused, tintColor }) =>
 			getTabBarIcon(navigation, focused, tintColor),
@@ -71,22 +73,12 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 				...navigation,
 				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'RegisterUser' && r.routeName !== 'LoginUser' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
-			tabBarPosition: 'bottom'
-		 }
-	: 
-		{
-		defaultNavigationOptions: ({ navigation }) => ({
-			tabBarIcon: ({ focused, tintColor }) =>
-			getTabBarIcon(navigation, focused, tintColor),
-		}),
-		tabBarOptions: {
-			activeTintColor: 'tomato',
-			inactiveTintColor: 'gray',
-		},
-		}
-		
+			tabBarPosition: 'bottom',
+			backBehavior: 'history'
+		 }	
 		);
-
+		
+/*
 const defaultGetStateForAction = TabNavigator.router.getStateForAction
 TabNavigator.router.getStateForAction = (action, state) => {
   switch (action.type) {
@@ -112,7 +104,58 @@ TabNavigator.router.getStateForAction = (action, state) => {
   }
   return defaultGetStateForAction(action, state)
 }
+*/
+const defaultGetStateForAction = TabNavigator.router.getStateForAction;
+TabNavigator.router.getStateForAction = (action, state) => {
+	console.log(action)
+	console.log("changed?")
+	console.log(state)
+	const screen = state ? state.routes[state.index] : null;
+	const tab = screen && screen.routes ? screen.routes[screen.index] : null;
+	const tabScreen = tab && tab.routes ? tab.routes[tab.index] : null;
+	console.log("tab",state)
+	console.log("tab",screen)
 
+	if (action.type === "Navigation/NAVIGATE" && action.routeName == 'Home') 
+	{
+		console.log("home!!!")
+		// Option 1: will close the application
+		const newRoutes = state.routes.filter(r => r.routeName !== 'auth');
+		const newIndex = newRoutes.length - 1;
+
+		return {
+			...state,
+			routeName : "Home"
+			
+		};
+	
+	}
+
+
+	if(screen !== null && state.routeKeyHistory.length !== 0 && state.routeKeyHistory !== 'undefined'){
+	console.log("key",screen.key)
+	console.log("history",state.routeKeyHistory[state.routeKeyHistory.length-2])
+	
+	if (action.type === NavigationActions.BACK && screen.key == 'Main1' && state.routeKeyHistory[state.routeKeyHistory.length-2] == 'LoginUser') 
+	 {
+		console.log("not Move!!!"+screen.key)
+		// Option 1: will close the application
+	//	 return null;
+		
+	 // Option 2: will keep the app open
+	 const newRoutes = state.routes.filter(r => r.routeName !== 'auth');
+	 const newIndex = newRoutes.length - 1;
+	 return {
+		 ...state,
+		 index: 0,
+		 routes: newRoutes
+		 
+	 };
+	}
+}
+
+	return defaultGetStateForAction(action, state);
+};
 
 const AppContainer = createAppContainer(TabNavigator)
 	
@@ -128,7 +171,8 @@ const RootStack = createStackNavigator({
 		navigationOptions: {
 			header: null
 		}
-	},
+	},				
+
 	initialRouteName: 'Home'
 });
 const RootStack2 = createStackNavigator({ 
@@ -213,6 +257,7 @@ const RootContainer2 = createAppContainer(RootStack2);
 		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
 	  </View>
 		:
+		// 로그인 상태면 RootContainer2를 가져오고 아니면 RootContainer를 가져옴
 	(this.state.login) ? 
 	<RootContainer2 />
 	: 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, BackHandler, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
-
+import {Navigation} from 'react-navigation';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -71,16 +71,19 @@ componentWillUnmount() {
 }
 
 handleBackPress = () => { 
-  return true;
+ // this.props.navigation.goBack()
+//  return true;
+
 }
 
 componentWillMount(){
+   
   BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
   console.log("Main1 - componentWillMount : ", this.props.status.isLogged + this.props.status.loginId)
 
   // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
   AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("FirstPage - login_id : ", result)
+    console.log("Main1 - login_id : ", result)
     if(result == null){      
       this.props.navigation.navigate('Home') 
     }else{
@@ -302,6 +305,18 @@ componentWillReceiveProps(nextProps){
 }
 
    setChange(){    
+/*
+     // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
+    AsyncStorage.getItem('login_id', (err, result) => {
+    console.log("Main1 - login_id : ", result)
+    if(result == null){      
+      this.props.navigation.navigate('Home') 
+    }else{
+        if(this.props.status.loginId == null || this.props.status.loginId == 0){
+          this.props.setLogin(result)          
+        }       
+    }             
+    }) */
     console.log("Main1 setChange()")
      //textSize 바뀌는 경우
     AsyncStorage.getItem('textSize', (err, result) => {
@@ -579,7 +594,6 @@ onModalOpen(url) {
 }
 
 render() { 
-  console.log("here!", this.props.status.loginId )   
   return (this.state.initialLoading)
   ? (    
       <View style={styles.loadingContainer}>

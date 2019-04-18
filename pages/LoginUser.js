@@ -21,7 +21,7 @@ componentWillUnmount() {
 }
 
 handleBackPress = () => { 
-  return true;
+//  return true;
 }
 componentWillMount(){
   BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
@@ -35,10 +35,6 @@ componentWillMount(){
     function handleFirstConnectivityChange(isConnected) {
       console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
       setState(isConnected)
-     /* NetInfo.isConnected.removeEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      ); */
     }
     NetInfo.isConnected.addEventListener(
       'connectionChange',
@@ -90,8 +86,6 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
 
           // 서버 DB의 값을 가져옴
           this.getAllComments(responseJson.id) // -> comments 모두 가져온 후에 lectio가져옴 -> lectios가져온 후에 weekends 가져옴
-         // this.getAllLectios(responseJson.id)
-         // this.getAllWeekends(responseJson.id)
 
           //userDB에 값 확인 및 삽입
           db.transaction(tx => {
@@ -103,11 +97,6 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
 
               //  기기 DB에 값이 있는 경우 
                 if (len > 0) { 
-                //  if(setLogin){ 
-                //    setLogin(responseJson.id)                     
-                //  }                
-
-              //  기기 user DB에 값이 없는 경우 DB에 삽입
                 } else {
                   db.transaction(function(tx) {
                     tx.executeSql(
@@ -116,9 +105,6 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
                       (tx, results) => {
                         if (results.rowsAffected > 0) {                            
                         console.log('LoginUser - DB user info inserted :', responseJson.id)
-                       //   if(setLogin){ // action setLogin
-                       //     setLogin(responseJson.id) 
-                        //  }                
                         } else {
                           console.log('LoginUser - DB user info inserting failed :', responseJson.id)
                         }
@@ -142,18 +128,18 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
 
   componentWillReceiveProps(nextProps){  
     // props의 loginId값이 변경될때
-    console.log("LoginUser - this.props.status.loginId: ", nextProps.status.loginId)  
+    console.log("LoginUser - this.props.status.loginId: ", nextProps.status.loginId + "/ isLogged:"+nextProps.status.isLogged)  
   
     // setLogin 후에 실행 (처음로그인시 필요)
-    if(nextProps.status.isLogged){         
+    if(nextProps.status.isLogged){         // && nextProps.status.loginId !== undefined
+      console.log("Go Main1 after Login")
       this.setState({getData:false})
       this.props.navigation.navigate('Main1', {});        
-    } 
-  
+    }   
   }
   
-getAllComments(id){    
- 
+getAllComments(id_){    
+  console.log("GetAllComments"+id_)
   fetch('https://sssagranatus.cafe24.com/servertest/commentData_ori.php', {
     method: 'POST',
     headers: {
@@ -162,7 +148,7 @@ getAllComments(id){
     },
     body: JSON.stringify({ 
       status: "selectall",
-      id: id
+      id: id_
     })
   
   }).then((response) => response.json())
@@ -171,6 +157,7 @@ getAllComments(id){
         {
           const stack = responseJson.stack
           console.log("LoginUser - stacks in getAllComments : ", stack)
+          //stack 값이 있으면 getComments  / 없으면 getAllLectios
           if(stack !== undefined){
               var date, id, onesentence, comment;
             for(var i=0; i<stack.length; i++){
@@ -182,7 +169,7 @@ getAllComments(id){
               this.getComments(i, stack.length, date, id, onesentence, comment)              
             }
           }else{
-            this.getAllLectios(id)
+            this.getAllLectios(id_)
           }
         }else{
           console.log("LoginUser - getAllComments : ", 'failed')
@@ -192,8 +179,8 @@ getAllComments(id){
       });   
 } 
 
-getAllLectios(id){
-  //alert("getalllectios"+id) 
+getAllLectios(id_){
+  console.log("GetAllLectios"+id_)
   fetch('https://sssagranatus.cafe24.com/servertest/lectioData_ori.php', {
     method: 'POST',
     headers: {
@@ -202,7 +189,7 @@ getAllLectios(id){
     },
     body: JSON.stringify({ 
       status: "selectall",
-      id: id
+      id: id_
     })
   
   }).then((response) => response.json())
@@ -212,6 +199,7 @@ getAllLectios(id){
         {
           const stack = responseJson.stack
           console.log("LoginUser - stacks in getAllLectios : ", stack)
+            //stack 값이 있으면 getLectios  / 없으면 getAllWeekends
           if(stack !== undefined){            
             var date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2;
             for(var i=0; i<stack.length; i++){
@@ -224,12 +212,11 @@ getAllLectios(id){
               sum1 = stack[i][6]
               sum2 = stack[i][7]
               js1 = stack[i][8]
-              js2 = stack[i][9]     
-           //   console.log("LoginUser - value of stacks in getAllLectios : ",date+"/"+id+"/"+onesentence+"/"+bg1+"/"+bg2+"/"+bg3+"/"+sum1+"/"+sum2+"/"+js1+"/"+js2)      
+              js2 = stack[i][9]        
               this.getLectios(i, stack.length, date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2)      
             }  
           }else{
-            this.getAllWeekends(id)
+            this.getAllWeekends(id_)
           }                  
           
         }else{
@@ -241,9 +228,10 @@ getAllLectios(id){
       });   
 } 
 
-getAllWeekends(id){    
-   const setLogin = () => this.props.setLogin(id)
-  
+getAllWeekends(id_){    
+  console.log("GetAllWeekends"+id_)
+   const setLogin = (id) => this.props.setLogin(id)
+
    fetch('https://sssagranatus.cafe24.com/servertest/weekendData_ori.php', {
      method: 'POST',
      headers: {
@@ -252,7 +240,7 @@ getAllWeekends(id){
      },
      body: JSON.stringify({ 
        status: "selectall",
-       id: id
+       id: id_
      })
    
    }).then((response) => response.json())
@@ -260,6 +248,7 @@ getAllWeekends(id){
         if(responseJson.error == false)
           {
             const stack = responseJson.stack
+            //stack 값이 있으면 getWeekends  / 없으면 setLogin
             if(stack !== undefined){
               console.log("LoginUser - stacks in getAllWeekends : ", stack)
               var date, id, mysentence, mythought, question, answer;
@@ -275,7 +264,11 @@ getAllWeekends(id){
                 this.getWeekends(i, stack.length, date, id, mysentence, mythought, question, answer)              
                 }
             }else{
-              setLogin()
+              console.log("before setLogin id : "+ id_)
+              if(id_ !== undefined){
+                setLogin(id_)
+              }
+              
             }
             
           }else{
@@ -287,6 +280,7 @@ getAllWeekends(id){
  } 
 
 getComments(i, stacks, date, id, onesentence, comment){
+  console.log("GetComments"+id)
   const getAllLectios = this.getAllLectios
   db.transaction(tx => {
     tx.executeSql(
@@ -324,6 +318,7 @@ getComments(i, stacks, date, id, onesentence, comment){
 }
 
 getLectios(i, stacks, date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2){ 
+  console.log("GetLectios"+id)
   const getAllWeekends = this.getAllWeekends
   db.transaction(tx => {
     tx.executeSql(
@@ -363,7 +358,7 @@ getLectios(i, stacks, date, id, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2
 }
 
 getWeekends(i, stacks, date, id, mysentence, mythought, question, answer){
-
+  console.log("GetWeekends"+id)
   const setLogin = this.props.setLogin
   db.transaction(tx => {
     tx.executeSql(
@@ -373,8 +368,11 @@ getWeekends(i, stacks, date, id, mysentence, mythought, question, answer){
         var len = results.rows.length;
         if (len > 0) {                  
             console.log('LoginUser - Weekend DB', date+"already existed")           
-            if(i == stacks-1) {       
-               setLogin(id)
+            if(i == stacks-1) {   
+              console.log("before setLogin id : " + id)    
+              if(id !== undefined){
+                setLogin(id)
+              }
              }    
         } else {
           console.log('LoginUser - Weekend DB', date+"inserting!") 
@@ -385,8 +383,11 @@ getWeekends(i, stacks, date, id, mysentence, mythought, question, answer){
               (tx, results) => {
                 if (results.rowsAffected > 0) {
                   console.log('LoginUser - Weekend DB', date+" insert done")     
-                  if(i == stacks-1){       
-                    setLogin(id)
+                  if(i == stacks-1){      
+                    console.log("before setLogin id : " + id) 
+                    if(id !== undefined){
+                      setLogin(id)
+                    }
                   }               
                 } else {
                   console.log('LoginUser - Weekend DB', "insert failed")                        
