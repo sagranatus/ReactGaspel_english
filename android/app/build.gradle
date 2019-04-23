@@ -103,8 +103,8 @@ android {
         applicationId "com.yellowpg.gaspel"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 102
-        versionName "2.2.2"
+        versionCode 103
+        versionName "2.2.3"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
