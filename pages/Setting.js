@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
+import { Platform, PushNotificationIOS, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
 import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -51,24 +51,38 @@ constructor(props) {
   }
 
   // 알람세팅 - 시간의 경우 this.state.time에서 가져옴, 매일
-  setAlarm = () => {
+  setAlarm = (hour, minutes) => {
     var date = new Date()
     var year = date.getFullYear();
     var month = date.getMonth()+1
     var day = date.getDate();
     console.log(month+'/'+day+'/'+year+' '+this.state.time)
-    if(new Date(month+'/'+day+'/'+year+' '+this.state.time) - new Date() < 0){
+    if(new Date(month+'/'+day+'/'+year+' '+hour+":"+minutes+":00") - new Date() < 0){
       day = date.getDate()+1;
+      console.log("previous time setting!!")
     }
-    PushNotification.localNotificationSchedule({
-      id: '123',
-      message: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
-      date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
-      vibrate: true, // (optional) default: true
-      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      playSound: true, // (optional) default: true
-      repeatType: 'day'
-    });
+    month = Platform.OS == 'ios' ? month-1 : month
+    console.log(year+"/"+month+"/"+day+"/"+hour+"/"+minutes)
+    if(Platform.OS == 'ios'){
+      PushNotificationIOS.scheduleLocalNotification({
+        alertTitle:"거룩한독서 알람",
+        alertBody: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+  // fireDate: new Date(2019,3,5,14,24,0).toISOString(), // in 60 secs
+       fireDate:new Date(year, month, day, hour, minutes, 0).toISOString(),
+        repeatInterval: 'day'
+      });
+    }else{
+      PushNotification.localNotificationSchedule({
+        id: '123',
+        message: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+        date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
+        vibrate: true, // (optional) default: true
+        vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+        playSound: true, // (optional) default: true
+        repeatType: 'day'
+      });
+    } 
+
 
   };
   
@@ -87,6 +101,7 @@ constructor(props) {
   
 
 componentWillMount(){
+  PushNotificationIOS.requestPermissions()
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
@@ -138,7 +153,7 @@ componentWillMount(){
   console.log(day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00")
   // time setting 및 알람 세팅하기, alarm1 에 값 저장하기
   this.setState({time:hour +":"+ minutes +":00",  fireDate:day+"-"+month+"-"+year+" "+hour +":"+ minutes +":00"})
-  this.setAlarm()
+  this.setAlarm(hour, minutes)
   try {
     AsyncStorage.setItem('alarm1', hour +":"+ minutes +":00");      
   } catch (error) {
@@ -150,6 +165,9 @@ componentWillMount(){
 // 알람 삭제하기
 stopAlarm1(){
   PushNotification.cancelLocalNotifications({id: '123'})
+  if(Platform.OS == "ios"){
+    PushNotificationIOS.cancelAllLocalNotifications();
+  }
   this.setState({ time: '' });
   try{
   AsyncStorage.setItem('alarm1', "")

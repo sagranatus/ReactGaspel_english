@@ -223,10 +223,10 @@ render() {
               />
                 <Picker
                 selectedValue={this.state.UserGender}
-                style={{width:'24%', padding:'1%', marginBottom:7}}
+                style={{width:'24%', padding:'1%', marginBottom:7, height:50}}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({UserGender: itemValue})
-                }>
+                  this.setState({UserGender: itemValue}) }
+                itemStyle={{height:50}}>
                 <Picker.Item label="성별" value="" />
                 <Picker.Item label="남자" value="남자" />
                 <Picker.Item label="여자" value="여자" />
@@ -234,10 +234,10 @@ render() {
               
               <Picker
                 selectedValue={this.state.UserRegion}
-                style={{width:'48%'}}
+                style={{width:'48%', height:50}}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({UserRegion: itemValue})
-                }>
+                  this.setState({UserRegion: itemValue})}
+                itemStyle={{height:50}}>
                 <Picker.Item label="교구 선택" value="" />
                 <Picker.Item label="서울대교구" value="서울대교구" />
                 <Picker.Item label="대전교구" value="대전교구" />

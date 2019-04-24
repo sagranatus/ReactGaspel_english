@@ -708,9 +708,9 @@ render() {
           <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
         </View> 
 
-        <View style={this.state.js2 !== ""  ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 15, marginBottom:10, marginLeft:'2%'}}>       
+        <View style={this.state.js2 !== ""  ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 30, marginBottom:10, marginLeft:'2%'}}>       
         </View>  
-        <View style={this.state.js2 !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 15, marginBottom:10, marginRight:'1%'}} >
+        <View style={this.state.js2 !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 30, marginBottom:10, marginRight:'1%'}} >
           <TouchableOpacity 
           activeOpacity = {0.9}
           style={this.state.comment == "" && this.state.js2 == "" ? {} : {display:'none'}}
@@ -756,9 +756,9 @@ render() {
           } : {display:'none'}
         }
         />
-        <View style={this.state.mysentence !== ""   ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 15, marginBottom:10, marginLeft:'2%'}}>       
+        <View style={this.state.mysentence !== ""   ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 30, marginBottom:10, marginLeft:'2%'}}>       
         </View>  
-        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 15, marginBottom:10, marginRight:'1%'}} >
+        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 30, marginBottom:10, marginRight:'1%'}} >
           <TouchableOpacity 
           activeOpacity = {0.9}
           onPress = {() => this.props.navigation.navigate('Main4')}
