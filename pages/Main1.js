@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
+import { Platform, PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
 import {Navigation} from 'react-navigation';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -796,7 +796,7 @@ render() {
           onRequestClose={this.onModalClose}
         >
           <View style={styles.modalContent}>
-            <View style={styles.modalButtons}>
+            <View style={[styles.modalButtons, Platform.OS=="ios" ? {marginTop:18}: {}]}>
               <TouchableOpacity
                   onPress={this.onModalClose}
                   style={styles.closeButton}

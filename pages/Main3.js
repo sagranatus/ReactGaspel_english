@@ -4,6 +4,7 @@ import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 
@@ -836,7 +837,7 @@ setChange(){
                         style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                     </View>                    
                 </KeyboardAvoidingView>                    
-                <ScrollView style={{marginBottom:230}}>              
+                <KeyboardAwareScrollView style={{marginBottom:230}}>              
                     <TouchableHighlight
                     style={{ justifyContent: 'center', alignItems: 'center'}}
                     underlayColor = {"#fff"}
@@ -850,7 +851,7 @@ setChange(){
                     onPress={() => this.getNextMoreGaspel()}>
                         <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                     </TouchableHighlight >                                    
-                </ScrollView>  
+                </KeyboardAwareScrollView>  
            </View>
            )
          :
@@ -1174,7 +1175,7 @@ setChange(){
                     </View>                        
                 </KeyboardAvoidingView>   
 
-                <ScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:160}}>                            
+                <KeyboardAwareScrollView style={this.state.currentIndex == 0 ? {display:'none'} : {marginBottom:160}}>                            
                     <TouchableHighlight
                     style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                     underlayColor = {"#fff"}
@@ -1189,7 +1190,7 @@ setChange(){
                             <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                     </TouchableHighlight >
                     <View style={{height:60}} />  
-                </ScrollView>                     
+                </KeyboardAwareScrollView>                     
             </View> 
         </View>   
         )       

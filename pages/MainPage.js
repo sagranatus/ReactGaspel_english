@@ -265,9 +265,13 @@ export default class App extends React.Component {
 		:
 		// 로그인 상태면 RootContainer2를 가져오고 아니면 RootContainer를 가져옴
 	(this.state.login) ? 
+	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>
 	<RootContainer2 />
+	</View>
 	: 
-	<RootContainer />
+	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>
+	<RootContainer2 />
+	</View>
 	}
 }
 

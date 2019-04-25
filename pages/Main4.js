@@ -4,6 +4,7 @@ import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
+import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
 var normalSize;
@@ -786,7 +787,7 @@ componentWillMount(){
                   </View>                          
               </KeyboardAvoidingView>
 
-              <ScrollView style={{marginBottom:230, marginTop:10}}>              
+              <KeyboardAwareScrollView style={{marginBottom:230, marginTop:10}}>              
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
@@ -800,7 +801,7 @@ componentWillMount(){
                 onPress={() => this.getNextMoreGaspel()}>
                     <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                 </TouchableHighlight >                                      
-              </ScrollView>  
+              </KeyboardAwareScrollView>  
             </View>
           )
          :
@@ -1085,7 +1086,7 @@ componentWillMount(){
                   </KeyboardAvoidingView>
 
                 
-                  <ScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:130}}>         
+                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:130}}>         
                       <TouchableHighlight
                       style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                       underlayColor = {"#fff"}
@@ -1100,7 +1101,7 @@ componentWillMount(){
                             <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
                       </TouchableHighlight >                                        
                       <View style={{height:90}} />    
-                  </ScrollView>  
+                  </KeyboardAwareScrollView>  
               </View>
           </View>   
         )       
