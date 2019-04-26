@@ -13,6 +13,8 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* GaspelAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* GaspelAppTests.m */; };
+		02301A592272A2F400E3F707 /* libReactNativeAutoUpdater.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 024739AD226ED7B900B55CBC /* libReactNativeAutoUpdater.a */; };
+		02301A5E2272A53A00E3F707 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		02473966226ED69000B55CBC /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02473963226ED64D00B55CBC /* libRCTPushNotification.a */; };
 		02DF1A0A2271B3A5000698A6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02DF1A082271B3A5000698A6 /* LaunchScreen.xib */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -49,7 +51,6 @@
 		7750B2ED25DD41DFA4BE585E /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DA74A2D876B4ECEB94BE773 /* libRNVectorIcons.a */; };
 		7D38359581EB4242B1727293 /* NanumMyeongjoBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2C289BD544A48B6ADF196C7 /* NanumMyeongjoBold.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		A4550CF08AAA454286362EAF /* libReactNativeAutoUpdater.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD606685E82243B7BD26F473 /* libReactNativeAutoUpdater.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B7B01AEFCE9B43A9B0050E91 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F555D89593C4F7B96951EED /* FontAwesome.ttf */; };
 		C15C373A88694A108163A4E9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7AB7C40CC1EA4F5AB03F00AF /* Foundation.ttf */; };
@@ -487,6 +488,7 @@
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+				02301A592272A2F400E3F707 /* libReactNativeAutoUpdater.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
@@ -495,12 +497,12 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				02301A5E2272A53A00E3F707 /* libReact.a in Frameworks */,
 				1BD17F0D369541F4913D7F3D /* libRNGestureHandler.a in Frameworks */,
 				E7A6745785CA4123A00B6049 /* libSQLite.a in Frameworks */,
 				7750B2ED25DD41DFA4BE585E /* libRNVectorIcons.a in Frameworks */,
 				18B3372C5374401683B85927 /* libRNImagePicker.a in Frameworks */,
 				CC7BC33F9A3A4F6CA4532E34 /* libRNFetchBlob.a in Frameworks */,
-				A4550CF08AAA454286362EAF /* libReactNativeAutoUpdater.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,6 +932,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = X34V75M24W;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1598,6 +1601,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X34V75M24W;
@@ -1620,7 +1626,7 @@
 					"n-fetch-blobios/**",
 					"$(SRCROOT)..",
 					ode_modules,
-					"eact-native-auto-updateriosReactNativeAutoUpdater/**",
+					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1629,8 +1635,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yellowpg;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yellowpg.GaspelApp;
 				PRODUCT_NAME = GaspelApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1640,6 +1647,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X34V75M24W;
 				HEADER_SEARCH_PATHS = (
@@ -1661,7 +1671,7 @@
 					"n-fetch-blobios/**",
 					"$(SRCROOT)..",
 					ode_modules,
-					"eact-native-auto-updateriosReactNativeAutoUpdater/**",
+					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1670,8 +1680,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yellowpg;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yellowpg.GaspelApp;
 				PRODUCT_NAME = GaspelApp;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

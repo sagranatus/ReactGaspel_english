@@ -1020,7 +1020,7 @@ render() {
               }}
               onPress={() => this.pickImage() } 
               >
-              <Image source={this.state.avatarSource} onError={(e) => { this.setState({iconShow:true, avatarSource: require('../resources/add_image.png')}) }}  style={{flex: 1,width: 130,height: 130,resizeMode: 'contain'}}/>
+              <Image source={this.state.avatarSource} onError={(e) => { this.setState({iconShow:true, avatarSource: require('../resources/add_image.png')}) }}  style={{flex: 1,width: 130,height: 130,resizeMode: 'cover'}}/>
             </TouchableOpacity> 
             <TouchableOpacity 
             activeOpacity = {0.9}

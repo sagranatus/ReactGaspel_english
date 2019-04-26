@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { PixelRatio, StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Platform, PixelRatio, StyleSheet, TextInput, View, Alert, Text, AsyncStorage, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
@@ -435,7 +435,7 @@ render() {
         </TouchableOpacity>   
       </View> 
       <View style={{width:'100%', marginTop:130, padding:10}}>
-        <Text style={{marginBottom:5}}>* 이메일로 가입하신 분은 @ 앞 부분이 아이디가 됩니다.{"\n"}(예- yellowpage@naver.com -> yellowpage)</Text>
+        <Text style={Platform.OS=="ios"? {display:'none'} : {marginBottom:5}}>* 이메일로 가입하신 분은 @ 앞 부분이 아이디가 됩니다.{"\n"}(예- yellowpage@naver.com -> yellowpage)</Text>
         <TextInput        
           placeholder="아이디"      
           value={this.state.UserId}

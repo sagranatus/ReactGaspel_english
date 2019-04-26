@@ -12,7 +12,7 @@
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 
-//#import "ReactNativeAutoUpdater.h"
+#import "ReactNativeAutoUpdater.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
