@@ -28,6 +28,8 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		18B3372C5374401683B85927 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5944F1B91D842069306CB7E /* libRNImagePicker.a */; };
 		1BD17F0D369541F4913D7F3D /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02BC280BB84B4290B230F1 /* libRNGestureHandler.a */; };
+		1ED2E746227C35EA00A8EDC2 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
+		1ED2E78A227C375C00A8EDC2 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 1ED2E75A227C375C00A8EDC2 /* main.jsbundle */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -435,6 +437,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GaspelApp/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1803DD22D76C421F8FBB0A96 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		1ED2E75A227C375C00A8EDC2 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = main.jsbundle; sourceTree = "<group>"; };
 		1FA0E58741F149A1879852AC /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		28CAB3CF424848E99F5E0C28 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		2B67B54355484169877E38D8 /* SQLite.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = "../node_modules/react-native-sqlite-storage/src/ios/SQLite.xcodeproj"; sourceTree = "<group>"; };
@@ -690,6 +693,7 @@
 			children = (
 				02DF1A082271B3A5000698A6 /* LaunchScreen.xib */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				1ED2E75A227C375C00A8EDC2 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -950,6 +954,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1390,10 +1395,12 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				D3A49EE675A7413687BB72A0 /* AntDesign.ttf in Resources */,
+				1ED2E746227C35EA00A8EDC2 /* main.jsbundle in Resources */,
 				666842CCB6F7422F91E59102 /* Entypo.ttf in Resources */,
 				C82067FDB8104C71B99ECF70 /* EvilIcons.ttf in Resources */,
 				D367D6143D6A41D1989F8240 /* Feather.ttf in Resources */,
 				B7B01AEFCE9B43A9B0050E91 /* FontAwesome.ttf in Resources */,
+				1ED2E78A227C375C00A8EDC2 /* main.jsbundle in Resources */,
 				39C61391D0DE4F1086680BF5 /* FontAwesome5_Brands.ttf in Resources */,
 				C59312CA05CE44DE84925948 /* FontAwesome5_Regular.ttf in Resources */,
 				CBC4DE7323CB473BAC30BC99 /* FontAwesome5_Solid.ttf in Resources */,
@@ -1916,7 +1923,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos11.2;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -1962,7 +1969,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos11.2;
+				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

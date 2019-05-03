@@ -17,7 +17,7 @@ import FirstPage from '../containers/FirstPageContainer';
 import LoginUser from '../containers/LoginUserContainer';
 import { TextInput } from 'react-native-gesture-handler';
 
-//saea git test
+//saea only change sdk root
 const getTabBarIcon = (navigation, focused, tintColor) => {
 	const { routeName } = navigation.state;
 	let IconComponent = Icon;
