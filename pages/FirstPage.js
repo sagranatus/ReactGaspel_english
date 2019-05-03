@@ -7,7 +7,7 @@ var ReactNativeAutoUpdater = require('react-native-auto-updater');
 
 ReactNativeAutoUpdater.jsCodeVersion() 
 export default class FirstPage extends Component { 
-
+//test git
  
 constructor(props) { 
     super(props) 
