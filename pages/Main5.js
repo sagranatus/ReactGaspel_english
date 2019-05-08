@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard, Alert } from 'react-native';
+import { Platform, StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator, AsyncStorage, Keyboard, Alert } from 'react-native';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -990,7 +990,7 @@ render() {
           style={{position: 'absolute', left:10,bottom:12}}
           onPress={() => this.state.selectedDate_format.includes("일요일") ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
           >    
-            <Text style={{color:"#01579b"}}>더보기</Text>
+            <Text style={Platform.OS == "ios"? {color:"#01579b", marginBottom:5} : {color:"#01579b"}}>더보기</Text>
         </TouchableOpacity>   
       </View>     
       <View style={{flex:1, backgroundColor:'#fff'}}>    

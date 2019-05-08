@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { PixelRatio, StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage } from 'react-native';
+import { Platform, PixelRatio, StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage } from 'react-native';
 import {PropTypes} from 'prop-types';
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -167,7 +167,7 @@ render() {
       value={this.state.UserName}
       onChangeText={UserName => this.setState({UserName})}  
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={Platform.OS=="ios" ? [styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}] : [styles.TextInputStyleClass, {width:'24%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -175,7 +175,7 @@ render() {
       value={this.state.UserCatholicName}
       onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={Platform.OS=="ios" ? [styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}] : [styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -183,12 +183,12 @@ render() {
       value={this.state.UserAge}
       onChangeText={UserAge => this.setState({UserAge})}    
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={Platform.OS=="ios" ? {display:'none'} : [styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <Picker
       selectedValue={this.state.UserGender}
-      style={{width:'24%', paddingLeft:'1%', height:50}}
+      style={Platform.OS=="ios" ? {display:'none'} : {width:'24%', paddingLeft:'1%', height:50}}
       onValueChange={(itemValue, itemIndex) =>
         this.setState({UserGender: itemValue})
       }
@@ -200,10 +200,10 @@ render() {
       
       <Picker
       selectedValue={this.state.UserRegion}
-      style={{width:'48%', padding:'1%', height:50}}
+      style={{width:'48%', padding:'1%', height:90}}
       onValueChange={(itemValue, itemIndex) =>
         this.setState({UserRegion: itemValue})}
-      itemStyle={{height:50}}
+      itemStyle={{height:90}}
       >
         <Picker.Item label="교구" value="" />
         <Picker.Item label="서울대교구" value="서울대교구" />
@@ -229,7 +229,7 @@ render() {
       value={this.state.UserCathedral}
       onChangeText={UserCathedral => this.setState({UserCathedral})}
       underlineColorAndroid='transparent'        
-      style={[styles.TextInputStyleClass, {width:'48%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={Platform.OS == "ios" ? [styles.TextInputStyleClass, {width:'48%',marginTop:28, fontSize: 15 / PixelRatio.getFontScale()}] : [styles.TextInputStyleClass, {width:'48%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
       
       <TextInput                

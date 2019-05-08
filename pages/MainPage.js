@@ -68,78 +68,78 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom',
-			backBehavior: 'history'
+			backBehavior: Platform.OS == 'ios' ? 'none' : 'history'
 		 }	
 		);
 		
 
+	if(	Platform.OS !== 'ios' ){
+	const defaultGetStateForAction = TabNavigator.router.getStateForAction;
+	TabNavigator.router.getStateForAction = (action, state) => {
+		const screen = state ? state.routes[state.index] : null;
+		console.log("tab",state)
+		console.log("tab",screen)
 
-const defaultGetStateForAction = TabNavigator.router.getStateForAction;
-TabNavigator.router.getStateForAction = (action, state) => {
-	const screen = state ? state.routes[state.index] : null;
-	console.log("tab",state)
-	console.log("tab",screen)
-
-	// FirstPage에서 뒤로가기 세팅
-	if (action.type === "Navigation/NAVIGATE" && action.routeName == 'Home') 
-	{
-		console.log("home!!!")
-		return {
-			...state,
-			routeName : "Home",
-			index: 0			
-		};	
-	}
-
-	// Main1, 3, 4, 5 의 경우 LoginUser로 가는 것을 방지하기 위한 세팅 
-	if(screen !== null && state.routeKeyHistory.length !== 0 && state.routeKeyHistory !== 'undefined'){
-	console.log("key",screen.key)
-	console.log("history",state.routeKeyHistory)	
-		if (action.type === NavigationActions.BACK && screen.key == 'Main1' && state.routeKeyHistory.length == 1) 
+		// FirstPage에서 뒤로가기 세팅
+		if (action.type === "Navigation/NAVIGATE" && action.routeName == 'Home') 
 		{
-			console.log("not Move!!!"+screen.key)
-			
-		const newRoutes = state.routes;
-		return {
-			...state,
-			index: 0,
-			routes: newRoutes		 
-		};
-		}else if (action.type === NavigationActions.BACK && screen.key == 'Main3' && state.routeKeyHistory.length == 1) 
-		{
-			console.log("not Move!!!"+screen.key)
-			
-			const newRoutes = state.routes;
+			console.log("home!!!")
 			return {
 				...state,
-				index: 1,
-				routes: newRoutes		 
-			};
-		}else if (action.type === NavigationActions.BACK && screen.key == 'Main4' && state.routeKeyHistory.length == 1) 
-			{
-			console.log("not Move!!!"+screen.key)
-			
-			const newRoutes = state.routes;
-			return {
-				...state,
-				index: 2,
-				routes: newRoutes		 
-			};
-		}else if (action.type === NavigationActions.BACK && screen.key == 'Main5' && state.routeKeyHistory.length == 1) 
-		{
-			console.log("not Move!!!"+screen.key)
-			
-			const newRoutes = state.routes;
-			return {
-				...state,
-				index: 3,
-				routes: newRoutes		 
-			};
+				routeName : "Home",
+				index: 0			
+			};	
 		}
-	}
-	return defaultGetStateForAction(action, state);
-};
 
+		// Main1, 3, 4, 5 의 경우 LoginUser로 가는 것을 방지하기 위한 세팅 
+		if(screen !== null && state.routeKeyHistory.length !== 0 && state.routeKeyHistory !== 'undefined'){
+		console.log("key",screen.key)
+		console.log("history",state.routeKeyHistory)	
+			if (action.type === NavigationActions.BACK && screen.key == 'Main1' && state.routeKeyHistory.length == 1) 
+			{
+				console.log("not Move!!!"+screen.key)
+				
+			const newRoutes = state.routes;
+			return {
+				...state,
+				index: 0,
+				routes: newRoutes		 
+			};
+			}else if (action.type === NavigationActions.BACK && screen.key == 'Main3' && state.routeKeyHistory.length == 1) 
+			{
+				console.log("not Move!!!"+screen.key)
+				
+				const newRoutes = state.routes;
+				return {
+					...state,
+					index: 1,
+					routes: newRoutes		 
+				};
+			}else if (action.type === NavigationActions.BACK && screen.key == 'Main4' && state.routeKeyHistory.length == 1) 
+				{
+				console.log("not Move!!!"+screen.key)
+				
+				const newRoutes = state.routes;
+				return {
+					...state,
+					index: 2,
+					routes: newRoutes		 
+				};
+			}else if (action.type === NavigationActions.BACK && screen.key == 'Main5' && state.routeKeyHistory.length == 1) 
+			{
+				console.log("not Move!!!"+screen.key)
+				
+				const newRoutes = state.routes;
+				return {
+					...state,
+					index: 3,
+					routes: newRoutes		 
+				};
+			}
+		}
+		return defaultGetStateForAction(action, state);
+	};
+}
 const AppContainer = createAppContainer(TabNavigator)
 	
 const RootStack = createStackNavigator({
@@ -152,7 +152,7 @@ const RootStack = createStackNavigator({
 	Main: {
 		screen: AppContainer,
 		navigationOptions: {
-			header: null
+			header: null,
 		}
 	},	
 	RegisterUser: {
@@ -166,10 +166,16 @@ const RootStack = createStackNavigator({
 		navigationOptions: {
 			header: null
 		}				
-	},				
-
-	initialRouteName: 'Home'
-});
+	},
+},
+{
+		initialRouteName: 'Home',
+		headerMode: 'none',
+			defaultNavigationOptions: {
+				gesturesEnabled: false
+			}
+		}
+);
 const RootStack2 = createStackNavigator({ 
 	Main: {
 		screen: AppContainer,
@@ -194,9 +200,16 @@ const RootStack2 = createStackNavigator({
 		navigationOptions: {
 			header: null
 		}										
-	},	
-	initialRouteName: 'Main'
-});
+	}
+},
+	{
+			initialRouteName: 'Main',
+			headerMode: 'none',
+				defaultNavigationOptions: {
+					gesturesEnabled: false
+				}
+			}
+	);
 // 로그인상태에 따라 첫번째를 Main1 / Home으로 변경하기 위한 코드
 const RootContainer = createAppContainer(RootStack);
 const RootContainer2 = createAppContainer(RootStack2);
@@ -270,7 +283,7 @@ export default class App extends React.Component {
 	</View>
 	: 
 	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>
-	<RootContainer2 />
+	<RootContainer />
 	</View>
 	}
 }
