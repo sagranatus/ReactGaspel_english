@@ -167,7 +167,7 @@ render() {
       value={this.state.UserName}
       onChangeText={UserName => this.setState({UserName})}  
       underlineColorAndroid='transparent'        
-      style={Platform.OS=="ios" ? [styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}] : [styles.TextInputStyleClass, {width:'24%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={[styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -175,7 +175,7 @@ render() {
       value={this.state.UserCatholicName}
       onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
       underlineColorAndroid='transparent'        
-      style={Platform.OS=="ios" ? [styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}] : [styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={[styles.TextInputStyleClass, {width:'48%', paddingRight:'1%', fontSize: 15 / PixelRatio.getFontScale()}]}
       />
 
       <TextInput                
@@ -183,12 +183,12 @@ render() {
       value={this.state.UserAge}
       onChangeText={UserAge => this.setState({UserAge})}    
       underlineColorAndroid='transparent'        
-      style={Platform.OS=="ios" ? {display:'none'} : [styles.TextInputStyleClass, {width:'24%', paddingLeft:'0.5%', paddingRight:'0.5%', fontSize: 15 / PixelRatio.getFontScale()}]}
+      style={{display:'none'}}
       />
 
       <Picker
       selectedValue={this.state.UserGender}
-      style={Platform.OS=="ios" ? {display:'none'} : {width:'24%', paddingLeft:'1%', height:50}}
+      style={{display:'none'}}
       onValueChange={(itemValue, itemIndex) =>
         this.setState({UserGender: itemValue})
       }
@@ -200,10 +200,10 @@ render() {
       
       <Picker
       selectedValue={this.state.UserRegion}
-      style={{width:'48%', padding:'1%', height:90}}
+      style={Platform.OS=="ios" ? {width:'48%', padding:'1%', height:90} : {width:'48%', padding:'1%', height:50}}
       onValueChange={(itemValue, itemIndex) =>
         this.setState({UserRegion: itemValue})}
-      itemStyle={{height:90}}
+      itemStyle={Platform.OS=="ios" ? {height:90} : {height: 50}}
       >
         <Picker.Item label="교구" value="" />
         <Picker.Item label="서울대교구" value="서울대교구" />

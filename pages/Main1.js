@@ -9,7 +9,7 @@ import Slideshow from 'react-native-image-slider-show';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
 import Icon3 from 'react-native-vector-icons/Ionicons'
-
+import RNFetchBlob from "rn-fetch-blob";
 var smallSize;
 var normalSize;
 var largeSize;
@@ -35,11 +35,11 @@ constructor(props) {
       interval: null,
       dataSource: [
       {
-        url: 'http://sssagranatus.cafe24.com/resource/slide1.png',
+        url: ""
       }, {
-        url: 'http://sssagranatus.cafe24.com/resource/slide2.png'
+        url: ""
       }, {
-        url: 'http://sssagranatus.cafe24.com/resource/slide3.png'
+        url: ""
       },
     ], 
     position2: 1,
@@ -63,13 +63,90 @@ constructor(props) {
  
   this.onModalClose = this.onModalClose.bind(this);
   this.onModalOpen = this.onModalOpen.bind(this);
+  this.getSlideImagefromServer = this.getSlideImagefromServer.bind(this);
 }
 
 urlSetting(){
   this.setState({reload:true})
 }
 
+getSlideImagefromServer(){
+   //test 
+
+   let dirs = RNFetchBlob.fs.dirs;
+   console.log(dirs)
+   RNFetchBlob.config({
+     // add this option that makes response data to be stored as a file,
+     // this is much more performant.
+     path: dirs.SDCardApplicationDir + "/slide1.png",
+     fileCache: false
+   })
+     .fetch(
+       "GET",
+       "http://sssagranatus.cafe24.com/resource/slide1.png",
+       {
+         //some headers ..
+       }
+     )
+     .progress((received, total) => {
+     
+     })
+     .then(res => {
+    //  alert("done")
+     });
+ 
+     RNFetchBlob.config({
+       // add this option that makes response data to be stored as a file,
+       // this is much more performant.
+       path: dirs.SDCardApplicationDir + "/slide2.png",
+       fileCache: false
+     })
+       .fetch(
+         "GET",
+         "http://sssagranatus.cafe24.com/resource/slide2.png",
+         {
+           //some headers ..
+         }
+       )
+       .progress((received, total) => {
+       
+       })
+       .then(res => {
+       // alert("done")
+       });
+ 
+       RNFetchBlob.config({
+         // add this option that makes response data to be stored as a file,
+         // this is much more performant.
+         path: dirs.SDCardApplicationDir + "/slide3.png",
+         fileCache: false
+       })
+         .fetch(
+           "GET",
+           "http://sssagranatus.cafe24.com/resource/slide3.png",
+           {
+             //some headers ..
+           }
+         )
+         .progress((received, total) => {
+         
+         })
+         .then(res => {
+        //  alert("done")
+         }); 
+ 
+     this.setState( {dataSource: [
+       {
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide1.png"
+       }, {
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide2.png"
+       }, {
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide3.png"
+       }]}) 
+ 
+}
 componentWillMount(){
+  this.getSlideImagefromServer(); 
   this._panResponder = PanResponder.create({
     onMoveShouldSetResponderCapture: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
@@ -399,14 +476,7 @@ componentWillReceiveProps(nextProps){
         
       }else{       
         // today1 달라진 경우
-        this.setState( {dataSource: [
-          {
-            url: 'http://sssagranatus.cafe24.com/resource/slide1.png',
-          }, {
-            url: 'http://sssagranatus.cafe24.com/resource/slide2.png',
-          }, {
-            url: 'http://sssagranatus.cafe24.com/resource/slide3.png',
-        }]}) 
+        this.getSlideImagefromServer();
 
          // slide url 다시 가져오기
       fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
@@ -664,6 +734,7 @@ render() {
         <Slideshow 
           dataSource={this.state.dataSource}
           position={this.state.position}
+          expire={'second'} 
           arrowSize={0}
           onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
           onPositionChanged={position => this.setState({ position })} />                    

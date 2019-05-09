@@ -101,7 +101,12 @@ constructor(props) {
   
 
 componentWillMount(){
-  PushNotificationIOS.requestPermissions()
+  if(Platform.OS == "ios"){
+    PushNotificationIOS.requestPermissions()
+  }else{
+    PushNotification.requestPermissions()
+  }
+  
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
@@ -163,10 +168,11 @@ componentWillMount(){
   };
 
 // 알람 삭제하기
-stopAlarm1(){
-  PushNotification.cancelLocalNotifications({id: '123'})
+stopAlarm1(){  
   if(Platform.OS == "ios"){
     PushNotificationIOS.cancelAllLocalNotifications();
+  }else{
+    PushNotification.cancelLocalNotifications({id: '123'})
   }
   this.setState({ time: '' });
   try{
