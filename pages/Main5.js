@@ -29,7 +29,7 @@ constructor(props) {
         selectedDate_format: "",// - -
         onesentence: "",      
         initialLoading: true,
-        avatarSource:  {uri: ""},
+        avatarSource:  {uri: Platform.OS == "ios" ? 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg' : ""},
         todaycount: 0,
         weekcount: 0,
         monthcount: 0,
@@ -46,8 +46,7 @@ constructor(props) {
     this.getImagefromServer = this.getImagefromServer.bind(this);
   }
 
-  getImagefromServer(){
-   
+  getImagefromServer(){   
 
     let dirs = RNFetchBlob.fs.dirs;
     console.log(dirs)
@@ -146,14 +145,13 @@ constructor(props) {
           Image_TAG: this.props.status.loginId
         });
 
-        //삽입
-      
-      
-       
+        //삽입     
+        if(Platform.OS !=="ios"){
         let dirs = RNFetchBlob.fs.dirs;
         console.log(dirs.SDCardApplicationDir)
         RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg').then(() => {          
-          }).catch((e)=>{ alert("FAILED:= "+e.message) });     
+          }).catch((e)=>{ alert("FAILED:= "+e.message) }); 
+        }           
        
         this.uploadImageToServer()
       }
@@ -183,7 +181,10 @@ constructor(props) {
 }
  
 componentWillMount(){
-  this.getImagefromServer();
+  if(Platform.OS !=="ios"){
+    this.getImagefromServer();
+  }
+  
 
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {

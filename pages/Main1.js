@@ -35,20 +35,20 @@ constructor(props) {
       interval: null,
       dataSource: [
       {
-        url: ""
+        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide1.png" : ""
       }, {
-        url: ""
+        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide2.png" : ""
       }, {
-        url: ""
+        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide3.png" : ""
       },
     ], 
     position2: 1,
     interval2: null,
     dataSource2: [
       {
-        url: ''
+        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/ad1.png" : ""
       }, {
-        url: ''
+        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/ad2.png" : ""
       }
       
     ],
@@ -194,7 +194,10 @@ getSlideImagefromServer(){
  
 }
 componentWillMount(){
-  this.getSlideImagefromServer(); 
+  if(Platform.OS !== "ios"){
+    this.getSlideImagefromServer(); 
+  }
+  
   this._panResponder = PanResponder.create({
     onMoveShouldSetResponderCapture: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
@@ -339,12 +342,12 @@ componentDidMount(){
   this.setState({
     interval: setInterval(() => {
       this.setState({
-        position: this.state.position === this.state.dataSource.length ? 0 : this.state.position + 1
+        position: this.state.position === (Platform.OS == "ios" ? this.state.dataSource.length-1 : this.state.dataSource.length) ? 0 : this.state.position + 1
       });
     }, 5000),
     interval2: setInterval(() => {
       this.setState({
-        position2: this.state.position2 === this.state.dataSource2.length ? 0 : this.state.position2 + 1
+        position2: this.state.position2 === (Platform.OS == "ios" ? this.state.dataSource2.length-1 : this.state.dataSource2.length) ? 0 : this.state.position2 + 1
       });
     }, 2000)
   });
@@ -524,8 +527,29 @@ componentWillReceiveProps(nextProps){
         
       }else{       
         // today1 달라진 경우
-        this.getSlideImagefromServer();
-
+        if(Platform.OS !== "ios"){
+          this.getSlideImagefromServer(); 
+        }else{
+          this.setState({dataSource: [
+            {
+              url: "http://sssagranatus.cafe24.com/resource/slide1.png"
+            }, {
+              url: "http://sssagranatus.cafe24.com/resource/slide2.png"
+            }, {
+              url:  "http://sssagranatus.cafe24.com/resource/slide3.png"
+            },
+          ]});
+          this.setState({dataSource2: [
+            {
+              url:  "http://sssagranatus.cafe24.com/resource/ad1.png"
+            }, {
+              url: "http://sssagranatus.cafe24.com/resource/ad2.png"
+            }            
+          ],
+        });
+        
+      }
+      
          // slide url 다시 가져오기
       fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
         method: 'POST',
@@ -782,7 +806,6 @@ render() {
         <Slideshow 
           dataSource={this.state.dataSource}
           position={this.state.position}
-          expire={'second'} 
           arrowSize={0}
           onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
           onPositionChanged={position => this.setState({ position })} />                    
