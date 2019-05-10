@@ -46,9 +46,9 @@ constructor(props) {
     interval2: null,
     dataSource2: [
       {
-        url: 'http://sssagranatus.cafe24.com/resource/ad1.png'
+        url: ''
       }, {
-        url: 'http://sssagranatus.cafe24.com/resource/ad2.png'
+        url: ''
       }
       
     ],
@@ -135,6 +135,47 @@ getSlideImagefromServer(){
         //  alert("done")
          }); 
  
+         RNFetchBlob.config({
+          // add this option that makes response data to be stored as a file,
+          // this is much more performant.
+          path: dirs.SDCardApplicationDir + "/ad1.png",
+          fileCache: false
+        })
+          .fetch(
+            "GET",
+            "http://sssagranatus.cafe24.com/resource/ad1.png",
+            {
+              //some headers ..
+            }
+          )
+          .progress((received, total) => {
+          
+          })
+          .then(res => {
+         //  alert("done")
+          }); 
+
+          
+         RNFetchBlob.config({
+          // add this option that makes response data to be stored as a file,
+          // this is much more performant.
+          path: dirs.SDCardApplicationDir + "/ad2.png",
+          fileCache: false
+        })
+          .fetch(
+            "GET",
+            "http://sssagranatus.cafe24.com/resource/ad2.png",
+            {
+              //some headers ..
+            }
+          )
+          .progress((received, total) => {
+          
+          })
+          .then(res => {
+         //  alert("done")
+          });
+  
      this.setState( {dataSource: [
        {
          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide1.png"
@@ -143,6 +184,13 @@ getSlideImagefromServer(){
        }, {
          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide3.png"
        }]}) 
+
+       this.setState( {dataSource2: [
+        {
+          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/ad1.png"
+        }, {
+          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/ad2.png"
+        },]}) 
  
 }
 componentWillMount(){

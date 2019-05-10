@@ -29,7 +29,7 @@ constructor(props) {
         selectedDate_format: "",// - -
         onesentence: "",      
         initialLoading: true,
-        avatarSource:  {uri: 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg'},
+        avatarSource:  {uri: ""},
         todaycount: 0,
         weekcount: 0,
         monthcount: 0,
@@ -43,8 +43,52 @@ constructor(props) {
     
     this.toggle = this.toggle.bind(this);  
     this.onselectDate= this.onselectDate.bind(this);
-   
+    this.getImagefromServer = this.getImagefromServer.bind(this);
   }
+
+  getImagefromServer(){
+   
+
+    let dirs = RNFetchBlob.fs.dirs;
+    console.log(dirs)
+
+    RNFetchBlob.fs.exists(dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg')
+    .then((exist) => {
+        //alert(exist)
+        console.log(`file ${exist ? '' : 'not'} exists`)
+        if(exist === false){
+          RNFetchBlob.config({
+            // add this option that makes response data to be stored as a file,
+            // this is much more performant.
+            path: dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg',
+            fileCache: false
+          })
+            .fetch(
+              "GET",
+              'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg',
+              {
+                //some headers ..
+              }
+            )
+            .progress((received, total) => {
+            
+            })
+            .then(res => {
+            // alert("done")
+            });
+        }
+    })
+    .catch(() => {  })
+  
+
+      this.setState( {avatarSource: 
+        {
+          uri: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/"+this.props.status.loginId+'.jpeg'
+        }
+      }) 
+
+    }
+
   // 메뉴 열고 닫기 - isOpen 
   toggle() {
     this.setState({
@@ -101,6 +145,16 @@ constructor(props) {
           data: response.data,
           Image_TAG: this.props.status.loginId
         });
+
+        //삽입
+      
+      
+       
+        let dirs = RNFetchBlob.fs.dirs;
+        console.log(dirs.SDCardApplicationDir)
+        RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg').then(() => {          
+          }).catch((e)=>{ alert("FAILED:= "+e.message) });     
+       
         this.uploadImageToServer()
       }
     });
@@ -129,6 +183,8 @@ constructor(props) {
 }
  
 componentWillMount(){
+  this.getImagefromServer();
+
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
