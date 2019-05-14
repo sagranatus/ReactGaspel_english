@@ -799,6 +799,13 @@ render() {
           >      
           <Image source={require('../resources/info.png')} style={{width: 20, height: 20}} />       
           </TouchableOpacity>
+
+          <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.props.navigation.navigate('SendImage')} // insertComment
+          >      
+          <Image source={require('../resources/up.png')} style={{width: 20, height: 20, marginLeft:10}} />       
+          </TouchableOpacity>
         </View>
       </View>
   

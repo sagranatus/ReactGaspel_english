@@ -404,6 +404,7 @@ transitionToNextPanel(from, nextIndex){
                          sum2 : results.rows.item(0).sum2,
                          js1 : results.rows.item(0).js1,
                          js2 : results.rows.item(0).js2,
+                         Sentence : results.rows.item(0).onesentence,
                          Lectioupdate: true,
                          initialLoading: false,
                          comment:null,

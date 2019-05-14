@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.content.Context;
 
 import com.facebook.react.ReactApplication;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -30,13 +31,14 @@ public class MainApplication extends Application implements ReactApplication {
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return false; //BuildConfig.DEBUG //saea release시에 false로 변경
+      return true; //BuildConfig.DEBUG //saea release시에 false로 변경
     }
 
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNViewShotPackage(),
             new ReactNativeAutoUpdaterPackage(),
             new ReactNativePushNotificationPackage(),
             new RNFetchBlobPackage(),

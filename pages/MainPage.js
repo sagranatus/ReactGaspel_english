@@ -15,6 +15,7 @@ import Setting from './Setting'
 import RegisterUser from '../containers/RegisterUserContainer';
 import FirstPage from '../containers/FirstPageContainer';
 import LoginUser from '../containers/LoginUserContainer';
+import SendImage from '../containers/SendImageContainer';
 import { TextInput } from 'react-native-gesture-handler';
 
 //saea only change sdk root
@@ -47,6 +48,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Guide: { screen: GuidePage },
 			Profile: { screen: Profile},
 			Setting: { screen: Setting },
+			SendImage: {screen: SendImage}
 		
 		},
 		 {	
@@ -65,7 +67,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
-				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting')}}} 
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting' && r.routeName !== 'SendImage' )}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom',
 			backBehavior: Platform.OS == 'ios' ? 'none' : 'history'
