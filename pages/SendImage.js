@@ -3,8 +3,31 @@ import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
 import { Text, Image, View, TouchableOpacity} from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
-
+import RNKakaoLink from 'react-native-kakao-links';
 var db = openDatabase({ name: 'UserDatabase.db' });
+import RNFetchBlob from "rn-fetch-blob";
+const linkObject={
+  webURL                :'https://developers.kakao.com/docs/android/kakaotalk-link',//optional
+  mobileWebURL          :'https://developers.kakao.com/docs/android/kakaotalk-link',//optional
+ // androidExecutionParams:'shopId=1&itemId=24', //optional For Linking URL
+ // iosExecutionParams    :'shopId=1&itemId=24', //optional For Linking URL
+};
+
+
+
+//5개의 속성 중 최대 3개만 표시해 줍니다. 우선순위는 Like > Comment > Shared > View > Subscriber 입니다.
+const socialObject ={
+  likeCount:12,//optional
+  commentCount:1,//optional
+  sharedCount:23,//optional
+  viewCount:10,//optional
+  subscriberCount:22//optional
+}
+
+const buttonObject = {
+  title:'앱으로보기',//required
+  link : linkObject,//required
+}
 
 export default class SendImage extends Component {
   constructor(props) { 
@@ -15,6 +38,7 @@ export default class SendImage extends Component {
       }
       this.saveImage = this.saveImage.bind(this);
       this.getData = this.getData.bind(this);
+      this.linkFeed= this.linkFeed.bind(this);
   }
   componentWillMount () {
     var date = new Date();
@@ -90,10 +114,50 @@ export default class SendImage extends Component {
   saveImage(){
       this.refs.viewShot.capture().then(uri => {
           console.log("do something with ", uri);
-          //alert(uri);
-          this.setState({uri: uri})
+         // alert(uri);
+          this.setState({uri: uri})        
+         // let dirs = RNFetchBlob.fs.dirs;
+        //  console.log(dirs.DCIMDir)
+          //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
+         // RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png")
+         // .then(() => { alert("done") })
+         // .catch((error) => { alert(error) })
+
+        // alert(this.state.uri2);
       });
   }
+
+  linkFeed = async () => {
+    
+  const contentObject = {
+    title     : this.state.Sentence,
+    link      : linkObject,
+    imageURL  : 'http://sssagranatus.cafe24.com/resource/'+this.state.backgroundImageName,
+    imageFile: this.state.uri,
+    desc      : this.state.js2,//optional
+   // imageWidth: 240,//optional
+  //  imageHeight:240//optional
+    }
+   
+    try{
+      let dirs = RNFetchBlob.fs.dirs;
+      const options = {
+        objectType:'feed',//required
+        content:contentObject,//required
+       // social:socialObject,//optional
+        buttons:[buttonObject]//optional
+      /*  objectType:'image',
+        url: dirs.DCIMDir+"/sendimg.png"*/
+      };
+      const response = await RNKakaoLink.link(options);
+      console.log(response);
+    //  alert(response);
+
+    }catch(e){
+      console.warn(e);
+    }
+  }
+
 
 changeDateFormat(date){
   var year = date.getFullYear();
@@ -138,13 +202,13 @@ render() {
       <Image source={this.state.backgroundImage} style={{width: 70, height: 70}} />  
     </ViewShot>
     <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
-      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImage: require('../resources/pray1_img.png')})}>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImageName:'pray1_img.png' ,backgroundImage: require('../resources/pray1_img.png')})}>
        <Image source={require('../resources/pray1_img.png')} style={{width: 70, height: 70}} />      
       </TouchableOpacity>        
-      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImage: require('../resources/pray2_img.png')})}>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImageName:'pray2_img.png' , backgroundImage: require('../resources/pray2_img.png')})}>
         <Image source={require('../resources/pray2_img.png')} style={{width: 70, height: 70}} />          
       </TouchableOpacity> 
-      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImage: require('../resources/weekend_img1.png')})}>
+      <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImageName:'weekend_img1.png', backgroundImage: require('../resources/weekend_img1.png')})}>
         <Image source={require('../resources/weekend_img1.png')} style={{width: 70, height: 70}} />  
         </TouchableOpacity>
     </View>
@@ -155,7 +219,15 @@ render() {
         >    
             <Text>Save</Text>      
       </TouchableOpacity>    
+   
       <Image source={this.state.uri !== null ? {uri: this.state.uri} : require('../resources/ic_launcher.png')} style={{width: '100%', height: 120}} resizeMode={"contain"}/>  
+  
+      <TouchableOpacity 
+        activeOpacity = {0.9}
+        onPress={() => this.linkFeed() } 
+        >    
+            <Text>Send!!</Text>      
+      </TouchableOpacity>    
   </View>
   );
 }

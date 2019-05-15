@@ -63,6 +63,7 @@
 		EE2A3DF3262D42EAB30C4EF2 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3BFB63E94BD4B7196BE6EEF /* MaterialCommunityIcons.ttf */; };
 		FE515D6C8C9040A5A940179B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F6C90751C1A4A3893BDE295 /* SimpleLineIcons.ttf */; };
 		3F46E318CDAD4B9894B3DF89 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */; };
+		084801EC0A1C4ABABA877361 /* libRNKakaoLink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164F83B75B5049E9995AB876 /* libRNKakaoLink.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -469,6 +470,8 @@
 		F848FFBAF43C4BE1973CC567 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; name = "RNViewShot.xcodeproj"; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */ = {isa = PBXFileReference; name = "libRNViewShot.a"; path = "libRNViewShot.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */ = {isa = PBXFileReference; name = "RNKakaoLink.xcodeproj"; path = "../node_modules/react-native-kakao-links/ios/RNKakaoLink.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		164F83B75B5049E9995AB876 /* libRNKakaoLink.a */ = {isa = PBXFileReference; name = "libRNKakaoLink.a"; path = "libRNKakaoLink.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +508,7 @@
 				18B3372C5374401683B85927 /* libRNImagePicker.a in Frameworks */,
 				CC7BC33F9A3A4F6CA4532E34 /* libRNFetchBlob.a in Frameworks */,
 				3F46E318CDAD4B9894B3DF89 /* libRNViewShot.a in Frameworks */,
+				084801EC0A1C4ABABA877361 /* libRNKakaoLink.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -795,6 +799,7 @@
 				28CAB3CF424848E99F5E0C28 /* RNImagePicker.xcodeproj */,
 				3491D87E803341B2AB2E0D6F /* RNFetchBlob.xcodeproj */,
 				03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */,
+				8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1539,12 +1544,14 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1570,12 +1577,14 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1619,6 +1628,7 @@
 					ode_modules,
 					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1666,6 +1676,7 @@
 					ode_modules,
 					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1703,11 +1714,13 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1742,11 +1755,13 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1780,11 +1795,13 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1818,11 +1835,13 @@
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
+					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
