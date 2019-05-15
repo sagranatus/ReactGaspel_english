@@ -792,7 +792,7 @@ render() {
           <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', paddingLeft:3}]}>오늘의복음</Text>
            
         </View>
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'0%', paddingLeft:'40%', float:'right'}}>
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'0%', paddingLeft:'33%', float:'right'}}>
           <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.props.navigation.navigate('Guide')} // insertComment
@@ -804,7 +804,7 @@ render() {
           activeOpacity = {0.9}
           onPress={() => this.props.navigation.navigate('SendImage')} // insertComment
           >      
-          <Image source={require('../resources/up.png')} style={{width: 20, height: 20, marginLeft:10}} />       
+          <Image source={require('../resources/plane.png')} style={{width: 20, height: 20, marginLeft:10}} />       
           </TouchableOpacity>
         </View>
       </View>

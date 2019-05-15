@@ -1,7 +1,7 @@
 import ViewShot from "react-native-view-shot";
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { Text, Image, View, TouchableOpacity} from 'react-native';
+import { Text, Image, View, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import RNKakaoLink from 'react-native-kakao-links';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -25,7 +25,7 @@ const socialObject ={
 }
 
 const buttonObject = {
-  title:'앱으로보기',//required
+  title:'',//required
   link : linkObject,//required
 }
 
@@ -111,48 +111,90 @@ export default class SendImage extends Component {
       }); 
   
   }
+ 
   saveImage(){
+    try {
+      const granted = PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome picntures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
       this.refs.viewShot.capture().then(uri => {
           console.log("do something with ", uri);
          // alert(uri);
           this.setState({uri: uri})        
-         // let dirs = RNFetchBlob.fs.dirs;
-        //  console.log(dirs.DCIMDir)
+          let dirs = RNFetchBlob.fs.dirs;
+          console.log(dirs.DCIMDir)
           //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
-         // RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png")
-         // .then(() => { alert("done") })
-         // .catch((error) => { alert(error) })
+          RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png")
+          .then(() => { 
+
+           })
+          .catch((error) => { 
+            alert(error) 
+          })
 
         // alert(this.state.uri2);
       });
   }
 
   linkFeed = async () => {
-    
-  const contentObject = {
-    title     : this.state.Sentence,
-    link      : linkObject,
-    imageURL  : 'http://sssagranatus.cafe24.com/resource/'+this.state.backgroundImageName,
-    imageFile: this.state.uri,
-    desc      : this.state.js2,//optional
-   // imageWidth: 240,//optional
-  //  imageHeight:240//optional
-    }
    
     try{
       let dirs = RNFetchBlob.fs.dirs;
       const options = {
-        objectType:'feed',//required
+     /*   objectType:'feed',//required
         content:contentObject,//required
        // social:socialObject,//optional
-        buttons:[buttonObject]//optional
-      /*  objectType:'image',
-        url: dirs.DCIMDir+"/sendimg.png"*/
+        buttons:[buttonObject]//optional*/
+        objectType:'image',
+        url: dirs.DCIMDir+"/sendimg.png"
       };
       const response = await RNKakaoLink.link(options);
       console.log(response);
-    //  alert(response);
+     // alert(response);
+      if(response !== null){
+        var image = response.argumentMsg;
+        const contentObject = {
+          title     : "오늘의복음을 해보았습니다.",
+          link      : linkObject,
+          imageURL  : image,
+          imageFile: this.state.uri,
+          desc      : "하느님 말씀을 들으니 참 좋네요~ 한번 써보세요~!",//optional
+          imageWidth: 300,//optional
+          imageHeight:150//optional
+          }
 
+          try{
+            let dirs = RNFetchBlob.fs.dirs;
+            const options = {
+              objectType:'feed',//required
+              content:contentObject,//required
+             // social:socialObject,//optional
+              buttons:[buttonObject]//optional
+            };
+            const response = await RNKakaoLink.link(options);
+            console.log(response);
+          }catch(e){
+            console.warn(e);
+          }
+      }
+      
     }catch(e){
       console.warn(e);
     }
@@ -185,7 +227,7 @@ render() {
     style={{
       flex: 1,
       paddingTop: 0,
-      backgroundColor: 'white',
+      backgroundColor: 'white'
     }}>      
       <TouchableOpacity
         activeOpacity = {0.9}
@@ -196,11 +238,19 @@ render() {
             {"<"} 뒤로
         </Text>
       </TouchableOpacity>   
-    <ViewShot ref="viewShot" options={{ format: "jpg", quality: 1 }} style={{backgroundColor:'white', borderRadius: 4, borderWidth: 0.5, borderColor: '#d6d7da'}}>
-      <Text>{this.state.Sentence}</Text>
-      <Text>{this.state.js2}</Text>
-      <Image source={this.state.backgroundImage} style={{width: 70, height: 70}} />  
+    <View
+    style={{
+      alignItems: 'center'
+    }}
+    > 
+    <ViewShot ref="viewShot" options={{ format: "jpg", quality: 1 }} style={{alignItems: 'center',backgroundColor:'white', borderRadius: 4, borderWidth: 0.5, borderColor: '#d6d7da', width:300, height:150}}>
+      <Image source={this.state.backgroundImage} style={{width: '100%', height:150}} ImageResizeMode={'center'} />  
+      <View style={{position: 'absolute', top:'18%', color:'white',alignItems: 'center', padding:10}}>
+      <Text style={{fontSize:16,color:'white', textAlign:'center'}}>{this.state.Sentence}</Text>
+      <Text style={{fontSize:15,color:'white', textAlign:'center',marginTop:10}}>{this.state.js2}</Text>
+      </View>
     </ViewShot>
+    </View>
     <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
       <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}} onPress={()=>this.setState({backgroundImageName:'pray1_img.png' ,backgroundImage: require('../resources/pray1_img.png')})}>
        <Image source={require('../resources/pray1_img.png')} style={{width: 70, height: 70}} />      
@@ -220,7 +270,7 @@ render() {
             <Text>Save</Text>      
       </TouchableOpacity>    
    
-      <Image source={this.state.uri !== null ? {uri: this.state.uri} : require('../resources/ic_launcher.png')} style={{width: '100%', height: 120}} resizeMode={"contain"}/>  
+      <Image source={this.state.uri !== null ? {uri: this.state.uri} : {}} style={{width: '100%', height: 120}} resizeMode={"contain"}/>  
   
       <TouchableOpacity 
         activeOpacity = {0.9}
