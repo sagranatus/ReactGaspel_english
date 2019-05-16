@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView, Alert, NetInfo, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
+import {  PanResponder, PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, KeyboardAvoidingView, Alert, NetInfo, Image, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -41,7 +41,8 @@ constructor(props) {
         basic: null, // null 시에 선택창알림
         comment: null,
         doMore: false,
-        weekend: false
+        weekend: false,
+        selectShow: false
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -358,6 +359,21 @@ transitionToNextPanel(from, nextIndex){
             }
           )
       });    
+
+      this._panResponder = PanResponder.create({
+        onMoveShouldSetResponderCapture: () => true,
+        onMoveShouldSetPanResponderCapture: () => true,
+        onPanResponderGrant: (e, gestureState) => {
+          this.fScroll.setNativeProps({ scrollEnabled: false })
+        },
+        onPanResponderMove: () => {
+    
+        },
+        onPanResponderTerminationRequest: () => true,
+        onPanResponderRelease: () => {
+          this.fScroll.setNativeProps({ scrollEnabled: true })
+        },
+      })
   }
 
   getData(){
@@ -859,13 +875,35 @@ setChange(){
         // 내용이 있고 수정 아닌 상태
             (            
             <View  style={{backgroundColor:'#fff', flex:1}}>
-            <ScrollView style={!this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}> 
+            <ScrollView style={!this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}
+            ref={(e) => { this.fScroll = e }}> 
                  <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();
                 }}
                 />
-                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
+                
+            <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+                <ScrollView 
+                style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
+                    {...this._panResponder.panHandlers}
+                    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
+                    <Text style={[styles.TextStyle,{marginTop:20, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                    </ScrollView>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{position: 'absolute', right:2, top:2}}
+                    onPress={() => this.setState({selectShow:false}) } 
+                    >    
+                    <Icon name={'close'} size={30} color={"#000"} />        
+                </TouchableOpacity>           
+            </View>     
+                 <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.setState({selectShow:true}) } 
+                    >    
+                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
+                </TouchableOpacity> 
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
@@ -879,7 +917,7 @@ setChange(){
                 <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
+                <Text style={[styles.TextResultStyleClass, normalSize, {fontWeight:'bold'}]}>{this.state.js2}</Text>        
                 <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                 <TouchableOpacity
                     activeOpacity = {0.9}
@@ -920,7 +958,7 @@ setChange(){
                 onPress={() => this.setState({ Lectioupdate: false, start:true, currentIndex: 0, basic:false, doMore:true })}
                 >
                 <Text style={{color:"#fff", textAlign:'center',fontWeight:'bold'}}>
-                    심화과정 이어서 하기 
+                    거룩한독서 이어서 하기 
                 </Text>
                 </TouchableOpacity>
                 </View>
@@ -941,7 +979,7 @@ setChange(){
                 <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
                 <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
 
-                <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
+                <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다.  <Text style={{fontWeight:'bold'}}>거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text></Text>
                 <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
                 <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
                 <TouchableOpacity
@@ -1233,14 +1271,14 @@ const styles = StyleSheet.create({
         color: "#000",
         margin:5,
         marginBottom: 7,
-        borderWidth: 1,
-         borderColor: '#01579b',
-         borderRadius: 5,
          fontSize:14 
         },
     UpdateQuestionStyleClass: {
         textAlign: 'center',
-        color: '#000',
+        color: '#686868',
+        backgroundColor:'#F9F9F9',
+        padding:5,
+        borderBottomColor:"#d8d8d8", borderBottomWidth:0.5,
         fontSize:14
     },
     TextQuestionStyleClass: {        

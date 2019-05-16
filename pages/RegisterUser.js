@@ -1,8 +1,9 @@
 import React, { Component } from 'react'; 
-import { Platform, PixelRatio, StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage } from 'react-native';
+import { Platform, PixelRatio, StyleSheet, TextInput, View, Alert, Text, TouchableOpacity, Picker,AsyncStorage, PushNotificationIOS } from 'react-native';
 import {PropTypes} from 'prop-types';
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
+var PushNotification = require('react-native-push-notification');
 var db = openDatabase({ name: 'UserDatabase.db' });
 
 
@@ -71,9 +72,47 @@ UserRegistrationFunction = () =>{
               AsyncStorage.setItem('login_id', responseJson.id);
               AsyncStorage.setItem('login_name', UserName);
               AsyncStorage.setItem('login_christ_name', UserCatholicName);
+              AsyncStorage.setItem('alarm1', "09:00:00");     
             } catch (error) {
               console.error('AsyncStorage error: ' + error.message);
             }         
+
+             //alarm 기본 9시로 세팅
+          if(Platform.OS == "ios"){
+            PushNotificationIOS.requestPermissions()
+          }else{
+            PushNotification.requestPermissions()
+          }
+          var date = new Date()
+          var year = date.getFullYear();
+          var month = date.getMonth()+1
+          var day = date.getDate();
+          console.log(month+'/'+day+'/'+year+' '+"09:00:00")
+          if(new Date(month+'/'+day+'/'+year+' '+"09:00:00") - new Date() < 0){
+            day = date.getDate()+1;
+            console.log("previous time setting!!")
+          }
+          month = Platform.OS == 'ios' ? month-1 : month
+        
+          if(Platform.OS == 'ios'){
+            PushNotificationIOS.scheduleLocalNotification({
+              alertTitle:"거룩한독서 알람",
+              alertBody: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+        // fireDate: new Date(2019,3,5,14,24,0).toISOString(), // in 60 secs
+             fireDate:new Date(month+'/'+day+'/'+year+' '+"09:00:00").toISOString(),
+              repeatInterval: 'day'
+            });
+          }else{
+            PushNotification.localNotificationSchedule({
+              id: '123',
+              message: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+              date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
+              vibrate: true, // (optional) default: true
+              vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+              playSound: true, // (optional) default: true
+              repeatType: 'day'
+            });
+          } 
             
             console.log('RegisterUser - registration success : ', responseJson.id);
             const setLogin = this.props.setLogin

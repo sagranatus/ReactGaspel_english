@@ -157,6 +157,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-share')
+    compile project(':react-native-fs')
     compile project(':react-native-kakao-links')
     compile project(':react-native-view-shot')
     compile project(':react-native-push-notification')

@@ -759,7 +759,7 @@ render() {
     style={{backgroundColor:'#fff'}} 
     ref={(e) => { this.fScroll = e }}>    
 
-     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:'80%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:450, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
        <ScrollView 
        style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
         {...this._panResponder.panHandlers}
@@ -789,8 +789,12 @@ render() {
           >  
           <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />    
           </TouchableOpacity>          
+          <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.setState({selectShow:true})} // insertComment
+          >  
           <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', paddingLeft:3}]}>오늘의복음</Text>
-           
+          </TouchableOpacity>    
         </View>
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'0%', paddingLeft:'33%', float:'right'}}>
           <TouchableOpacity 
@@ -818,7 +822,7 @@ render() {
           onPositionChanged={position => this.setState({ position })} />                    
       </View>            
     
-      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+      <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
         </View>   

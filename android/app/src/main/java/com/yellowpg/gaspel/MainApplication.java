@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.content.Context;
 
 import com.facebook.react.ReactApplication;
+import cl.json.RNSharePackage;
+import cl.json.ShareApplication;
+import com.rnfs.RNFSPackage;
 import co.jootopia.kakao.link.RNKakaoLinkPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
@@ -27,7 +30,7 @@ import org.pgsqlite.SQLitePluginPackage;
 import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import javax.annotation.Nullable;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -39,6 +42,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNSharePackage(),
+            new RNFSPackage(),
             new RNKakaoLinkPackage(),
             new RNViewShotPackage(),
             new ReactNativeAutoUpdaterPackage(),
@@ -65,6 +70,11 @@ public class MainApplication extends Application implements ReactApplication {
     }
   
   };
+
+  @Override
+  public String getFileProviderAuthority() {
+         return "com.yellowpg.gaspel.provider";
+  }
 
   @Override
   public ReactNativeHost getReactNativeHost() {

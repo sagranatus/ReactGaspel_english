@@ -1,9 +1,11 @@
 import ViewShot from "react-native-view-shot";
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { Text, Image, View, TouchableOpacity, PermissionsAndroid} from 'react-native';
+import { Text, Image, View, TouchableOpacity, PermissionsAndroid, StyleSheet} from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
+import Share, {ShareSheet, Button} from 'react-native-share';
 import RNKakaoLink from 'react-native-kakao-links';
+import fs from 'react-native-fs';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import RNFetchBlob from "rn-fetch-blob";
 const linkObject={
@@ -34,7 +36,9 @@ export default class SendImage extends Component {
       super(props)         
       this.state = {
           uri: null,
-          js2: ""
+          js2: "",
+          sendVal: "saea",
+          visible: false
       }
       this.saveImage = this.saveImage.bind(this);
       this.getData = this.getData.bind(this);
@@ -143,14 +147,37 @@ export default class SendImage extends Component {
           //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
           RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png")
           .then(() => { 
-
+           /* RNFetchBlob.config({
+              fileCache: true
+            })
+              .fetch("GET", "http://sssagranatus.cafe24.com/resource/slide1.png")
+              // the image is now dowloaded to device's storage
+              .then(resp => {
+                // the image path you can use it directly with Image component
+                imagePath = resp.path();
+                return resp.readFile("base64");
+              })
+              .then(base64Data => {
+                // here's base64 encoded image
+                console.log(base64Data);
+                this.setState({sendVal: base64Data})
+                // remove the file from storage
+                return fs.unlink(imagePath);
+              });*/
+              fs.readFile(this.state.uri, 'base64')
+              .then(res =>{
+                console.log(res);
+                this.setState({sendVal: res})
+              });
            })
           .catch((error) => { 
             alert(error) 
           })
-
-        // alert(this.state.uri2);
       });
+
+     
+
+
   }
 
   linkFeed = async () => {
@@ -200,7 +227,6 @@ export default class SendImage extends Component {
     }
   }
 
-
 changeDateFormat(date){
   var year = date.getFullYear();
   var month = date.getMonth()+1
@@ -222,6 +248,14 @@ getTodayLabel(date) {
   return todayLabel;
 }
 render() {
+ 
+  let shareImageBase64 = {
+    title: "오늘의복음",
+    message: "오늘의 복음 앱을 사용해서 하느님 말씀을 들어보세요!",
+    url: "data:image/png;base64,"+this.state.sendVal,
+    subject: "오늘의복음에 대한 나의 묵상" //  for email
+  };
+  
   return (
     <View
     style={{
@@ -271,13 +305,22 @@ render() {
       </TouchableOpacity>    
    
       <Image source={this.state.uri !== null ? {uri: this.state.uri} : {}} style={{width: '100%', height: 120}} resizeMode={"contain"}/>  
-  
+      <View style={{width:'100%', justifyContent: 'center',  alignItems: 'center', marginTop:10, marginBottom: 20, padding:10}}>
       <TouchableOpacity 
         activeOpacity = {0.9}
-        onPress={() => this.linkFeed() } 
-        >    
-            <Text>Send!!</Text>      
+        style={styles.Button}
+        onPress={() => this.linkFeed() }>    
+            <Text style={{color:"#fff", textAlign:'center'}}>카카오톡 보내기</Text>      
       </TouchableOpacity>    
+
+          <TouchableOpacity 
+           style={styles.Button}
+           onPress={()=>{
+          Share.open(shareImageBase64);
+        }}>
+            <Text style={{color:"#fff", textAlign:'center'}}>이미지 전달하기</Text>
+        </TouchableOpacity> 
+      </View>
   </View>
   );
 }
@@ -289,3 +332,13 @@ SendImage.propTypes = {
       loginId: PropTypes.string
   })
 };
+const styles = StyleSheet.create({
+    Button:{
+      textAlign:'center',
+      backgroundColor: '#01579b', 
+      padding: 10, 
+      marginTop:10,
+      width:200,
+      borderRadius: 10,
+      height:40}
+    });
