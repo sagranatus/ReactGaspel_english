@@ -412,6 +412,7 @@ componentWillReceiveProps(nextProps){
           this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
         }
         var changed = this.changeDateFormat(date)
+        this.setState({deliver_date: changed})
         // 오늘 DB값을 가져옴
         this.getData(changed)  
       }else{
@@ -783,6 +784,20 @@ render() {
      </TouchableOpacity>           
    </View>     
 
+   <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
+      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
+        <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
+      </View>
+      
+      <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
+        <TouchableOpacity 
+        activeOpacity = {0.9}
+        onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+        >      
+        <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
+        </TouchableOpacity>
+      </View>
+    </View>
     <ScrollView 
     style={{backgroundColor:'#fff'}} 
     ref={(e) => { this.fScroll = e }}>    
@@ -791,20 +806,6 @@ render() {
       onWillFocus={payload => {console.log(payload),
         this.setChange();
       }} />
-      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-         <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
-        </View>
-       
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
-          <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.props.navigation.navigate('Guide')} // insertComment
-          >      
-         <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
-          </TouchableOpacity>
-        </View>
-      </View>
   
       <View>      
         <Slideshow 
@@ -826,7 +827,7 @@ render() {
         <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
         <TouchableOpacity 
           activeOpacity = {0.9}
-          onPress={() => this.props.navigation.navigate('SendImage')} // insertComment
+          onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date})} // insertComment
           >  
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />  오늘의복음 공유</Text>   
           </TouchableOpacity>

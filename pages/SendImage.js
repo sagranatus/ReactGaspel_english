@@ -13,6 +13,9 @@ import RNFetchBlob from "rn-fetch-blob";
 import ColorPalette from 'react-native-color-palette'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon4 from 'react-native-vector-icons/Feather'
+import Icon5 from 'react-native-vector-icons/AntDesign'
 
 var db = openDatabase({ name: 'UserDatabase.db' });
 const linkObject={
@@ -23,7 +26,7 @@ const linkObject={
 };
 
 var selectedval;
-
+var from;
 //5개의 속성 중 최대 3개만 표시해 줍니다. 우선순위는 Like > Comment > Shared > View > Subscriber 입니다.
 const socialObject ={
   likeCount:12,//optional
@@ -49,8 +52,7 @@ export default class SendImage extends Component {
           fontColor: '#286F92',
           index: 0,
           routes: [
-            { key: 'first', title: '오늘/주일 선택', out: true },
-            { key: 'second', title: '배경선택' },
+            { key: 'second', title: '배경선택', out: true },
             { key: 'third', title: '글씨색상 선택' }
           ],
           out: false,
@@ -63,34 +65,30 @@ export default class SendImage extends Component {
   }
  
   componentWillMount () {
-   
-    // 오늘 DB값을 가져옴
+
+    const { params } = this.props.navigation.state;
+    // console.log(params.otherParam)
+    
+    if(params != null){
+    console.log("Main1 - params : ", params+"existed" )
+        date = params.otherParam2
+        from = params.otherParam
+        this.getData(date)  
+    }
+    /*
     var date = new Date();    
     this.getData("오늘의복음")  
     selectedval = [0]
     if(date.getDay() == 0){
       this.setState({weekend:true})
     }
+    */
     
   this.setState({backgroundImageName:'el1.png', backgroundImage: require('../resources/el1.png')})
     
   }
-  getData(selected){    
-  var date = new Date();
-  var changed = this.changeDateFormat(date)
-  var selectedday;
-  if(selected == "오늘의복음"){
-    selectedval = [0]
-    selectedday = changed 
-  }else{
-    selectedval = [1]
-    var lastday = date.getDate() - (date.getDay() - 1) - 1;
-    date = new Date(date.setDate(lastday));
-    var changed_weekend = this.changeDateFormat(date)
-    selectedday = changed_weekend  
-  }
-  
-
+  getData(date){      
+    var selectedday = date
     console.log("SendImage - getData")
     const loginId = this.props.status.loginId    
     console.log(selectedday+loginId)
@@ -312,11 +310,14 @@ getTodayLabel(date) {
 }
 
 setChange(){
-  var date = new Date();    
-  this.getData("오늘의복음")  
-  selectedval = [0]
-  if(date.getDay() == 0){
-    this.setState({weekend:true})
+  const { params } = this.props.navigation.state;
+  // console.log(params.otherParam)
+  
+  if(params != null){
+  console.log("Main1 - params : ", params+"existed" )
+      date = params.otherParam2
+      from = params.otherParam
+      this.getData(date)  
   }
 }
 
@@ -343,7 +344,7 @@ render() {
       <TouchableOpacity
         activeOpacity = {0.9}
         style={{backgroundColor: '#01579b', padding: 10}}
-        onPress={ () =>  this.props.navigation.navigate('Main1')}
+        onPress={ () =>  this.props.navigation.navigate(from)}
         >
         <Text style={{color:"#FFF", textAlign:'left'}}>
             {"<"} 뒤로
@@ -375,19 +376,7 @@ render() {
         renderScene={SceneMap({
           first: () => (
             <View>
-             <SelectMultipleGroupButton
-                multiple={false}
-                group={[
-                  { value: '오늘의복음' },
-                  { value: '주일의복음' }]}
-                defaultSelectedIndexes={selectedval}
-                buttonViewStyle={ !this.state.weekend ? { flex: 1, margin: 0, borderRadius: 0 } : {display:'none'}}
-                highLightStyle={{
-                  borderColor: '#01579b', textColor: '#01579b', backgroundColor: '#fff',
-                  borderTintColor: '#01579b', textTintColor: 'white', backgroundTintColor: '#01579b'
-                }}
-                onSelectedValuesChange={(selectedValues) => this.getData(selectedValues)}
-              />
+            
             </View>
           ),
           second: () => (
@@ -443,6 +432,23 @@ render() {
                 <Image source={require('../resources/el5.png')} style={{width: 70, height: 48}} />  
                 </TouchableOpacity>
               </View>  
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, width:'100%'}}>
+                <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el6.png' ,backgroundImage: require('../resources/el6.png'), backgroundWhite: false})}>
+                <Image source={require('../resources/el6.png')} style={{width: 70, height: 48}} />      
+                </TouchableOpacity>        
+                <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el7.png' , backgroundImage: require('../resources/el7.png'), backgroundWhite: false})}>
+                  <Image source={require('../resources/el7.png')} style={{width: 70, height: 48}} />          
+                </TouchableOpacity> 
+                <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el8.png', backgroundImage: require('../resources/el8.png'), backgroundWhite: false})}>
+                <Image source={require('../resources/el8.png')} style={{width: 70, height: 48}} />  
+                </TouchableOpacity>
+                <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el9.png', backgroundImage: require('../resources/el9.png'), backgroundWhite: false})}>
+                <Image source={require('../resources/el9.png')} style={{width: 70, height: 48}} />  
+                </TouchableOpacity>
+                <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el10.png', backgroundImage: require('../resources/el10.png'), backgroundWhite: false})}>
+                <Image source={require('../resources/el10.png')} style={{width: 70, height: 48}} />  
+                </TouchableOpacity>
+              </View>  
             </View>   
           
           ),
@@ -452,7 +458,7 @@ render() {
                 onChange={color => [this.setState({fontColor: color})] }
                 value={this.state.fontColor}
                 colors={['#286F92', '#0B614B', '#1abc9c', '#3498db', '#0489B1', '#34495e', '#C0392B', '#E74C3C', '#8A084B', '#4B088A', '#6E6E6E', '#000']}
-                title={"Controlled Color Palette:"}
+                title={""}
                 icon={
                   <Icon name={'check-circle-o'} size={25} color={'black'} />
                 // React-Native-Vector-Icons Example
@@ -463,7 +469,7 @@ render() {
         })} 
         
         onIndexChange={index => this.setState({ index })}
-        initialLayout={{ width: Dimensions.get('window').width, height: 300}}
+        initialLayout={{ width: Dimensions.get('window').width, height: 250}}
         renderTabBar={(props) =>
         <TabBar
           {...props}
@@ -480,21 +486,24 @@ render() {
             </View>
           )}
         /> }
-      />       
-      <Image source={this.state.uri !== null ? {uri: this.state.uri} : {}} style={{display:'none',width: 300, height: 200}} resizeMode={"contain"}/>  
-      <View style={{width:'100%', justifyContent: 'center',  alignItems: 'center', marginTop:10, marginBottom: 20, padding:10}}>
-      <TouchableOpacity 
-        activeOpacity = {0.9}
-        style={styles.Button}
-        onPress={() => this.saveImage()}>    
-            <Text style={{color:"#fff", textAlign:'center'}}>카카오톡 보내기</Text>      
-      </TouchableOpacity>    
-
-          <TouchableOpacity 
-           style={styles.Button}
-           onPress={()=>this.saveImage1()}>
-            <Text style={{color:"#fff", textAlign:'center'}}>이미지 전달하기</Text>
-        </TouchableOpacity> 
+      />   
+       <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.saveImage1()} 
+          >  
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}> <Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:9}} />  복음카드 공유하기</Text>   
+        </TouchableOpacity>
+        </View>   
+        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.saveImage()} 
+          >  
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />  카카오톡 보내기</Text>   
+          </TouchableOpacity>
+        </View>   
       </View>
   </View>
   );

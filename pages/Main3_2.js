@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { PanResponder, PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Alert, ImageBackground, TouchableHighlight, AsyncStorage, ActivityIndicator, Keyboard } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
+import Icon3 from 'react-native-vector-icons/FontAwesome'
+import Icon4 from 'react-native-vector-icons/Feather'
+import Icon5 from 'react-native-vector-icons/AntDesign'
 import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -630,7 +633,7 @@ render() {
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                             },
-                            {text: '끝내기', onPress: () =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                            {text: '끝내기', onPress: () => this.setState({Lectioediting: false})},
                         ],
                         {cancelable: true},
                         )}
@@ -760,21 +763,22 @@ render() {
             (
             <View style={{flex:1, backgroundColor:"#fff"}}>
             <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
-                        <ScrollView 
-                        style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
-                            {...this._panResponder.panHandlers}
-                            onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
-                             <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>   
-                            <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
-                            </ScrollView>
-                            <TouchableOpacity 
-                            activeOpacity = {0.9}
-                            style={{position: 'absolute', right:2, top:2}}
-                            onPress={() => this.setState({selectShow:false}) } 
-                            >    
-                            <Icon name={'close'} size={30} color={"#000"} />        
-                        </TouchableOpacity>           
-                    </View>     
+                <ScrollView 
+                style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
+                    {...this._panResponder.panHandlers}
+                    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
+                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
+                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.Sentence}</Text>  
+                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                    </ScrollView>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{position: 'absolute', right:2, top:2}}
+                    onPress={() => this.setState({selectShow:false}) } 
+                    >    
+                    <Icon name={'close'} size={30} color={"#000"} />        
+                </TouchableOpacity>           
+            </View>     
                 <NavigationEvents
                 onWillFocus={payload => {
                 this.refreshContents()
@@ -804,13 +808,38 @@ render() {
                     </Text>
                 </TouchableOpacity>
                 <ScrollView style={!this.state.basic ? {backgroundColor:"#fff"} : {display:'none'}}
-                  ref={(e) => { this.fScroll = e }}>                         
-                    
+                  ref={(e) => { this.fScroll = e }}>                                             
                     <TouchableOpacity 
                         activeOpacity = {0.9}
                         onPress={() => this.setState({selectShow:true}) } 
                         >    
-                    <Text style={[{color:'#286F92', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
+                    <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.setState({selectShow: true})} 
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음읽기</Text>   
+                        </TouchableOpacity>
+                        </View>   
+                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'edit-3'} size={20} color={"#000"} style={{paddingTop:12}} />   수정하기</Text>   
+                        </TouchableOpacity>
+                        </View>         
+                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3_2", otherParam2: this.state.Lectiodate})}
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon3 name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />   공유하기</Text>   
+                        </TouchableOpacity>
+                        </View>                  
+                    </View>  
+                    <Text style={[{color:'#286F92', textAlign: 'center',  marginTop: 10, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
                     </TouchableOpacity>  
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -884,11 +913,28 @@ render() {
                 this.refreshContents()
                 }}
                 />
+                <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+                <ScrollView 
+                style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
+                    {...this._panResponder.panHandlers}
+                    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
+                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
+                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.Sentence}</Text>  
+                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                    </ScrollView>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{position: 'absolute', right:2, top:2}}
+                    onPress={() => this.setState({selectShow:false}) } 
+                    >    
+                    <Icon name={'close'} size={30} color={"#000"} />        
+                </TouchableOpacity>           
+               </View>    
                 <TouchableOpacity
                 activeOpacity = {0.9}
                 style={{backgroundColor: '#01579b', padding: 10}}
                 onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
-                    this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
+                    this.state.start ? this.setState({start:false}) : this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})
                     : Alert.alert(
                         '정말 끝내시겠습니까?',
                         '확인을 누르면 쓴 내용이 저장되지 않습니다.',
@@ -898,7 +944,7 @@ render() {
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                         },
-                        {text: '끝내기', onPress: () =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                        {text: '끝내기', onPress: () =>  this.state.start ? this.setState({start:false}): this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                         ],
                         {cancelable:true},
                     )}
@@ -907,27 +953,34 @@ render() {
                         {"<"} 뒤로
                     </Text>
                 </TouchableOpacity>             
-                <ScrollView style={this.state.start == false ? {backgroundColor:"#fff"} : {display:'none'}}>       
-                    <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
-                        <Text style={[{color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
-                        <Text style={{color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
-
-                        <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
-                        <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
-                        <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
-                        <TouchableOpacity
+                <ScrollView style={this.state.start == false ? {backgroundColor:"#fff"} : {display:'none'}}
+                 ref={(e) => { this.fScroll = e }}>         
+                    <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />    
+                    <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.Lectiodate}</Text>   
+                        </View>   
+                    </View>   
+                    <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                        <TouchableOpacity 
                         activeOpacity = {0.9}
-                        style={[styles.Button, {height:60, paddingTop:7}]}
+                        onPress={() => this.setState({selectShow: true})} 
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음 읽기</Text>   
+                        </TouchableOpacity>
+                        </View>   
+                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
                         onPress={() =>  this.setState({start: true})} 
-                        >
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold', lineHeight:20}}>
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>                        
-                        {this.state.Lectiodate}{"\n"}
-                        </Text>
-                            거룩한 독서 시작하기
-                        </Text>
-                    </TouchableOpacity>
-                    </View>
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'play-circle'} size={20} color={"#000"} style={{paddingTop:12}} />   거룩한독서 시작하기</Text>   
+                        </TouchableOpacity>
+                        </View>                     
+                     </View>  
+                    <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
+                    <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />                          
                 </ScrollView>
                <View style={this.state.praying == true && !this.state.basic ? {backgroundColor:"#fff"} : {display:'none'}}>                       
                     <View style = {styles.container}>

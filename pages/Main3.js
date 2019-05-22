@@ -4,8 +4,9 @@ import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
+import Icon3 from 'react-native-vector-icons/FontAwesome'
 import Icon4 from 'react-native-vector-icons/Feather'
-import Icon5 from 'react-native-vector-icons/Ionicons'
+import Icon5 from 'react-native-vector-icons/AntDesign'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
@@ -894,40 +895,53 @@ setChange(){
                     <Icon name={'close'} size={30} color={"#000"} />        
                 </TouchableOpacity>           
             </View>     
+            <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff',  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>거룩한독서</Text>
+                </View>
+                
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                    >      
+                    <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
+                    </TouchableOpacity>
+                </View>
+            </View>
             <ScrollView style={!this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}
             ref={(e) => { this.fScroll = e }}> 
                  <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();
                 }}
-                />               
-                   <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',backgroundColor: "#fff", borderBottomColor: '#d8d8d8', borderBottomWidth:0.5}}>  
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 30, marginTop:8, paddingLeft:'1%'}}>
+                />
+                 <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow:true})} // insertComment
+                    onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Icon4 name={'book-open'} size={26} color={"#000"} />
-                    </TouchableOpacity>          
-                    
-                    </View>
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '40%', height: 30, marginTop:10}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow:true})} // insertComment
-                    >  
-                    <Text style={{fontSize:17, textAlign:'center', fontFamily:'NanumMyeongjoBold', color:'#000'}}>거룩한독서</Text>
-                    </TouchableOpacity>  
-                    </View>
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 30, marginLeft:'0%', paddingLeft:'20%', float:'right'}}>                    
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
-                    >      
-                    <Icon5 name={'ios-information-circle-outline'} size={27} color={"#000"} style={{paddingTop:6}} />
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음읽기</Text>   
                     </TouchableOpacity>
-                    </View>
-                </View>
+                    </View>   
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+                    >  
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'edit-3'} size={20} color={"#000"} style={{paddingTop:12}} />   수정하기</Text>   
+                    </TouchableOpacity>
+                    </View>         
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Lectiodate})}
+                    >  
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon3 name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />   공유하기</Text>   
+                    </TouchableOpacity>
+                    </View>                  
+                </View>  
                  <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow:true}) } 
@@ -948,16 +962,7 @@ setChange(){
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
                 <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
-                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
-                <TouchableOpacity
-                    activeOpacity = {0.9}
-                    style={styles.Button}
-                    onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
-                    >
-                    <Text style={{color:"#FFF", textAlign:'center',fontWeight:'bold'}}>
-                        수정
-                    </Text>
-                </TouchableOpacity>
+                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>                
                 </View>
             </ScrollView>
 
@@ -1026,57 +1031,45 @@ setChange(){
                     >    
                     <Icon name={'close'} size={30} color={"#000"} />        
                 </TouchableOpacity>           
-            </View>     
+            </View>                
             <ScrollView style={this.state.start == false ? {} : {display:'none'}}
-            ref={(e) => { this.fScroll = e }}>      
-            <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',backgroundColor: "#fff", borderBottomColor: '#d8d8d8', borderBottomWidth:0.5}}>  
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 30, marginTop:8, paddingLeft:'1%'}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow:true})} // insertComment
-                    >  
-                    <Icon4 name={'book-open'} size={26} color={"#000"} />
-                    </TouchableOpacity>          
-                    
-                    </View>
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '40%', height: 30, marginTop:10}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow:true})} // insertComment
-                    >  
-                    <Text style={{fontSize:17, textAlign:'center', fontFamily:'NanumMyeongjoBold', color:'#000'}}>거룩한독서</Text>
-                    </TouchableOpacity>  
-                    </View>
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 30, marginLeft:'0%', paddingLeft:'20%', float:'right'}}>                    
+            ref={(e) => { this.fScroll = e }}>   
+               <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff', borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>거룩한독서</Text>
+                </View>
+                
+                <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.props.navigation.navigate('Guide')} // insertComment
                     >      
-                    <Icon5 name={'ios-information-circle-outline'} size={27} color={"#000"} style={{paddingTop:6}} />
+                    <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
                     </TouchableOpacity>
-                    </View>
                 </View>
-
-                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />       
-                <Text style={[{display:'none', color:'#01579b', textAlign: 'right', marginRight:10, marginTop:20}, largeSize]}>거룩한 독서</Text>
-                <Text style={{display:'none', color:'#01579b', textAlign: 'right', marginRight:10, fontSize:14}}>Lectio Divina</Text>
-
+                </View>                
+                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />   
+                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.setState({selectShow: true})} 
+                    >  
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  오늘의복음 읽기</Text>   
+                    </TouchableOpacity>
+                    </View>   
+                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() =>  this.setState({start: true})} 
+                    >  
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'play-circle'} size={20} color={"#000"} style={{paddingTop:12}} />   거룩한독서 시작하기</Text>   
+                    </TouchableOpacity>
+                    </View>                     
+                </View>    
                 <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
                 <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
-                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
-                <TouchableOpacity
-                activeOpacity = {0.9}
-                style={[styles.Button, {height:60, paddingTop:7}]}
-                onPress={() =>  this.setState({start: true})} 
-                >
-                    <Text style={{color:"#FFF", textAlign:'center',fontWeight:'bold', lineHeight:20}}>
-                        <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>  
-                        오늘{"\n"}
-                        </Text> 
-                        거룩한 독서 시작하기
-                    </Text>
-                </TouchableOpacity>
-                </View>
+              
             </ScrollView>
 
             <View style={this.state.praying == true && !this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}>   
