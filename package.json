@@ -11,6 +11,7 @@
     "react-native": "^0.57.8",
     "react-native-auto-updater": "^0.2.5",
     "react-native-calendars": "^1.22.0",
+    "react-native-color-palette": "^2.0.3",
     "react-native-file-upload": "^1.0.4",
     "react-native-fs": "^2.13.3",
     "react-native-gesture-handler": "^1.1.0",

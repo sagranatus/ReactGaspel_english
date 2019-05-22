@@ -1011,8 +1011,8 @@ render() {
       <View style={this.state.selectShow ? {position: 'absolute', right:'2%', bottom:'10%', width:'96%', height:250, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
         <View style={{marginLeft:20, marginRight:20}}>   
           <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:13}]}>{this.state.selectedDate_format}</Text>    
-          <Text style={this.state.mysentence!="" ? {display:'none'} : [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]}>{this.state.sentence}</Text>    
-          <Text style={this.state.mysentence!="" ? [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]: {display:'none'}}>{this.state.mysentence}</Text>        
+          <Text style={this.state.mysentence!="" ? {display:'none'} : [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#286F92', textAlign:'center'}]}>{this.state.sentence}</Text>    
+          <Text style={this.state.mysentence!="" ? [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#286F92', textAlign:'center'}]: {display:'none'}}>{this.state.mysentence}</Text>        
           <Text style={this.state.js2 != "" ? [normalSize, styles.TextStyle,{marginTop:5, padding:10, color:'#000', textAlign:'center'}]:{display:'none'}}>{this.state.js2}</Text>           
           <Text style={this.state.comment != "" && this.state.js2 == "" ? [normalSize, styles.TextStyle,{marginTop:15, padding:10, color:'#000', textAlign:'center'}]: {display:'none'}}>{this.state.comment}</Text>                             
         </View>

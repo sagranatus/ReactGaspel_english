@@ -8,7 +8,9 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
-import Icon3 from 'react-native-vector-icons/Ionicons'
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon4 from 'react-native-vector-icons/Feather'
+import Icon5 from 'react-native-vector-icons/AntDesign'
 import RNFetchBlob from "rn-fetch-blob";
 var smallSize;
 var normalSize;
@@ -755,60 +757,51 @@ render() {
       </View>
     )
   : (   
+    <View style={{flex:1, backgroundColor:"#fff"}}>
+    <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:450, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+    <ScrollView 
+    style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
+     {...this._panResponder.panHandlers}
+     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
+       <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.sentence}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:5, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
+       <TouchableOpacity 
+          activeOpacity = {0.9}  
+          style={this.state.js2 == "" && this.state.comment == "" ? {} : {display:'none'}}        
+          onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
+          >    
+           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>거룩한독서 하러가기</Text>    
+          </TouchableOpacity>        
+     </ScrollView>
+     <TouchableOpacity 
+       activeOpacity = {0.9}
+       style={{position: 'absolute', right:2, top:2}}
+       onPress={() => this.setState({selectShow:false}) } 
+       >    
+         <Icon2 name={'close'} size={30} color={"#000"} />        
+     </TouchableOpacity>           
+   </View>     
+
     <ScrollView 
     style={{backgroundColor:'#fff'}} 
     ref={(e) => { this.fScroll = e }}>    
-
-     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:450, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
-       <ScrollView 
-       style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
-        {...this._panResponder.panHandlers}
-        onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
-          <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
-          <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.sentence}</Text>    
-          <Text style={[styles.TextStyle,{marginTop:5, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>           
-        </ScrollView>
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          style={{position: 'absolute', right:2, top:2}}
-          onPress={() => this.setState({selectShow:false}) } 
-          >    
-            <Icon2 name={'close'} size={30} color={"#000"} />        
-        </TouchableOpacity>           
-      </View>     
 
       <NavigationEvents
       onWillFocus={payload => {console.log(payload),
         this.setChange();
       }} />
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'1%'}}>
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.setState({selectShow:true})} // insertComment
-          >  
-          <Image source={require('../resources/ic_launcher.png')} style={{width: 20, height: 20}} />    
-          </TouchableOpacity>          
-          <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.setState({selectShow:true})} // insertComment
-          >  
-          <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', paddingLeft:3}]}>오늘의복음</Text>
-          </TouchableOpacity>    
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
+         <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
         </View>
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 30, marginTop:10, marginLeft:'0%', paddingLeft:'33%', float:'right'}}>
+       
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
           <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.props.navigation.navigate('Guide')} // insertComment
           >      
-          <Image source={require('../resources/info.png')} style={{width: 20, height: 20}} />       
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.props.navigation.navigate('SendImage')} // insertComment
-          >      
-          <Image source={require('../resources/plane.png')} style={{width: 20, height: 20, marginLeft:10}} />       
+         <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
           </TouchableOpacity>
         </View>
       </View>
@@ -821,7 +814,24 @@ render() {
           onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
           onPositionChanged={position => this.setState({ position })} />                    
       </View>            
-    
+      <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.setState({selectShow:true})} // insertComment
+          >  
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}> <Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
+        </TouchableOpacity>
+        </View>   
+        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          onPress={() => this.props.navigation.navigate('SendImage')} // insertComment
+          >  
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />  오늘의복음 공유</Text>   
+          </TouchableOpacity>
+        </View>   
+      </View>
       <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
@@ -855,31 +865,11 @@ render() {
         />
         </View> 
         <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:5}]}>{this.state.comment}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#286F92', marginBottom:5}]}>{this.state.comment}</Text>   
         </View>  
         <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#286F92'}]}>{this.state.js2}</Text>   
         </View> 
-
-        <View style={this.state.js2 !== ""  ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 30, marginBottom:10, marginLeft:'2%'}}>       
-        </View>  
-        <View style={this.state.js2 !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 30, marginBottom:10, marginRight:'1%'}} >
-          <TouchableOpacity 
-          activeOpacity = {0.9}
-          style={this.state.comment == "" && this.state.js2 == "" ? {} : {display:'none'}}
-          onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
-          >    
-          <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
-          </TouchableOpacity>      
-          <TouchableOpacity 
-            activeOpacity = {0.9}
-            style={this.state.comment !== "" && this.state.js2 =="" ? {} : {display:'none'}}
-            onPress = {() => this.props.navigation.navigate('Main3')}
-            >    
-            <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />  
-          </TouchableOpacity>    
-        </View>         
-      
        
       </View>
 
@@ -895,7 +885,7 @@ render() {
         </View>    
 
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
+        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#286F92'}]}>{this.state.mysentence}</Text>   
         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
         <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
         <View
@@ -908,17 +898,7 @@ render() {
             marginBottom:5
           } : {display:'none'}
         }
-        />
-        <View style={this.state.mysentence !== ""   ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '85%', height: 30, marginBottom:10, marginLeft:'2%'}}>       
-        </View>  
-        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '12%', height: 30, marginBottom:10, marginRight:'1%'}} >
-          <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress = {() => this.props.navigation.navigate('Main4')}
-          >    
-            <Icon2 name={'arrow-right'} size={35} color={"#01579b"} />        
-          </TouchableOpacity>     
-        </View>          
+        />   
       </View>
 
       <View style={this.state.weekend & this.state.mysentence !== "" ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
@@ -929,7 +909,7 @@ render() {
          <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
         </View>    
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>        
+        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#286F92'}]}>{this.state.mysentence}</Text>        
       </View>
         
       <View>      
@@ -971,6 +951,7 @@ render() {
         </Modal>
       </View>
     </ScrollView>  
+    </View>
       )
       
   }
