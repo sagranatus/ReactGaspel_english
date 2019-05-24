@@ -82,7 +82,7 @@ export default function Menu({ onItemSelected }) {
                 setChange()
             }}
             />
-        <Text style={[styles.name, normalSize]}>{name} {christname}</Text>
+        <Text style={[styles.name, normalSize, {height:33}]}>{name} {christname}</Text>
 
       <Text
         onPress={() => onItemSelected('Setting')}

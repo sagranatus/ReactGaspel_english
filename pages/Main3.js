@@ -45,7 +45,8 @@ constructor(props) {
         comment: null,
         doMore: false,
         weekend: false,
-        selectShow: false
+        selectShow: false,
+        selectQuestion: false
      }
      
      this.moveNext = this.moveNext.bind(this);
@@ -877,7 +878,63 @@ setChange(){
          :
         // 내용이 있고 수정 아닌 상태
             (            
-            <View  style={{backgroundColor:'#fff', flex:1}}>             
+            <View  style={{backgroundColor:'#fff', flex:1}}>           
+              
+              <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
+              <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
+                <Text style={[styles.textStyle, normalSize]}>거룩한 독서는 하느님 말씀 안에서 이루어지는 하나의 총제적인 과정으로 6단계로 요약될 수 있습니다.{"\n"}</Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>침묵</Text> 
+                <Text style={[styles.textStyle, normalSize]}>
+                하느님께 우리 마음의 주파수를 맞추려는 노력으로 하느님 말씀을 듣기 전에 차분한 마음 안에서 자신을 온전히 내려놓아야 합니다.{"\n"}
+                </Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>성령청원</Text>
+                <Text style={[styles.textStyle, normalSize]}>
+                하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있고 성령의 도움 없이는 거룩한 독서 자체가 불가능합니다. 반드시 성령의 도움이 필요합니다.{"\n"}
+                </Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>독서</Text>
+                <Text style={[styles.textStyle, normalSize]}>
+                하느님의 말씀을 듣는 것으로 성경 본문이 그 자체로 무엇을 말하고 있는가에 초점을 맞춥니다. 세밀한 독서와 반복적인 독서가 필요하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
+                </Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>묵상</Text>
+                <Text style={[styles.textStyle, normalSize]}>
+                말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정으로 하느님께서 지금 나에게 하고 계시는 말씀을 듣기 위해 노력합니다.{"\n"}
+                </Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>기도</Text>
+                <Text style={[styles.textStyle, normalSize]}>
+                하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
+                </Text>
+                <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>관상</Text>
+                <Text style={[styles.textStyle, normalSize]}>
+                정신과 마음의 진정한 회개를 이끌어 내는 단계로, 모든 이와 모든 것을 하느님의 눈으로 바라보며 모든 것이 하느님의 은총임을 깨닫게 해주는 하느님의 선물입니다. {"\n"}
+                </Text>
+              
+                <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서</Text> 
+                <Text style={[styles.textStyle, normalSize]}>       
+                    - 말씀새기기 : 성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  간단한 묵상 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도 {"\n"}
+                <Text style={[styles.textStyle, {fontSize:13}]}>· 오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.(묵상)</Text>
+                </Text>
+                <Text style={[styles.textStyle, normalSize]}>   
+                - 거룩한독서 : 성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (세밀하고, 반복적인 독서) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도
+                </Text>
+                <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>
+                · 복음의 등장 인물은?(독서)
+                {"\n"}· 복음의 배경장소는?(독서)
+                {"\n"}· 배경시간 혹은 상황은?(독서)
+                {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
+                {"\n"}· 특별히 눈에 띄는 부분은?(묵상)
+                {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
+                {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
+                {"\n"}
+                </Text>
+                <TouchableOpacity 
+                activeOpacity = {0.9}
+                style={{position: 'absolute', right:2, top:2}}
+                onPress={() => this.setState({selectQuestion:false}) } 
+                >    
+                    <Icon name={'close'} size={30} color={"#000"} />        
+                </TouchableOpacity>   
+            </ScrollView>        
+            </View>       
             <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
                 <ScrollView 
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
@@ -894,7 +951,7 @@ setChange(){
                     >    
                     <Icon name={'close'} size={30} color={"#000"} />        
                 </TouchableOpacity>           
-            </View>     
+            </View>   
             <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff',  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
                     <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>거룩한독서</Text>
@@ -903,7 +960,7 @@ setChange(){
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
-                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                    onPress={() => this.setState({selectQuestion:true, selectShow: false})} // insertComment
                     >      
                     <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
                     </TouchableOpacity>
@@ -914,6 +971,59 @@ setChange(){
                  <NavigationEvents
                 onWillFocus={payload => {
                     this.setChange();
+                }}
+                />
+
+                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:12}}>  
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.setState({selectShow: true})} 
+                  >  
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음읽기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+                  > 
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  수정하기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Lectiodate})}
+                  > 
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                </View>       
+                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 3, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text>           
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg2}</Text>   
+                <Text style={styles.UpdateQuestionStyleClass}>배경시간 혹은 상황은?</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg3}</Text>
+                <Text style={styles.UpdateQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum1}</Text>  
+                <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum2}</Text>   
+                <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
+                <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
+                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>                
+                </View>
+            </ScrollView>
+
+            <ScrollView style={this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}
+             ref={(e) => { this.fScroll = e }}> 
+                <NavigationEvents
+                onWillFocus={payload => {
+                this.setChange();
                 }}
                 />
                  <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
@@ -940,58 +1050,18 @@ setChange(){
                     >  
                     <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon3 name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />   공유하기</Text>   
                     </TouchableOpacity>
-                    </View>                  
+                    </View>                                    
                 </View>  
-                 <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow:true}) } 
-                    >            
-                <Text style={[{color:'#286F92', textAlign: 'center',  marginTop: 10, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
-                </TouchableOpacity> 
-                <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
-                <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg2}</Text>   
-                <Text style={styles.UpdateQuestionStyleClass}>배경시간 혹은 상황은?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg3}</Text>
-                <Text style={styles.UpdateQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum1}</Text>  
-                <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum2}</Text>   
-                <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
-                <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
-                <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
-                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>                
-                </View>
-            </ScrollView>
 
-            <ScrollView style={this.state.basic ? {backgroundColor:'#fff'} : {display:'none'}}
-             ref={(e) => { this.fScroll = e }}> 
-                <NavigationEvents
-                onWillFocus={payload => {
-                this.setChange();
-                }}
-                />
                 <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow:true}) } 
                     >    
-                <Text style={[{color:'#286F92', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
+                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
                 </TouchableOpacity> 
                 <Text style={styles.UpdateQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.comment}</Text>   
-                <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:0}}>
-                <TouchableOpacity
-                activeOpacity = {0.9}
-                style={[styles.Button, {backgroundColor:"#87CEEB"}]}
-                onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
-                >
-                <Text style={{color:"#FFF", textAlign:'center',fontWeight:'bold'}}>
-                    수정
-                </Text>
-                </TouchableOpacity>
-                </View>
+               
                 <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginTop:10}}>
                 <TouchableOpacity
                 activeOpacity = {0.9}
@@ -1015,6 +1085,61 @@ setChange(){
                 this.setChange();
             }}
             />
+             <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
+                <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
+                    <Text style={[styles.textStyle, normalSize]}>거룩한 독서는 하느님 말씀 안에서 이루어지는 하나의 총제적인 과정으로 6단계로 요약될 수 있습니다.{"\n"}</Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>침묵</Text> 
+                    <Text style={[styles.textStyle, normalSize]}>
+                    하느님께 우리 마음의 주파수를 맞추려는 노력으로 하느님 말씀을 듣기 전에 차분한 마음 안에서 자신을 온전히 내려놓아야 합니다.{"\n"}
+                    </Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>성령청원</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있고 성령의 도움 없이는 거룩한 독서 자체가 불가능합니다. 반드시 성령의 도움이 필요합니다.{"\n"}
+                    </Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>독서</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    하느님의 말씀을 듣는 것으로 성경 본문이 그 자체로 무엇을 말하고 있는가에 초점을 맞춥니다. 세밀한 독서와 반복적인 독서가 필요하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
+                    </Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>묵상</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정으로 하느님께서 지금 나에게 하고 계시는 말씀을 듣기 위해 노력합니다.{"\n"}
+                    </Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>기도</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
+                    </Text>
+                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>관상</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    정신과 마음의 진정한 회개를 이끌어 내는 단계로, 모든 이와 모든 것을 하느님의 눈으로 바라보며 모든 것이 하느님의 은총임을 깨닫게 해주는 하느님의 선물입니다. {"\n"}
+                    </Text>
+                
+                    <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>거룩한 독서</Text> 
+                    <Text style={[styles.textStyle, normalSize]}>       
+                        - 말씀새기기 : 성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  간단한 묵상 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도 {"\n"}
+                    <Text style={[styles.textStyle, {fontSize:13}]}>· 오늘 하루동안 묵상하고 싶은 구절을 적어 봅시다.(묵상)</Text>
+                    </Text>
+                    <Text style={[styles.textStyle, normalSize]}>   
+                    - 거룩한독서 : 성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (세밀하고, 반복적인 독서) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} /> 묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도
+                    </Text>
+                    <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>
+                    · 복음의 등장 인물은?(독서)
+                    {"\n"}· 복음의 배경장소는?(독서)
+                    {"\n"}· 배경시간 혹은 상황은?(독서)
+                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
+                    {"\n"}· 특별히 눈에 띄는 부분은?(묵상)
+                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
+                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
+                    {"\n"}
+                    </Text>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    style={{position: 'absolute', right:2, top:2}}
+                    onPress={() => this.setState({selectQuestion:false}) } 
+                    >    
+                        <Icon name={'close'} size={30} color={"#000"} />        
+                    </TouchableOpacity>   
+                </ScrollView>  
+            </View>      
             <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
                 <ScrollView 
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
@@ -1042,31 +1167,32 @@ setChange(){
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
-                    onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+                    onPress={() => this.setState({selectQuestion:true, selectShow: false})} // insertComment
                     >      
                     <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
                     </TouchableOpacity>
                 </View>
                 </View>                
-                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />   
-                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                <Image source={require('../resources/lectio_img1.png')} style={{width: '100%', height: 150}} />              
+
+                <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+                    <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  오늘의복음 읽기</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
                     </TouchableOpacity>
                     </View>   
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+                    <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() =>  this.setState({start: true})} 
-                    >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'play-circle'} size={20} color={"#000"} style={{paddingTop:12}} />   거룩한독서 시작하기</Text>   
+                    > 
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  거룩한독서 시작하기</Text>   
                     </TouchableOpacity>
-                    </View>                     
-                </View>    
+                    </View>   
+                </View>
                 <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>거룩한 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 하느님께서 내게 주신 말씀을 되뇌며 기도를 하는 과정을 모두 포함합니다. 거룩한 독서를 통해 하느님께서 ‘지금, 나에게’ 하고 계시는 말씀을 들을 수 있습니다.</Text>
                 <Image source={require('../resources/lectio_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
               
@@ -1322,7 +1448,14 @@ Main3.propTypes = {
     })
   };
   
-const styles = StyleSheet.create({          
+const styles = StyleSheet.create({      
+    textStyle:{ backgroundColor: '#fff', color:'#000', lineHeight:25, fontSize:15, margin:5 },
+    TextStyle:{
+        color:'#000', 
+        textAlign: 'center', 
+        width:'100%',
+        marginBottom:3
+      },     
      DescriptionComponentStyle: {
         lineHeight:25,
         padding:5,

@@ -8,6 +8,8 @@ import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {NavigationEvents} from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
+import Icon3 from 'react-native-vector-icons/FontAwesome'
+import Icon5 from 'react-native-vector-icons/AntDesign'
 import ImagePicker from 'react-native-image-picker'; 
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -38,7 +40,8 @@ constructor(props) {
         isOpen: false,
         selectedItem: 'About',
         iconShow:true,
-        selectShow:false
+        selectShow:false,
+        selectQuestion: false
     }
     
     this.toggle = this.toggle.bind(this);  
@@ -1008,11 +1011,45 @@ render() {
     isOpen={this.state.isOpen}
     onChange={isOpen => this.updateMenuState(isOpen)}
     >
+
+      <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+        <Text style={{color:"#fff", position: 'absolute', left:'80%', top:25, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'2%', top:45}}>환경설정(글씨크기 및 알람 설정),프로필수정을 할 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'63%', top:105, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:125}}>오늘,이번주,이번달 기록을 알려주어요.</Text>
+
+        <Text style={{color:"#fff", position: 'absolute', left:'20%', top:140, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'20%', top:160}}>프로필 사진을 등록해보세요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:225}}>날짜를 클릭하면 이전의 거룩한독서를 할 수 있어요.</Text>
+        
+        <Text style={{color:"#fff", position: 'absolute', left:'46%', top:240, fontWeight:'bold', fontSize:16}}>   |</Text>
+
+        <Text style={{color:"#fff", position: 'absolute', left:'60%', top:280, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{ position: 'absolute', left:'59.4%', top:248, fontWeight:'bold', fontSize:16}}><Icon3 name={"circle-thin"} size={40} color={"#01579b"} /></Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'16%', top:300}}>거룩한독서를 한 날짜에는 동그라미로 표시가 돼요.</Text>
+    
+
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>메인화면</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'8%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>거룩한독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'34%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:17}}>주일의독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'59%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>나의페이지</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          style={{position: 'absolute', right:2, top:2}}
+          onPress={() => this.setState({selectQuestion:false}) } 
+          >    
+            <Icon2 name={'close'} size={30} color={"#fff"} />        
+        </TouchableOpacity>           
+      </View>     
       <View style={this.state.selectShow ? {position: 'absolute', right:'2%', bottom:'10%', width:'96%', height:250, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
         <View style={{marginLeft:20, marginRight:20}}>   
           <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:13}]}>{this.state.selectedDate_format}</Text>    
-          <Text style={this.state.mysentence!="" ? {display:'none'} : [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#286F92', textAlign:'center'}]}>{this.state.sentence}</Text>    
-          <Text style={this.state.mysentence!="" ? [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#286F92', textAlign:'center'}]: {display:'none'}}>{this.state.mysentence}</Text>        
+          <Text style={this.state.mysentence!="" ? {display:'none'} : [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]}>{this.state.sentence}</Text>    
+          <Text style={this.state.mysentence!="" ? [styles.TextStyle,{fontSize:15,marginTop:5, padding:10, color:'#01579b', textAlign:'center'}]: {display:'none'}}>{this.state.mysentence}</Text>        
           <Text style={this.state.js2 != "" ? [normalSize, styles.TextStyle,{marginTop:5, padding:10, color:'#000', textAlign:'center'}]:{display:'none'}}>{this.state.js2}</Text>           
           <Text style={this.state.comment != "" && this.state.js2 == "" ? [normalSize, styles.TextStyle,{marginTop:15, padding:10, color:'#000', textAlign:'center'}]: {display:'none'}}>{this.state.comment}</Text>                             
         </View>
@@ -1036,30 +1073,41 @@ render() {
             <Icon2 name={'close'} size={30} color={"#000"} />        
         </TouchableOpacity>   
         <TouchableOpacity 
-          activeOpacity = {0.9}
-          style={{position: 'absolute', left:48,bottom:10}}
+          activeOpacity = {0.9}  
+          style={{position: 'absolute', left:'40%', bottom:16, width:'20%', borderWidth:1, borderColor:'#4e99e0', borderRadius:2, padding:5}} 
           onPress={() => this.state.selectedDate_format.includes("일요일") ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
           >    
-            <Text><Icon2 name={'arrow-right'} size={30} color={"#01579b"} /></Text>
-        </TouchableOpacity>   
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          style={{position: 'absolute', left:10,bottom:12}}
-          onPress={() => this.state.selectedDate_format.includes("일요일") ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
-          >    
-            <Text style={Platform.OS == "ios"? {color:"#01579b", marginBottom:5} : {color:"#01579b"}}>더보기</Text>
-        </TouchableOpacity>   
+           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#4e99e0'}]}>더보기</Text>    
+        </TouchableOpacity>        
       </View>     
       <View style={{flex:1, backgroundColor:'#fff'}}>    
-        <View style={{width:'100%', backgroundColor: '#F9F9F9', padding: 2, borderBottomWidth: 0.5, borderBottomColor: '#d8d8d8', marginBottom:10}}>  
-          <Icon2 style={{textAlign:'right'}} name={"navicon"} size={40} color={"#d8d8d8"} onPress={this.toggle}/>   
-        </View>   
+          <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff', borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: '79%', height: 30, marginTop:10, paddingLeft:'1%'}}>
+                <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>나의페이지</Text>
+            </View>
+            
+            <View style={{flexDirection: "column", flexWrap: 'wrap', width: '17%', height: 30, marginLeft:'0%', float:'right'}}>              
+                <TouchableOpacity 
+                activeOpacity = {0.9}                
+                style={{marginRight:13}}
+                onPress={() => this.toggle()} // insertComment
+                >      
+                <Icon5 style={{textAlign:'right'}} name={"setting"} size={24} color={"#000"} style={{paddingTop:9}} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                activeOpacity = {0.9}
+                onPress={() => this.setState({selectQuestion:true})} // insertComment
+                >      
+                <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
+                </TouchableOpacity>
+            </View>
+          </View>  
         <NavigationEvents
         onWillFocus={payload => {
             [this.refreshContents(), console.log("payload", payload)]
         }}
         />                
-        <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
+        <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10,  borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 100}}>
             <TouchableOpacity 
               activeOpacity = {0.9}
@@ -1122,7 +1170,7 @@ render() {
             horizontal
             pagingEnabled
             onDayPress={day=>this.onselectDate(day, null)}
-            style={{borderTopWidth: 0.5, borderTopColor: '#d8d8d8'}}
+            //style={{borderTopWidth: 0.5, borderTopColor: '#d8d8d8'}}
             markedDates={this.state.Marked}             
             // onPressArrowLeft={substractMonth => this.substractMonth()}
           //   onPressArrowRight={addMonth => this.addMonth()}

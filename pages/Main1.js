@@ -59,7 +59,8 @@ constructor(props) {
     url1: "",
     url2: "",
     modalVisible: false,
-    selectShow: false
+    selectShow: false,
+    selectQuestion:false
   
   }
  
@@ -759,7 +760,34 @@ render() {
     )
   : (   
     <View style={{flex:1, backgroundColor:"#fff"}}>
-    <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:450, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+      <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+        <Text style={{color:"#fff", position: 'absolute', left:'24%', top:110}}>클릭하면 해당 내용을 읽을 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', top:210}}>오늘의 복음을 읽을 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', top:225, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'55%', top:195}}>거룩한 독서를 하면 {"\n"}내용을 공유할 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'55%', top:225, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:295}}>오늘의 복음 주제성구를 읽을 수 있어요.{"\n"}거룩한 독서를 하면 {"\n"}하느님께서 내게 주신 말씀을 볼 수 있어요.</Text>
+     
+        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:430}}>주일의 복음 주제성구를 읽을 수 있어요.{"\n"}주일의 독서를 하면 {"\n"}한주간 묵상할 구절을 볼 수 있어요.</Text>
+    
+
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>메인화면</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'8%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>거룩한독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'34%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:17}}>주일의독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'59%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>나의페이지</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <TouchableOpacity 
+          activeOpacity = {0.9}
+          style={{position: 'absolute', right:2, top:2}}
+          onPress={() => this.setState({selectQuestion:false}) } 
+          >    
+            <Icon2 name={'close'} size={30} color={"#fff"} />        
+        </TouchableOpacity>           
+      </View>     
+    <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
     <ScrollView 
     style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
      {...this._panResponder.panHandlers}
@@ -767,13 +795,15 @@ render() {
        <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
        <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.sentence}</Text>    
        <Text style={[styles.TextStyle,{marginTop:5, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
+       <View style={{flex:1, justifyContent: 'center', alignItems: 'center', marginTop:10, marginBottom:10}}>
        <TouchableOpacity 
           activeOpacity = {0.9}  
-          style={this.state.js2 == "" && this.state.comment == "" ? {} : {display:'none'}}        
+          style={this.state.js2 == "" && this.state.comment == "" ? {width:150, borderWidth:1, borderColor:'#4e99e0', borderRadius:2, padding:5} : {display:'none'}}        
           onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
           >    
-           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>거룩한독서 하러가기</Text>    
-          </TouchableOpacity>        
+           <Text style={[{fontSize:14, textAlign:'center', color:'#4e99e0', textAlign:'center'}]}>거룩한독서 하러가기</Text>    
+        </TouchableOpacity>        
+      </View>
      </ScrollView>
      <TouchableOpacity 
        activeOpacity = {0.9}
@@ -792,7 +822,7 @@ render() {
       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
         <TouchableOpacity 
         activeOpacity = {0.9}
-        onPress={() => this.props.navigation.navigate('Guide')} // insertComment
+        onPress={() => this.setState({selectQuestion:true, selectShow: false})} // insertComment
         >      
         <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
         </TouchableOpacity>
@@ -809,30 +839,13 @@ render() {
   
       <View>      
         <Slideshow 
+          height={160}
           dataSource={this.state.dataSource}
           position={this.state.position}
           arrowSize={0}
           onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
           onPositionChanged={position => this.setState({ position })} />                    
       </View>            
-      <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.setState({selectShow:true})} // insertComment
-          >  
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}> <Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
-        </TouchableOpacity>
-        </View>   
-        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date})} // insertComment
-          >  
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />  오늘의복음 공유</Text>   
-          </TouchableOpacity>
-        </View>   
-      </View>
       <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
@@ -841,7 +854,26 @@ render() {
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
         </View>   
       </View>
-      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+      
+      <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+          <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
+          <TouchableOpacity 
+            activeOpacity = {0.9}
+            onPress={() => this.setState({selectShow:true})} // insertComment
+            >  
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
+          </TouchableOpacity>
+          </View>   
+          <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
+          <TouchableOpacity 
+            activeOpacity = {0.9}
+            onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date})} // insertComment
+            >  
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 공유하기</Text>   
+            </TouchableOpacity>
+          </View>   
+        </View>
+      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
         <View style={this.state.comment == "" && this.state.js2 == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘 해주신 말씀</Text>   
         </View> 
@@ -866,10 +898,10 @@ render() {
         />
         </View> 
         <View style={this.state.js2 == "" && this.state.comment !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#286F92', marginBottom:5}]}>{this.state.comment}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:10, padding:5, color:'#01579b', marginBottom:5}]}>{this.state.comment}</Text>   
         </View>  
         <View style={this.state.js2 !== "" ? {width:'100%', paddingBottom:5}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#286F92'}]}>{this.state.js2}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.js2}</Text>   
         </View> 
        
       </View>
@@ -886,7 +918,7 @@ render() {
         </View>    
 
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#286F92'}]}>{this.state.mysentence}</Text>   
+        <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
         <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
         <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
         <View
@@ -910,7 +942,7 @@ render() {
          <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
         </View>    
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
-        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#286F92'}]}>{this.state.mysentence}</Text>        
+        <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>        
       </View>
         
       <View>      

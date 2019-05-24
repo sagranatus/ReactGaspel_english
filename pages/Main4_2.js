@@ -780,37 +780,37 @@ render() {
               </TouchableOpacity>
               <ScrollView style={{marginBottom:40}}
               ref={(e) => { this.fScroll = e }}>
-                 <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        onPress={() => this.setState({selectShow: true})} 
-                        >  
-                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음읽기</Text>   
-                        </TouchableOpacity>
-                        </View>   
-                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
-                        >  
-                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'edit-3'} size={20} color={"#000"} style={{paddingTop:12}} />   수정하기</Text>   
-                        </TouchableOpacity>
-                        </View>         
-                        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                        <TouchableOpacity 
-                        activeOpacity = {0.9}
-                        onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main4_2", otherParam2: this.state.Weekenddate})}
-                        >  
-                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon3 name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />   공유하기</Text>   
-                        </TouchableOpacity>
-                        </View>                  
-                    </View> 
+                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:12}}>  
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.setState({selectShow: true})} 
+                  >  
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음읽기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
+                  > 
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  수정하기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                  <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
+                  <TouchableOpacity 
+                  activeOpacity = {0.9}
+                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main4_2", otherParam2: this.state.Weekenddate})}
+                  > 
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
+                  </TouchableOpacity>
+                  </View>   
+                </View>   
             <TouchableOpacity 
               activeOpacity = {0.9}
               onPress={() => this.setState({selectShow:true}) } 
               >       
-              <Text style={[{color:'#286F92', textAlign: 'center', marginTop: 10, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
+              <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 3, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
               </TouchableOpacity>
               <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
               <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -832,17 +832,7 @@ render() {
               <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
               <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
               <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.mysentence}</Text>     
-              <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
-              <TouchableOpacity
-                  activeOpacity = {0.9}
-                  style={styles.Button}
-                  onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
-                  >
-                  <Text style={{color:"#FFF", textAlign:'center', fontWeight:'bold'}}>
-                      수정
-                  </Text>
-              </TouchableOpacity>
-              </View>
+             
               </ScrollView> 
           </View>          
           )
@@ -903,24 +893,24 @@ render() {
                     <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
                     <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.Weekenddate}</Text>   
                     </View>   
-                </View>   
-                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
-                  <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  onPress={() => this.setState({selectShow: true})} 
-                  >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음 읽기</Text>   
-                  </TouchableOpacity>
-                  </View>   
-                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
-                  <TouchableOpacity 
-                  activeOpacity = {0.9}
-                  onPress={() =>  this.setState({start: true})} 
-                  >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'play-circle'} size={20} color={"#000"} style={{paddingTop:12}} />   주일의독서 시작하기</Text>   
-                  </TouchableOpacity>
-                  </View> 
+                </View>  
+                 <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+                    <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() => this.setState({selectShow: true})} 
+                    >  
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음 읽기</Text>   
+                    </TouchableOpacity>
+                    </View>   
+                    <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
+                    <TouchableOpacity 
+                    activeOpacity = {0.9}
+                    onPress={() =>  this.setState({start: true})} 
+                    > 
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  주일의독서 시작하기</Text>   
+                    </TouchableOpacity>
+                    </View>   
                 </View>        
                   <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도합니다. 한 주간 선택한 구절을 되새김함으로써 말씀과 함께 살아가는 연습을 할 수 있습니다.</Text>
                   <Image source={require('../resources/weekend_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />                   
