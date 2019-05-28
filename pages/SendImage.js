@@ -65,6 +65,27 @@ export default class SendImage extends Component {
   }
  
   componentWillMount () {
+    try {
+      const granted = PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome picntures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
 
     const { params } = this.props.navigation.state;
     // console.log(params.otherParam)
@@ -180,27 +201,6 @@ export default class SendImage extends Component {
 }
  
   saveImage(){
-    try {
-      const granted = PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome picntures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera');
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
       this.refs.viewShot.capture().then(uri => {
           console.log("do something with ", uri);
          // alert(uri);
@@ -259,11 +259,11 @@ export default class SendImage extends Component {
       if(response !== null){
         var image = response.argumentMsg;
         const contentObject = {
-          title     : "오늘의복음을 해보았습니다.",
+          title     : "오늘의복음 앱에서 말씀 묵상을 해 보았습니다.",
           link      : linkObject,
           imageURL  : image,
           imageFile: this.state.uri,
-          desc      : "하느님 말씀을 들으니 참 좋네요~ 한번 써보세요~!",//optional
+          desc      : "하느님께서 제게 해 주신 말씀을 들으니 참 기쁘네요. 한번 사용해 보시겠어요?",//optional
           imageWidth: 300,//optional
           imageHeight:200//optional
           }
@@ -381,7 +381,7 @@ render() {
           ),
           second: () => (
             <View style={{flex: 1, flexWrap: 'wrap', justifyContent: 'center'}}>
-              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, width:'100%'}}>
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 5, width:'100%'}}>
                 <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'cd1.png' ,backgroundImage: require('../resources/cd1.png'), backgroundWhite: true})}>
                 <Image source={require('../resources/cd1.png')} style={{width: 70, height: 48}} />      
                 </TouchableOpacity>        
@@ -398,7 +398,7 @@ render() {
                 <Image source={require('../resources/cd10.png')} style={{width: 70, height: 48}} />  
                 </TouchableOpacity>
               </View>   
-              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, width:'100%'}}>
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 5, width:'100%'}}>
                 <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'cd5.png' ,backgroundImage: require('../resources/cd5.png'), backgroundWhite: true})}>
                 <Image source={require('../resources/cd5.png')} style={{width: 70, height: 48}} />      
                 </TouchableOpacity>        
@@ -415,7 +415,7 @@ render() {
                 <Image source={require('../resources/cd11.png')} style={{width: 70, height: 48}} />  
                 </TouchableOpacity>
               </View>    
-              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, width:'100%'}}>
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 5, width:'100%'}}>
                 <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el1.png' ,backgroundImage: require('../resources/el1.png'), backgroundWhite: false})}>
                 <Image source={require('../resources/el1.png')} style={{width: 70, height: 48}} />      
                 </TouchableOpacity>        
@@ -432,7 +432,7 @@ render() {
                 <Image source={require('../resources/el5.png')} style={{width: 70, height: 48}} />  
                 </TouchableOpacity>
               </View>  
-              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, width:'100%'}}>
+              <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 5, width:'100%'}}>
                 <TouchableOpacity style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 48}} onPress={()=>this.setState({backgroundImageName:'el6.png' ,backgroundImage: require('../resources/el6.png'), backgroundWhite: false})}>
                 <Image source={require('../resources/el6.png')} style={{width: 70, height: 48}} />      
                 </TouchableOpacity>        
@@ -469,7 +469,7 @@ render() {
         })} 
         
         onIndexChange={index => this.setState({ index })}
-        initialLayout={{ width: Dimensions.get('window').width, height: 250}}
+        initialLayout={{ width: Dimensions.get('window').width, height: 200}}
         renderTabBar={(props) =>
         <TabBar
           {...props}
@@ -487,21 +487,21 @@ render() {
           )}
         /> }
       />   
-       <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+       <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:10, borderTopColor:"#d8d8d8", borderTopWidth:0.5}}>  
+       <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
         <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.saveImage1()} 
           >  
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}> <Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:9}} />  복음카드 공유하기</Text>   
+           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  말씀카드 공유하기</Text>   
         </TouchableOpacity>
         </View>   
-        <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '50%', height: 30, marginTop:5}}>
+        <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
         <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.saveImage()} 
           >  
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />  카카오톡 보내기</Text>   
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'thumbs-o-up'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  카카오톡 공유하기</Text>   
           </TouchableOpacity>
         </View>   
       </View>

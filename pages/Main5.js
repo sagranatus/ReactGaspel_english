@@ -1020,13 +1020,13 @@ render() {
 
         <Text style={{color:"#fff", position: 'absolute', left:'20%', top:140, fontWeight:'bold', fontSize:16}}>    |</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'20%', top:160}}>프로필 사진을 등록해보세요.</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:225}}>날짜를 클릭하면 이전의 거룩한독서를 할 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:265}}>날짜를 클릭하면 이전의 거룩한독서를 할 수 있어요.</Text>
         
-        <Text style={{color:"#fff", position: 'absolute', left:'46%', top:240, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'46%', top:280, fontWeight:'bold', fontSize:16}}>   |</Text>
 
-        <Text style={{color:"#fff", position: 'absolute', left:'60%', top:280, fontWeight:'bold', fontSize:16}}>    |</Text>
-        <Text style={{ position: 'absolute', left:'59.4%', top:248, fontWeight:'bold', fontSize:16}}><Icon3 name={"circle-thin"} size={40} color={"#01579b"} /></Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'16%', top:300}}>거룩한독서를 한 날짜에는 동그라미로 표시가 돼요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'60%', top:320, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{ position: 'absolute', left:'59.4%', top:288, fontWeight:'bold', fontSize:16}}><Icon3 name={"circle-thin"} size={40} color={"#01579b"} /></Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'16%', top:340}}>거룩한독서를 한 날짜에는 동그라미로 표시가 돼요.</Text>
     
 
         <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>메인화면</Text>
@@ -1039,11 +1039,11 @@ render() {
         <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
         <TouchableOpacity 
           activeOpacity = {0.9}
-          style={{position: 'absolute', right:2, top:2}}
+          style={{position: 'absolute', right:"4%", top:8}}
           onPress={() => this.setState({selectQuestion:false}) } 
           >    
-            <Icon2 name={'close'} size={30} color={"#fff"} />        
-        </TouchableOpacity>           
+            <Icon5 name={'closecircle'} size={22} color={"#fff"} />        
+        </TouchableOpacity>   
       </View>     
       <View style={this.state.selectShow ? {position: 'absolute', right:'2%', bottom:'10%', width:'96%', height:250, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
         <View style={{marginLeft:20, marginRight:20}}>   
@@ -1107,7 +1107,7 @@ render() {
             [this.refreshContents(), console.log("payload", payload)]
         }}
         />                
-        <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10,  borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>
+        <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: 10}}>
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 100}}>
             <TouchableOpacity 
               activeOpacity = {0.9}
@@ -1170,7 +1170,7 @@ render() {
             horizontal
             pagingEnabled
             onDayPress={day=>this.onselectDate(day, null)}
-            //style={{borderTopWidth: 0.5, borderTopColor: '#d8d8d8'}}
+            style={{borderTopWidth: 0.5, borderTopColor: '#d8d8d8'}}
             markedDates={this.state.Marked}             
             // onPressArrowLeft={substractMonth => this.substractMonth()}
           //   onPressArrowRight={addMonth => this.addMonth()}

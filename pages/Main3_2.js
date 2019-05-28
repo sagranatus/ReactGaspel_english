@@ -814,7 +814,7 @@ render() {
                         onPress={() => this.setState({selectShow:true}) } 
                         >                     
 
-                    <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:12}}>  
+                    <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:10, borderBottomColor:'#d8d8d8', borderBottomWidth:0.5}}>  
                         <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
                         <TouchableOpacity 
                         activeOpacity = {0.9}
@@ -840,7 +840,7 @@ render() {
                         </TouchableOpacity>
                         </View>   
                     </View>      
-                    <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 3, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text>
+                    <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text>
                     </TouchableOpacity>  
                     <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
                     <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -861,37 +861,37 @@ render() {
     
                 <ScrollView style={this.state.basic ? {backgroundColor:"#fff"} : {display:'none'}}
                  ref={(e) => { this.fScroll = e }}>                    
-                  <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-                  <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({selectShow: true})} 
-                    >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'book-open'} size={18} color={"#000"} style={{paddingTop:12}} />  복음읽기</Text>   
-                    </TouchableOpacity>
+                  <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:10, borderBottomColor:'#d8d8d8', borderBottomWidth:0.5}}>  
+                        <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.setState({selectShow: true})} 
+                        >  
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음읽기</Text>   
+                        </TouchableOpacity>
+                        </View>   
+                        <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
+                        > 
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  수정하기</Text>   
+                        </TouchableOpacity>
+                        </View>   
+                        <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
+                        <TouchableOpacity 
+                        activeOpacity = {0.9}
+                        onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3_2", otherParam2: this.state.Lectiodate})}
+                        > 
+                        <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
+                        </TouchableOpacity>
+                        </View>   
                     </View>   
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
-                    >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon4 name={'edit-3'} size={20} color={"#000"} style={{paddingTop:12}} />   수정하기</Text>   
-                    </TouchableOpacity>
-                    </View>         
-                    <View style={{flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '33%', height: 30, marginTop:5}}>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3_2", otherParam2: this.state.Lectiodate})}
-                    >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}><Icon3 name={'send-o'} size={18} color={"#000"} style={{paddingTop:9}} />   공유하기</Text>   
-                    </TouchableOpacity>
-                    </View>                                    
-                </View>    
                 <TouchableOpacity 
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow:true}) } 
                     >    
-                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 30, marginBottom: 20, padding:5}, largeSize]}>{this.state.Sentence}</Text>
+                <Text style={[{color:'#01579b', textAlign: 'center',  marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text>
                 </TouchableOpacity>              
                 <Text style={styles.UpdateQuestionStyleClass}>오늘 하루동안 묵상하고 싶은 구절</Text>
                 <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.comment}</Text>   
@@ -968,7 +968,7 @@ render() {
                         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.Lectiodate}</Text>   
                         </View>   
                     </View>   
-                    <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+                    <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:15, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                         <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
                         <TouchableOpacity 
                         activeOpacity = {0.9}

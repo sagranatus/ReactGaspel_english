@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {  PanResponder,PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, NetInfo, KeyboardAvoidingView, Image, ImageBackground, Alert, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
+import { Dimensions, PanResponder,PixelRatio, StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, Keyboard, NetInfo, KeyboardAvoidingView, Image, ImageBackground, Alert, TouchableHighlight, AsyncStorage,  ActivityIndicator  } from 'react-native';
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Icon3 from 'react-native-vector-icons/FontAwesome'
@@ -7,6 +7,7 @@ import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import {NavigationEvents} from 'react-navigation'
 import { openDatabase } from 'react-native-sqlite-storage';
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
@@ -47,7 +48,14 @@ constructor(props) {
       currentIndex:0,
       initialLoading: true,
       selectShow: false,
-      selectQuestion:false
+      selectQuestion:false,
+      index: 0,
+      routes: [
+          { key: 'first', title: '독서 과정', out: true },
+          { key: 'second', title: '거룩한 독서' },
+          { key: 'third', title: '주의사항' }
+        ],
+        out: false,
     }
     
     this.moveNext = this.moveNext.bind(this);
@@ -808,7 +816,7 @@ componentWillMount(){
                   </View>                          
               </KeyboardAvoidingView>
 
-              <KeyboardAwareScrollView style={{marginBottom:230, marginTop:10}}>              
+              <KeyboardAwareScrollView style={this.state.currentIndex == 6 ? {marginBottom:230, marginTop:30} : {marginBottom:230, marginTop:10}}>           
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
@@ -829,58 +837,125 @@ componentWillMount(){
          // 내용 있는 경우
         (
         <View  style={{backgroundColor:'#fff', flex:1}}>
-           <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
-                <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
-                    <Text style={[styles.textStyle, normalSize]}>거룩한 독서는 하느님 말씀 안에서 이루어지는 하나의 총제적인 과정으로 6단계로 요약될 수 있습니다.{"\n"}</Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>침묵</Text> 
-                    <Text style={[styles.textStyle, normalSize]}>
-                    하느님께 우리 마음의 주파수를 맞추려는 노력으로 하느님 말씀을 듣기 전에 차분한 마음 안에서 자신을 온전히 내려놓아야 합니다.{"\n"}
+         <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
+         <TouchableOpacity 
+            activeOpacity = {0.9}
+            style={{position: 'absolute', right:"4%", top:8}}
+            onPress={() => this.setState({selectQuestion:false}) } 
+            >    
+                <Icon5 name={'closecircle'} size={22} color={"#fff"} />        
+            </TouchableOpacity>   
+                    <TabView
+                   style={{margin:5, marginTop:35, borderTopColor:'#d8d8d8', borderTopWidth:0.5, backgroundColor:"#fff"}}
+                navigationState={this.state}
+                renderScene={SceneMap({
+                  first: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff' , paddingTop:10}]}>               
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 복음으로 거룩한독서를 할 수 있습니다.</Text>                      
+
+                  <View style={{ flex:1, justifyContent: 'center', alignItems: 'center', marginTop:20, marginBottom:20}}> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    성령청원기도 
                     </Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>성령청원</Text>
-                    <Text style={[styles.textStyle, normalSize]}>
-                    하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있고 성령의 도움 없이는 거룩한 독서 자체가 불가능합니다. 반드시 성령의 도움이 필요합니다.{"\n"}
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} />  
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    세밀한 독서
                     </Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>독서</Text>
-                    <Text style={[styles.textStyle, normalSize]}>
-                    하느님의 말씀을 듣는 것으로 성경 본문이 그 자체로 무엇을 말하고 있는가에 초점을 맞춥니다. 세밀한 독서와 반복적인 독서가 필요하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
+                    <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
+                    · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.
+                    {"\n"}· 복음의 등장 인물은?
+                    {"\n"}· 복음의 배경장소는?
+                    {"\n"}· 배경시간 혹은 상황은?
+                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.
                     </Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>묵상</Text>
-                    <Text style={[styles.textStyle, normalSize]}>
-                    말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정으로 하느님께서 지금 나에게 하고 계시는 말씀을 듣기 위해 노력합니다.{"\n"}
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    묵상
                     </Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>기도</Text>
-                    <Text style={[styles.textStyle, normalSize]}>
-                    하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
+                    <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
+                    · 특별히 눈에 띄는 부분은?
+                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?
+                    {"\n"}· 복음과 관련된 묵상 질문
+                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?
+                    {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.
                     </Text>
-                    <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>관상</Text>
-                    <Text style={[styles.textStyle, normalSize]}>
-                    정신과 마음의 진정한 회개를 이끌어 내는 단계로, 모든 이와 모든 것을 하느님의 눈으로 바라보며 모든 것이 하느님의 은총임을 깨닫게 해주는 하느님의 선물입니다. {"\n"}
-                    </Text>
-                
-                    <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 독서</Text> 
-                    <Text style={[styles.textStyle, normalSize]}>       
-                      성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (배경지식 공부 / 세밀하고, 반복적인 독서) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  관상 (한주간 말씀을 품고 살기)
-                    </Text>        
-                    <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>
-                    · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.(독서)
-                    {"\n"}· 복음의 등장 인물은?(독서)
-                    {"\n"}· 복음의 배경장소는?(독서)
-                    {"\n"}· 배경시간 혹은 상황은?(독서)
-                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
-                    {"\n"}· 특별히 눈에 띄는 부분은?(묵상)
-                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
-                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
-                    {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.(관상)
-                    {"\n"}
-                    </Text>
-                    <TouchableOpacity 
-                    activeOpacity = {0.9}
-                    style={{position: 'absolute', right:2, top:2}}
-                    onPress={() => this.setState({selectQuestion:false}) } 
-                    >    
-                        <Icon name={'close'} size={30} color={"#000"} />        
-                    </TouchableOpacity>   
-                </ScrollView>  
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    묵상후 기도
+                    </Text>    
+                    </View>                    
+                  
+                  </ScrollView>
+                ),
+                second: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
+                  하느님께서 ‘지금 이순간, 나에게’ 하시는 말씀을 {"\n"}듣기 위해 기도와 함께하는 독서법입니다.
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>침묵</Text> 
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님께 우리 마음의 주파수를 맞추려는 노력으로 차분한 마음 안에서 자신을 온전히 내려놓습니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>성령청원기도</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있기에 반드시 성령의 도움이 필요합니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>독서</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님의 말씀을 듣는 것으로 세밀한 독서와 반복적인 독서를 하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>묵상</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정입니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>기도</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>관상</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                  거룩한 독서를 통해 하느님의 말씀을 기억하면서 모든 것이 하느님의 은총임을 깨닫습니다. {"\n"}
+                  </Text>
+                  </ScrollView>
+                ),
+                third: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>            
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>정해진 침묵의 시간</Text> 
+                  <Text style={[styles.textStyle, normalSize]}>
+                  거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. {"\n"}<Text style={{fontSize:13}}>* 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.</Text>
+                      {"\n"}
+                  </Text>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>들을 귀가 있는 마음</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                      급하게 해서는 안됩니다. 주님은 당신 말씀의 씨를 뿌리고 계시며 나 자신은 말씀이 떨어지는 땅입니다. 열매를 맺기 위해서는 좋은 땅이 준비되어야 합니다. 
+                      {"\n"} 
+                  </Text>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>지속적인 독서</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                  꾸준함이 필요합니다. 지금 당장 성서 본문이 이해되지 않는다고 하더라도 지속적으로 연습하다보면 하느님의 말씀이 어느 순간 나의 마음을 울리게 될 것입니다.
+                  </Text>
+                  </ScrollView>
+                )
+                })}
+                onIndexChange={index => this.setState({ index })}
+                initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height}}
+                renderTabBar={(props) =>
+                <TabBar
+                {...props}
+                indicatorStyle={{ backgroundColor: '#01579b' }}
+                style={{backgroundColor: "white"}}
+                renderIcon={this.renderIcon}
+                renderLabel={({ route }) => (
+                    <View>
+                        <Text style={{textAlign: 'center',
+                            color: route.key === props.navigationState.routes[props.navigationState.index].key ?
+                            '#01579b' : 'black'}}>
+                            {route.title}
+                        </Text>
+                    </View>
+                )}
+                /> }
+            /> 
             </View>      
             <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
             <ScrollView 
@@ -922,7 +997,7 @@ componentWillMount(){
             }}
             />  
 
-                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:12}}>  
+                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:10, borderBottomColor:'#d8d8d8', borderBottomWidth:0.5}}>  
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
@@ -952,7 +1027,7 @@ componentWillMount(){
               activeOpacity = {0.9}
               onPress={() => this.setState({selectShow:true}) } 
               >    
-            <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 3, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
+            <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
             </TouchableOpacity>
             <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -987,59 +1062,126 @@ componentWillMount(){
                   this.setChange();
               }}
               />              
-                <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
-                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
-                      <Text style={[styles.textStyle, normalSize]}>거룩한 독서는 하느님 말씀 안에서 이루어지는 하나의 총제적인 과정으로 6단계로 요약될 수 있습니다.{"\n"}</Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>침묵</Text> 
-                      <Text style={[styles.textStyle, normalSize]}>
-                      하느님께 우리 마음의 주파수를 맞추려는 노력으로 하느님 말씀을 듣기 전에 차분한 마음 안에서 자신을 온전히 내려놓아야 합니다.{"\n"}
-                      </Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>성령청원</Text>
-                      <Text style={[styles.textStyle, normalSize]}>
-                      하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있고 성령의 도움 없이는 거룩한 독서 자체가 불가능합니다. 반드시 성령의 도움이 필요합니다.{"\n"}
-                      </Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>독서</Text>
-                      <Text style={[styles.textStyle, normalSize]}>
-                      하느님의 말씀을 듣는 것으로 성경 본문이 그 자체로 무엇을 말하고 있는가에 초점을 맞춥니다. 세밀한 독서와 반복적인 독서가 필요하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
-                      </Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>묵상</Text>
-                      <Text style={[styles.textStyle, normalSize]}>
-                      말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정으로 하느님께서 지금 나에게 하고 계시는 말씀을 듣기 위해 노력합니다.{"\n"}
-                      </Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>기도</Text>
-                      <Text style={[styles.textStyle, normalSize]}>
-                      하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
-                      </Text>
-                      <Text style={[{color:'#01579b', textAlign:'center'}, largeSize]}>관상</Text>
-                      <Text style={[styles.textStyle, normalSize]}>
-                      정신과 마음의 진정한 회개를 이끌어 내는 단계로, 모든 이와 모든 것을 하느님의 눈으로 바라보며 모든 것이 하느님의 은총임을 깨닫게 해주는 하느님의 선물입니다. {"\n"}
-                      </Text>
+              <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>             
+              <TouchableOpacity 
+            activeOpacity = {0.9}
+            style={{position: 'absolute', right:"4%", top:8}}
+            onPress={() => this.setState({selectQuestion:false}) } 
+            >    
+                <Icon5 name={'closecircle'} size={22} color={"#fff"} />        
+            </TouchableOpacity>   
+                    <TabView
+                   style={{margin:5, marginTop:35, borderTopColor:'#d8d8d8', borderTopWidth:0.5, backgroundColor:"#fff"}}
+                navigationState={this.state}
+                renderScene={SceneMap({
+                first: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff' , paddingTop:10}]}>               
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 복음으로 거룩한독서를 할 수 있습니다.</Text>                      
+
+                  <View style={{ flex:1, justifyContent: 'center', alignItems: 'center', marginTop:20, marginBottom:20}}> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    성령청원기도 
+                    </Text>
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} />  
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    세밀한 독서
+                    </Text>
+                    <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
+                    · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.
+                    {"\n"}· 복음의 등장 인물은?
+                    {"\n"}· 복음의 배경장소는?
+                    {"\n"}· 배경시간 혹은 상황은?
+                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.
+                    </Text>
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    묵상
+                    </Text>
+                    <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
+                    · 특별히 눈에 띄는 부분은?
+                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?
+                    {"\n"}· 복음과 관련된 묵상 질문
+                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?
+                    {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.
+                    </Text>
+                    <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    묵상후 기도
+                    </Text>    
+                    </View>                    
                   
-                      <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 독서</Text> 
-                      <Text style={[styles.textStyle, normalSize]}>       
-                        성령청원기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  독서 (배경지식 공부 / 세밀하고, 반복적인 독서) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  묵상 (예수님 모습 찾기, 내게 해주시는 말씀 듣기, 한주간 묵상할 구절 고르기) <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  기도 <Icon5 name={'rightcircleo'} size={15} color={"#01579b"} />  관상 (한주간 말씀을 품고 살기)
-                      </Text>        
-                      <Text style={[styles.textStyle, {fontSize:13, marginTop:-5}]}>
-                      · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.(독서)
-                      {"\n"}· 복음의 등장 인물은?(독서)
-                      {"\n"}· 복음의 배경장소는?(독서)
-                      {"\n"}· 배경시간 혹은 상황은?(독서)
-                      {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.(독서)
-                      {"\n"}· 특별히 눈에 띄는 부분은?(묵상)
-                      {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?(묵상)
-                      {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?(묵상)
-                      {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.(관상)
+                  </ScrollView>
+                ),
+                second: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
+                  하느님께서 ‘지금 이순간, 나에게’ 하시는 말씀을 {"\n"}듣기 위해 기도와 함께하는 독서법입니다.
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>침묵</Text> 
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님께 우리 마음의 주파수를 맞추려는 노력으로 차분한 마음 안에서 자신을 온전히 내려놓습니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>성령청원기도</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있기에 반드시 성령의 도움이 필요합니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>독서</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님의 말씀을 듣는 것으로 세밀한 독서와 반복적인 독서를 하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>묵상</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정입니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>기도</Text>
+                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                  하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
+                  </Text>
+                  <Text style={[styles.UpdateQuestionStyleClass]}>관상</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                  거룩한 독서를 통해 하느님의 말씀을 기억하면서 모든 것이 하느님의 은총임을 깨닫습니다. {"\n"}
+                  </Text>
+                  </ScrollView>
+                ),
+                third: () => (
+                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>            
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>정해진 침묵의 시간</Text> 
+                  <Text style={[styles.textStyle, normalSize]}>
+                  거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. {"\n"}<Text style={{fontSize:13}}>* 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.</Text>
                       {"\n"}
-                      </Text>
-                      <TouchableOpacity 
-                      activeOpacity = {0.9}
-                      style={{position: 'absolute', right:2, top:2}}
-                      onPress={() => this.setState({selectQuestion:false}) } 
-                      >    
-                          <Icon name={'close'} size={30} color={"#000"} />        
-                      </TouchableOpacity>   
-                  </ScrollView>  
-              </View>      
+                  </Text>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>들을 귀가 있는 마음</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                      급하게 해서는 안됩니다. 주님은 당신 말씀의 씨를 뿌리고 계시며 나 자신은 말씀이 떨어지는 땅입니다. 열매를 맺기 위해서는 좋은 땅이 준비되어야 합니다. 
+                      {"\n"} 
+                  </Text>
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>지속적인 독서</Text>
+                  <Text style={[styles.textStyle, normalSize]}>
+                  꾸준함이 필요합니다. 지금 당장 성서 본문이 이해되지 않는다고 하더라도 지속적으로 연습하다보면 하느님의 말씀이 어느 순간 나의 마음을 울리게 될 것입니다.
+                  </Text>
+                  </ScrollView>
+                )
+                })}
+                onIndexChange={index => this.setState({ index })}
+                initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height}}
+                renderTabBar={(props) =>
+                <TabBar
+                {...props}
+                indicatorStyle={{ backgroundColor: '#01579b' }}
+                style={{backgroundColor: "white"}}
+                renderIcon={this.renderIcon}
+                renderLabel={({ route }) => (
+                    <View>
+                        <Text style={{textAlign: 'center',
+                            color: route.key === props.navigationState.routes[props.navigationState.index].key ?
+                            '#01579b' : 'black'}}>
+                            {route.title}
+                        </Text>
+                    </View>
+                )}
+                /> }
+            /> 
+            </View>      
               <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
               <ScrollView 
               style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
@@ -1074,7 +1216,7 @@ componentWillMount(){
                 </View>
                 </View>     
                 <Image source={require('../resources/weekend_img1.png')} style={{width: '100%', height: 150}} />     
-                <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+                <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:15, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -1303,7 +1445,7 @@ componentWillMount(){
                   </KeyboardAvoidingView>
 
                 
-                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:130}}>         
+                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : this.state.currentIndex == 9 ? {marginTop:20, marginBottom:130} :{marginBottom:130} }>      
                       <TouchableHighlight
                       style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                       underlayColor = {"#fff"}

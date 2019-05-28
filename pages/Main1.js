@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
+import { Alert, Platform, PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
 import {Navigation} from 'react-navigation';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -781,10 +781,10 @@ render() {
         <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
         <TouchableOpacity 
           activeOpacity = {0.9}
-          style={{position: 'absolute', right:2, top:2}}
+          style={{position: 'absolute', right:'4%', top:8}}
           onPress={() => this.setState({selectQuestion:false}) } 
           >    
-            <Icon2 name={'close'} size={30} color={"#fff"} />        
+            <Icon5 name={'closecircle'} size={22} color={"#fff"} />        
         </TouchableOpacity>           
       </View>     
     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
@@ -822,7 +822,7 @@ render() {
       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
         <TouchableOpacity 
         activeOpacity = {0.9}
-        onPress={() => this.setState({selectQuestion:true, selectShow: false})} // insertComment
+        onPress={() => [this.setState({selectQuestion:true, selectShow: false}),  this.fScroll.scrollTo({y: 0})]} // insertComment
         >      
         <Icon5 name={'questioncircleo'} size={22} color={"#000"} style={{paddingTop:9}} />
         </TouchableOpacity>
@@ -855,7 +855,7 @@ render() {
         </View>   
       </View>
       
-      <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+      <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:15, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
           <TouchableOpacity 
             activeOpacity = {0.9}
@@ -867,13 +867,29 @@ render() {
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
           <TouchableOpacity 
             activeOpacity = {0.9}
-            onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date})} // insertComment
+            onPress={() => this.state.js2 !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date}) :
+            Alert.alert(
+              '거룩한 독서를 하러 가시겠어요?',
+              '아직 오늘의 복음을 묵상하지 않으셨네요. 거룩한독서를 하고 말씀을 공유해보세요.',
+              [                                 
+                {
+                text: '취소',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+                },
+                {text: '거룩한독서 하러가기', onPress: () => 
+                  this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')
+                },
+              ],
+              {cancelable: true},
+              )        
+          } // insertComment
             >  
             <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 공유하기</Text>   
             </TouchableOpacity>
           </View>   
         </View>
-      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+      <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={this.state.comment == "" && this.state.js2 == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘 해주신 말씀</Text>   
         </View> 

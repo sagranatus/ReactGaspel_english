@@ -712,7 +712,7 @@ render() {
                 </View>                          
               </KeyboardAvoidingView>
               
-              <KeyboardAwareScrollView style={{marginBottom:230, marginTop:10}}>              
+              <KeyboardAwareScrollView style={this.state.currentIndex == 6 ? {marginBottom:230, marginTop:30} : {marginBottom:230, marginTop:10}}>      
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
@@ -780,7 +780,7 @@ render() {
               </TouchableOpacity>
               <ScrollView style={{marginBottom:40}}
               ref={(e) => { this.fScroll = e }}>
-                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:12}}>  
+                <View style={{backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:5, paddingBottom:10, borderBottomColor:'#d8d8d8', borderBottomWidth:0.5}}>  
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '31%', marginRight:'1.5%', height:40}}>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
@@ -810,7 +810,7 @@ render() {
               activeOpacity = {0.9}
               onPress={() => this.setState({selectShow:true}) } 
               >       
-              <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 3, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
+              <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
               </TouchableOpacity>
               <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
               <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -894,7 +894,7 @@ render() {
                     <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.Weekenddate}</Text>   
                     </View>   
                 </View>  
-                 <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:13, borderBottomColor:"#f2f5f7", borderBottomWidth:10}}>  
+                 <View style={{flex:1, backgroundColor: "#fff", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop:5, alignItems: 'center',  padding:10, paddingBottom:15, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5,flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center',   alignItems: 'center',  width: '48%', marginRight:'3%', height:40}}>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -1096,7 +1096,8 @@ render() {
                   </KeyboardAvoidingView>
 
               
-                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : {marginBottom:130}}>         
+                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : this.state.currentIndex == 9 ? {marginTop:20, marginBottom:130} :{marginBottom:130} }> 
+     
                       <TouchableHighlight
                       style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                       underlayColor = {"#fff"}
