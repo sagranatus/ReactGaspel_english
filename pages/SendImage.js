@@ -1,7 +1,7 @@
 import ViewShot from "react-native-view-shot";
 import React, { Component } from 'react';
 import {PropTypes} from 'prop-types';
-import { Text, Image, View, TouchableOpacity, PermissionsAndroid, StyleSheet, Dimensions, Button} from 'react-native';
+import { Platform, Text, Image, View, TouchableOpacity, PermissionsAndroid, StyleSheet, Dimensions, Button} from 'react-native';
 import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -207,9 +207,9 @@ export default class SendImage extends Component {
           this.setState({uri: uri})        
          
           let dirs = RNFetchBlob.fs.dirs;
-          console.log(dirs.DCIMDir)
+          console.log(dirs.DocumentDir)
           //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
-          RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png") 
+          RNFetchBlob.fs.cp(uri, dirs.DocumentDir+"/sendimg.jpg") 
           .then(() => { 
            /* RNFetchBlob.config({
               fileCache: true
@@ -228,7 +228,7 @@ export default class SendImage extends Component {
                 // remove the file from storage
                 return fs.unlink(imagePath);
               });*/
-
+              alert("save")
               this.linkFeed() 
            })
           .catch((error) => { 
@@ -251,11 +251,11 @@ export default class SendImage extends Component {
        // social:socialObject,//optional
         buttons:[buttonObject]//optional*/
         objectType:'image',
-        url: dirs.DCIMDir+"/sendimg.png"
+        url: dirs.DocumentDir+"/sendimg.jpg"
       };
       const response = await RNKakaoLink.link(options);
       console.log(response);
-     // alert(response);
+      alert(response);
       if(response !== null){
         var image = response.argumentMsg;
         const contentObject = {
@@ -280,6 +280,7 @@ export default class SendImage extends Component {
             console.log(response);
           }catch(e){
             console.warn(e);
+            alert(e)
           }
       }
       
@@ -496,7 +497,7 @@ render() {
            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  말씀카드 공유하기</Text>   
         </TouchableOpacity>
         </View>   
-        <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
+        <View style={Platform.OS == "ios" ? {display:'none'} : {backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
         <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.saveImage()} 

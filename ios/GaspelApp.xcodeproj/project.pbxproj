@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -16,6 +17,7 @@
 		02301A5E2272A53A00E3F707 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		02473966226ED69000B55CBC /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02473963226ED64D00B55CBC /* libRCTPushNotification.a */; };
 		02DF1A0A2271B3A5000698A6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02DF1A082271B3A5000698A6 /* LaunchScreen.xib */; };
+		084801EC0A1C4ABABA877361 /* libRNKakaoLink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164F83B75B5049E9995AB876 /* libRNKakaoLink.a */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -27,6 +29,10 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		18B3372C5374401683B85927 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5944F1B91D842069306CB7E /* libRNImagePicker.a */; };
 		1BD17F0D369541F4913D7F3D /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02BC280BB84B4290B230F1 /* libRNGestureHandler.a */; };
+		1EFE1F58229D2BAF004F2FA4 /* KakaoOpenSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EFE1F57229D2BAF004F2FA4 /* KakaoOpenSDK.framework */; };
+		1EFE1F5A229D2C43004F2FA4 /* KakaoCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EFE1F59229D2C43004F2FA4 /* KakaoCommon.framework */; };
+		1EFE1F5C229D2C4C004F2FA4 /* KakaoLink.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EFE1F5B229D2C4C004F2FA4 /* KakaoLink.framework */; };
+		1EFE1F5E229D2C55004F2FA4 /* KakaoMessageTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EFE1F5D229D2C55004F2FA4 /* KakaoMessageTemplate.framework */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -44,14 +50,17 @@
 		31EBB0739D484084B925CAC5 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50AA15BF35AF4D7084F11164 /* Ionicons.ttf */; };
 		39C61391D0DE4F1086680BF5 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1803DD22D76C421F8FBB0A96 /* FontAwesome5_Brands.ttf */; };
 		3CCBBEA40DD04113915329B4 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CAC1E05C25CE487C9606AC2C /* Zocial.ttf */; };
+		3F46E318CDAD4B9894B3DF89 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */; };
 		3FD29EA5979645FCB1962131 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FA0E58741F149A1879852AC /* MaterialIcons.ttf */; };
 		528D9E20C92F4ABBB51D9D55 /* libRNVectorIcons-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67231981C2994ED186E8F517 /* libRNVectorIcons-tvOS.a */; };
 		666842CCB6F7422F91E59102 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6499AFD0098F4B3496AF3FD9 /* Entypo.ttf */; };
 		7750B2ED25DD41DFA4BE585E /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DA74A2D876B4ECEB94BE773 /* libRNVectorIcons.a */; };
 		7D38359581EB4242B1727293 /* NanumMyeongjoBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2C289BD544A48B6ADF196C7 /* NanumMyeongjoBold.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		9B009BA072AD46C1A73FEFDD /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E0EAD125A44F0FB40B3618 /* libRNFS.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B7B01AEFCE9B43A9B0050E91 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F555D89593C4F7B96951EED /* FontAwesome.ttf */; };
+		B8B5E8AE85644AAFA808950F /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D417FF72430F4EB6959D83E4 /* libRNShare.a */; };
 		C15C373A88694A108163A4E9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7AB7C40CC1EA4F5AB03F00AF /* Foundation.ttf */; };
 		C59312CA05CE44DE84925948 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44B1B68C1D414AFDB450A9CF /* FontAwesome5_Regular.ttf */; };
 		C82067FDB8104C71B99ECF70 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 57E594064FC54D6D9A87F16E /* EvilIcons.ttf */; };
@@ -62,10 +71,6 @@
 		E7A6745785CA4123A00B6049 /* libSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3DF5E7B984B4475A920B96B /* libSQLite.a */; };
 		EE2A3DF3262D42EAB30C4EF2 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3BFB63E94BD4B7196BE6EEF /* MaterialCommunityIcons.ttf */; };
 		FE515D6C8C9040A5A940179B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F6C90751C1A4A3893BDE295 /* SimpleLineIcons.ttf */; };
-		3F46E318CDAD4B9894B3DF89 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */; };
-		084801EC0A1C4ABABA877361 /* libRNKakaoLink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164F83B75B5049E9995AB876 /* libRNKakaoLink.a */; };
-		9B009BA072AD46C1A73FEFDD /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E0EAD125A44F0FB40B3618 /* libRNFS.a */; };
-		B8B5E8AE85644AAFA808950F /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D417FF72430F4EB6959D83E4 /* libRNShare.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,6 +206,41 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		1EFE1E1D229D0E0E004F2FA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
+			remoteInfo = RNFS;
+		};
+		1EFE1E1F229D0E0E004F2FA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6456441F1EB8DA9100672408;
+			remoteInfo = "RNFS-tvOS";
+		};
+		1EFE1E25229D0E0E004F2FA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNKakaoLink;
+		};
+		1EFE1E2D229D0E10004F2FA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5DDF3176F7C4DE08FD9D6E4 /* RNShare.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNShare;
+		};
+		1EFE1E32229D0E10004F2FA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNViewShot;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -415,6 +455,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -427,6 +468,7 @@
 		0247395D226ED64C00B55CBC /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		024739A8226ED7B900B55CBC /* ReactNativeAutoUpdater.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeAutoUpdater.xcodeproj; path = "../node_modules/react-native-auto-updater/ios/ReactNativeAutoUpdater.xcodeproj"; sourceTree = "<group>"; };
 		02DF1A092271B3A5000698A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = GaspelApp/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* GaspelApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaspelApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -436,7 +478,12 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = GaspelApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GaspelApp/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		164F83B75B5049E9995AB876 /* libRNKakaoLink.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKakaoLink.a; sourceTree = "<group>"; };
 		1803DD22D76C421F8FBB0A96 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		1EFE1F57229D2BAF004F2FA4 /* KakaoOpenSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoOpenSDK.framework; sourceTree = "<group>"; };
+		1EFE1F59229D2C43004F2FA4 /* KakaoCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoCommon.framework; sourceTree = "<group>"; };
+		1EFE1F5B229D2C4C004F2FA4 /* KakaoLink.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoLink.framework; sourceTree = "<group>"; };
+		1EFE1F5D229D2C55004F2FA4 /* KakaoMessageTemplate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KakaoMessageTemplate.framework; sourceTree = "<group>"; };
 		1FA0E58741F149A1879852AC /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		28CAB3CF424848E99F5E0C28 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		2B67B54355484169877E38D8 /* SQLite.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = "../node_modules/react-native-sqlite-storage/src/ios/SQLite.xcodeproj"; sourceTree = "<group>"; };
@@ -461,23 +508,20 @@
 		88951F1E1DC5477DB2C6850C /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		8A391F9F8C654B4B8AF8A6A8 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		8F6C90751C1A4A3893BDE295 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKakaoLink.xcodeproj; path = "../node_modules/react-native-kakao-links/ios/RNKakaoLink.xcodeproj"; sourceTree = "<group>"; };
 		900D7865DB114180B9164E9A /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		CAC1E05C25CE487C9606AC2C /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		D3BFB63E94BD4B7196BE6EEF /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		D3DF5E7B984B4475A920B96B /* libSQLite.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSQLite.a; sourceTree = "<group>"; };
+		D417FF72430F4EB6959D83E4 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
+		D5DDF3176F7C4DE08FD9D6E4 /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
 		DD606685E82243B7BD26F473 /* libReactNativeAutoUpdater.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeAutoUpdater.a; sourceTree = "<group>"; };
 		F2C289BD544A48B6ADF196C7 /* NanumMyeongjoBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumMyeongjoBold.ttf; path = ../resources/fonts/NanumMyeongjoBold.ttf; sourceTree = "<group>"; };
 		F5944F1B91D842069306CB7E /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
+		F7E0EAD125A44F0FB40B3618 /* libRNFS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFS.a; sourceTree = "<group>"; };
 		F848FFBAF43C4BE1973CC567 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
-		03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; name = "RNViewShot.xcodeproj"; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */ = {isa = PBXFileReference; name = "libRNViewShot.a"; path = "libRNViewShot.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */ = {isa = PBXFileReference; name = "RNKakaoLink.xcodeproj"; path = "../node_modules/react-native-kakao-links/ios/RNKakaoLink.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		164F83B75B5049E9995AB876 /* libRNKakaoLink.a */ = {isa = PBXFileReference; name = "libRNKakaoLink.a"; path = "libRNKakaoLink.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		F7E0EAD125A44F0FB40B3618 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		D5DDF3176F7C4DE08FD9D6E4 /* RNShare.xcodeproj */ = {isa = PBXFileReference; name = "RNShare.xcodeproj"; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		D417FF72430F4EB6959D83E4 /* libRNShare.a */ = {isa = PBXFileReference; name = "libRNShare.a"; path = "libRNShare.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -498,11 +542,13 @@
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+				1EFE1F5A229D2C43004F2FA4 /* KakaoCommon.framework in Frameworks */,
 				02301A592272A2F400E3F707 /* libReactNativeAutoUpdater.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
+				1EFE1F5C229D2C4C004F2FA4 /* KakaoLink.framework in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
@@ -510,8 +556,10 @@
 				02301A5E2272A53A00E3F707 /* libReact.a in Frameworks */,
 				1BD17F0D369541F4913D7F3D /* libRNGestureHandler.a in Frameworks */,
 				E7A6745785CA4123A00B6049 /* libSQLite.a in Frameworks */,
+				1EFE1F58229D2BAF004F2FA4 /* KakaoOpenSDK.framework in Frameworks */,
 				7750B2ED25DD41DFA4BE585E /* libRNVectorIcons.a in Frameworks */,
 				18B3372C5374401683B85927 /* libRNImagePicker.a in Frameworks */,
+				1EFE1F5E229D2C55004F2FA4 /* KakaoMessageTemplate.framework in Frameworks */,
 				CC7BC33F9A3A4F6CA4532E34 /* libRNFetchBlob.a in Frameworks */,
 				3F46E318CDAD4B9894B3DF89 /* libRNViewShot.a in Frameworks */,
 				084801EC0A1C4ABABA877361 /* libRNKakaoLink.a in Frameworks */,
@@ -616,6 +664,10 @@
 				8A391F9F8C654B4B8AF8A6A8 /* libRNFetchBlob.a */,
 				DD606685E82243B7BD26F473 /* libReactNativeAutoUpdater.a */,
 				67231981C2994ED186E8F517 /* libRNVectorIcons-tvOS.a */,
+				007FAAC4A7574BB0B9332C00 /* libRNViewShot.a */,
+				164F83B75B5049E9995AB876 /* libRNKakaoLink.a */,
+				F7E0EAD125A44F0FB40B3618 /* libRNFS.a */,
+				D417FF72430F4EB6959D83E4 /* libRNShare.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -735,9 +787,46 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1EFE1DEE229D0E0E004F2FA4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1EFE1E1E229D0E0E004F2FA4 /* libRNFS.a */,
+				1EFE1E20229D0E0E004F2FA4 /* libRNFS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1EFE1DF0229D0E0E004F2FA4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1EFE1E26229D0E0E004F2FA4 /* libRNKakaoLink.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1EFE1E2A229D0E10004F2FA4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1EFE1E2E229D0E10004F2FA4 /* libRNShare.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1EFE1E2F229D0E10004F2FA4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1EFE1E33229D0E10004F2FA4 /* libRNViewShot.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1EFE1F5D229D2C55004F2FA4 /* KakaoMessageTemplate.framework */,
+				1EFE1F5B229D2C4C004F2FA4 /* KakaoLink.framework */,
+				1EFE1F59229D2C43004F2FA4 /* KakaoCommon.framework */,
+				1EFE1F57229D2BAF004F2FA4 /* KakaoOpenSDK.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 			);
 			name = Frameworks;
@@ -1036,6 +1125,10 @@
 					ProjectRef = 3491D87E803341B2AB2E0D6F /* RNFetchBlob.xcodeproj */;
 				},
 				{
+					ProductGroup = 1EFE1DEE229D0E0E004F2FA4 /* Products */;
+					ProjectRef = C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */;
+				},
+				{
 					ProductGroup = 0247388E226ED18700B55CBC /* Products */;
 					ProjectRef = 41270E90C0DC42E5A4B7622F /* RNGestureHandler.xcodeproj */;
 				},
@@ -1044,8 +1137,20 @@
 					ProjectRef = 28CAB3CF424848E99F5E0C28 /* RNImagePicker.xcodeproj */;
 				},
 				{
+					ProductGroup = 1EFE1DF0229D0E0E004F2FA4 /* Products */;
+					ProjectRef = 8F76D0E00512456A9E14A9BA /* RNKakaoLink.xcodeproj */;
+				},
+				{
+					ProductGroup = 1EFE1E2A229D0E10004F2FA4 /* Products */;
+					ProjectRef = D5DDF3176F7C4DE08FD9D6E4 /* RNShare.xcodeproj */;
+				},
+				{
 					ProductGroup = 02473892226ED18800B55CBC /* Products */;
 					ProjectRef = 01C824EF1F934B93B40BE690 /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = 1EFE1E2F229D0E10004F2FA4 /* Products */;
+					ProjectRef = 03CD863D13704F66B8E3CDE6 /* RNViewShot.xcodeproj */;
 				},
 				{
 					ProductGroup = 02473890226ED18800B55CBC /* Products */;
@@ -1187,6 +1292,41 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1EFE1E1E229D0E0E004F2FA4 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 1EFE1E1D229D0E0E004F2FA4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1EFE1E20229D0E0E004F2FA4 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 1EFE1E1F229D0E0E004F2FA4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1EFE1E26229D0E0E004F2FA4 /* libRNKakaoLink.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNKakaoLink.a;
+			remoteRef = 1EFE1E25229D0E0E004F2FA4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1EFE1E2E229D0E10004F2FA4 /* libRNShare.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNShare.a;
+			remoteRef = 1EFE1E2D229D0E10004F2FA4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1EFE1E33229D0E10004F2FA4 /* libRNViewShot.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNViewShot.a;
+			remoteRef = 1EFE1E32229D0E10004F2FA4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */ = {
@@ -1457,7 +1597,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1553,10 +1693,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1590,10 +1730,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1625,6 +1765,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X34V75M24W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..",
@@ -1645,10 +1789,18 @@
 					"$(SRCROOT)..",
 					ode_modules,
 					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-view-shotios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-kakao-linksios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fs/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-shareios",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1662,6 +1814,7 @@
 				PROVISIONING_PROFILE = "48a72ee3-b173-426a-926c-8d5ab0922a56";
 				PROVISIONING_PROFILE_SPECIFIER = "Saea Jang";
 				VERSIONING_SYSTEM = "apple-generic";
+				dd = d;
 			};
 			name = Debug;
 		};
@@ -1675,6 +1828,10 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X34V75M24W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..",
@@ -1695,10 +1852,10 @@
 					"$(SRCROOT)..",
 					ode_modules,
 					"$(SRCROOT)/../node_modules/react-native-auto-updater/**",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1712,6 +1869,7 @@
 				PROVISIONING_PROFILE = "48a72ee3-b173-426a-926c-8d5ab0922a56";
 				PROVISIONING_PROFILE_SPECIFIER = "Saea Jang";
 				VERSIONING_SYSTEM = "apple-generic";
+				dd = d;
 			};
 			name = Release;
 		};
@@ -1735,10 +1893,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1780,10 +1938,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1824,10 +1982,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1868,10 +2026,10 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\nn-fetch-blobios/**",
 					"$(SRCROOT)..\node_modules\neact-native-auto-updateriosReactNativeAutoUpdater",
-					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
-					"$(SRCROOT)\..\node_modules\react-native-kakao-links\ios/**",
-					"$(SRCROOT)\..\node_modules\react-native-fs/**",
-					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
+					"$(SRCROOT)..\node_modules\neact-native-kakao-linksios/**",
+					"$(SRCROOT)..\node_modules\neact-native-fs/**",
+					"$(SRCROOT)..\node_modules\neact-native-shareios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
