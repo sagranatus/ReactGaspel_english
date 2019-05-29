@@ -55,8 +55,59 @@ constructor(props) {
     this.moveFinal = this.moveFinal.bind(this);
     this.movePrevious = this.movePrevious.bind(this);
     this.transitionToNextPanel = this.transitionToNextPanel.bind(this);  
+    this.getData = this.getData.bind(this);    
 }
 
+getData(){
+  // lectio, weekend DB 있는지 확인        
+  const loginId = this.props.status.loginId;
+  var today_comment_date = this.state.Weekenddate
+  db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM lectio where date = ? and uid = ?',
+        [today_comment_date,loginId],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {                  
+              console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
+              this.setState({
+                  bg1 : results.rows.item(0).bg1,
+                  bg2 : results.rows.item(0).bg2,
+                  bg3 : results.rows.item(0).bg3,
+                  sum1 : results.rows.item(0).sum1,
+                  sum2 : results.rows.item(0).sum2,
+                  js1 : results.rows.item(0).js1,
+                  js2 : results.rows.item(0).js2,
+                  Weekendupdate: true,
+                  initialLoading: false
+              })
+          } else {      
+              this.setState({
+                  initialLoading: false
+              })                              
+          }
+        }
+      );
+
+      tx.executeSql(
+          'SELECT * FROM weekend where date = ? and uid = ?',
+          [today_comment_date,loginId],
+          (tx, results) => {
+            var len = results.rows.length;
+            if (len > 0) {                  
+              console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
+                this.setState({
+                    mysentence : results.rows.item(0).mysentence,
+                    mythought : results.rows.item(0).mythought,
+                    answer:  results.rows.item(0).answer,
+                    question: results.rows.item(0).question
+                })
+            } else {                                     
+            }
+          }
+        );
+    });    
+}
 movePrevious(){
   this.transitionToNextPanel(this.state.currentIndex -1);
 }
@@ -582,11 +633,11 @@ render() {
                     '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                     [                                 
                       {
-                        text: 'Cancel',
+                        text: '취소',
                         onPress: () => console.log('Cancel Pressed'),
                         style: 'cancel',
                       },
-                      {text: 'OK', onPress:() => this.setState({Weekendediting: false})},
+                      {text: '끝내기', onPress:() => [Keyboard.dismiss(), this.setState({Weekendediting: false}), this.getData()]},
                     ],
                     {cancelable: false},
                   )}
@@ -738,18 +789,18 @@ render() {
               this.refreshContents()
               }}
               />              
-              <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+              <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
                 <ScrollView 
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     {...this._panResponder.panHandlers}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text> 
-                    <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.Sentence}</Text>  
+                    <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text>  
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
                   </ScrollView>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
-                  style={{position: 'absolute', right:2, top:2}}
+                  style={{position: 'absolute', right:5, top:5}}
                   onPress={() => this.setState({selectShow:false}) } 
                   >    
                   <Icon name={'close'} size={30} color={"#000"} />        
@@ -765,11 +816,11 @@ render() {
                     '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                     [                                 
                       {
-                        text: 'Cancel',
+                        text: '취소',
                         onPress: () => console.log('Cancel Pressed'),
                         style: 'cancel',
                       },
-                      {text: 'OK', onPress:() =>  this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                      {text: '끝내기', onPress:() =>  [Keyboard.dismiss(), this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})]},
                     ],
                     {cancelable: false},
                   )} 
@@ -846,18 +897,18 @@ render() {
               this.refreshContents()
               }}
               />              
-              <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:400, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
+              <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
                 <ScrollView 
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     {...this._panResponder.panHandlers}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text> 
-                    <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.Sentence}</Text>  
+                    <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text>  
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
                   </ScrollView>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
-                  style={{position: 'absolute', right:2, top:2}}
+                  style={{position: 'absolute', right:5, top:5}}
                   onPress={() => this.setState({selectShow:false}) } 
                   >    
                   <Icon name={'close'} size={30} color={"#000"} />        
@@ -873,11 +924,11 @@ render() {
                     '확인을 누르면 쓴 내용이 저장되지 않습니다.',
                     [                                 
                       {
-                        text: 'Cancel',
+                        text: '취소',
                         onPress: () => console.log('Cancel Pressed'),
                         style: 'cancel',
                       },
-                      {text: 'OK', onPress:() =>   this.state.start ? this.setState({start:false}): this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
+                      {text: '끝내기', onPress:() =>  this.state.start ? [Keyboard.dismiss(), this.setState({start: false,  answer:"",  bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})] : this.props.navigation.navigate('Main5', {otherParam: this.state.selectedDate})},
                     ],
                     {cancelable: false},
                   )} 

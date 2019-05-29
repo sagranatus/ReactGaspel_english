@@ -793,7 +793,7 @@ render() {
      {...this._panResponder.panHandlers}
      onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
        <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
-       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, normalSize]}>{this.state.sentence}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence}</Text>    
        <Text style={[styles.TextStyle,{marginTop:5, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
        <View style={{flex:1, justifyContent: 'center', alignItems: 'center', marginTop:10, marginBottom:10}}>
        <TouchableOpacity 
@@ -807,7 +807,7 @@ render() {
      </ScrollView>
      <TouchableOpacity 
        activeOpacity = {0.9}
-       style={{position: 'absolute', right:2, top:2}}
+       style={{position: 'absolute', right:5, top:5}}
        onPress={() => this.setState({selectShow:false}) } 
        >    
          <Icon2 name={'close'} size={30} color={"#000"} />        
@@ -867,7 +867,7 @@ render() {
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
           <TouchableOpacity 
             activeOpacity = {0.9}
-            onPress={() => this.state.js2 !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date}) :
+            onPress={() => this.state.js2 !== "" || this.state.comment !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date}) :
             Alert.alert(
               '거룩한 독서를 하러 가시겠어요?',
               '아직 오늘의 복음을 묵상하지 않으셨네요. 거룩한독서를 하고 말씀을 공유해보세요.',

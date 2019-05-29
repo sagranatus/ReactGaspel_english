@@ -35,7 +35,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return true; //BuildConfig.DEBUG //saea release시에 false로 변경
+      return false; //BuildConfig.DEBUG //saea release시에 false로 변경
     }
 
     @Override

@@ -207,9 +207,9 @@ export default class SendImage extends Component {
           this.setState({uri: uri})        
          
           let dirs = RNFetchBlob.fs.dirs;
-          console.log(dirs.DocumentDir)
+          console.log(dirs.DCIMDir)
           //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
-          RNFetchBlob.fs.cp(uri, dirs.DocumentDir+"/sendimg.jpg") 
+          RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png") 
           .then(() => { 
            /* RNFetchBlob.config({
               fileCache: true
@@ -228,7 +228,7 @@ export default class SendImage extends Component {
                 // remove the file from storage
                 return fs.unlink(imagePath);
               });*/
-              alert("save")
+            //  alert("save")
               this.linkFeed() 
            })
           .catch((error) => { 
@@ -251,11 +251,11 @@ export default class SendImage extends Component {
        // social:socialObject,//optional
         buttons:[buttonObject]//optional*/
         objectType:'image',
-        url: dirs.DocumentDir+"/sendimg.jpg"
+        url: dirs.DCIMDir+"/sendimg.png"
       };
       const response = await RNKakaoLink.link(options);
       console.log(response);
-      alert(response);
+      //alert(response);
       if(response !== null){
         var image = response.argumentMsg;
         const contentObject = {
@@ -280,7 +280,7 @@ export default class SendImage extends Component {
             console.log(response);
           }catch(e){
             console.warn(e);
-            alert(e)
+         //   alert(e)
           }
       }
       
@@ -366,8 +366,8 @@ render() {
       <Text style={this.state.comment!=="" && this.state.js2 =="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.comment}</Text>
       <Text style={this.state.js2 !=="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.js2}</Text>
 
-      <Text style={this.state.comment==!"" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>__{this.state.date_comment} 복음 묵상</Text>
-      <Text style={this.state.js2 !=="" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>__{this.state.date} 복음 묵상</Text>
+      <Text style={this.state.comment!== "" && this.state.js2 == "" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date_comment} 복음 묵상</Text>
+      <Text style={this.state.js2 !=="" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date} 복음 묵상</Text>
       </View>
       </View>
     </ViewShot>
@@ -497,7 +497,7 @@ render() {
            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  말씀카드 공유하기</Text>   
         </TouchableOpacity>
         </View>   
-        <View style={Platform.OS == "ios" ? {display:'none'} : {backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
+        <View style={Platform.OS == "ios" ? {display:'none'} : {display:'none'}}>
         <TouchableOpacity 
           activeOpacity = {0.9}
           onPress={() => this.saveImage()} 
