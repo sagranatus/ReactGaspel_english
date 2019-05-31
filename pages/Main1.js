@@ -15,7 +15,7 @@ import RNFetchBlob from "rn-fetch-blob";
 var smallSize;
 var normalSize;
 var largeSize;
-
+// english version!!
 var urls = Array()
 export default class Main1 extends Component { 
 
