@@ -65,11 +65,11 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
           }
 
         //alarm 기본 9시로 세팅
-          if(Platform.OS == "ios"){
+        /*  if(Platform.OS == "ios"){
             PushNotificationIOS.requestPermissions()
           }else{
             PushNotification.requestPermissions()
-          }
+          } */
           var date = new Date()
           var year = date.getFullYear();
           var month = date.getMonth()+1
@@ -86,7 +86,7 @@ fetch('https://sssagranatus.cafe24.com/servertest/user_login.php', {
               alertTitle:"거룩한독서 알람",
               alertBody: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
         // fireDate: new Date(2019,3,5,14,24,0).toISOString(), // in 60 secs
-             fireDate:new Date(month+'/'+day+'/'+year+' '+"09:00:00").toISOString(),
+             fireDate:new Date(year, month, day, 9, 0, 0 ).toISOString(),
               repeatInterval: 'day'
             });
           }else{
