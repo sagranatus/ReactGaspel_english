@@ -1,5 +1,5 @@
 {
-  "name": "Gaspel",
+  "name": "Gaspel_en",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -17,7 +17,6 @@
     "react-native-gesture-handler": "^1.1.0",
     "react-native-image-picker": "^0.28.0",
     "react-native-image-slider-show": "^1.0.3",
-    "react-native-kakao-links": "^1.0.2",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-push-notification": "^3.1.2",

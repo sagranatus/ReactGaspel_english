@@ -11,6 +11,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
+import toShortFormat from '../etc/dateFormat';
 var normalSize;
 var normalSize_input;
 var largeSize;
@@ -36,10 +37,6 @@ constructor(props) {
       js1:"",
       js2:"",
       mysentence: "",
-      mythought: "",
-      question: "",
-      answer:"",
-      background: "",
       start: false,
       praying: false,
       Weekenddate:"",
@@ -68,14 +65,12 @@ constructor(props) {
 
 getData(){
   //  alert("awdad")
-     // comment나 lectio DB가 있는지 확인
-     const loginId = this.props.status.loginId;    
-     var today_comment_date =this.state.Lectiodate
+     var today_comment_date =this.state.Date
      db.transaction(tx => {       
          //comment있는지 확인  
          tx.executeSql(
-           'SELECT * FROM comment where date = ? and uid = ?',
-           [today_comment_date, loginId],
+           'SELECT * FROM comment where date = ?',
+           [today_comment_date],
            (tx, results) => {
              var len = results.rows.length;
            //  comment 값이 있는 경우에 가져오기 
@@ -95,8 +90,8 @@ getData(){
            }
          ),
          tx.executeSql(
-             'SELECT * FROM lectio where date = ? and uid = ?',
-             [today_comment_date,loginId],
+             'SELECT * FROM lectio where date = ?',
+             [today_comment_date],
              (tx, results) => {
                var len = results.rows.length;
              //  lectio 값이 있는 경우에 가져오기
@@ -144,10 +139,8 @@ moveFinal(){
         AsyncStorage.setItem('refreshMain1', "refresh");
       } catch (error) {
         console.error('AsyncStorage error: ' + error.message);
-      }             
-        this.props.updateWeekend("update",this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2,this.state.mysentence, this.state.mythought, this.state.question, this.state.answer)
-        const loginId = this.props.status.loginId;
-        const date = this.state.Weekenddate;
+      }            
+        const date = this.state.Date;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -156,14 +149,11 @@ moveFinal(){
         const js1 = this.state.js1
         const js2 = this.state.js2
         const mysentence = this.state.mysentence
-        const mythought = this.state.mythought
-        const question = this.state.question
-        const answer = this.state.answer
         // lectio, weekend DB를 업데이트한다.
         db.transaction(function(tx) {
         tx.executeSql(
-            'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
-            [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
+            'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where date=?',
+            [bg1, bg2, bg3, sum1, sum2, js1, js2,date],
             (tx, results) => {
             if (results.rowsAffected > 0) {
                 console.log('Main4 - lectio data updated : ', "success")                     
@@ -173,8 +163,8 @@ moveFinal(){
             }
         ),
         tx.executeSql(
-            'UPDATE weekend set mysentence=?, mythought=?, question=?, answer=? where uid=? and date=?',
-            [mysentence, mythought, question, answer, loginId, date],
+            'UPDATE weekend set mysentence=? where date=?',
+            [mysentence, date],
             (tx, results) => {
             if (results.rowsAffected > 0) {
                 console.log('Main4 - weekend data updated : ', "success")               
@@ -192,11 +182,9 @@ moveFinal(){
             AsyncStorage.setItem('refreshMain1', "refresh");
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
-          }     
-        this.props.insertWeekend("insert", this.props.status.loginId, this.state.Weekenddate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2, this.state.mysentence, this.state.mythought, this.state.question, this.state.answer)
-        const loginId = this.props.status.loginId;
+          }           
         const sentence = this.state.Sentence;
-        const date = this.state.Weekenddate;
+        const date = this.state.Date;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -205,15 +193,12 @@ moveFinal(){
         const js1 = this.state.js1
         const js2 = this.state.js2
         const mysentence = this.state.mysentence
-        const mythought = this.state.mythought
-        const question = this.state.question
-        const answer = this.state.answer
       
         // 값이 있는지 확인하고 없는 경우 lectio, weekend DB에 삽입한다 
         db.transaction(tx => {
             tx.executeSql(
-              'SELECT * FROM lectio where date = ? and uid = ?',
-              [date, loginId],
+              'SELECT * FROM lectio where date = ?',
+              [date],
               (tx, results) => {
                 var len = results.rows.length;
               //  값이 있는 경우에 
@@ -222,8 +207,8 @@ moveFinal(){
                 } else {
                   db.transaction(function(tx) {
                     tx.executeSql(
-                      'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                      [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+                      'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?)',
+                      [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
                       (tx, results) => {                          
                         if (results.rowsAffected > 0) {
                             console.log('Main4 - lectio data inserted : ', "success")          
@@ -239,8 +224,8 @@ moveFinal(){
             );
 
             tx.executeSql(
-                'SELECT * FROM weekend where date = ? and uid = ?',
-                [date, loginId],
+                'SELECT * FROM weekend where date = ?',
+                [date],
                 (tx, results) => {
                   var len = results.rows.length;
                 //  값이 있는 경우에 
@@ -249,8 +234,8 @@ moveFinal(){
                   } else {
                     db.transaction(function(tx) {
                       tx.executeSql(
-                        'INSERT INTO weekend (uid, date, mysentence, mythought, question, answer) VALUES (?,?,?,?,?,?)',
-                        [loginId,date,mysentence, mythought, question, answer],
+                        'INSERT INTO weekend (date, mysentence) VALUES (?,?)',
+                        [date,mysentence],
                         (tx, results) => {                            
                           if (results.rowsAffected > 0) {
                             console.log('Main4 - weekend data inserted : ', "success") 
@@ -342,7 +327,7 @@ componentWillMount(){
         console.error('AsyncStorage error: ' + error.message);
       }
 
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(today))
+    var today_comment_date = toShortFormat(date)
     console.log('Main4 - weekend date : ', today+"/"+today_comment_date)
     this.setState({
         Date: today,
@@ -351,14 +336,12 @@ componentWillMount(){
 
     // gaspel 및 weekendmore 데이터 가져오기
     this.props.getGaspel(today) 
-    this.props.getWeekendMore(today) 
 
-    // lectio, weekend DB 있는지 확인        
-    const loginId = this.props.status.loginId;
+    // lectio, weekend DB 있는지 확인      
     db.transaction(tx => {
         tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [today_comment_date,loginId],
+          'SELECT * FROM lectio where date = ?',
+          [today],
           (tx, results) => {
             var len = results.rows.length;
             if (len > 0) {                  
@@ -384,17 +367,14 @@ componentWillMount(){
         );
 
         tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [today_comment_date,loginId],
+            'SELECT * FROM weekend where date = ?',
+            [today],
             (tx, results) => {
               var len = results.rows.length;
               if (len > 0) {                  
                 console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                   this.setState({
-                      mysentence : results.rows.item(0).mysentence,
-                      mythought : results.rows.item(0).mythought,
-                      answer:  results.rows.item(0).answer,
-                      question: results.rows.item(0).question
+                      mysentence : results.rows.item(0).mysentence
                   })
               } else {                                     
               }
@@ -420,12 +400,11 @@ componentWillMount(){
 
   getData(){
       // lectio, weekend DB 있는지 확인        
-      const loginId = this.props.status.loginId;
-      var today_comment_date = this.state.Weekenddate
+      var today_comment_date = this.state.Date
       db.transaction(tx => {
           tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [today_comment_date,loginId],
+            'SELECT * FROM lectio where date = ?',
+            [today_comment_date],
             (tx, results) => {
               var len = results.rows.length;
               if (len > 0) {                  
@@ -450,17 +429,14 @@ componentWillMount(){
           );
   
           tx.executeSql(
-              'SELECT * FROM weekend where date = ? and uid = ?',
-              [today_comment_date,loginId],
+              'SELECT * FROM weekend where date = ?',
+              [today_comment_date],
               (tx, results) => {
                 var len = results.rows.length;
                 if (len > 0) {                  
                   console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                     this.setState({
-                        mysentence : results.rows.item(0).mysentence,
-                        mythought : results.rows.item(0).mythought,
-                        answer:  results.rows.item(0).answer,
-                        question: results.rows.item(0).question
+                        mysentence : results.rows.item(0).mysentence
                     })
                 } else {                                     
                 }
@@ -468,97 +444,48 @@ componentWillMount(){
             );
         });    
   }
-  
-  getTodayLabel(date) {        
-    var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
-    var todayLabel = week[date.getDay()];        
-    return todayLabel;
-}
 
-  componentWillReceiveProps(nextProps){    
-  
-      // getGaspel에서 받아오는 경우
-      if(nextProps.weekend.sentence != null){
-        console.log('Main4 - get Gaspel Data')  
-        var contents = ""+nextProps.weekend.contents
-        var sentence = ""+nextProps.weekend.sentence
-        var start = contents.indexOf("✠");
-        var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-        contents = contents.substring(start, end);
-        contents = contents.replace(/&ldquo;/gi, "");
-        contents = contents.replace(/&rdquo;/gi, "");
-        contents = contents.replace(/&lsquo;/gi, "");
-        contents = contents.replace(/&rsquo;/gi, "");
-        contents = contents.replace(/&prime;/gi, "'");
-        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
-      //  contents = contents.replace(/\n/gi, " ");    
-   
-      // 몇장 몇절인지 찾기
-        var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-        }
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-        }
-        var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        contents_ = contents.substring(pos.index+pos[0].length)
+  componentWillReceiveProps(nextProps){      
+    if(nextProps.gaspels.contents != null){
+      console.log(nextProps.gaspels.contents) 
+      console.log(nextProps.gaspels.person) 
+    //  alert(nextProps.gaspels.created_at)
 
-        // 여기서 각 절 번호 가져옴
-        pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
-
-        // 절 가져옴
-        var first_verse = pos[0]
-        var last_verse = pos[pos.length-1]
-
-        console.log("Main4 - first verse, last verse get : ", first_verse+"/"+last_verse)
-
-        // 복음사가 가져옴
-        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-        var today_person;
-        if(idx_today == -1){
-            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-            today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
-        }else{
-            today_person = contents.substring(2,idx_today-2);
-        }
-
-       console.log("Main4 - person & chapter get : ",today_person+"/"+chapter);
-        // Contents, Sentence, Firstverse, Lastverse, Person, Chapter 세팅
+        var contents = nextProps.gaspels.contents
+        var firstdot = contents.indexOf(".");
+      //  var firstsentence = contents.substring(0, firstdot)+"...";
+        var firstsentence = contents.split(" ").splice(0,18).join(" ")+"...";
+        var sentence_from = "Holy Gospel of Jesus Christ \naccording to Saint "+nextProps.gaspels.person;
+        var chapter = nextProps.gaspels.cv.substring(0,nextProps.gaspels.cv.indexOf(":"))
+        var first = nextProps.gaspels.cv.substring(nextProps.gaspels.cv.indexOf(":")+1,nextProps.gaspels.cv.indexOf("-"))
+        var last =  nextProps.gaspels.cv.substring(nextProps.gaspels.cv.indexOf("-")+1)
         this.setState({
-            Contents : contents,
-            Sentence : sentence,
-            Firstverse: first_verse - 3,
-            Lastverse: parseInt(last_verse) + 3,
-            Person: today_person,
-            Chapter: chapter
+        Contents : contents+"\n",
+        Sentence : sentence_from,
+        Firstverse:  Number(first.replace(/[^0-9]/g, ''))-3,
+        Lastverse: Number(last.replace(/[^0-9]/g, ''))+3,
+        Person: nextProps.gaspels.person,
+        Chapter: chapter,
+        cv: nextProps.gaspels.cv
+      })
+     // alert(last);
+     // alert(chapter+first+last)
+    }
 
-        });   
-      }
-
-      // threegaspel 가져올때 
-    if(nextProps.weekend.threegaspels != null){  
-        console.log("Main4 - Three gaspel get")           
+    // threegaspel 가져올때 
+    if(nextProps.gaspels.threegaspels != null){   
+        console.log("Main4 - Three gaspel get")             
         if(this.state.Move == "prev"){
             this.setState({
-                Contents : nextProps.weekend.threegaspels+"\n"+this.state.Contents
+                Contents : nextProps.gaspels.threegaspels+"\n"+this.state.Contents
             })    
         }else{
             this.setState({
-                Contents : this.state.Contents+"\n"+nextProps.weekend.threegaspels
+                Contents : this.state.Contents+"\n"+nextProps.gaspels.threegaspels
             })    
-        }
-          
+        }          
     }
-    // weekendMore 값 가져오기
-    if(nextProps.weekend.background != null){ 
-      console.log("Main4 - weekend More get") 
-      var background = nextProps.weekend.background.replace(/,/gi, "\n\n");
-      this.setState({
-        question : nextProps.weekend.question,
-        background:  background
-      })    
-     }
+      
   }
 
   setChange(){
@@ -599,7 +526,7 @@ componentWillMount(){
         day = "0"+day;
     } 
     var todaydate = year+"-"+month+"-"+day;
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(todaydate))
+    var today_comment_date = toShortFormat(date)
     console.log(todaydate)
     AsyncStorage.getItem('thisweekend', (err, result) => {
         console.log("Main4 - get AsyncStorage thisweekend : ", result)
@@ -622,14 +549,12 @@ componentWillMount(){
         
             // 데이터 가져오기
             this.props.getGaspel(todaydate) 
-            this.props.getWeekendMore(todaydate) 
 
              //lectio, Weekend DB 있는지 확인        
-            const loginId = this.props.status.loginId;
             db.transaction(tx => {
                 tx.executeSql(
-                'SELECT * FROM lectio where date = ? and uid = ?',
-                [today_comment_date,loginId],
+                'SELECT * FROM lectio where date = ?',
+                [todaydate],
                 (tx, results) => {
                     var len = results.rows.length;
                 //  값이 있는 경우에 
@@ -661,23 +586,19 @@ componentWillMount(){
                 );
 
                 tx.executeSql(
-                    'SELECT * FROM weekend where date = ? and uid = ?',
-                    [today_comment_date,loginId],
+                    'SELECT * FROM weekend where date = ?',
+                    [todaydate],
                     (tx, results) => {
                     var len = results.rows.length;
                     //  값이 있는 경우에 
                     if (len > 0) {                  
                         console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
                         this.setState({
-                            mysentence : results.rows.item(0).mysentence,
-                            mythought : results.rows.item(0).mythought,
-                            answer:  results.rows.item(0).answer
+                            mysentence : results.rows.item(0).mysentence
                         })
                     } else {     
                         this.setState({
-                            mysentence : "",
-                            mythought : "",
-                            answer: ""
+                            mysentence : ""
                         })                                
                     }
                     }
@@ -761,13 +682,13 @@ componentWillMount(){
               </View>
               
               <OnboardingButton
-                  totalItems={this.state.question != null ? 9 : 8}
+                  totalItems={8}
                   currentIndex={this.state.currentIndex}
                   movePrevious={this.movePrevious}
                   moveNext={this.moveNext}
                   moveFinal={this.moveFinal}
               />
-              <KeyboardAvoidingView style={(this.state.currentIndex == 9 && this.state.question != null) ? {height:170} : {height:130}}>  
+              <KeyboardAvoidingView style={{height:130}}>  
                   <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
                   <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                   <TextInput
@@ -838,21 +759,9 @@ componentWillMount(){
                   // Making the Under line Transparent.
                   underlineColorAndroid='transparent'        
                   style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                                   
-                  </View>
-                  
-                  <View style={(this.state.currentIndex == 6 && this.state.question != null) ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
-                      <TextInput
-                      multiline = {true}
-                      placeholder="여기에 적어봅시다"
-                      value={this.state.answer}        
-                      onChangeText={answer => this.setState({answer})}        
-                      // Making the Under line Transparent.
-                      underlineColorAndroid='transparent'        
-                      style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                               
-                      </View>
+                  </View>                  
 
-                  <View style={(this.state.currentIndex == 7 && this.state.question != null) || (this.state.currentIndex == 6 && this.state.question == null) ? {} : {display:'none'}}>
+                  <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
                   <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                   <TextInput
                   multiline = {true}
@@ -864,7 +773,7 @@ componentWillMount(){
                   style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                   </View>
 
-                  <View style={(this.state.currentIndex == 8 && this.state.question != null) || (this.state.currentIndex == 7 && this.state.question == null) ? {} : {display:'none'}}>
+                  <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
                   <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                   <TextInput
                   multiline = {true}
@@ -877,7 +786,7 @@ componentWillMount(){
                   </View>                          
               </KeyboardAvoidingView>
 
-              <KeyboardAwareScrollView style={this.state.currentIndex == 6 ? {marginBottom:230, marginTop:30} : {marginBottom:230, marginTop:10}}>           
+              <KeyboardAwareScrollView style={{marginBottom:230, marginTop:10}}>           
                 <TouchableHighlight
                 style={{ justifyContent: 'center', alignItems: 'center'}}
                 underlayColor = {"#fff"}
@@ -1023,9 +932,10 @@ componentWillMount(){
             style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                 {...this._panResponder.panHandlers}
                 onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>  
-                <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
-                <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text>       
-                <Text style={[styles.TextStyle,{marginTop:20, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                  <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
+                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
+                    <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>             
                 </ScrollView>
                 <TouchableOpacity 
                 activeOpacity = {0.9}
@@ -1037,7 +947,7 @@ componentWillMount(){
           </View>  
           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff',  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>주일의독서</Text>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>Lectio Divina of the Lord's Day</Text>
                 </View>
                 
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
@@ -1064,7 +974,7 @@ componentWillMount(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({selectShow: true})} 
                   >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음읽기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
@@ -1072,15 +982,15 @@ componentWillMount(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  수정하기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
-                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main4", otherParam2: this.state.Weekenddate})}
+                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main4", otherParam2: this.state.Date})}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Share</Text>   
                   </TouchableOpacity>
                   </View>   
                 </View>   
@@ -1102,10 +1012,6 @@ componentWillMount(){
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum2}</Text>   
             <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>                
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
-            <View style={this.state.question != null ? {} : {display:'none'}}>
-              <Text style={styles.UpdateQuestionStyleClass}>{this.state.question}</Text>
-              <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.answer}</Text>  
-            </View>
             <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
             <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
@@ -1248,9 +1154,10 @@ componentWillMount(){
               style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                   {...this._panResponder.panHandlers}
                   onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
-                  <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
-                  <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text>    
-                  <Text style={[styles.TextStyle,{marginTop:20, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
+                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
+                    <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>             
                   </ScrollView>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
@@ -1264,7 +1171,7 @@ componentWillMount(){
               ref={(e) => { this.fScroll = e }}>   
               <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff', borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>주일의독서</Text>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>Lectio Divina of the Lord's Day</Text>
                 </View>
                 
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
@@ -1283,7 +1190,7 @@ componentWillMount(){
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  주일의복음 읽기</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                     </TouchableOpacity>
                     </View>   
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -1291,7 +1198,7 @@ componentWillMount(){
                     activeOpacity = {0.9}
                     onPress={() =>  this.setState({start: true})} 
                     > 
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  주일의독서 시작하기</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
                     </TouchableOpacity>
                     </View>   
                 </View>
@@ -1358,7 +1265,7 @@ componentWillMount(){
                       </TouchableOpacity>
                   </View>
                   <OnboardingButton
-                      totalItems={ this.state.question != null ? 12 : 11}
+                      totalItems={10}
                       currentIndex={this.state.currentIndex}
                       movePrevious={this.movePrevious}
                       moveNext={this.moveNext}
@@ -1388,14 +1295,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                        <Text style={{textAlign:'center', paddingTop:40, fontSize:15, color: "#01579b"}}>말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다</Text> 
-                        <Text style={[{textAlign:'center', paddingTop:40, fontSize:15, color: "#000"}, normalSize]}>{this.state.background}</Text>                                             
-                      </View>
-                      <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                         <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                               
                       </View>
 
-                      <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
                       <TextInput
                       multiline = {true}
@@ -1407,7 +1310,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                           
                       </View>
 
-                      <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
                       <TextInput
                       multiline = {true}
@@ -1419,7 +1322,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                         
                       </View>
 
-                      <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
                       <TextInput
                       multiline = {true}
@@ -1431,7 +1334,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
                       </View>
 
-                      <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
                       <TextInput
                       multiline = {true}
@@ -1443,7 +1346,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                       </View>
 
-                      <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
                       <TextInput
                       multiline = {true}
@@ -1455,7 +1358,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                       </View>
 
-                      <View style={this.state.currentIndex == 8 ? {} : {display:'none'}}>
+                      <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
                       <TextInput
                       multiline = {true}
@@ -1466,20 +1369,7 @@ componentWillMount(){
                       underlineColorAndroid='transparent'        
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                       </View>
-
-                      <View style={(this.state.currentIndex == 9 && this.state.question != null) ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>{this.state.question}</Text>
-                      <TextInput
-                      multiline = {true}
-                      placeholder="여기에 적어봅시다"
-                      value={this.state.answer}        
-                      onChangeText={answer => this.setState({answer})}        
-                      // Making the Under line Transparent.
-                      underlineColorAndroid='transparent'        
-                      style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                             
-                      </View>
-
-                      <View style={(this.state.currentIndex == 10 && this.state.question!= null) || (this.state.currentIndex==9 && this.state.question == null) ? {} : {display:'none'}}>
+                      <View style={(this.state.currentIndex == 8) ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
                       <TextInput
                       multiline = {true}
@@ -1491,7 +1381,7 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                          
                       </View>
 
-                      <View style={(this.state.currentIndex == 11 && this.state.question!= null) || (this.state.currentIndex==10 && this.state.question == null) ? {} : {display:'none'}}>
+                      <View style={(this.state.currentIndex==9) ? {} : {display:'none'}}>
                       <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
                       <TextInput
                       multiline = {true}
@@ -1506,16 +1396,16 @@ componentWillMount(){
                   </KeyboardAvoidingView>
 
                 
-                  <KeyboardAwareScrollView style={this.state.currentIndex == 0 || this.state.currentIndex ==1 ? {display:'none'} : this.state.currentIndex == 9 ? {marginTop:20, marginBottom:130} :{marginBottom:130} }>      
+                  <KeyboardAwareScrollView style={this.state.currentIndex == 0  ? {display:'none'} : {marginBottom:130} }>      
                       <TouchableHighlight
-                      style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
+                      style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                       underlayColor = {"#fff"}
                       onPress={() => this.getPrevMoreGaspel()}>
                           <Icon name={"chevron-up"} size={40} color={"#A8A8A8"} /> 
                       </TouchableHighlight >     
                       <Text style={[styles.DescriptionComponentStyle, normalSize]}>{this.state.Contents}</Text>        
                       <TouchableHighlight
-                      style={this.state.currentIndex == 2  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
+                      style={this.state.currentIndex == 1  ? {display:'none'} : { justifyContent: 'center', alignItems: 'center'}}
                       underlayColor = {"#fff"}
                       onPress={() => this.getNextMoreGaspel()}>
                             <Icon name={"chevron-down"} size={40} color={"#A8A8A8"} /> 
@@ -1529,15 +1419,7 @@ componentWillMount(){
 }
 Main4.propTypes = {
     getGaspel: PropTypes.func,
-    getWeekendMore: PropTypes.func,
-    getThreeGaspel: PropTypes.func,
-    insertWeekend: PropTypes.func,   
-    updateWeekend: PropTypes.func, 
-    weekend: PropTypes.object, // gaspelaction 결과값
-    status: PropTypes.shape({
-        isLogged: PropTypes.bool,
-        loginId: PropTypes.string
-    })
+    getThreeGaspel: PropTypes.func
   };
   
 const styles = StyleSheet.create({    

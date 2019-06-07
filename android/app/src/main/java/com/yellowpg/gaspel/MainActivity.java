@@ -1,4 +1,4 @@
-package com.yellowpg.gaspel;
+package com.yellowpg.gaspel_en;
 
 import com.facebook.react.ReactActivity;
 
@@ -23,7 +23,7 @@ public class MainActivity extends ReactNativeAutoUpdaterActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "Gaspel";
+        return "Gaspel_en";
     }
 /*
     @Override

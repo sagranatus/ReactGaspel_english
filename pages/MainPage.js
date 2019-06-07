@@ -5,17 +5,13 @@ import Icon from 'react-native-vector-icons/EvilIcons'
 import Main1 from '../containers/Main1Container'
 import Main3 from '../containers/Main3Container'
 import Main4 from '../containers/Main4Container'
-import Main5 from '../containers/Main5Container'
+import Main5 from './Main5'
 import TabBarComponent from './TabBarComponent.js'
 import Main3_2 from '../containers/Main3_2Container';
 import Main4_2 from '../containers/Main4_2Container';
 import GuidePage from './GuidePage';
-import Profile from '../containers/ProfileContainer'
 import Setting from './Setting'
-import RegisterUser from '../containers/RegisterUserContainer';
-import FirstPage from '../containers/FirstPageContainer';
-import LoginUser from '../containers/LoginUserContainer';
-import SendImage from '../containers/SendImageContainer';
+import SendImage from './SendImage'
 import { TextInput } from 'react-native-gesture-handler';
 
 //saea only change sdk root testtest
@@ -46,7 +42,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Main3_2: {screen: Main3_2},
 			Main4_2: {screen: Main4_2},
 			Guide: { screen: GuidePage },
-			Profile: { screen: Profile},
+	//		Profile: { screen: Profile},
 			Setting: { screen: Setting },
 			SendImage: {screen: SendImage}
 		
@@ -67,7 +63,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
-				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'FirstPage' && r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Profile' && r.routeName !== 'Setting' && r.routeName !== 'SendImage' )}}} 
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Setting' && r.routeName !== 'SendImage' )}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom',
 			backBehavior: Platform.OS == 'ios' ? 'none' : 'history'
@@ -144,78 +140,6 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 }
 const AppContainer = createAppContainer(TabNavigator)
 	
-const RootStack = createStackNavigator({
-  Home: {
-		screen: FirstPage,
-		navigationOptions: {
-			header: null
-		}
-	},
-	Main: {
-		screen: AppContainer,
-		navigationOptions: {
-			header: null,
-		}
-	},	
-	RegisterUser: {
-		screen: RegisterUser,
-		navigationOptions: {
-			header: null
-		}
-	},
-	LoginUser: {
-		screen: LoginUser,
-		navigationOptions: {
-			header: null
-		}				
-	},
-},
-{
-		initialRouteName: 'Home',
-		headerMode: 'none',
-			defaultNavigationOptions: {
-				gesturesEnabled: false
-			}
-		}
-);
-const RootStack2 = createStackNavigator({ 
-	Main: {
-		screen: AppContainer,
-		navigationOptions: {
-			header: null
-		}
-	},
-	Home: {
-		screen: FirstPage,
-		navigationOptions: {
-			header: null
-		}
-	},
-	RegisterUser: {
-		screen: RegisterUser,
-		navigationOptions: {
-			header: null
-		}				
-	},
-	LoginUser: {
-		screen: LoginUser,
-		navigationOptions: {
-			header: null
-		}										
-	}
-},
-	{
-			initialRouteName: 'Main',
-			headerMode: 'none',
-				defaultNavigationOptions: {
-					gesturesEnabled: false
-				}
-			}
-	);
-// 로그인상태에 따라 첫번째를 Main1 / Home으로 변경하기 위한 코드
-const RootContainer = createAppContainer(RootStack);
-const RootContainer2 = createAppContainer(RootStack2);
-
 
 export default class App extends React.Component {
 
@@ -226,21 +150,12 @@ export default class App extends React.Component {
 
 		this.state = {
 			initialLoading: true,
-			internet: false,
-			login: false
+			internet: false
 		} 		
 	}
 
 	componentWillMount(){	
-		
-  // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
-  	AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("MainPage - login_id : ", result)
-    if(result != null){    
-			this.setState({login:true})
-    }           
-    })
-		
+				
 		const setState1 = (state) => this.setState({initialLoading : state})
 		setTimeout(function() {
 		  setState1(false)
@@ -278,14 +193,8 @@ export default class App extends React.Component {
 		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
 	  </View>
 		:
-		// 로그인 상태면 RootContainer2를 가져오고 아니면 RootContainer를 가져옴
-	(this.state.login) ? 
 	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>
-	<RootContainer2 />
-	</View>
-	: 
-	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>
-	<RootContainer />
+	<AppContainer />
 	</View>
 	}
 }

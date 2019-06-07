@@ -8,19 +8,51 @@ import {NavigationEvents} from 'react-navigation'
 import Slideshow from 'react-native-image-slider-show';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
-import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import RNFetchBlob from "rn-fetch-blob";
+import toShortFormat from '../etc/dateFormat';
+
 var smallSize;
 var normalSize;
 var largeSize;
 // english version!!
 var urls = Array()
+
+
 export default class Main1 extends Component { 
 
 constructor(props) { 
   super(props)  
+
+   // DB 테이블 생성
+   db.transaction(function(txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='users'",
+      [],
+      function(tx, res) {
+        console.log('FirstPage - item:', res.rows.length);
+        if (res.rows.length == 0) {
+         // txn.executeSql('DROP TABLE IF EXISTS comment', []);
+        //  txn.executeSql('DROP TABLE IF EXISTS lectio', []);
+         // txn.executeSql('DROP TABLE IF EXISTS weekend', []);
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS comment(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, comment TEXT NOT NULL)',
+            []
+          );
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS lectio(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, bg1 TEXT NOT NULL, bg2 TEXT NOT NULL, bg3 TEXT NOT NULL, sum1 TEXT NOT NULL, sum2 TEXT NOT NULL, js1 TEXT NOT NULL, js2 TEXT NOT NULL)',
+            []
+          );
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, mysentence TEXT NOT NULL)',
+            []
+          );
+        }
+      }
+    );
+  });
+
  
   this.state = {
       textSize: "",
@@ -64,15 +96,16 @@ constructor(props) {
   
   }
  
+  // slideshow 
   this.onModalClose = this.onModalClose.bind(this);
   this.onModalOpen = this.onModalOpen.bind(this);
   this.getSlideImagefromServer = this.getSlideImagefromServer.bind(this);
 }
-
+// slideshow 
 urlSetting(){
   this.setState({reload:true})
 }
-
+// slideshow 
 getSlideImagefromServer(){
    //test 
 
@@ -181,26 +214,30 @@ getSlideImagefromServer(){
   
      this.setState( {dataSource: [
        {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide1.png"
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide1.png"
        }, {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide2.png"
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide2.png"
        }, {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/slide3.png"
+         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide3.png"
        }]}) 
 
        this.setState( {dataSource2: [
         {
-          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/ad1.png"
+          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/ad1.png"
         }, {
-          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/ad2.png"
+          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/ad2.png"
         },]}) 
  
 }
+
+
 componentWillMount(){
+  // slideshow 
   if(Platform.OS !== "ios"){
     this.getSlideImagefromServer(); 
   }
   
+  // scroll inside scroll
   this._panResponder = PanResponder.create({
     onMoveShouldSetResponderCapture: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
@@ -216,17 +253,6 @@ componentWillMount(){
     },
   })
 
-  console.log("Main1 - componentWillMount : ", this.props.status.isLogged + this.props.status.loginId)
-
-  // 로그인 상태값 가져오고 없으면 FirstPage이동, 값이 있으면 setLogin
-  AsyncStorage.getItem('login_id', (err, result) => {
-    console.log("Main1 - login_id : ", result)
-    if(result == null){      
-      this.props.navigation.navigate('Home') 
-    }else{
-      this.props.setLogin(result) 
-    }             
-    })
 
   // slide url 가져오기
   fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
@@ -281,8 +307,7 @@ componentWillMount(){
     }
   })
   
-  // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기
-  
+  // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기  
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth()+1
@@ -294,7 +319,7 @@ componentWillMount(){
       day = "0"+day;
   } 
   var today = year+"-"+month+"-"+day; // 오늘날짜 세팅
-  var todayShow =  year+"년"+month+"월"+day+"일";
+  var todayShow = toShortFormat(date)
 
   // 일요일날짜 구하기
   if(date.getDay() !== 0){ 
@@ -319,7 +344,7 @@ componentWillMount(){
 
   // 오늘날짜와 주일 날짜를 today1, weekend1에 저장 
   try {
-    AsyncStorage.setItem('today1', today);
+    AsyncStorage.setItem('today1', today); //xxxx-xx-xx format
     AsyncStorage.setItem('weekend1', weekend);
   } catch (error) {
     console.error('AsyncStorage error: ' + error.message);
@@ -357,99 +382,57 @@ componentDidMount(){
 }
 
 componentWillUnmount(){
-  // interval 삭제
+  // slideshow interval 삭제
   clearInterval(this.state.interval2);
   clearInterval(this.state.interval);
 }
 
 
 componentWillReceiveProps(nextProps){
-    if(nextProps.status.isLogged == this.props.status.isLogged){
-      if(nextProps.gaspels.sentence != null){
-      console.log(nextProps.gaspels.sentence) 
-      console.log(nextProps.gaspels.thisdate) 
+      if(nextProps.gaspels.contents != null){
+      console.log(nextProps.gaspels.contents) 
+      console.log(nextProps.gaspels.person) 
 
       // 오늘날짜인 경우
       if(nextProps.gaspels.created_at == this.state.today){
-        var contents = ""+nextProps.gaspels.contents
-        var start = contents.indexOf("✠");
-        var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-        contents = contents.substring(start, end);
-        contents = contents.replace(/&ldquo;/gi, "");
-        contents = contents.replace(/&rdquo;/gi, "");
-        contents = contents.replace(/&lsquo;/gi, "");
-        contents = contents.replace(/&rsquo;/gi, "");
-        contents = contents.replace(/&prime;/gi, "'");
-        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
-
-        // 몇장 몇절인지 찾기
-        var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-        }
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-        }
-                  
-        // 복음사가 가져옴
-        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-        var today_person;
-        if(idx_today == -1){
-            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-            today_person = contents.substring(2,idx_today-2); 
-        }else{
-            today_person = contents.substring(2,idx_today-2);
-        }
-
-        var place = today_person+" "+pos
-        console.log("place", place)
-        place = place.replace(/\n/gi, "");   
-        // sentence, todayDate, place state setting
-        this.setState({contents: contents, sentence: nextProps.gaspels.sentence, todayDate: nextProps.gaspels.thisdate, place: place})
-        
+      
+        var contents = nextProps.gaspels.contents
+        var firstdot = contents.indexOf(".");
+      //  var firstsentence = contents.substring(0, firstdot)+"...";
+        var firstsentence = contents.split(" ").splice(0,18).join(" ")+"...";
+        var sentence_from = "Holy Gospel of Jesus Christ \naccording to Saint "+nextProps.gaspels.person;
+        this.setState({contents: contents, sentence: firstsentence, todayDate: nextProps.gaspels.thisdate, place: nextProps.gaspels.person+" "+nextProps.gaspels.cv, sentence_from: sentence_from})
+       
+           
         var date = new Date();
         // 일요일인 경우는 today == 주일날짜이므로 여기서 sentence_weekend, place_weekend를 설정해줘야 한다.
         if(date.getDay() == 0){
-          this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
+          this.setState({sentence_weekend: firstsentence, place_weekend: nextProps.gaspels.person+" "+nextProps.gaspels.cv, sentence_from: sentence_from})
         }
-        var changed = this.changeDateFormat(date)
+
+        var date = new Date();
+        var changed = toShortFormat(date)
         this.setState({deliver_date: changed})
+       
+       
+        var year = date.getFullYear();
+        var month = date.getMonth()+1
+        var day = date.getDate();
+        if(month < 10){
+            month = "0"+month;
+        }
+        if(day < 10){
+            day = "0"+day;
+        } 
         // 오늘 DB값을 가져옴
-        this.getData(changed)  
+        this.getData(year+"-"+month+"-"+day)  
       }else{
-        // 주일 내용인 경우
-          var contents = nextProps.gaspels.contents
-          var start = contents.indexOf("✠");
-          var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-          contents = contents.substring(start, end);
-          // 몇장 몇절인지 찾기
-          var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-          if(pos == null){
-              pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-          }
-          if(pos == null){
-              pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-          }
-                    
-          // 복음사가 가져옴
-          var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-          var today_person;
-          if(idx_today == -1){
-              idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-              today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
-          }else{
-              today_person = contents.substring(2,idx_today-2);
-          }
-  
-          var place = today_person+" "+pos
-          console.log("place_weekend", place)
-          // 주일 sentence, place state setting 
-          place = place.replace(/\n/gi, "");  
-          this.setState({sentence_weekend: nextProps.gaspels.sentence, place_weekend: place})
+        // 주일의 내용 가져오기
+        var contents = nextProps.gaspels.contents
+        var firstsentence = contents.split(" ").splice(0,18).join(" ")+"...";
+        this.setState({sentence_weekend: firstsentence, place_weekend: nextProps.gaspels.person+" "+nextProps.gaspels.cv})     
       } 
-    }
-  }
-  
+    }    
 }
 
    setChange(){    
@@ -494,6 +477,7 @@ componentWillReceiveProps(nextProps){
       var lastday = date.getDate()
       date = new Date(date.setDate(lastday));
     }   
+    
     var year = date.getFullYear();
     var month = date.getMonth()+1
     var day = date.getDate();
@@ -519,8 +503,16 @@ componentWillReceiveProps(nextProps){
            this.setState({initialLoading:true})
             try {
               var date = new Date();
-              var changed = this.changeDateFormat(date)
-              this.getData(changed) 
+              var year = date.getFullYear();
+              var month = date.getMonth()+1
+              var day = date.getDate();
+              if(month < 10){
+                  month = "0"+month;
+              }
+              if(day < 10){
+                  day = "0"+day;
+              } 
+              this.getData(year+"-"+month+"-"+day)
               AsyncStorage.setItem('refreshMain1', 'no');
             } catch (error) {
                 console.error('AsyncStorage error: ' + error.message);
@@ -622,7 +614,6 @@ componentWillReceiveProps(nextProps){
   getData(today){
     // 오늘 데이터, 일요일 데이터 가져오기
     console.log("Main1 - getData")
-    const loginId = this.props.status.loginId 
     var date = new Date()
     console.log(date)
     if(date.getDay() !== 0){
@@ -644,13 +635,12 @@ componentWillReceiveProps(nextProps){
     } 
     var date_weekend = year+"-"+month+"-"+day;
    
-    var weekenddate = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel(new Date(date_weekend)) 
-    console.log("date", weekenddate+"/"+today)
+   
    
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM comment where date = ? and uid = ?',
-        [today, loginId],
+        'SELECT * FROM comment where date = ?',
+        [today],
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {                  
@@ -666,8 +656,8 @@ componentWillReceiveProps(nextProps){
         }
       ),
       tx.executeSql(
-        'SELECT * FROM lectio where date = ? and uid = ?',
-        [today,loginId],
+        'SELECT * FROM lectio where date = ?',
+        [today],
         (tx, results) => {
             var len = results.rows.length;
             if (len > 0) {                  
@@ -683,8 +673,8 @@ componentWillReceiveProps(nextProps){
         }
         ), 
         tx.executeSql(
-          'SELECT * FROM weekend where date = ? and uid = ?',
-          [weekenddate,loginId],
+          'SELECT * FROM weekend where date = ?',
+          [date_weekend],
           (tx, results) => {
               var len = results.rows.length;
               if (len > 0) {                  
@@ -704,29 +694,7 @@ componentWillReceiveProps(nextProps){
     });    
      
   }
-
-  changeDateFormat(date){
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var date_changed = year+"년 "+month+"월 "+day+"일 "+ this.getTodayLabel( new Date(date))
-    console.log(date_changed)
-    return date_changed
-  
-  }
  
-
-  getTodayLabel(date) {        
-    var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
-    var todayLabel = week[date.getDay()];        
-    return todayLabel;
-}
 
 onModalClose() {
   this.setState({
@@ -793,15 +761,15 @@ render() {
      {...this._panResponder.panHandlers}
      onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
        <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
-       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence}</Text>    
-       <Text style={[styles.TextStyle,{marginTop:5, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
+       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence_from}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:0, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
        <View style={{flex:1, justifyContent: 'center', alignItems: 'center', marginTop:10, marginBottom:10}}>
        <TouchableOpacity 
           activeOpacity = {0.9}  
           style={this.state.js2 == "" && this.state.comment == "" ? {width:150, borderWidth:1, borderColor:'#4e99e0', borderRadius:2, padding:5} : {display:'none'}}        
           onPress = {() => this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')}
           >    
-           <Text style={[{fontSize:14, textAlign:'center', color:'#4e99e0', textAlign:'center'}]}>거룩한독서 하러가기</Text>    
+           <Text style={[{fontSize:14, textAlign:'center', color:'#4e99e0', textAlign:'center'}]}>Go Lectio Divina</Text>    
         </TouchableOpacity>        
       </View>
      </ScrollView>
@@ -816,7 +784,7 @@ render() {
 
    <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff'}}>  
       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-        <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>오늘의복음</Text>
+        <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold'}]}>Today's Gospel</Text>
       </View>
       
       <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
@@ -836,8 +804,8 @@ render() {
       onWillFocus={payload => {console.log(payload),
         this.setChange();
       }} />
-  
-      <View>      
+      <View style={{display:'none'}}>   
+      <Image source={require('../resources/first_img1_2.png')} style={{width: '100%', height: 150}} />   
         <Slideshow 
           height={160}
           dataSource={this.state.dataSource}
@@ -847,11 +815,12 @@ render() {
           onPositionChanged={position => this.setState({ position })} />                    
       </View>            
       <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '30%', height: 20, marginTop:5, marginLeft:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
+      
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.todayDate}</Text>   
         </View>   
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '66%', height: 20, marginTop:5, marginRight:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'right', color:'#686868'}]}>{this.state.todayDate}</Text>   
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.todayDate_show}</Text>   
         </View>   
       </View>
       
@@ -861,7 +830,7 @@ render() {
             activeOpacity = {0.9}
             onPress={() => this.setState({selectShow:true})} // insertComment
             >  
-            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
           </TouchableOpacity>
           </View>   
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -869,15 +838,15 @@ render() {
             activeOpacity = {0.9}
             onPress={() => this.state.js2 !== "" || this.state.comment !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date}) :
             Alert.alert(
-              '거룩한 독서를 하러 가시겠어요?',
-              '아직 오늘의 복음을 묵상하지 않으셨네요. 거룩한독서를 하고 말씀을 공유해보세요.',
+              'Go for doing Lectio Divina?',
+              'you didn\'t do lectio divina yet. would you share what you meditate after doing it?',
               [                                 
                 {
-                text: '취소',
+                text: 'cancel',
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
                 },
-                {text: '거룩한독서 하러가기', onPress: () => 
+                {text: 'Go Lectio Divina', onPress: () => 
                   this.state.weekend ? this.props.navigation.navigate('Main4') : this.props.navigation.navigate('Main3')
                 },
               ],
@@ -885,23 +854,23 @@ render() {
               )        
           } // insertComment
             >  
-            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 공유하기</Text>   
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  Share Today's Gospel</Text>   
             </TouchableOpacity>
           </View>   
         </View>
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={this.state.comment == "" && this.state.js2 == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘 해주신 말씀</Text>   
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>God said to me:</Text>   
         </View> 
         <View style={this.state.comment == "" && this.state.js2 == "" ? {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'} : {display:'none'} }>
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>오늘의 복음 말씀</Text>   
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Today's Gospel</Text>   
         </View>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
         </View>  
         <Icon style={{paddingTop:5}} name={'quote-left'} size={13} color={"#000"} />
         <View style={this.state.js2 == "" && this.state.comment == "" ? {width:'100%',justifyContent: 'center', alignItems: 'center'}: {display:'none'}}>
-          <Text style={[normalSize, styles.TextStyle,{padding:5}]}>{this.state.sentence}</Text>   
+          <Text style={[normalSize, styles.TextStyle,{padding:0}]}>{this.state.sentence}</Text>   
           <Text style={[styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]}>{this.state.place}</Text>
           <View
           style={{
@@ -923,19 +892,19 @@ render() {
       </View>
 
       <View style={!this.state.weekend ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
-        <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>한주간 묵상할 구절</Text>   
+        <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '58%', height: 20, marginTop:5, marginLeft:'2%'}}>
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Sentence to Meditate for a week</Text>   
         </View>    
-        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>주일의 복음 말씀</Text>   
+        <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '58%', height: 20, marginTop:5, marginLeft:'2%'}}>
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Weekend's Gospel</Text>   
         </View>  
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginRight:'2%'}}>
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '38%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
         </View>    
 
         <Icon style={{paddingTop:5}} name={'quote-right'} size={13} color={"#000"} />
         <Text style={this.state.mysentence == "" ? {display:'none'} : [normalSize, styles.TextStyle,{marginTop:5, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>   
-        <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:5}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
+        <Text style={this.state.mysentence == "" ? [normalSize, styles.TextStyle,{padding:0}] : {display:'none'}}>{this.state.sentence_weekend}</Text>
         <Text style={this.state.mysentence == "" ? [styles.TextStyle, {fontSize:14, width:'100%', marginTop:0}]: {display:'none'}}>{this.state.place_weekend}</Text>   
         <View
           style={this.state.mysentence == "" ? 
@@ -1006,10 +975,6 @@ render() {
   }
 }
 Main1.propTypes = { 
-    status: PropTypes.shape({
-        isLogged: PropTypes.bool,
-        loginId: PropTypes.string
-    }),
     getGaspel: PropTypes.func,
     gaspels: PropTypes.object // gaspelaction 결과값
   };

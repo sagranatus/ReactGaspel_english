@@ -6,7 +6,6 @@ import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Share, {ShareSheet} from 'react-native-share';
-import RNKakaoLink from 'react-native-kakao-links';
 import {NavigationEvents} from 'react-navigation'
 import fs from 'react-native-fs';
 import RNFetchBlob from "rn-fetch-blob";
@@ -18,28 +17,10 @@ import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 
 var db = openDatabase({ name: 'UserDatabase.db' });
-const linkObject={
-  webURL                :'https://developers.kakao.com/docs/android/kakaotalk-link',//optional
-  mobileWebURL          :'https://developers.kakao.com/docs/android/kakaotalk-link',//optional
- // androidExecutionParams:'shopId=1&itemId=24', //optional For Linking URL
- // iosExecutionParams    :'shopId=1&itemId=24', //optional For Linking URL
-};
+
 
 var selectedval;
 var from;
-//5개의 속성 중 최대 3개만 표시해 줍니다. 우선순위는 Like > Comment > Shared > View > Subscriber 입니다.
-const socialObject ={
-  likeCount:12,//optional
-  commentCount:1,//optional
-  sharedCount:23,//optional
-  viewCount:10,//optional
-  subscriberCount:22//optional
-}
-
-const buttonObject = {
-  title:'',//required
-  link : linkObject,//required
-}
 
 export default class SendImage extends Component {
   constructor(props) { 
@@ -61,7 +42,6 @@ export default class SendImage extends Component {
       }
       this.saveImage = this.saveImage.bind(this);
       this.getData = this.getData.bind(this);
-      this.linkFeed= this.linkFeed.bind(this);
   }
  
   componentWillMount () {
@@ -200,94 +180,7 @@ export default class SendImage extends Component {
      });
 }
  
-  saveImage(){
-      this.refs.viewShot.capture().then(uri => {
-          console.log("do something with ", uri);
-         // alert(uri);
-          this.setState({uri: uri})        
-         
-          let dirs = RNFetchBlob.fs.dirs;
-          console.log(dirs.DCIMDir)
-          //this.setState({uri2: "/data/data"+this.state.uri.substring(19, uri.length)})
-          RNFetchBlob.fs.cp(uri, dirs.DCIMDir+"/sendimg.png") 
-          .then(() => { 
-           /* RNFetchBlob.config({
-              fileCache: true
-            })
-              .fetch("GET", "http://sssagranatus.cafe24.com/resource/slide1.png")
-              // the image is now dowloaded to device's storage
-              .then(resp => {
-                // the image path you can use it directly with Image component
-                imagePath = resp.path();
-                return resp.readFile("base64");
-              })
-              .then(base64Data => {
-                // here's base64 encoded image
-                console.log(base64Data);
-                this.setState({sendVal: base64Data})
-                // remove the file from storage
-                return fs.unlink(imagePath);
-              });*/
-            //  alert("save")
-              this.linkFeed() 
-           })
-          .catch((error) => { 
-            alert(error) 
-          })
-      });
-
-     
-
-
-  }
-
-  linkFeed = async () => {
-   
-    try{
-      let dirs = RNFetchBlob.fs.dirs;
-      const options = {
-     /*   objectType:'feed',//required
-        content:contentObject,//required
-       // social:socialObject,//optional
-        buttons:[buttonObject]//optional*/
-        objectType:'image',
-        url: dirs.DCIMDir+"/sendimg.png"
-      };
-      const response = await RNKakaoLink.link(options);
-      console.log(response);
-      //alert(response);
-      if(response !== null){
-        var image = response.argumentMsg;
-        const contentObject = {
-          title     : "오늘의복음 앱에서 말씀 묵상을 해 보았습니다.",
-          link      : linkObject,
-          imageURL  : image,
-          imageFile: this.state.uri,
-          desc      : "하느님께서 제게 해 주신 말씀을 들으니 참 기쁘네요. 한번 사용해 보시겠어요?",//optional
-          imageWidth: 300,//optional
-          imageHeight:200//optional
-          }
-
-          try{
-            let dirs = RNFetchBlob.fs.dirs;
-            const options = {
-              objectType:'feed',//required
-              content:contentObject,//required
-             // social:socialObject,//optional
-              buttons:[buttonObject]//optional
-            };
-            const response = await RNKakaoLink.link(options);
-            console.log(response);
-          }catch(e){
-            console.warn(e);
-         //   alert(e)
-          }
-      }
-      
-    }catch(e){
-      console.warn(e);
-    }
-  }
+  
 
 changeDateFormat(date){
   var year = date.getFullYear();
@@ -496,27 +389,13 @@ render() {
           >  
            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  말씀카드 공유하기</Text>   
         </TouchableOpacity>
-        </View>   
-        <View style={Platform.OS == "ios" ? {display:'none'} : {display:'none'}}>
-        <TouchableOpacity 
-          activeOpacity = {0.9}
-          onPress={() => this.saveImage()} 
-          >  
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'thumbs-o-up'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  카카오톡 공유하기</Text>   
-          </TouchableOpacity>
-        </View>   
+        </View>         
       </View>
   </View>
   );
 }
 }
 
-SendImage.propTypes = { 
-  status: PropTypes.shape({
-      isLogged: PropTypes.bool,
-      loginId: PropTypes.string
-  })
-};
 const styles = StyleSheet.create({
     Button:{
       textAlign:'center',

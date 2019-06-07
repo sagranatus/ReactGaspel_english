@@ -1,4 +1,4 @@
-package com.yellowpg.gaspel;
+package com.yellowpg.gaspel_en;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.NotificationChannel;
@@ -10,7 +10,6 @@ import com.facebook.react.ReactApplication;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import com.rnfs.RNFSPackage;
-import co.jootopia.kakao.link.RNKakaoLinkPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -35,7 +34,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return false; //BuildConfig.DEBUG //saea release시에 false로 변경
+      return true; //BuildConfig.DEBUG //saea release시에 false로 변경
     }
 
     @Override
@@ -44,7 +43,6 @@ public class MainApplication extends Application implements ShareApplication, Re
             new MainReactPackage(),
             new RNSharePackage(),
             new RNFSPackage(),
-            new RNKakaoLinkPackage(),
             new RNViewShotPackage(),
             new ReactNativeAutoUpdaterPackage(),
             new ReactNativePushNotificationPackage(),
@@ -73,7 +71,7 @@ public class MainApplication extends Application implements ShareApplication, Re
 
   @Override
   public String getFileProviderAuthority() {
-         return "com.yellowpg.gaspel.provider";
+         return "com.yellowpg.gaspel_en.provider";
   }
 
   @Override

@@ -1,138 +1,62 @@
 import { createStore, combineReducers,  applyMiddleware} from 'redux';
 import promiseMiddleware from 'redux-promise'
-const initialState_Login = {
-    isLogged: false,
-    loginId: ""
-};
-
-const loginReducer = (state = initialState_Login, action) => { // action에 따라 이벤트 발생
-  switch (action.type) {
-    case 'LOGIN': 
-      return {
-           isLogged: true,
-           loginId: action.payload // loginId 값 전달
-      };
-    case 'LOGOUT':
-      return {
-           isLogged: false,
-           loginId: null
-      };   
-    default:
-      return state;
-  }
-};
-
-const userupdateReducer = (state = {}, action) => { // action에 따라 이벤트 발생
-  switch (action.type) {
-    case 'UPDATEUSER':
-    return action.payload;
-    default:
-      return state;
-  }
-};
 
 const gaspelReducer = (state = {}, action) => { // action에 따라 이벤트 발생
   switch (action.type) {
     case 'GETGASPEL': 
       return action.payload;      
     case 'GETTHREEGASPEL': 
-      return action.payload;   
-  /*  case 'INSERTCOMMENT': 
-      return action.payload; 
-    case 'UPDATECOMMENT': 
-      return action.payload; */
-   
+      return action.payload;      
     default:
       return state;
   }
 };
 
-const gaspel2Reducer = (state = {}, action) => { // action에 따라 이벤트 발생
+const gaspelReducer2 = (state = {}, action) => { // action에 따라 이벤트 발생
   switch (action.type) {
     case 'GETGASPEL2': 
       return action.payload;      
     case 'GETTHREEGASPEL2': 
-      return action.payload;   
- 
-   
+      return action.payload;      
     default:
       return state;
   }
 };
 
-
-const lectioReducer = (state = {}, action) => { // action에 따라 이벤트 발생
+const gaspelReducer3 = (state = {}, action) => { // action에 따라 이벤트 발생
   switch (action.type) {
-    case 'GETGASPEL_LECTIO': 
+    case 'GETGASPEL3': 
       return action.payload;      
-    case 'GETTHREEGASPEL_LECTIO': 
-      return action.payload;   
-    case 'INSERTLECTIO': 
-      return action.payload; 
-    case 'UPDATELECTIO': 
-      return action.payload;
-    case 'INSERTCOMMENT': 
-      return action.payload; 
-    case 'UPDATECOMMENT': 
-      return action.payload;
+    case 'GETTHREEGASPEL3': 
+      return action.payload;      
     default:
       return state;
   }
 };
 
-const lectio2Reducer = (state = {}, action) => { // action에 따라 이벤트 발생
+const gaspelReducer4 = (state = {}, action) => { // action에 따라 이벤트 발생
   switch (action.type) {
-    case 'GETGASPEL_LECTIO2': 
+    case 'GETGASPEL4': 
       return action.payload;      
-    case 'GETTHREEGASPEL_LECTIO2': 
-      return action.payload;   
-    case 'INSERTLECTIO2': 
-      return action.payload; 
-    case 'UPDATELECTIO2': 
-      return action.payload;
-    case 'INSERTCOMMENT2': 
-      return action.payload; 
-    case 'UPDATECOMMENT2': 
-      return action.payload;
+    case 'GETTHREEGASPEL4': 
+      return action.payload;      
     default:
       return state;
   }
 };
 
-const weekendReducer = (state = {}, action) => { // action에 따라 이벤트 발생
+const gaspelReducer5 = (state = {}, action) => { // action에 따라 이벤트 발생
   switch (action.type) {
-    case 'GETGASPEL_WEEKEND': 
+    case 'GETGASPEL5': 
       return action.payload;      
-    case 'GETTHREEGASPEL_WEEKEND': 
-      return action.payload;   
-    case 'INSERTWEEKEND': 
-      return action.payload2; 
-    case 'UPDATEWEEKEND': 
-      return action.payload;
-    case 'GET_WEEKEND_MORE': 
-      return action.payload;
-    default:
-      return state;
-  }
-};
-const weekend2Reducer = (state = {}, action) => { // action에 따라 이벤트 발생
-  switch (action.type) {
-    case 'GETGASPEL_WEEKEND2': 
+    case 'GETTHREEGASPEL5': 
       return action.payload;      
-    case 'GETTHREEGASPEL_WEEKEND2': 
-      return action.payload;   
-    case 'INSERTWEEKEND2': 
-      return action.payload2; 
-    case 'UPDATEWEEKEND2': 
-      return action.payload;
-    case 'GET_WEEKEND_MORE2': 
-     return action.payload;
     default:
       return state;
   }
 };
 
 export default createStore(
-  combineReducers({status:loginReducer, results:userupdateReducer, gaspels: gaspelReducer, lectios: lectioReducer, gaspels2: gaspel2Reducer, lectios2: lectio2Reducer, weekend: weekendReducer, weekend2: weekend2Reducer}),
+  combineReducers({ gaspels: gaspelReducer, gaspels2: gaspelReducer2, gaspels3: gaspelReducer3, gaspels4: gaspelReducer4, gaspels5: gaspelReducer5 }),
   applyMiddleware(promiseMiddleware)
 );

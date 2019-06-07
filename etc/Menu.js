@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
 var name, christname;
 export default function Menu({ onItemSelected }) {
   
-  AsyncStorage.getItem('login_name', (err, result) => {
+  AsyncStorage.getItem('name', (err, result) => {
     console.log("Menu - login_name : ", result)
     name = result;
   
   })
-  AsyncStorage.getItem('login_christ_name', (err, result) => {
-    console.log("Menu - login_chirst_name : ", result)
+  AsyncStorage.getItem('catholic_name', (err, result) => {
+    console.log("Menu - catholic_name : ", result)
     christname = result
   })
 
@@ -89,20 +89,8 @@ export default function Menu({ onItemSelected }) {
         style={[styles.item, normalSize]}
       >
         환경설정
-      </Text>
-
-      <Text
-        onPress={() => onItemSelected('Profile')}
-        style={[styles.item, normalSize]}
-      >
-        프로필 수정
-      </Text>
-      <Text
-        onPress={() => onItemSelected('Logout')}
-        style={[styles.item, normalSize]}
-      >
-        로그아웃
-      </Text>
+      </Text>     
+     
     </ScrollView>
   );
 }

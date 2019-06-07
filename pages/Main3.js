@@ -11,6 +11,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
+import toShortFormat from '../etc/dateFormat';
 
 var normalSize;
 var normalSize_input;
@@ -78,10 +79,8 @@ moveFinal(){
     Keyboard.dismiss()
     // lectio server
     if(this.state.Lectioupdate){
-        // 업데이트시 수정하기- 진행후에 Lectioediting: false
-        
-        const loginId = this.props.status.loginId;
-        const date = this.state.Lectiodate;
+        // 업데이트시 수정하기- 진행후에 Lectioediting: false        
+        const date = this.state.Date;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -96,18 +95,16 @@ moveFinal(){
             console.error('AsyncStorage error: ' + error.message);
           }     
         if(this.state.basic){
-            // 말씀새기기 한 경우
-            this.props.updateComment("update",this.props.status.loginId,this.state.Lectiodate,this.state.Sentence, this.state.comment)
              // comment DB를 업데이트
             db.transaction(function(tx) {
                 tx.executeSql(
-                    'UPDATE comment set comment=? where uid=? and date=?',
-                    [comment, loginId, date],
+                    'UPDATE comment set comment=? where date=?',
+                    [comment, date],
                     (tx, results) => {
                 //  console.log('Results', 'done');
                     if (results.rowsAffected > 0) {
                         console.log('Main3 - comment data updated : ', "update success")        
-                        Alert.alert("수정 하였습니다.")           
+                        Alert.alert("Edition succeeded.")           
                     } else {
                         console.log('Main3 - comment data updated : ', "update fail")  
                     }
@@ -115,13 +112,11 @@ moveFinal(){
                 );
                 }); 
         }else{
-            // 거룩한 독서 한경우
-            this.props.updateLectio("update",this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
-              // lectio DB를 업데이트
+                // lectio DB를 업데이트
             db.transaction(function(tx) {
                 tx.executeSql(
-                    'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where uid=? and date=?',
-                    [bg1, bg2, bg3, sum1, sum2, js1, js2, loginId, date],
+                    'UPDATE lectio set bg1=?, bg2=?, bg3=?, sum1=?, sum2=?, js1=?, js2=? where date=?',
+                    [bg1, bg2, bg3, sum1, sum2, js1, js2, date],
                     (tx, results) => {
                     if (results.rowsAffected > 0) {
                         console.log('Main3 - lectio data updated : ', "success")                       
@@ -142,9 +137,8 @@ moveFinal(){
           } catch (error) {
             console.error('AsyncStorage error: ' + error.message);
           }
-        const loginId = this.props.status.loginId;
         const sentence = this.state.Sentence;
-        const date = this.state.Lectiodate;
+        const date = this.state.Date;
         const bg1 = this.state.bg1
         const bg2 = this.state.bg2
         const bg3 = this.state.bg3
@@ -154,14 +148,12 @@ moveFinal(){
         const js2 = this.state.js2
         const comment = this.state.comment
         if(this.state.basic){
-            // 말씀새기기 쓴 경우
-            this.props.insertComment("insert", this.props.status.loginId,this.state.Lectiodate,this.state.Sentence, this.state.comment)
                 // comment DB에 삽입
             db.transaction(tx => {
                 db.transaction(function(tx) {
                     tx.executeSql(
-                    'INSERT INTO comment (uid, date, onesentence, comment) VALUES (?,?,?,?)',
-                    [loginId,date,sentence, comment],
+                    'INSERT INTO comment (date, onesentence, comment) VALUES (?,?,?)',
+                    [date,sentence, comment],
                     (tx, results) => {
                         if (results.rowsAffected > 0) {
                             console.log('Main3 - comment data inserted : ', "success")                 
@@ -174,14 +166,11 @@ moveFinal(){
             });
             this.setState({ praying : true });
          }else{
-             // 거룩한 독서 한 경우
-            this.props.insertLectio("insert", this.props.status.loginId, this.state.Lectiodate, this.state.Sentence, this.state.bg1, this.state.bg2, this.state.bg3, this.state.sum1, this.state.sum2, this.state.js1, this.state.js2)
-    
                 // lectio DB에 삽입
             db.transaction(tx => {
                 tx.executeSql(
-                'SELECT * FROM lectio where date = ? and uid = ?',
-                [date, loginId],
+                'SELECT * FROM lectio where date = ?',
+                [date],
                 (tx, results) => {
                     var len = results.rows.length;
                 //  값이 있는 경우에 
@@ -190,8 +179,8 @@ moveFinal(){
                     } else {
                     db.transaction(function(tx) {
                         tx.executeSql(
-                        'INSERT INTO lectio (uid, date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                        [loginId,date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+                        'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?)',
+                        [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
                         (tx, results) => {
                             if (results.rowsAffected > 0) {
                                 console.log('Main3 - lectio data inserted : ', "success")                 
@@ -221,10 +210,10 @@ transitionToNextPanel(from, nextIndex){
             '말씀새기기 / 거룩한독서를 선택하세요.',
             '환경설정에서 설정하시면 선택창이 뜨지 않습니다.',
             [
-              {text: '말씀새기기', onPress: () => this.setState({
+              {text: 'Simple Meditation', onPress: () => this.setState({
                 basic:true, currentIndex: nextIndex})
                },
-              {text: '거룩한독서', onPress: () => this.setState({
+              {text: 'Lectio Divina', onPress: () => this.setState({
                 basic:false, currentIndex: nextIndex})  
                },
             ],
@@ -305,9 +294,10 @@ transitionToNextPanel(from, nextIndex){
       } catch (error) {
         console.error('AsyncStorage error: ' + error.message);
       }
-    var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+    var today_comment_date = toShortFormat(date)
+   // alert(today_comment_date)
     console.log('Main3 - today date : ', today+"/"+today_comment_date)
-
+      
     this.setState({
         Date: today,
         Lectiodate: today_comment_date
@@ -315,15 +305,12 @@ transitionToNextPanel(from, nextIndex){
 
     // gaspel 데이터 가져오기
     this.props.getGaspel(today) 
-
-    
-    // comment나 lectio DB가 있는지 확인
-    const loginId = this.props.status.loginId;    
+  
     db.transaction(tx => {       
         //comment있는지 확인  
         tx.executeSql(
-          'SELECT * FROM comment where date = ? and uid = ?',
-          [today_comment_date, loginId],
+          'SELECT * FROM comment where date = ?',
+          [today],
           (tx, results) => {
             var len = results.rows.length;
           //  comment 값이 있는 경우에 가져오기 
@@ -343,8 +330,8 @@ transitionToNextPanel(from, nextIndex){
           }
         ),
         tx.executeSql(
-            'SELECT * FROM lectio where date = ? and uid = ?',
-            [today_comment_date,loginId],
+            'SELECT * FROM lectio where date = ?',
+            [today],
             (tx, results) => {
               var len = results.rows.length;
             //  lectio 값이 있는 경우에 가져오기
@@ -391,13 +378,12 @@ transitionToNextPanel(from, nextIndex){
   getData(){
     //  alert("awdad")
        // comment나 lectio DB가 있는지 확인
-       const loginId = this.props.status.loginId;    
-       var today_comment_date =this.state.Lectiodate
+       var today_comment_date =this.state.Date
        db.transaction(tx => {       
            //comment있는지 확인  
            tx.executeSql(
-             'SELECT * FROM comment where date = ? and uid = ?',
-             [today_comment_date, loginId],
+             'SELECT * FROM comment where date = ?',
+             [today_comment_date],
              (tx, results) => {
                var len = results.rows.length;
              //  comment 값이 있는 경우에 가져오기 
@@ -417,8 +403,8 @@ transitionToNextPanel(from, nextIndex){
              }
            ),
            tx.executeSql(
-               'SELECT * FROM lectio where date = ? and uid = ?',
-               [today_comment_date,loginId],
+               'SELECT * FROM lectio where date = ?',
+               [today_comment_date],
                (tx, results) => {
                  var len = results.rows.length;
                //  lectio 값이 있는 경우에 가져오기
@@ -459,82 +445,45 @@ transitionToNextPanel(from, nextIndex){
       })
   }
 
-    getTodayLabel() {        
-        var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
-        var today = new Date().getDay();
-        var todayLabel = week[today];        
-        return todayLabel;
-    }
 
 componentWillReceiveProps(nextProps){    
-    // getGaspel에서 받아오는 경우
-    if(nextProps.lectios.sentence != null){
-        console.log('Main3 - get Gaspel Data')  
-        var contents = ""+nextProps.lectios.contents
-        var sentence = ""+nextProps.lectios.sentence
-        var start = contents.indexOf("✠");
-        var end = contents.indexOf("◎ 그리스도님 찬미합니다");
-        contents = contents.substring(start, end);
-        contents = contents.replace(/&ldquo;/gi, "");
-        contents = contents.replace(/&rdquo;/gi, "");
-        contents = contents.replace(/&lsquo;/gi, "");
-        contents = contents.replace(/&rsquo;/gi, "");
-        contents = contents.replace(/&prime;/gi, "'");
-        contents = contents.replace("주님의 말씀입니다.", "\n주님의 말씀입니다.");
-
-        // 몇장 몇절인지 찾기
-        var pos = contents.match(/\d{1,2},\d{1,2}-\d{1,2}/);
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}.*-\d{1,2}/);
-        }
-        if(pos == null){
-            pos = contents.match(/\d{1,2},\d{1,2}-\n\d{1,2}/);
-        }
-        var chapter = pos[0].substring(0,pos[0].indexOf(","))
-        contents_ = contents.substring(pos.index+pos[0].length)
-
-        // 여기서 각 절 번호 가져옴
-        pos = contents_.match(/\d{1,2}/gi) // 모든 절 위치 가져옴
-
-        // 절 가져옴
-        var first_verse = pos[0]
-        var last_verse = pos[pos.length-1]
-
-        console.log("Main3 - first verse, last verse get : ", first_verse+"/"+last_verse)
-
-        // 복음사가 가져옴
-        var idx_today = contents.indexOf("전한 거룩한 복음입니다.");
-        var today_person;
-        if(idx_today == -1){
-            idx_today = contents.indexOf("전한 거룩한 복음의 시작입니다.");
-            today_person = contents.substring(2,idx_today-2); // 복음사 사람 이름
-        }else{
-            today_person = contents.substring(2,idx_today-2);
-        }
-
-            console.log("Main3 - person & chapter get : ",today_person+"/"+chapter);
-        // Contents, Sentence, Firstverse, Lastverse, Person, Capter 세팅
-        this.setState({
-            Contents : contents,
-            Sentence : sentence,
-            Firstverse: first_verse - 3,
-            Lastverse: parseInt(last_verse) + 3,
-            Person: today_person,
-            Chapter: chapter
-
-        });   
+  
+    if(nextProps.gaspels.contents != null){
+        console.log(nextProps.gaspels.contents) 
+        console.log(nextProps.gaspels.person) 
+      //  alert(nextProps.gaspels.created_at)
+  
+          var contents = nextProps.gaspels.contents
+          var firstdot = contents.indexOf(".");
+        //  var firstsentence = contents.substring(0, firstdot)+"...";
+          var firstsentence = contents.split(" ").splice(0,18).join(" ")+"...";
+          var sentence_from = "Holy Gospel of Jesus Christ \naccording to Saint "+nextProps.gaspels.person;
+          var chapter = nextProps.gaspels.cv.substring(0,nextProps.gaspels.cv.indexOf(":"))
+          var first = nextProps.gaspels.cv.substring(nextProps.gaspels.cv.indexOf(":")+1,nextProps.gaspels.cv.indexOf("-"))
+          var last =  nextProps.gaspels.cv.substring(nextProps.gaspels.cv.indexOf("-")+1)
+          this.setState({
+          Contents : contents+"\n",
+          Sentence : sentence_from,
+          Firstverse:  Number(first.replace(/[^0-9]/g, ''))-3,
+          Lastverse: Number(last.replace(/[^0-9]/g, ''))+3,
+          Person: nextProps.gaspels.person,
+          Chapter: chapter,
+          cv: nextProps.gaspels.cv
+        })
+       // alert(last);
+       // alert(chapter+first+last)
     }
 
     // threegaspel 가져올때 
-    if(nextProps.lectios.threegaspels != null){   
+    if(nextProps.gaspels.threegaspels != null){   
         console.log("Main3 - Three gaspel get")             
         if(this.state.Move == "prev"){
             this.setState({
-                Contents : nextProps.lectios.threegaspels+"\n"+this.state.Contents
+                Contents : nextProps.gaspels.threegaspels+"\n"+this.state.Contents
             })    
         }else{
             this.setState({
-                Contents : this.state.Contents+"\n"+nextProps.lectios.threegaspels
+                Contents : this.state.Contents+"\n"+nextProps.gaspels.threegaspels
             })    
         }          
     }     
@@ -583,7 +532,7 @@ setChange(){
        day = "0"+day;
    } 
    var todaydate = year+"-"+month+"-"+day;
-   var today_comment_date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel()
+   var today_comment_date = toShortFormat(date)
    AsyncStorage.getItem('today3', (err, result) => {
      console.log("Main3 - get AsyncStorage today : ", result)
      if(result == todaydate){
@@ -632,11 +581,11 @@ setChange(){
             doMore: false })
        this.props.getGaspel(todaydate)
         // comment, lectio DB 있는지 확인
-        const loginId = this.props.status.loginId;    
+          
         db.transaction(tx => {
             tx.executeSql(
-                'SELECT * FROM comment where date = ? and uid = ?',
-                [today_comment_date, loginId],
+                'SELECT * FROM comment where date = ?',
+                [todaydate],
                 (tx, results) => {
                   var len = results.rows.length;
                 //  값이 있는 경우에 
@@ -656,8 +605,8 @@ setChange(){
                 }
               ),
               tx.executeSql(
-                  'SELECT * FROM lectio where date = ? and uid = ?',
-                  [today_comment_date,loginId],
+                  'SELECT * FROM lectio where date = ?',
+                  [todaydate],
                   (tx, results) => {
                     var len = results.rows.length;
                   //  값이 있는 경우에 
@@ -697,6 +646,7 @@ setChange(){
   }
   // 이후 3절 가져오기
   getNextMoreGaspel(){
+    //  alert(this.state.Lastverse)
      this.props.getThreeGaspel("next", this.state.Person, this.state.Chapter, this.state.Lastverse)
      this.setState({
         Lastverse: this.state.Lastverse+3,
@@ -1033,9 +983,10 @@ setChange(){
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     {...this._panResponder.panHandlers}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
-                    <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
-                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text>    
-                    <Text style={[styles.TextStyle,{marginTop:20, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                     <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
+                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
+                    <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>     
                     </ScrollView>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -1047,7 +998,7 @@ setChange(){
             </View>   
             <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff',  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>거룩한독서</Text>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>Lectio Divina</Text>
                 </View>
                 
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
@@ -1073,7 +1024,7 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({selectShow: true})} 
                   >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  복음읽기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
@@ -1081,15 +1032,15 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  수정하기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
-                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Lectiodate})}
+                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Date})}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Share</Text>   
                   </TouchableOpacity>
                   </View>   
                 </View>       
@@ -1139,7 +1090,7 @@ setChange(){
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
                   <TouchableOpacity 
                   activeOpacity = {0.9}
-                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Lectiodate})}
+                  onPress={() => this.props.navigation.navigate('SendImage', {otherParam: "Main3", otherParam2: this.state.Date})}
                   > 
                   <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon3 name={'send-o'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  공유하기</Text>   
                   </TouchableOpacity>
@@ -1214,7 +1165,7 @@ setChange(){
                     </Text>    
 
                     </View>   
-                    <Text style={[styles.UpdateQuestionStyleClass, {marginTop:10}]}>거룩한독서</Text>
+                    <Text style={[styles.UpdateQuestionStyleClass, {marginTop:10}]}>Lectio Divina</Text>
                  
                     <View style={{ flex:1, justifyContent: 'center', alignItems: 'center', marginTop:10, marginBottom:20}}> 
                     <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
@@ -1325,7 +1276,8 @@ setChange(){
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                      <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
                      <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
-                    <Text style={[styles.TextStyle,{marginTop:20, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
+                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
+                    <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
                     </ScrollView>
                     <TouchableOpacity 
                     activeOpacity = {0.9}
@@ -1339,7 +1291,7 @@ setChange(){
             ref={(e) => { this.fScroll = e }}>   
                <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff', borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '88%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>거룩한독서</Text>
+                    <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>Lectio Divina</Text>
                 </View>
                 
                 <View style={{flexDirection: "column", flexWrap: 'wrap', width: '8%', height: 30, marginLeft:'0%', float:'right'}}>
@@ -1359,7 +1311,7 @@ setChange(){
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  오늘의복음 읽기</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
                     </TouchableOpacity>
                     </View>   
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -1367,7 +1319,7 @@ setChange(){
                     activeOpacity = {0.9}
                     onPress={() =>  this.setState({start: true})} 
                     > 
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  거룩한독서 시작하기</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
                     </TouchableOpacity>
                     </View>   
                 </View>
@@ -1616,14 +1568,7 @@ setChange(){
 }
 Main3.propTypes = {
     getGaspel: PropTypes.func,
-    getThreeGaspel: PropTypes.func,
-    insertLectio: PropTypes.func,   
-    updateLectio: PropTypes.func, 
-    lectios: PropTypes.object, // gaspelaction 결과값
-    status: PropTypes.shape({
-        isLogged: PropTypes.bool,
-        loginId: PropTypes.string
-    })
+    getThreeGaspel: PropTypes.func   
   };
   
 const styles = StyleSheet.create({      

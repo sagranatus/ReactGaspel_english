@@ -31,7 +31,7 @@ constructor(props) {
         selectedDate_format: "",// - -
         onesentence: "",      
         initialLoading: true,
-        avatarSource:  {uri: Platform.OS == "ios" ? 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg' : ""},
+        avatarSource:  {uri: ""},
         todaycount: 0,
         weekcount: 0,
         monthcount: 0,
@@ -54,38 +54,16 @@ constructor(props) {
     let dirs = RNFetchBlob.fs.dirs;
     console.log(dirs)
 
-    RNFetchBlob.fs.exists(dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg')
+    RNFetchBlob.fs.exists(dirs.SDCardApplicationDir + '/profileimg.jpeg')
     .then((exist) => {
-        //alert(exist)
-        console.log(`file ${exist ? '' : 'not'} exists`)
-        if(exist === false){
-          RNFetchBlob.config({
-            // add this option that makes response data to be stored as a file,
-            // this is much more performant.
-            path: dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg',
-            fileCache: false
-          })
-            .fetch(
-              "GET",
-              'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg',
-              {
-                //some headers ..
-              }
-            )
-            .progress((received, total) => {
-            
-            })
-            .then(res => {
-            // alert("done")
-            });
-        }
+      //  alert(exist)
     })
     .catch(() => {  })
   
 
       this.setState( {avatarSource: 
         {
-          uri: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel/"+this.props.status.loginId+'.jpeg'
+          uri: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/"+'/profileimg.jpeg'
         }
       }) 
 
@@ -109,10 +87,6 @@ constructor(props) {
     });
     if(item == 'Setting'){
       this.props.navigation.navigate("Setting")
-    }else if(item == 'Logout'){
-      this.props.setLogout()
-    }else if(item == 'Profile'){
-      this.props.navigation.navigate("Profile")
     }
   }
   // 프로필 이미지 선택
@@ -144,44 +118,25 @@ constructor(props) {
         
         this.setState({
           avatarSource: source,
-          data: response.data,
-          Image_TAG: this.props.status.loginId
+          data: response.data
         });
 
         //삽입     
         if(Platform.OS !=="ios"){
         let dirs = RNFetchBlob.fs.dirs;
         console.log(dirs.SDCardApplicationDir)
-        RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + "/"+this.props.status.loginId+'.jpeg').then(() => {          
-          }).catch((e)=>{ alert("FAILED:= "+e.message) }); 
+        RNFetchBlob.fs.unlink(dirs.SDCardApplicationDir + '/profileimg.jpeg').then(() => {
+          RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + '/profileimg.jpeg').then(() => {          
+          }).catch((e)=>{ alert("FAILED:= "+e.message) });           
+        });
+        
         }           
        
-        this.uploadImageToServer()
       }
     });
   }
 
-  // 이미지를 서버에 저장
-  uploadImageToServer = () => {
- 
-    RNFetchBlob.fetch('POST', 'https://sssagranatus.cafe24.com/servertest/upload_image.php', {
-      Authorization: "Bearer access-token",
-      otherHeader: "foo",
-      'Content-Type': 'multipart/form-data',
-    }, [
-        { name: 'image', filename: 'image.png', type: 'image/png', data: this.state.data },
-        { name: 'image_tag', data: this.state.Image_TAG }
-      ]).then((resp) => { 
-        var tempMSG = resp.data;
- 
-        tempMSG = tempMSG.replace(/^"|"$/g, '');
-        console.log(tempMSG)
- 
-      }).catch((err) => {
-        console.log(err)
-      })
- 
-}
+
  
 componentWillMount(){
   if(Platform.OS !=="ios"){
@@ -242,25 +197,25 @@ componentWillMount(){
     console.error('AsyncStorage error: ' + error.message);
   }
   // login_name, christ_name 가져와서 name, christname setting
-  AsyncStorage.getItem('login_name', (err, result) => {
-    console.log("Main5 - login_name : ", result)
+  AsyncStorage.getItem('name', (err, result) => {
+    console.log("Main5 - name : ", result)
     this.setState({
       name: result
           });
 
   })
-  AsyncStorage.getItem('login_christ_name', (err, result) => {
-    console.log("Main5 - login_chirst_name : ", result)
+  AsyncStorage.getItem('catholic_name', (err, result) => {
+    console.log("Main5 - login_catholic_name : ", result)
     this.setState({
       christname: result
           });
 
   })
   // 년월에 대해 getAllPoints로 이번달 달력 DB값 가져오기 
-  var year_month = year+"년 "+month;
+  var year_month = year+"-"+month;
   this.getAllPoints(year_month)   
 
-  var year_month_previous = year+"년 "+month_previous;
+  var year_month_previous = year+"-"+month_previous;
   this.getAllPoints(year_month_previous)   
   
 }
@@ -309,7 +264,7 @@ refreshContents(){
             console.log("Main5 - login_name : ", result)
             this.setState({
               name: result,
-              avatarSource:  {uri: 'https://sssagranatus.cafe24.com/servertest/uploads/'+this.props.status.loginId+'.jpeg'},
+              avatarSource:  {uri: ''},
             //  iconShow:false
                   });
           
@@ -380,7 +335,7 @@ refreshContents(){
               })
               today = params.otherParam+"-01"
               this.setState({selectedDate: today})
-              year_month = params.otherParam.substring(0,4)+"년 "+params.otherParam.substring(5,6)
+              year_month = params.otherParam.substring(0,4)+"-"+params.otherParam.substring(5,6)
               this.setState({selectedDate: today})
               this.getAllPoints(year_month)  
             }else{
@@ -400,7 +355,7 @@ refreshContents(){
               var today = year+"-"+month+"-"+day;
               this.setState({Today: today, selectedDate: today})
 
-             var year_month = year+"년 "+month;
+             var year_month = year+"-"+month;
               this.getAllPoints(year_month)  
             }
             }else{
@@ -418,13 +373,13 @@ refreshContents(){
               var today = year+"-"+month+"-"+day;
               this.setState({Today: today, selectedDate: today})
             
-              var year_month = year+"년 "+month;
+              var year_month = year+"-"+month;
               this.getAllPoints(year_month)                    
                            
             }       
             
           // 날짜가 달라지면 전달것도 가져오기
-          var year_month_previous = year+"년 "+month_previous;
+          var year_month_previous = year+"-"+month_previous;
           this.getAllPoints(year_month_previous)   
         
         }else{
@@ -438,15 +393,12 @@ refreshContents(){
 
 getAllPoints(year_month){
   
-// 달력 년월로 값 가져오기 
-  console.log("Main5 - getallpoints", this.props.status.loginId)
-
   // 날짜에 맞는 DB값 모두 가져오기
     //년월이 들어있는 comment DB 있는지 확인    
     db.transaction(tx => {
      tx.executeSql(
-      'SELECT * FROM comment where uid = ? and date LIKE ?',
-      [this.props.status.loginId, year_month+"%"],
+      'SELECT * FROM comment where date LIKE ?',
+      [ year_month+"%"],
       (tx, results) => {
         var len = results.rows.length;
         if (len > 0) {     
@@ -457,11 +409,7 @@ getAllPoints(year_month){
             var year, month, day, date
                   
             for(var i=0; i<results.rows.length; i++){
-              year = results.rows.item(i).date.substring(0, year_site);
-              month = results.rows.item(i).date.substring(year_site+2, month_site);
-              day = results.rows.item(i).date.substring(month_site+2, day_site);
-              
-              date = year+"-"+month+"-"+day
+              date = results.rows.item(i).date
               if(commentDates.indexOf(date) < 0 ){
               commentDates.push(date);
               } 
@@ -482,23 +430,14 @@ getAllPoints(year_month){
     //년월이 포함된 lectio DB있는지 확인    
   db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM lectio where uid = ?  and date LIKE ?',
-      [this.props.status.loginId, year_month+"%"],
+      'SELECT * FROM lectio where date LIKE ?',
+      [year_month+"%"],
       (tx, results) => {
         var len = results.rows.length;
         if (len > 0) {                  
             console.log('Main5 - get Lectios data')             
-            var year_site = results.rows.item(0).date.indexOf("년");
-            var month_site = results.rows.item(0).date.indexOf("월");
-            var day_site = results.rows.item(0).date.indexOf("일");
-            var year, month, day, date
-            
             for(var i=0; i<results.rows.length; i++){
-              year = results.rows.item(i).date.substring(0, year_site);
-              month = results.rows.item(i).date.substring(year_site+2, month_site);
-              day = results.rows.item(i).date.substring(month_site+2, day_site);
-              
-              date = year+"-"+month+"-"+day
+              date = results.rows.item(i).date
               if(lectioDates.indexOf(date) < 0 ){
                 lectioDates.push(date);
                 } 
@@ -518,16 +457,6 @@ getAllPoints(year_month){
   });  
 }
 
-
-componentWillReceiveProps(nextProps){
-  if(nextProps.status.isLogged == false){  
-    console.log("after login Go Home")
-  // 로그아웃시에 Main1으로 이동
-  // alert("logout")
-    this.props.navigation.navigate('Home')  
-  }
-    
-}
 
 commentFunc = (commentDates) => {
   console.log("Main5 - commentFunc")
@@ -692,25 +621,23 @@ changeDate(direction){
   } 
   var date_format = year+"-"+month+"-"+day;
   
-  date = year+"년 "+month+"월 "+day+"일 "+this.getTodayLabel( new Date(date_format))       
+  
   this.setState({
     selectedDate: date_format,
-    selectedDate_format: date,
+    selectedDate_format: toShortFormat(date),
     comment:"",
     mysentence: "",
     js2: "",
     sentence:""
   })
-  const loginId = this.props.status.loginId
-  console.log(date+loginId)
-
+  date = date_format
   // 선택날짜에 해당되는 DB 가져옴
-  if(date.includes("일요일")){
+  if(new Date(date_format).getDay() == 0){
     // 일요일인 경우 mysentence, lectio 값 가져옴
     db.transaction(tx => {   
       tx.executeSql(
-        'SELECT * FROM lectio where date = ? and uid = ?',
-        [date,loginId],
+        'SELECT * FROM lectio where date = ?',
+        [date],
         (tx, results) => {
             var len = results.rows.length;
         //  값이 있는 경우에 
@@ -729,8 +656,8 @@ changeDate(direction){
         }
         ), 
         tx.executeSql(
-          'SELECT * FROM weekend where date = ? and uid = ?',
-          [date,loginId],
+          'SELECT * FROM weekend where date = ?',
+          [date],
           (tx, results) => {
               var len = results.rows.length;
           //  값이 있는 경우에 
@@ -754,11 +681,11 @@ changeDate(direction){
 
   }else{
     // 평일인 경우는 comment, lectio 가져옴
-    console.log("not weekend", date+loginId)
+    console.log("not weekend", date)
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM comment where date = ? and uid = ?',
-        [date, loginId],
+        'SELECT * FROM comment where date = ?',
+        [date],
         (tx, results) => {
           var len = results.rows.length;
         //  값이 있는 경우에 
@@ -776,8 +703,8 @@ changeDate(direction){
         }
       ),
       tx.executeSql(
-        'SELECT * FROM lectio where date = ? and uid = ?',
-        [date,loginId],
+        'SELECT * FROM lectio where date = ?',
+        [date],
         (tx, results) => {
             var len = results.rows.length;
         //  값이 있는 경우에 
@@ -807,7 +734,7 @@ onselectDate(day, today){
   if(today != null){  
     // today값이 존재하는 경우에 이 날짜 값 가져오기
     console.log("Main5 - onselectDate date : ", today)
-    date = today.substring(0, 4)+"년 "+today.substring(5, 7)+"월 "+today.substring(8, 10)+"일 "+this.getTodayLabel( new Date(today))
+    date = toShortFormat( new Date(today))
     
   }else{
     //day 값으로 날짜 설정
@@ -818,14 +745,13 @@ onselectDate(day, today){
     if(day.day < 10){
       day.day = "0"+day.day;
     }   
-    
     var date_format = day.year+"-"+day.month+"-"+day.day;
    // alert(date_format in this.state.Marked)
     var exist = date_format in this.state.Marked
     if (!exist){
       // 만약 this.state.Marked에 있는 key값에 날짜가 없는 경우 보내기
-      date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
-      if(date.includes("일요일")){
+      date = toShortFormat( new Date(date_format))       
+      if(new Date(date_format).getDay() == 0){
         Alert.alert(
           date+'의 독서를 하시겠습니까?',
           '',
@@ -859,6 +785,7 @@ onselectDate(day, today){
           )            
       }
     }else{
+    
     // this.state.Marked key값에 날짜가 있는 경우 각 날짜 DB값 가져오고 팝업 보이기
     this.setState({
       selectedDate: date_format,
@@ -866,17 +793,15 @@ onselectDate(day, today){
       mysentence: "",
       js2: "",
       sentence:""
-    })
-    date = day.year+"년 "+day.month+"월 "+day.day+"일 "+this.getTodayLabel( new Date(date_format))       
-  
-  const loginId = this.props.status.loginId
-  console.log(date+loginId)
-    if(date.includes("일요일")){
+    })    
+    date = toShortFormat( new Date(date_format))    
+  console.log(date)
+    if(new Date(date_format).getDay() == 0){
       //일요일인 경우 lectio, weekend 가져옴
       db.transaction(tx => {   
         tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [date,loginId],
+          'SELECT * FROM lectio where date = ?',
+          [date_format],
           (tx, results) => {
               var len = results.rows.length;
           //  값이 있는 경우에 
@@ -895,8 +820,8 @@ onselectDate(day, today){
           }
           ), 
           tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [date,loginId],
+            'SELECT * FROM weekend where date = ?',
+            [date_format],
             (tx, results) => {
                 var len = results.rows.length;
             //  값이 있는 경우에 
@@ -919,11 +844,11 @@ onselectDate(day, today){
       });    
     }else{
       // 평일인 경우 comment, lectio 가져옴
-      console.log("not weekend", date+loginId)
+      console.log("not weekend", date)
       db.transaction(tx => {
         tx.executeSql(
-          'SELECT * FROM comment where date = ? and uid = ?',
-          [date, loginId],
+          'SELECT * FROM comment where date = ?',
+          [date_format],
           (tx, results) => {
             var len = results.rows.length;
           //  값이 있는 경우에 
@@ -941,8 +866,8 @@ onselectDate(day, today){
           }
         ),
         tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [date,loginId],
+          'SELECT * FROM lectio where date = ?',
+          [date_format],
           (tx, results) => {
               var len = results.rows.length;
           //  값이 있는 경우에 
@@ -970,12 +895,6 @@ onselectDate(day, today){
     selectedDate_format: date
   }) 
 }
-    
-getTodayLabel(date) {        
-  var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');        
-  var todayLabel = week[date.getDay()];        
-  return todayLabel;
-}
 
 // month이동시에 년월에 해당하는 DB 동그라미값가져오기 getAllPoints
 changeMonth(year, month){
@@ -983,7 +902,7 @@ changeMonth(year, month){
       month = "0"+month;
   }
   var today = year+"-"+month+"-01";
-  var year_month = year+"년 "+month; 
+  var year_month = year+"-"+month; 
   this.setState({selectedDate: today})
   this.getAllPoints(year_month)   
 }
@@ -1075,7 +994,7 @@ render() {
         <TouchableOpacity 
           activeOpacity = {0.9}  
           style={{position: 'absolute', left:'40%', bottom:16, width:'20%', borderWidth:1, borderColor:'#4e99e0', borderRadius:2, padding:5}} 
-          onPress={() => this.state.selectedDate_format.includes("일요일") ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
+          onPress={() => new Date(this.state.selectedDate).getDay() == 0 ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
           >    
            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#4e99e0'}]}>더보기</Text>    
         </TouchableOpacity>        
@@ -1083,7 +1002,7 @@ render() {
       <View style={{flex:1, backgroundColor:'#fff'}}>    
           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', backgroundColor:'#fff', borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
             <View style={{flexDirection: "column", flexWrap: 'wrap', width: '79%', height: 30, marginTop:10, paddingLeft:'1%'}}>
-                <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>나의페이지</Text>
+                <Text style={[ styles.TextStyle, {fontSize:17, textAlign:'left', fontFamily:'NanumMyeongjoBold', color:"#000"}]}>My Page</Text>
             </View>
             
             <View style={{flexDirection: "column", flexWrap: 'wrap', width: '17%', height: 30, marginLeft:'0%', float:'right'}}>              
@@ -1137,15 +1056,15 @@ render() {
                  </View>
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
             <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.todaycount}</Text>      
-            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>오늘</Text>     
+            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>Today</Text>     
           </View>        
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
             <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.weekcount}</Text>  
-            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번주</Text>          
+            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>This Week</Text>          
           </View>    
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 70, height: 70, marginTop:10}}>
             <Text style={{color:'#000', textAlign: 'center', fontSize: 23, marginBottom:0}}>{this.state.monthcount}</Text>   
-            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>이번달</Text>       
+            <Text style={{textAlign: 'center', fontSize: 13, marginBottom:10}}>This Month</Text>       
           </View>  
           <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center', marginTop: -30}}>
           <View style={{flexDirection: "column", flexWrap: 'wrap', width: 120, height: 40}}>
@@ -1183,14 +1102,7 @@ render() {
     )
   }
 }
-Main5.propTypes = { 
-  setLogout: PropTypes.func,
-    status: PropTypes.shape({
-        isLogged: PropTypes.bool,
-        loginId: PropTypes.string
-    })
-  };
-  
+
 const styles = StyleSheet.create({
   loadingContainer: {
       alignItems: 'center',

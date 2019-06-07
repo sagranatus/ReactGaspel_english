@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
  
-import { Platform, PushNotificationIOS, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
+import {Alert, Keyboard, TextInput, Platform, PushNotificationIOS, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
 import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -101,6 +101,14 @@ constructor(props) {
   
 
 componentWillMount(){
+
+  AsyncStorage.getItem('name', (err, result) => {
+    this.setState({UserName : result})
+  })
+  AsyncStorage.getItem('catholic_name', (err, result) => {
+    this.setState({UserCatholicName : result})
+  })
+
   if(Platform.OS == "ios"){
     PushNotificationIOS.requestPermissions()
   }else{
@@ -181,7 +189,16 @@ stopAlarm1(){
     console.error('AsyncStorage error: ' + error.message);
   }
 }
-
+UpdateUserFunction(){
+  Keyboard.dismiss()
+  try {
+    AsyncStorage.setItem('name', this.state.UserName);
+    AsyncStorage.setItem('catholic_name', this.state.UserCatholicName);
+    Alert.alert("수정하였습니다.") 
+  } catch (error) {
+    console.error('AsyncStorage error: ' + error.message);
+  }   
+}
 setChanges(){
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
@@ -291,6 +308,34 @@ render() {
             {"<"} 뒤로
         </Text>
       </TouchableOpacity>  
+      <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>이름,세례명 설정</Text>      
+      <View style={{  justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap', margin: 0 }}>
+      <TextInput                
+      placeholder="이름"       
+      value={this.state.UserName} 
+      onChangeText={UserName => this.setState({UserName})}  
+      underlineColorAndroid='transparent'        
+      style={[styles.TextInputStyleClass, {width:'49%'},normalSize]}
+      />
+        <TextInput                
+      placeholder="세례명"        
+      value={this.state.UserCatholicName}
+      onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
+      underlineColorAndroid='transparent'        
+      style={[styles.TextInputStyleClass, {width:'49%'}, normalSize]}
+      />
+      </View>
+       <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
+        <TouchableOpacity 
+        activeOpacity = {0.9}
+        style={styles.Button}
+        onPress={()=> this.UpdateUserFunction()} 
+        >
+        <Text style={{color:"#fff", textAlign:'center'}}>
+        프로필 저장
+        </Text>
+        </TouchableOpacity>      
+      </View>
       <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>글씨크기 선택</Text>      
       <SelectMultipleGroupButton
         multiple={false}
@@ -403,5 +448,6 @@ const styles = StyleSheet.create({
       margin:  5,
       marginTop: 0,
       marginBottom: -5
-      },
+      }
+   
     });
