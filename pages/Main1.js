@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Platform, PanResponder, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
+import { Alert, Platform, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator,  ScrollView, NetInfo, Modal, WebView, Linking, Image} from 'react-native';
 import {Navigation} from 'react-navigation';
 import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -11,8 +11,7 @@ import Icon2 from 'react-native-vector-icons/EvilIcons'
 import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import RNFetchBlob from "rn-fetch-blob";
-import toShortFormat from '../etc/dateFormat';
-
+import {toShortFormat, dateFormat1} from '../etc/dateFormat';
 var smallSize;
 var normalSize;
 var largeSize;
@@ -100,10 +99,6 @@ constructor(props) {
   this.onModalClose = this.onModalClose.bind(this);
   this.onModalOpen = this.onModalOpen.bind(this);
   this.getSlideImagefromServer = this.getSlideImagefromServer.bind(this);
-}
-// slideshow 
-urlSetting(){
-  this.setState({reload:true})
 }
 // slideshow 
 getSlideImagefromServer(){
@@ -237,24 +232,7 @@ componentWillMount(){
     this.getSlideImagefromServer(); 
   }
   
-  // scroll inside scroll
-  this._panResponder = PanResponder.create({
-    onMoveShouldSetResponderCapture: () => true,
-    onMoveShouldSetPanResponderCapture: () => true,
-    onPanResponderGrant: (e, gestureState) => {
-      this.fScroll.setNativeProps({ scrollEnabled: false })
-    },
-    onPanResponderMove: () => {
-
-    },
-    onPanResponderTerminationRequest: () => true,
-    onPanResponderRelease: () => {
-      this.fScroll.setNativeProps({ scrollEnabled: true })
-    },
-  })
-
-
-  // slide url 가져오기
+   // slide url 가져오기
   fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
     method: 'POST',
     headers: {
@@ -281,7 +259,6 @@ componentWillMount(){
           }
           
           console.log(urls[0])
-          this.urlSetting()
         
       }else{
         console.log("Main1 - stacks in slide url : ", 'failed')
@@ -307,39 +284,10 @@ componentWillMount(){
     }
   })
   
-  // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기  
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth()+1
-  var day = date.getDate();
-  if(month < 10){
-      month = "0"+month;
-  }
-  if(day < 10){
-      day = "0"+day;
-  } 
-  var today = year+"-"+month+"-"+day; // 오늘날짜 세팅
-  var todayShow = toShortFormat(date)
-
-  // 일요일날짜 구하기
-  if(date.getDay() !== 0){ 
-    var lastday = date.getDate() - (date.getDay() - 1) - 1;
-    date = new Date(date.setDate(lastday));
-  }else{
-    // 일요일인 경우에는 그대로 값을 가져옴 
-    var lastday = date.getDate()
-    date = new Date(date.setDate(lastday));
-  }   
-  var year = date.getFullYear();
-  var month = date.getMonth()+1
-  var day = date.getDate();
-  if(month < 10){
-      month = "0"+month;
-  }
-  if(day < 10){
-      day = "0"+day;
-  } 
-  var weekend = year+"-"+month+"-"+day; // 주일날짜 세팅
+  // 오늘날짜, 일요일 날짜 구하고 값 설정후 gaspel 가져오기   
+  var today = dateFormat1("today")
+  var todayShow = toShortFormat(new Date())
+  var weekend = dateFormat1("weekend") // 주일날짜 세팅
 
 
   // 오늘날짜와 주일 날짜를 today1, weekend1에 저장 
@@ -352,8 +300,6 @@ componentWillMount(){
   
   this.setState({today: today, todayDate_show:todayShow}) // today, todayDate_show에 값 설정
   this.props.getGaspel(today) //오늘 gaspel 가져오기 
-
-
 
   // 일요일인 경우 weekend true로 준다.
   var date = new Date();
@@ -455,41 +401,11 @@ componentWillReceiveProps(nextProps){
     })
 
     // today, weekend날짜 얻어서 today1, weekend1과 비교
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var today = year+"-"+month+"-"+day;
+  
+    var today = dateFormat1("today");
 
-    // 일요일 경우는 weekend true, 아닌경우 false setting
-    if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-      this.setState({weekend:false})
-      var lastday = date.getDate() - (date.getDay() - 1) - 1;
-      date = new Date(date.setDate(lastday));
-    }else{      
-      this.setState({weekend:true})
-      var lastday = date.getDate()
-      date = new Date(date.setDate(lastday));
-    }   
-    
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var weekend = year+"-"+month+"-"+day;
-
-    var date = new Date();
+    // 일요일 경우는 weekend true, 아닌경우 false setting  
+    var weekend = dateFormat1("weekend");
 
     // today1이 변경되거나 refreshMain1인 경우에는 getData()를 다시 불러온다.
     AsyncStorage.getItem('today1', (err, result) => {
@@ -502,17 +418,7 @@ componentWillReceiveProps(nextProps){
               // refreshMain1 refresh 하는 경우
            this.setState({initialLoading:true})
             try {
-              var date = new Date();
-              var year = date.getFullYear();
-              var month = date.getMonth()+1
-              var day = date.getDate();
-              if(month < 10){
-                  month = "0"+month;
-              }
-              if(day < 10){
-                  day = "0"+day;
-              } 
-              this.getData(year+"-"+month+"-"+day)
+              this.getData(today)
               AsyncStorage.setItem('refreshMain1', 'no');
             } catch (error) {
                 console.error('AsyncStorage error: ' + error.message);
@@ -573,7 +479,6 @@ componentWillReceiveProps(nextProps){
               }
               
               console.log(urls[0])
-              this.urlSetting()
             
           }else{
             console.log("Main1 - stacks in slide url : ", 'failed')
@@ -614,28 +519,7 @@ componentWillReceiveProps(nextProps){
   getData(today){
     // 오늘 데이터, 일요일 데이터 가져오기
     console.log("Main1 - getData")
-    var date = new Date()
-    console.log(date)
-    if(date.getDay() !== 0){
-        var lastday = date.getDate() - (date.getDay() - 1) - 1;
-        date = new Date(date.setDate(lastday));
-    }else{
-       // 일요일인 경우에는 그대로 값을 가져옴 
-      var lastday = date.getDate()
-      date = new Date(date.setDate(lastday));
-    }    
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var date_weekend = year+"-"+month+"-"+day;
-   
-   
+    var date_weekend = dateFormat1("weekend");
    
     db.transaction(tx => {
       tx.executeSql(
@@ -758,7 +642,6 @@ render() {
     <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
     <ScrollView 
     style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
-     {...this._panResponder.panHandlers}
      onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
        <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
        <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence_from}</Text>    
@@ -816,7 +699,7 @@ render() {
       </View>            
       <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
       
-        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
+        <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 30, marginTop:5}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.todayDate}</Text>   
         </View>   
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 20, marginTop:5}}>
@@ -836,7 +719,7 @@ render() {
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
           <TouchableOpacity 
             activeOpacity = {0.9}
-            onPress={() => this.state.js2 !== "" || this.state.comment !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.deliver_date}) :
+            onPress={() => this.state.js2 !== "" || this.state.comment !== "" ? this.props.navigation.navigate('SendImage', {otherParam: "Main1", otherParam2: this.state.today}) :
             Alert.alert(
               'Go for doing Lectio Divina?',
               'you didn\'t do lectio divina yet. would you share what you meditate after doing it?',

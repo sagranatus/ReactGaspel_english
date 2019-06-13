@@ -12,7 +12,7 @@ import Icon3 from 'react-native-vector-icons/FontAwesome'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import ImagePicker from 'react-native-image-picker'; 
 import RNFetchBlob from 'rn-fetch-blob';
-
+import {toShortFormat, dateFormat1} from '../etc/dateFormat';
 import Menu from '../etc/Menu';
 import SideMenu from 'react-native-side-menu';
 
@@ -44,7 +44,6 @@ constructor(props) {
         selectQuestion: false
     }
     
-    this.toggle = this.toggle.bind(this);  
     this.onselectDate= this.onselectDate.bind(this);
     this.getImagefromServer = this.getImagefromServer.bind(this);
   }
@@ -53,42 +52,31 @@ constructor(props) {
 
     let dirs = RNFetchBlob.fs.dirs;
     console.log(dirs)
-
-    RNFetchBlob.fs.exists(dirs.SDCardApplicationDir + '/profileimg.jpeg')
-    .then((exist) => {
-      //  alert(exist)
+      AsyncStorage.getItem('profilenumber', (err, result) => {
+       // alert(result)
+      if(result == null){
+        result = 0;
+      }
+     // alert("third"+result)
+      RNFetchBlob.fs.exists(dirs.SDCardApplicationDir + '/profileimg'+result+'.jpeg')
+      .then((exist) => {
+        //  alert(exist)
+          this.setState( {avatarSource: 
+            {
+              uri: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/"+'/profileimg'+result+'.jpeg'
+            }
+          }) 
+      })
+      .catch(() => {  })
     })
-    .catch(() => {  })
+   
   
 
-      this.setState( {avatarSource: 
-        {
-          uri: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/"+'/profileimg.jpeg'
-        }
-      }) 
+    
 
     }
 
-  // 메뉴 열고 닫기 - isOpen 
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen,
-    });
-  }
-
-  updateMenuState(isOpen) {
-    this.setState({ isOpen });
-  }
-  // 메뉴 선택시 이벤트 실행
-  onMenuItemSelected = item => {
-    this.setState({
-      isOpen: false,
-      selectedItem: item,
-    });
-    if(item == 'Setting'){
-      this.props.navigation.navigate("Setting")
-    }
-  }
+ 
   // 프로필 이미지 선택
   pickImage(){
     const options = {
@@ -125,10 +113,41 @@ constructor(props) {
         if(Platform.OS !=="ios"){
         let dirs = RNFetchBlob.fs.dirs;
         console.log(dirs.SDCardApplicationDir)
-        RNFetchBlob.fs.unlink(dirs.SDCardApplicationDir + '/profileimg.jpeg').then(() => {
-          RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + '/profileimg.jpeg').then(() => {          
-          }).catch((e)=>{ alert("FAILED:= "+e.message) });           
-        });
+      
+     //   RNFetchBlob.fs.unlink(dirs.SDCardApplicationDir + '/profileimg.jpeg').then(() => {
+
+        AsyncStorage.getItem('profilenumber', (err, result) => {
+          if(result == null){
+            result = 0;
+            try {
+              var number = Number(result);
+            //  alert("second"+number)
+              number = number+1;   
+              AsyncStorage.setItem('profilenumber', String(number));                  
+              RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + '/profileimg'+String(number)+'.jpeg').then(() => {   
+              //  alert("success")       
+              }).catch((e)=>{ alert("FAILED:= "+e.message) });         
+              } catch (error) {
+                console.error('AsyncStorage error: ' + error.message);
+              }    
+          }else{
+            try {
+              var number = Number(result);
+             // alert("second"+number)
+              number = number+1;   
+              AsyncStorage.setItem('profilenumber', String(number));                  
+              RNFetchBlob.fs.cp(response.path, dirs.SDCardApplicationDir + '/profileimg'+String(number)+'.jpeg').then(() => {   
+              //  alert("success")       
+              }).catch((e)=>{ alert("FAILED:= "+e.message) });         
+              } catch (error) {
+                console.error('AsyncStorage error: ' + error.message);
+              }          
+          }                
+       
+        })
+
+          
+     //   });
         
         }           
        
@@ -193,6 +212,7 @@ componentWillMount(){
 
   try {
     AsyncStorage.setItem('today5', today);
+   // AsyncStorage.removeItem('profilenumber')
   } catch (error) {
     console.error('AsyncStorage error: ' + error.message);
   }
@@ -239,7 +259,33 @@ refreshContents(){
     this.setState({reload:true})
   })
 
-  
+  AsyncStorage.getItem('refreshNames', (err, result) => {
+    if(result == 'true'){
+
+    
+    AsyncStorage.getItem('name', (err, result) => {
+      console.log("Main5 - login_name : ", result)
+      this.setState({
+        name: result
+      //  iconShow:false
+            });
+    
+    })
+    AsyncStorage.getItem('catholic_name', (err, result) => {
+      console.log("Main5 - login_catholic_name : ", result)
+      this.setState({
+        christname: result
+            });
+    
+    })
+    try {
+      AsyncStorage.setItem('refreshNames','false');
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }   
+  }
+  });
+
   AsyncStorage.getItem('refreshMain5', (err, result) => {
   
     console.log("Main5 - get AsyncStorage refresh : ", result)  
@@ -260,7 +306,7 @@ refreshContents(){
         console.log(result2)
         if(result2 == null){
           // today5 값이 없는 경우, 즉 로그아웃후에 돌아오는 경우에는 이름, 프로필 사진도 변경해야함
-          AsyncStorage.getItem('login_name', (err, result) => {
+          AsyncStorage.getItem('name', (err, result) => {
             console.log("Main5 - login_name : ", result)
             this.setState({
               name: result,
@@ -269,8 +315,8 @@ refreshContents(){
                   });
           
           })
-          AsyncStorage.getItem('login_christ_name', (err, result) => {
-            console.log("Main5 - login_chirst_name : ", result)
+          AsyncStorage.getItem('catholic_name', (err, result) => {
+            console.log("Main5 - login_catholic_name : ", result)
             this.setState({
               christname: result
                   });
@@ -909,8 +955,6 @@ changeMonth(year, month){
 
 render() {    
   console.log("Main5 - render : Marked ", this.state.Marked)
-  const menu = <Menu onItemSelected={this.onMenuItemSelected} />;
-
   return (this.state.initialLoading)
   ? (        
     <View style={styles.loadingContainer}>
@@ -924,13 +968,7 @@ render() {
     )
 
   : (
-    <SideMenu
-    menuPosition={"right"}
-    menu={menu}
-    isOpen={this.state.isOpen}
-    onChange={isOpen => this.updateMenuState(isOpen)}
-    >
-
+      <View style={{flex:1, backgroundColor:"#fff"}}>
       <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
         <Text style={{color:"#fff", position: 'absolute', left:'80%', top:25, fontWeight:'bold', fontSize:16}}>    |</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'2%', top:45}}>환경설정(글씨크기 및 알람 설정),프로필수정을 할 수 있어요.</Text>
@@ -1009,7 +1047,7 @@ render() {
                 <TouchableOpacity 
                 activeOpacity = {0.9}                
                 style={{marginRight:13}}
-                onPress={() => this.toggle()} // insertComment
+                onPress={() => this.props.navigation.navigate('Setting')} // insertComment
                 >      
                 <Icon5 style={{textAlign:'right'}} name={"setting"} size={24} color={"#000"} style={{paddingTop:9}} />
                 </TouchableOpacity>
@@ -1098,7 +1136,7 @@ render() {
           />
         </View>        
       </View>
-    </SideMenu>
+      </View>
     )
   }
 }

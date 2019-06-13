@@ -11,7 +11,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
-import toShortFormat from '../etc/dateFormat';
+import {toShortFormat, dateFormat1} from '../etc/dateFormat';
 var normalSize;
 var normalSize_input;
 var largeSize;

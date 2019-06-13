@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.pgsqlite.SQLitePluginPackage;
 //import com.emekalites.react.alarm.notification.ANPackage;
+import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 // Add imports
 import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import javax.annotation.Nullable;
@@ -50,7 +51,8 @@ public class MainApplication extends Application implements ShareApplication, Re
             new ImagePickerPackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
-            new SQLitePluginPackage()
+            new SQLitePluginPackage(),
+            new RNHTMLtoPDFPackage()
            // new ANPackage()
       );
     }

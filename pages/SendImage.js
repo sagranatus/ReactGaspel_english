@@ -11,7 +11,7 @@ import fs from 'react-native-fs';
 import RNFetchBlob from "rn-fetch-blob";
 import ColorPalette from 'react-native-color-palette'
 import Icon from 'react-native-vector-icons/FontAwesome'
-
+import toShortFormat from '../etc/dateFormat';
 import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
@@ -40,7 +40,7 @@ export default class SendImage extends Component {
           weekend: false,
           backgroundWhite: false
       }
-      this.saveImage = this.saveImage.bind(this);
+      this.saveImage1 = this.saveImage1.bind(this);
       this.getData = this.getData.bind(this);
   }
  
@@ -91,12 +91,11 @@ export default class SendImage extends Component {
   getData(date){      
     var selectedday = date
     console.log("SendImage - getData")
-    const loginId = this.props.status.loginId    
-    console.log(selectedday+loginId)
+    console.log(selectedday)
       db.transaction(tx => {
         tx.executeSql(
-          'SELECT * FROM comment where date = ? and uid = ?',
-          [selectedday, loginId],
+          'SELECT * FROM comment where date = ?',
+          [selectedday],
           (tx, results) => {
             var len = results.rows.length;
             if (len > 0) {                  
@@ -104,7 +103,7 @@ export default class SendImage extends Component {
                 this.setState({
                    Sentence_comment: results.rows.item(0).onesentence,
                     comment: results.rows.item(0).comment,
-                    date_comment: results.rows.item(0).date
+                    date_comment: toShortFormat(new Date(results.rows.item(0).date))
                 })
             } else {  
               console.log("nono")      
@@ -117,8 +116,8 @@ export default class SendImage extends Component {
           }
         ),
         tx.executeSql(
-          'SELECT * FROM lectio where date = ? and uid = ?',
-          [selectedday,loginId],
+          'SELECT * FROM lectio where date = ?',
+          [selectedday],
           (tx, results) => {
               var len = results.rows.length;
               if (len > 0) {                  
@@ -126,7 +125,7 @@ export default class SendImage extends Component {
                   this.setState({
                       Sentence: results.rows.item(0).onesentence,
                       js2 : results.rows.item(0).js2,
-                      date: results.rows.item(0).date
+                      date: toShortFormat(new Date(results.rows.item(0).date))
                   })
               } else {   
                 console.log("nono")             
@@ -139,8 +138,8 @@ export default class SendImage extends Component {
           }
           ), 
           tx.executeSql(
-            'SELECT * FROM weekend where date = ? and uid = ?',
-            [selectedday,loginId],
+            'SELECT * FROM weekend where date = ?',
+            [selectedday],
             (tx, results) => {
                 var len = results.rows.length;
                 if (len > 0) {                  
@@ -259,8 +258,8 @@ render() {
       <Text style={this.state.comment!=="" && this.state.js2 =="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.comment}</Text>
       <Text style={this.state.js2 !=="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.js2}</Text>
 
-      <Text style={this.state.comment!== "" && this.state.js2 == "" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date_comment} 복음 묵상</Text>
-      <Text style={this.state.js2 !=="" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date} 복음 묵상</Text>
+      <Text style={this.state.comment!== "" && this.state.js2 == "" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date_comment}</Text>
+      <Text style={this.state.js2 !=="" ? {fontSize:12,color:'black', textAlign:'right', marginTop:3} : {display:'none'}}>{this.state.date}</Text>
       </View>
       </View>
     </ViewShot>

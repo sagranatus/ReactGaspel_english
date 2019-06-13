@@ -10,7 +10,7 @@ import {NavigationEvents} from 'react-navigation'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 var db = openDatabase({ name: 'UserDatabase.db' });
 import OnboardingButton from '../etc/OnboardingButton'
-import toShortFormat from '../etc/dateFormat';
+import {toShortFormat, dateFormat1} from '../etc/dateFormat';
 var date;
 var normalSize;
 var normalSize_input;

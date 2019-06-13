@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">오늘의복음</string>
+    <string name="app_name">today gaspel</string>
     <string name="kakao_app_key">77e54abd61b0ef660fa1ee3235df41ac</string>
     <string name="kakao_scheme">kakao77e54abd61b0ef660fa1ee3235df41ac</string>
     <string name="kakaolink_host">kakaolink</string>

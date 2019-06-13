@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
  
-import {Alert, Keyboard, TextInput, Platform, PushNotificationIOS, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
+import { PermissionsAndroid, ScrollView, TouchableHighlight, Alert, Keyboard, TextInput, Platform, PushNotificationIOS, StyleSheet, View, Text, TouchableOpacity, AsyncStorage, ActivityIndicator, DeviceEventEmitter } from 'react-native';
 import { SelectMultipleGroupButton } from 'react-native-selectmultiple-button'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
 import DateTimePicker from 'react-native-modal-datetime-picker';
-
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 var PushNotification = require('react-native-push-notification');
 var normalSize;
 var largeSize;
 var textSize;
 var course;
-
+var lectioContents, commentContents, weekendContents;
 //textSize 가져와서 textSize value 삽입
 AsyncStorage.getItem('textSize', (err, result) => { 
   if(result == "normal" || result == null){
@@ -37,6 +37,20 @@ AsyncStorage.getItem('course', (err, result) => {
 })
 export default class Main1 extends Component { 
 
+async createPDF() {
+  let options = {
+    html: commentContents+"<br />"+lectioContents+"<br />"+weekendContents,
+    fileName: 'test',
+    directory: 'Download',
+  };
+
+  let file = await RNHTMLtoPDF.convert(options)
+  // console.log(file.filePath);
+  alert(file.filePath);
+  console.log(file.filePath);
+}
+
+
 constructor(props) { 
     super(props)  
     this.state = {
@@ -44,9 +58,12 @@ constructor(props) {
       isDateTimePickerVisible: false,
       fireDate: '',
 			update: '',
-			futureFireDate: '0'
+      futureFireDate: '0',
+      isPermitted: false,
+      getData : "false"
     }
     this.setAlarm = this.setAlarm.bind(this);
+    this.getDB = this.getDB.bind(this);
    
   }
 
@@ -86,6 +103,94 @@ constructor(props) {
 
   };
   
+  getDB(){
+   // alert("haha")
+   this.setState({initialLoading: true})
+    db.transaction(tx => {
+      tx.executeSql(
+       'SELECT * FROM comment ORDER BY reg_id DESC',
+       [],
+       (tx, results) => {
+         var len = results.rows.length;
+         if (len > 0) {     
+             commentContents = "<h1 style='text-align: center;'><strong>Comment Table</strong></h1><table style='text-align: center;'><tr><th style='width:20%'>Date</th><th style='width:40%'>OneSentence</th><th style='width:40%'>Comment</th></tr>";
+             var date, onesentence, comment;
+             for(var i=0; i<results.rows.length; i++){
+               date = results.rows.item(i).date
+               onesentence = results.rows.item(i).onesentence
+               comment = results.rows.item(i).comment         
+               commentContents = commentContents + "<tr><td style='width:20%'>"+ date + "</td><td style='width:40%'>" + onesentence + "</td><td style='width:40%'>" + comment + "</td></tr>";
+               // 모든 값을 commentDates 배열에 저장             
+                if(i == results.rows.length-1){
+                  commentContents = commentContents + "</table>";
+                //  alert(commentContents)
+                }               
+              }            
+                         
+         } else {                  
+           console.log('Main5 - get Comments data : ', "no value")   
+         }
+       }
+     ),
+     tx.executeSql(
+      'SELECT * FROM lectio ORDER BY reg_id DESC',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+        if (len > 0) {                  
+          lectioContents = "<h1 style='text-align: center;'><strong>Lectio Divina Table</strong></h1><table style='text-align: center;'><tr><th style='width:10%'>Date</th><th style='width:15%'>OneSentence</th><th style='width:15%'>Backgrounds</th><th style='width:15%'>Summary</th><th>Summary2</th><th style='width:15%'>Jesus Feature</th><th style='width:15%'>Jesus2</th></tr>";
+          var date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence;
+          for(var i=0; i<results.rows.length; i++){
+            date = results.rows.item(i).date
+            onesentence = results.rows.item(i).onesentence
+            bg1 = results.rows.item(i).bg1
+            bg2 = results.rows.item(i).bg2
+            bg3 = results.rows.item(i).bg3
+            sum1 = results.rows.item(i).sum1
+            sum2 = results.rows.item(i).sum2
+            js1 = results.rows.item(i).js1
+            js2 = results.rows.item(i).js2  
+            lectioContents = lectioContents + "<tr><td style='width:10%'>"+ date + "</td><td style='width:15%'>" + onesentence + "</td><td style='width:15%'>" + bg1 +"/"+bg2+"/"+bg3+  "</td><td style='width:15%'>" + sum1+ "</td><td style='width:15%'>"+ sum2+  "</td><td style='width:15%'>"+js1+ "</td><td style='width:15%'>"+js2+"</td></tr>";
+            // 모든 값을 commentDates 배열에 저장             
+             if(i == results.rows.length-1){
+              lectioContents = lectioContents + "</table>";
+             //  alert(lectioContents)
+             }               
+           }             
+            
+        } else {
+          console.log('get Lectios data : ', "no value")   
+        }
+      }
+    ),
+    tx.executeSql(
+      'SELECT * FROM weekend ORDER BY reg_id DESC',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+        if (len > 0) {                  
+          weekendContents = "<h1 style='text-align: center;'><strong>Weekend MySentence Table</strong></h1><table style='text-align: center;'><tr><th style='width:30%'>Date</th><th style='width:70%'>My sentence</th></tr>";
+          var date, mysentence;
+          for(var i=0; i<results.rows.length; i++){
+            date = results.rows.item(i).date
+            mysentence = results.rows.item(i).mysentence
+            weekendContents = weekendContents + "<tr><td style='width:30%'>"+ date +"</td><td style='width:70%'>" + mysentence+"</td></tr>";
+            // 모든 값을 commentDates 배열에 저장             
+             if(i == results.rows.length-1){
+              weekendContents = weekendContents + "</table>";
+            //   alert(weekendContents)
+               this.createPDF()
+               this.setState({initialLoading: false, getData: 'true'})
+             }               
+           }             
+            
+        } else {
+          console.log('get Lectios data : ', "no value")   
+        }
+      }
+    );
+   });  
+  }
   // notification 세팅
 	componentDidMount() {
 		DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
@@ -98,10 +203,34 @@ constructor(props) {
 			console.log(obj);
 		});
   }
-  
 
 componentWillMount(){
+    
+async function requestExternalWritePermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'CameraExample App External Storage Write Permission',
+        message:
+          'CameraExample App needs access to Storage data in your SD Card ',
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      //If WRITE_EXTERNAL_STORAGE Permission is granted
+      //changing the state to show Create PDF option
+      that.setState({ isPermitted: true });
+    } else {
+     // alert('WRITE_EXTERNAL_STORAGE permission denied');
+    }
+  } catch (err) {
+  //  alert('Write permission err', err);
+   // console.warn(err);
+  }
+}
+//Calling the External Write permission function
 
+  requestExternalWritePermission();
   AsyncStorage.getItem('name', (err, result) => {
     this.setState({UserName : result})
   })
@@ -194,12 +323,14 @@ UpdateUserFunction(){
   try {
     AsyncStorage.setItem('name', this.state.UserName);
     AsyncStorage.setItem('catholic_name', this.state.UserCatholicName);
+    AsyncStorage.setItem('refreshNames', 'true');
     Alert.alert("수정하였습니다.") 
   } catch (error) {
     console.error('AsyncStorage error: ' + error.message);
   }   
 }
 setChanges(){
+  this.setState({getData : "false"})
   //textSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
     if(result == "normal" || result == null){
@@ -293,7 +424,7 @@ render() {
     )
 
 : (   
-  <View style={{flex:1}}>    
+  <ScrollView style={{flex:1}}>    
     <NavigationEvents
       onWillFocus={payload => {
           this.setChanges();   
@@ -394,7 +525,21 @@ render() {
          <Text style={{fontSize:14, textAlign:'center'}}>거룩한독서 알람 해제</Text>         
         </TouchableOpacity>
       </View>    
-    </View>
+
+      <Text style={[{marginTop:5, marginBottom:5, textAlign:'center'},normalSize]}>내용 엑셀로 다운로드</Text>
+      <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
+      <TouchableOpacity 
+        activeOpacity = {0.9}
+        style={styles.Button}
+        onPress={()=> this.getDB()} 
+        >
+        <Text style={{color:"#fff", textAlign:'center'}}>
+        내용가져오기
+        </Text>
+        </TouchableOpacity>                  
+      <Text style={this.state.getData=="true" ? {textAlign:'center'} : {display:'none'}}>Download 폴더에 파일이 다운로드 되었습니다.</Text>
+      </View>
+    </ScrollView>
       )
       
   }
@@ -448,6 +593,16 @@ const styles = StyleSheet.create({
       margin:  5,
       marginTop: 0,
       marginBottom: -5
-      }
+      },
+      loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 20,
+        marginBottom: 0,
+        marginHorizontal: 0,
+        paddingHorizontal: 10
+      },
    
     });
