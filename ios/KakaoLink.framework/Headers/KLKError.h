@@ -28,7 +28,7 @@ extern NSString *const KLKErrorDomain;
 /*!
  @abstract SDK 오류 코드 정의
  @constant KLKErrorCodeUnknown 알 수 없는 오류
- @constant KLKErrorCodeCancelled 요청이 취소 됨
+ @constant KLKErrorCodeCancelled 요청이 cancel 됨
  @constant KLKErrorCodeOperationInProgress 이전 요청이 아직 실행중이어서 작업을 진행할 수 없음
  @constant KLKErrorCodeBadResponse 요청에 대한 응답에 기대하는 값이 없거나 문제가 있음
  @constant KLKErrorCodeNetwork 네트워크 오류

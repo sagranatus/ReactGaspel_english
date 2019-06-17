@@ -48,9 +48,8 @@ constructor(props) {
       selectQuestion:false,
       index: 0,
       routes: [
-          { key: 'first', title: '독서 과정', out: true },
-          { key: 'second', title: '거룩한 독서' },
-          { key: 'third', title: '주의사항' }
+        { key: 'first', title: 'Reading Procedure', out: true },
+        { key: 'second', title: 'Lectio Divina' },
         ],
         out: false,
     }
@@ -60,65 +59,6 @@ constructor(props) {
     this.movePrevious = this.movePrevious.bind(this);
     this.transitionToNextPanel = this.transitionToNextPanel.bind(this); 
     this.getData = this.getData.bind(this); 
-}
-
-
-getData(){
-  //  alert("awdad")
-     var today_comment_date =this.state.Date
-     db.transaction(tx => {       
-         //comment있는지 확인  
-         tx.executeSql(
-           'SELECT * FROM comment where date = ?',
-           [today_comment_date],
-           (tx, results) => {
-             var len = results.rows.length;
-           //  comment 값이 있는 경우에 가져오기 
-             if (len > 0) {                  
-                 console.log('Main3 - check Comment data : ', results.rows.item(0).comment)   
-                 this.setState({
-                     comment: results.rows.item(0).comment,
-                     Lectioupdate: true,
-                     initialLoading: false,
-                     basic: true
-                 })
-             } else {     
-                 this.setState({
-                     initialLoading: false
-                 })                             
-             }
-           }
-         ),
-         tx.executeSql(
-             'SELECT * FROM lectio where date = ?',
-             [today_comment_date],
-             (tx, results) => {
-               var len = results.rows.length;
-             //  lectio 값이 있는 경우에 가져오기
-               if (len > 0) {                  
-                   console.log('Main3 - check Lectio data : ', results.rows.item(0).bg1) 
-                   this.setState({
-                       bg1 : results.rows.item(0).bg1,
-                       bg2 : results.rows.item(0).bg2,
-                       bg3 : results.rows.item(0).bg3,
-                       sum1 : results.rows.item(0).sum1,
-                       sum2 : results.rows.item(0).sum2,
-                       js1 : results.rows.item(0).js1,
-                       js2 : results.rows.item(0).js2,
-                       Sentence : results.rows.item(0).onesentence,
-                       Lectioupdate: true,
-                       initialLoading: false,
-                       comment:null,
-                       basic: false
-                   })
-               } else {
-                   this.setState({          
-                       initialLoading: false
-                   })                        
-               }
-             }
-           )
-       });   
 }
 
 movePrevious(){
@@ -259,27 +199,7 @@ transitionToNextPanel(nextIndex){
     });    
 }
 
-componentWillMount(){   
-  // 인터넷 연결
-   const setState = (isConnected) => this.setState({internet : isConnected})
-
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-    });
-    function handleFirstConnectivityChange(isConnected) {
-      console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-      setState(isConnected)
-     /* NetInfo.isConnected.removeEventListener(
-        'connectionChange',
-        handleFirstConnectivityChange
-      ); */
-    }
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      handleFirstConnectivityChange
-    );
-
+componentWillMount(){
   // textSize 가져오기
     AsyncStorage.getItem('textSize', (err, result) => {
       if(result == "normal" || result == null){
@@ -300,27 +220,15 @@ componentWillMount(){
 
    // 이번주주일 날짜 가져와서 thisweekend 저장, Date, Weekenddate setting
     var date = new Date()
-    console.log(date.getDay())
+    var today = dateFormat1("weekend")
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-        var lastday = date.getDate() - (date.getDay() - 1) - 1;
-        console.log(lastday)
-        date = new Date(date.setDate(lastday));
+      var lastday = date.getDate() - (date.getDay() - 1) - 1;
+      console.log(lastday)
+      date = new Date(date.setDate(lastday));
     }else{
       var lastday = date.getDate();
       date = new Date(date.setDate(lastday));
-    }       
-    console.log(date)
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var today = year+"-"+month+"-"+day;    
-   
+    }  
      try {
         AsyncStorage.setItem('thisweekend', today);
       } catch (error) {
@@ -336,71 +244,11 @@ componentWillMount(){
 
     // gaspel 및 weekendmore 데이터 가져오기
     this.props.getGaspel(today) 
-
-    // lectio, weekend DB 있는지 확인      
-    db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM lectio where date = ?',
-          [today],
-          (tx, results) => {
-            var len = results.rows.length;
-            if (len > 0) {                  
-                console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
-                this.setState({
-                    bg1 : results.rows.item(0).bg1,
-                    bg2 : results.rows.item(0).bg2,
-                    bg3 : results.rows.item(0).bg3,
-                    sum1 : results.rows.item(0).sum1,
-                    sum2 : results.rows.item(0).sum2,
-                    js1 : results.rows.item(0).js1,
-                    js2 : results.rows.item(0).js2,
-                    Sentence : results.rows.item(0).onesentence,
-                    Weekendupdate: true,
-                    initialLoading: false
-                })
-            } else {      
-                this.setState({
-                    initialLoading: false
-                })                              
-            }
-          }
-        );
-
-        tx.executeSql(
-            'SELECT * FROM weekend where date = ?',
-            [today],
-            (tx, results) => {
-              var len = results.rows.length;
-              if (len > 0) {                  
-                console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
-                  this.setState({
-                      mysentence : results.rows.item(0).mysentence
-                  })
-              } else {                                     
-              }
-            }
-          );
-      });    
-
-      this._panResponder = PanResponder.create({
-        onMoveShouldSetResponderCapture: () => true,
-        onMoveShouldSetPanResponderCapture: () => true,
-        onPanResponderGrant: (e, gestureState) => {
-          this.fScroll.setNativeProps({ scrollEnabled: false })
-        },
-        onPanResponderMove: () => {
-    
-        },
-        onPanResponderTerminationRequest: () => true,
-        onPanResponderRelease: () => {
-          this.fScroll.setNativeProps({ scrollEnabled: true })
-        },
-      })
+    this.getData(today)
   }
 
-  getData(){
+  getData(today_comment_date){
       // lectio, weekend DB 있는지 확인        
-      var today_comment_date = this.state.Date
       db.transaction(tx => {
           tx.executeSql(
             'SELECT * FROM lectio where date = ?',
@@ -417,6 +265,7 @@ componentWillMount(){
                       sum2 : results.rows.item(0).sum2,
                       js1 : results.rows.item(0).js1,
                       js2 : results.rows.item(0).js2,
+                      Sentence:  results.rows.item(0).onesentence,
                       Weekendupdate: true,
                       initialLoading: false
                   })
@@ -508,24 +357,15 @@ componentWillMount(){
 
     // 이번주 주일 날짜 계산
     var date = new Date()
-    console.log(date)
     if(date.getDay() !== 0){ // 일요일인 경우에는 그대로 값을 가져옴 
-        var lastday = date.getDate() - (date.getDay() - 1) - 1;
-        date = new Date(date.setDate(lastday));
+      var lastday = date.getDate() - (date.getDay() - 1) - 1;
+      console.log(lastday)
+      date = new Date(date.setDate(lastday));
     }else{
       var lastday = date.getDate();
       date = new Date(date.setDate(lastday));
-    }    
-    var year = date.getFullYear();
-    var month = date.getMonth()+1
-    var day = date.getDate();
-    if(month < 10){
-        month = "0"+month;
-    }
-    if(day < 10){
-        day = "0"+day;
-    } 
-    var todaydate = year+"-"+month+"-"+day;
+    }  
+    var todaydate = dateFormat1("weekend")
     var today_comment_date = toShortFormat(date)
     console.log(todaydate)
     AsyncStorage.getItem('thisweekend', (err, result) => {
@@ -551,59 +391,7 @@ componentWillMount(){
             this.props.getGaspel(todaydate) 
 
              //lectio, Weekend DB 있는지 확인        
-            db.transaction(tx => {
-                tx.executeSql(
-                'SELECT * FROM lectio where date = ?',
-                [todaydate],
-                (tx, results) => {
-                    var len = results.rows.length;
-                //  값이 있는 경우에 
-                    if (len > 0) {                  
-                        console.log('Main4 - check Lectio data : ', results.rows.item(0).bg1) 
-                        this.setState({
-                            bg1 : results.rows.item(0).bg1,
-                            bg2 : results.rows.item(0).bg2,
-                            bg3 : results.rows.item(0).bg3,
-                            sum1 : results.rows.item(0).sum1,
-                            sum2 : results.rows.item(0).sum2,
-                            js1 : results.rows.item(0).js1,
-                            js2 : results.rows.item(0).js2,
-                            Weekendupdate: true
-                        })
-                    } else {                        
-                        this.setState({
-                            bg1 : "",
-                            bg2 : "",
-                            bg3 : "",
-                            sum1 : "",
-                            sum2 : "",
-                            js1 : "",
-                            js2 : "",
-                            Weekendupdate: false
-                        })            
-                    }
-                }
-                );
-
-                tx.executeSql(
-                    'SELECT * FROM weekend where date = ?',
-                    [todaydate],
-                    (tx, results) => {
-                    var len = results.rows.length;
-                    //  값이 있는 경우에 
-                    if (len > 0) {                  
-                        console.log('Main4 - check Weekend data : ', results.rows.item(0).mysentence) 
-                        this.setState({
-                            mysentence : results.rows.item(0).mysentence
-                        })
-                    } else {     
-                        this.setState({
-                            mysentence : ""
-                        })                                
-                    }
-                    }
-                );
-            });    
+           this.getData(todaydate)
 
         }    
       })    
@@ -629,13 +417,7 @@ componentWillMount(){
 
   render() {
     console.log("Main4 - gaspels in render");
-    return !this.state.internet ? 
-    (    
-      <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
-      <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
-      </View>
-    ) :
-   (this.state.initialLoading)
+    return (this.state.initialLoading)
    ? (    
        <View style={styles.loadingContainer}>
        <ActivityIndicator
@@ -662,21 +444,21 @@ componentWillMount(){
                     activeOpacity = {0.9}
                     style={{backgroundColor: '#01579b', padding: 10}}
                     onPress={() =>  Alert.alert(
-                        '정말 끝내시겠습니까?',
-                        '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                        'Do you really want to close it?',
+                        'If you click OK, your entries are not saved.',
                         [                                 
                           {
-                            text: '취소',
+                            text: 'cancel',
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                           },
-                          {text: '끝내기', onPress:() =>   [Keyboard.dismiss(),this.setState({Weekendediting: false}), this.getData()]},
+                          {text: 'OK', onPress:() =>   [Keyboard.dismiss(),this.setState({Weekendediting: false}), this.getData(this.state.Date)]},
                         ],
                         {cancelable: true},
                       )}
                     >
                     <Text style={{color:"#FFF", textAlign:'left'}}>
-                        {"<"} 뒤로
+                        {"<"} back
                     </Text>
               </TouchableOpacity>        
               </View>
@@ -690,10 +472,10 @@ componentWillMount(){
               />
               <KeyboardAvoidingView style={{height:130}}>  
                   <View style={this.state.currentIndex == 0 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>Who are the characters of the gospel?</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.bg1}        
                   onChangeText={bg1 => this.setState({bg1})}        
                   // Making the Under line Transparent.
@@ -702,10 +484,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>Where is the background location of the gospel?</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.bg2}        
                   onChangeText={bg2 => this.setState({bg2})}        
                   // Making the Under line Transparent.
@@ -714,10 +496,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>The time or situation of the gospel?</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.bg3}        
                   onChangeText={bg3 => this.setState({bg3})}        
                   // Making the Under line Transparent.
@@ -726,10 +508,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
+                  <Text style={styles.TextQuestionStyleClass}>Let's summarize the contents centered on events.</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.sum1}        
                   onChangeText={sum1 => this.setState({sum1})}        
                   // Making the Under line Transparent.
@@ -738,10 +520,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>What verses are touching particularly?</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.sum2}        
                   onChangeText={sum2 => this.setState({sum2})}        
                   // Making the Under line Transparent.
@@ -750,10 +532,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>Let's look for characteristics of jesus in the gospel.</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.js1}        
                   onChangeText={js1 => this.setState({js1})}        
                   // Making the Under line Transparent.
@@ -762,10 +544,10 @@ componentWillMount(){
                   </View>                  
 
                   <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                  <Text style={styles.TextQuestionStyleClass}>What does jesus say to me through the gospel?</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.js2}        
                   onChangeText={js2 => this.setState({js2})}        
                   // Making the Under line Transparent.
@@ -774,10 +556,10 @@ componentWillMount(){
                   </View>
 
                   <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
-                  <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
+                  <Text style={styles.TextQuestionStyleClass}>Let's choose a verse of the gospel deeply touching.</Text>
                   <TextInput
                   multiline = {true}
-                  placeholder="여기에 적어봅시다"
+                  placeholder="Please write it here."
                   value={this.state.mysentence}        
                   onChangeText={mysentence => this.setState({mysentence})}        
                   // Making the Under line Transparent.
@@ -821,37 +603,35 @@ componentWillMount(){
                 renderScene={SceneMap({
                   first: () => (
                   <ScrollView style={[styles.scene, { backgroundColor: '#fff' , paddingTop:10}]}>               
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 복음으로 거룩한독서를 할 수 있습니다.</Text>                      
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>You can do Lectio Divina {"\n"}on Gospel of the Lord's Day.</Text>                      
 
                   <View style={{ flex:1, justifyContent: 'center', alignItems: 'center', marginTop:20, marginBottom:20}}> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    성령청원기도 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    The Prayer Come Holy Spirit 
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} />  
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    세밀한 독서
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Careful Reading
                     </Text>
                     <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
-                    · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.
-                    {"\n"}· 복음의 등장 인물은?
-                    {"\n"}· 복음의 배경장소는?
-                    {"\n"}· 배경시간 혹은 상황은?
-                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.
+                    {"\n"}· Who are the characters of the gospel?
+                    {"\n"}· Where is the background location of the gospel?
+                    {"\n"}· The time or situation of the gospel?
+                    {"\n"}· Let's summarize the contents centered on events.
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    묵상
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Meditation
                     </Text>
                     <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
-                    · 특별히 눈에 띄는 부분은?
-                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?
-                    {"\n"}· 복음과 관련된 묵상 질문
-                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?
-                    {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.
+                    · What verses are touching particularly?
+                    {"\n"}· Let's look for characteristics of jesus in the gospel.
+                    {"\n"}· What does jesus say to me through the gospel?
+                    {"\n"}· Let's choose a verse of the gospel deeply touching.
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    묵상후 기도
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Prayer after Meditation
                     </Text>    
                     </View>                    
                   
@@ -859,53 +639,35 @@ componentWillMount(){
                 ),
                 second: () => (
                   <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
-                  하느님께서 ‘지금 이순간, 나에게’ 하시는 말씀을 {"\n"}듣기 위해 기도와 함께하는 독서법입니다.
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>침묵</Text> 
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님께 우리 마음의 주파수를 맞추려는 노력으로 차분한 마음 안에서 자신을 온전히 내려놓습니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>성령청원기도</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있기에 반드시 성령의 도움이 필요합니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>독서</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님의 말씀을 듣는 것으로 세밀한 독서와 반복적인 독서를 하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>묵상</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정입니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>기도</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>관상</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                  거룩한 독서를 통해 하느님의 말씀을 기억하면서 모든 것이 하느님의 은총임을 깨닫습니다. {"\n"}
-                  </Text>
-                  </ScrollView>
-                ),
-                third: () => (
-                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>            
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>정해진 침묵의 시간</Text> 
-                  <Text style={[styles.textStyle, normalSize]}>
-                  거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. {"\n"}<Text style={{fontSize:13}}>* 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.</Text>
-                      {"\n"}
-                  </Text>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>들을 귀가 있는 마음</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                      급하게 해서는 안됩니다. 주님은 당신 말씀의 씨를 뿌리고 계시며 나 자신은 말씀이 떨어지는 땅입니다. 열매를 맺기 위해서는 좋은 땅이 준비되어야 합니다. 
-                      {"\n"} 
-                  </Text>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>지속적인 독서</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                  꾸준함이 필요합니다. 지금 당장 성서 본문이 이해되지 않는다고 하더라도 지속적으로 연습하다보면 하느님의 말씀이 어느 순간 나의 마음을 울리게 될 것입니다.
-                  </Text>
-                  </ScrollView>
-                )
+                     <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
+                     Lectio Divina (Latin for "Divine Reading") is a traditional monastic practice of scriptural reading, meditation and prayer intended to promote communion with God. 
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>Silence</Text> 
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    In an effort to match the frequency of our hearts to God, you put yourself down in a calm mind.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>The Prayer Come Holy Spirit</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    The Word of God must be helped of the Holy Spirit because it can be understood correctly when it is led by God.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Reading</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    Since Reading is to listen to Word of God, you should read carefully and repeatedly.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Meditation</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    You are trying to think about what Gospel want to say to you right now.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Prayer</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    You naturally respond to God in the trust in Him repeating the Words God has given you.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>contemplation</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    Through holy reading, you remember God's Word and realize that everything is God's grace. {"\n"}
+                    </Text>
+                    </ScrollView>
+                )               
                 })}
                 onIndexChange={index => this.setState({ index })}
                 initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height}}
@@ -930,7 +692,6 @@ componentWillMount(){
             <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
             <ScrollView 
             style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
-                {...this._panResponder.panHandlers}
                 onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>  
                   <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
                      <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
@@ -1000,21 +761,21 @@ componentWillMount(){
               >    
             <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
             </TouchableOpacity>
-            <Text style={styles.UpdateQuestionStyleClass}>복음의 등장인물은?</Text>
+            <Text style={styles.UpdateQuestionStyleClass}>Who are the characters of the gospel?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
-            <Text style={styles.UpdateQuestionStyleClass}>복음의 배경장소는?</Text>
+            <Text style={styles.UpdateQuestionStyleClass}>Where is the background location of the gospel?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg2}</Text>   
-            <Text style={styles.UpdateQuestionStyleClass}>배경시간 혹은 상황은?</Text>
+            <Text style={styles.UpdateQuestionStyleClass}>The time or situation of the gospel?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg3}</Text>
-            <Text style={styles.UpdateQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해봅시다.</Text>   
+            <Text style={styles.UpdateQuestionStyleClass}>Let's summarize the contents centered on events.</Text>   
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum1}</Text>  
-            <Text style={styles.UpdateQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text> 
+            <Text style={styles.UpdateQuestionStyleClass}>What verses are touching particularly?</Text> 
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.sum2}</Text>   
-            <Text style={styles.UpdateQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>                
+            <Text style={styles.UpdateQuestionStyleClass}>Let's look for characteristics of jesus in the gospel.</Text>                
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js1}</Text>   
-            <Text style={styles.UpdateQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+            <Text style={styles.UpdateQuestionStyleClass}>What does jesus say to me through the gospel?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.js2}</Text>        
-            <Text style={styles.UpdateQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
+            <Text style={styles.UpdateQuestionStyleClass}>Let's choose a verse of the gospel deeply touching.</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.mysentence}</Text>     
           </ScrollView>
           </View>
@@ -1043,37 +804,35 @@ componentWillMount(){
                 renderScene={SceneMap({
                 first: () => (
                   <ScrollView style={[styles.scene, { backgroundColor: '#fff' , paddingTop:10}]}>               
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>주일의 복음으로 거룩한독서를 할 수 있습니다.</Text>                      
+                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>You can do Lectio Divina {"\n"}on Gospel of the Lord's Day.</Text>                      
 
                   <View style={{ flex:1, justifyContent: 'center', alignItems: 'center', marginTop:20, marginBottom:20}}> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    성령청원기도 
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    The Prayer Come Holy Spirit 
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} />  
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    세밀한 독서
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Careful Reading
                     </Text>
                     <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
-                    · 말씀을 이해하기 위한 필요한 기초적인 정보를 찾아봅시다.
-                    {"\n"}· 복음의 등장 인물은?
-                    {"\n"}· 복음의 배경장소는?
-                    {"\n"}· 배경시간 혹은 상황은?
-                    {"\n"}· 복음의 내용을 사건 중심으로 요약해 봅시다.
+                    {"\n"}· Who are the characters of the gospel?
+                    {"\n"}· Where is the background location of the gospel?
+                    {"\n"}· The time or situation of the gospel?
+                    {"\n"}· Let's summarize the contents centered on events.
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    묵상
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Meditation
                     </Text>
                     <Text style={[styles.textStyle, {fontSize:13, margin:0}]}>
-                    · 특별히 눈에 띄는 부분은?
-                    {"\n"}· 복음에서 보여지는 예수님의 모습은 어떠한가요?
-                    {"\n"}· 복음과 관련된 묵상 질문
-                    {"\n"}· 복음을 통하여 예수님께서 내게 해주시는 말씀은?
-                    {"\n"}· 이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.
+                    · What verses are touching particularly?
+                    {"\n"}· Let's look for characteristics of jesus in the gospel.
+                    {"\n"}· What does jesus say to me through the gospel?
+                    {"\n"}· Let's choose a verse of the gospel deeply touching.
                     </Text>
                     <Icon3 name={'chevron-down'} size={15} color={"#e6e8ef"} /> 
-                    <Text style={[styles.textStyle, normalSize, {margin:5, width:120, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
-                    묵상후 기도
+                    <Text style={[styles.textStyle, normalSize, {margin:5, width:220, textAlign:'center', backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, padding:5}]}>
+                    Prayer after Meditation
                     </Text>    
                     </View>                    
                   
@@ -1081,52 +840,34 @@ componentWillMount(){
                 ),
                 second: () => (
                   <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
-                  하느님께서 ‘지금 이순간, 나에게’ 하시는 말씀을 {"\n"}듣기 위해 기도와 함께하는 독서법입니다.
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>침묵</Text> 
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님께 우리 마음의 주파수를 맞추려는 노력으로 차분한 마음 안에서 자신을 온전히 내려놓습니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>성령청원기도</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님의 말씀은 하느님께서 이끌어 주셔야만 올바로 알아들을 수 있기에 반드시 성령의 도움이 필요합니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>독서</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님의 말씀을 듣는 것으로 세밀한 독서와 반복적인 독서를 하며, 말씀을 여러 차례 침묵 속에서 읽습니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>묵상</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  말씀이 바로 나에게 지금 어떤 말을 걸고자 하는지에 대해 곰곰이 생각하며 노력을 기울이는 과정입니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>기도</Text>
-                  <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
-                  하느님께서 내게 주신 말씀을 되뇌이며 자연스럽게 솔직함과 그분께 대한 신뢰 안에서 하느님께 대답합니다.{"\n"}
-                  </Text>
-                  <Text style={[styles.UpdateQuestionStyleClass]}>관상</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                  거룩한 독서를 통해 하느님의 말씀을 기억하면서 모든 것이 하느님의 은총임을 깨닫습니다. {"\n"}
-                  </Text>
-                  </ScrollView>
-                ),
-                third: () => (
-                  <ScrollView style={[styles.scene, { backgroundColor: '#fff', paddingTop:10 }]}>            
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>정해진 침묵의 시간</Text> 
-                  <Text style={[styles.textStyle, normalSize]}>
-                  거룩한 독서 1단계인 침묵을 준비하기 위해 반드시 따로 시간을 내야 합니다. 고요와 침묵과 고독에 도움이 되는 시간이어야 합니다. {"\n"}<Text style={{fontSize:13}}>* 조용한 장소에서 촛불을 켜고 진행하면 좋습니다.</Text>
-                      {"\n"}
-                  </Text>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>들을 귀가 있는 마음</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                      급하게 해서는 안됩니다. 주님은 당신 말씀의 씨를 뿌리고 계시며 나 자신은 말씀이 떨어지는 땅입니다. 열매를 맺기 위해서는 좋은 땅이 준비되어야 합니다. 
-                      {"\n"} 
-                  </Text>
-                  <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>지속적인 독서</Text>
-                  <Text style={[styles.textStyle, normalSize]}>
-                  꾸준함이 필요합니다. 지금 당장 성서 본문이 이해되지 않는다고 하더라도 지속적으로 연습하다보면 하느님의 말씀이 어느 순간 나의 마음을 울리게 될 것입니다.
-                  </Text>
-                  </ScrollView>
+                     <Text style={[{color:'#01579b', textAlign:'center', marginTop:10}, largeSize]}>
+                     Lectio Divina (Latin for "Divine Reading") is a traditional monastic practice of scriptural reading, meditation and prayer intended to promote communion with God. 
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass, { marginTop:10}]}>Silence</Text> 
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    In an effort to match the frequency of our hearts to God, you put yourself down in a calm mind.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>The Prayer Come Holy Spirit</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    The Word of God must be helped of the Holy Spirit because it can be understood correctly when it is led by God.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Reading</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    Since Reading is to listen to Word of God, you should read carefully and repeatedly.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Meditation</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    You are trying to think about what Gospel want to say to you right now.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>Prayer</Text>
+                    <Text style={[styles.textStyle, normalSize,{marginBottom:0}]}>
+                    You naturally respond to God in the trust in Him repeating the Words God has given you.{"\n"}
+                    </Text>
+                    <Text style={[styles.UpdateQuestionStyleClass]}>contemplation</Text>
+                    <Text style={[styles.textStyle, normalSize]}>
+                    Through holy reading, you remember God's Word and realize that everything is God's grace. {"\n"}
+                    </Text>
+                    </ScrollView>
                 )
                 })}
                 onIndexChange={index => this.setState({ index })}
@@ -1152,7 +893,6 @@ componentWillMount(){
               <View style={this.state.selectShow ? {flex:1,position: 'absolute', right:'2%', top:'8%', width:'96%', height:500, backgroundColor:"#fff", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
               <ScrollView 
               style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
-                  {...this._panResponder.panHandlers}
                   onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                      <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
                      <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
@@ -1202,8 +942,8 @@ componentWillMount(){
                     </TouchableOpacity>
                     </View>   
                 </View>
-                  <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>주일의 독서는 하느님 말씀을 들을 수 있도록 성령을 청하고, 말씀을 읽기 전에 배경지식을 공부함으로써 준비를 하고, 세밀하고 반복적인 독서를 통해 말씀을 온전히 읽고, 말씀이 나에게 어떤 말을 건네고 있는지 묵상하며, 한 주간 묵상할 구절을 골라 하느님 말씀으로 기도합니다. 한 주간 선택한 구절을 되새김함으로써 말씀과 함께 살아가는 연습을 할 수 있습니다.</Text>
-                  <Image source={require('../resources/weekend_img2.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
+                  <Text style={[{color:'#000', margin:10, lineHeight: 25}, normalSize]}>Lectio Divina of the Lord's Day is the process including praying to the Holy Spirit, reading the Gospel thoroughly and repetitively, meditating on what the God is saying to you and choosing a biblical verse to meditate for a week. You can practice to living with the God's word by meditating selected verse for a week.</Text>
+                  <Image source={require('../resources/weekend_img2_en.png')}   resizeMode={'cover'} style={{ width: '100%', height: 80 }} />  
                   <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>                 
               </View>
               </ScrollView>
@@ -1225,14 +965,13 @@ componentWillMount(){
                     <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
         
                     <Text style={[{textAlign:'center', color:'#fff', paddingTop:270, lineHeight: 22}, normalSize]}> 
-                    주님께서 나에게 말씀하셨다.{"\n"}                         
-                        "{this.state.js2}"
+                    God told me that{"\n"}
+                    "{this.state.js2}"
                     {"\n"}{"\n"}
-                    주님 제가 이 말씀을 깊이 새기고{"\n"}
-                    하루를 살아가도록 이끄소서. {"\n"}
-                    {"\n"}                              
+                    Lord, lead me to live a day {"\n"}with this message {"\n"}deeply engraved.
+                    {"\n"} 
                     "{this.state.mysentence}"{"\n"}{"\n"}
-                    이 구절을 한주간 묵상하며 살게 하소서. 아멘.{"\n"}
+                     Please let me meditate on this verse for a week.{"\n"}Amen.{"\n"}
                       </Text>                                      
                     </ScrollView>                        
                   </ImageBackground> 
@@ -1246,21 +985,21 @@ componentWillMount(){
                           onPress={() => this.state.currentIndex == 0 || this.state.currentIndex == 1 || !this.state.start  ? 
                             this.setState({start: false, bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})
                             :  Alert.alert(
-                              '정말 끝내시겠습니까?',
-                              '확인을 누르면 쓴 내용이 저장되지 않습니다.',
+                              'Do you really want to close it?',
+                              'If you click OK, your entries are not saved.',
                               [                                 
                                 {
-                                  text: '취소',
+                                  text: 'cancel',
                                   onPress: () => console.log('Cancel Pressed'),
                                   style: 'cancel',
                                 },
-                                {text: '끝내기', onPress:() =>   [Keyboard.dismiss(), this.setState({start: false, answer:"", bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})]},
+                                {text: 'OK', onPress:() =>   [Keyboard.dismiss(), this.setState({start: false, answer:"", bg1: "", bg2: "", bg3: "", sum1: "", sum2: "", js1:"", js2:"", mysentence: "", currentIndex: 0})]},
                               ],
                               {cancelable: true},
                             )}
                           >
                           <Text style={{color:"#FFF", textAlign:'left'}}>
-                              {"<"} 뒤로
+                              {"<"} back
                           </Text>
                       </TouchableOpacity>
                   </View>
@@ -1277,17 +1016,7 @@ componentWillMount(){
                       <ImageBackground source={require('../resources/pray1_img.png')} style={{width: '100%', height: 600}}>
                       <ScrollView style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, marginBottom:130}}>
           
-                      <Text style={[{textAlign:'center', color:'#fff', paddingTop:'30%', lineHeight: 25}, normalSize]}> 빛이신 우리 아버지 하느님, {"\n"}
-                            하느님께서는 세상에 아드님을 보내셨으니, {"\n"}
-                            그분은 우리 사람들에게 보여주시기 위해 몸이 되신 {"\n"}
-                            말씀이시옵니다.{"\n"}
-                            이제 주님의 성령을 제 위에 보내시어{"\n"}
-                            주님께로부터 오는 이 말씀 안에서 {"\n"}
-                            예수 그리스도를 만나뵈옵게 하소서.{"\n"}
-                            그리고 그분을 더 깊이 알게 해주시어, {"\n"}
-                            그분을 더 깊이 사랑할 수 있게 해 주시고,{"\n"}
-                            주님 나라의 참된 행복에 이르게 하소서.{"\n"}
-                            아멘.{"\n"}</Text>          
+                      <Text style={[{textAlign:'center', color:'#fff', paddingTop:'30%', lineHeight: 25}, normalSize]}> Come Holy Spirit, {"\n"}fill the hearts of your faithful and kindle in them the fire of your love. {"\n"}Send forth your Spirit and they shall be created. {"\n"}And You shall renew the face of the earth. {"\n"}O, God, who by the light of the Holy Spirit, did instruct the hearts of the faithful, {"\n"}grant that by the same Holy Spirit we may be truly wise and ever enjoy His consolations, {"\n"}Through Christ Our Lord, {"\n"}Amen.</Text>          
                     
                       </ScrollView>
                         </ImageBackground>
@@ -1299,10 +1028,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>복음의 등장인물은?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>Who are the characters of the gospel?</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.bg1}        
                       onChangeText={bg1 => this.setState({bg1})}        
                       // Making the Under line Transparent.
@@ -1311,10 +1040,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 3 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>복음의 배경장소는?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>Where is the background location of the gospel?</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.bg2}        
                       onChangeText={bg2 => this.setState({bg2})}        
                       // Making the Under line Transparent.
@@ -1323,10 +1052,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 4 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>배경시간 혹은 상황은?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>The time or situation of the gospel?</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.bg3}        
                       onChangeText={bg3 => this.setState({bg3})}        
                       // Making the Under line Transparent.
@@ -1335,10 +1064,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 5 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>복음의 내용을 사건 중심으로 요약해 봅시다.</Text>
+                      <Text style={styles.TextQuestionStyleClass}>Let's summarize the contents centered on events.</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.sum1}        
                       onChangeText={sum1 => this.setState({sum1})}        
                       // Making the Under line Transparent.
@@ -1347,10 +1076,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 6 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>특별히 눈에 띄는 부분은?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>What verses are touching particularly?</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.sum2}        
                       onChangeText={sum2 => this.setState({sum2})}        
                       // Making the Under line Transparent.
@@ -1359,10 +1088,10 @@ componentWillMount(){
                       </View>
 
                       <View style={this.state.currentIndex == 7 ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>복음에서 보여지는 예수님의 모습은 어떠한가요?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>Let's look for characteristics of jesus in the gospel.</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.js1}        
                       onChangeText={js1 => this.setState({js1})}        
                       // Making the Under line Transparent.
@@ -1370,10 +1099,10 @@ componentWillMount(){
                       style={[styles.TextInputStyleClass, {fontSize: normalSize_input / PixelRatio.getFontScale()}]}  />                            
                       </View>
                       <View style={(this.state.currentIndex == 8) ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>복음을 통하여 예수님께서 내게 해주시는 말씀은?</Text>
+                      <Text style={styles.TextQuestionStyleClass}>What does jesus say to me through the gospel?</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.js2}        
                       onChangeText={js2 => this.setState({js2})}        
                       // Making the Under line Transparent.
@@ -1382,10 +1111,10 @@ componentWillMount(){
                       </View>
 
                       <View style={(this.state.currentIndex==9) ? {} : {display:'none'}}>
-                      <Text style={styles.TextQuestionStyleClass}>이번주 복음에서 특별히 와닿는 구절을 선택해 봅시다.</Text>
+                      <Text style={styles.TextQuestionStyleClass}>Let's choose a verse of the gospel deeply touching.</Text>
                       <TextInput
                       multiline = {true}
-                      placeholder="여기에 적어봅시다"
+                      placeholder="Please write it here."
                       value={this.state.mysentence}        
                       onChangeText={mysentence => this.setState({mysentence})}        
                       // Making the Under line Transparent.

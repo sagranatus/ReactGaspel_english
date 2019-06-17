@@ -17,7 +17,10 @@ import Icon4 from 'react-native-vector-icons/Feather'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 
 var db = openDatabase({ name: 'UserDatabase.db' });
-
+var month_names =["Jan","Feb","Mar",
+"Apr","May","Jun",
+"Jul","Aug","Sep",
+"Oct","Nov","Dec"];
 
 var selectedval;
 var from;
@@ -33,8 +36,8 @@ export default class SendImage extends Component {
           fontColor: '#286F92',
           index: 0,
           routes: [
-            { key: 'second', title: '배경선택', out: true },
-            { key: 'third', title: '글씨색상 선택' }
+            { key: 'second', title: 'Select Background Image', out: true },
+            { key: 'third', title: 'Select Text Color' }
           ],
           out: false,
           weekend: false,
@@ -74,6 +77,7 @@ export default class SendImage extends Component {
     console.log("Main1 - params : ", params+"existed" )
         date = params.otherParam2
         from = params.otherParam
+       // alert(date)
         this.getData(date)  
     }
     /*
@@ -98,12 +102,11 @@ export default class SendImage extends Component {
           [selectedday],
           (tx, results) => {
             var len = results.rows.length;
-            if (len > 0) {                  
-                console.log('Main1 - check Comment data : ', results.rows.item(0).comment)   
+            if (len > 0) {       
                 this.setState({
                    Sentence_comment: results.rows.item(0).onesentence,
                     comment: results.rows.item(0).comment,
-                    date_comment: toShortFormat(new Date(results.rows.item(0).date))
+                    date_comment: "My Meditation on "+month_names[new Date(results.rows.item(0).date).getMonth()] + " " + new Date(results.rows.item(0).date).getDate() + " " + new Date(results.rows.item(0).date).getFullYear()
                 })
             } else {  
               console.log("nono")      
@@ -125,7 +128,7 @@ export default class SendImage extends Component {
                   this.setState({
                       Sentence: results.rows.item(0).onesentence,
                       js2 : results.rows.item(0).js2,
-                      date: toShortFormat(new Date(results.rows.item(0).date))
+                      date: "My Meditation on "+month_names[new Date(results.rows.item(0).date).getMonth()] + " " + new Date(results.rows.item(0).date).getDate() + " " + new Date(results.rows.item(0).date).getFullYear()
                   })
               } else {   
                 console.log("nono")             
@@ -240,7 +243,7 @@ render() {
         onPress={ () =>  this.props.navigation.navigate(from)}
         >
         <Text style={{color:"#FFF", textAlign:'left'}}>
-            {"<"} 뒤로
+            {"<"} back
         </Text>
       </TouchableOpacity>   
     <View
@@ -386,7 +389,7 @@ render() {
           activeOpacity = {0.9}
           onPress={() => this.saveImage1()} 
           >  
-           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  말씀카드 공유하기</Text>   
+           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon name={'send-o'} size={18} color={"#4e99e0"} style={{paddingTop:9}} />  Share Gospel Card</Text>   
         </TouchableOpacity>
         </View>         
       </View>

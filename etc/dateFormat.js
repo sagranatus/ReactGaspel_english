@@ -38,3 +38,4 @@ export const dateFormat1 = function(when) { // "today" -> 오늘날짜 xxxx-xx-x
     
     return year+"-"+month+"-"+day;
 }
+

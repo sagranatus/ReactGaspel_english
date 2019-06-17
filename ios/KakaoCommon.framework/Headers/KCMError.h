@@ -28,7 +28,7 @@ extern NSString *const KCMErrorDomain;
 /*!
  @abstract 오류 코드 정의
  @constant KCMErrorCodeUnknown 알 수 없는 오류
- @constant KCMErrorCodeCancelled 작업이 취소 됨
+ @constant KCMErrorCodeCancelled 작업이 cancel 됨
  @constant KCMErrorCodeOperationInProgress 동시 작업이 지원되지 않는 API에서 다른 요청이 이미 실행중임
  @constant KCMErrorCodeNotSupported 지원되지 않는 기능
  @constant KCMErrorCodeBadParameter 파라미터 이상

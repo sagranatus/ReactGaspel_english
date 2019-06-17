@@ -25,7 +25,7 @@ extern NSString *const KOErrorDomain;
 /*!
  @abstract 오류 코드 정의
  @constant  KOErrorUnknown 알 수 없는 오류
- @constant  KOErrorCancelled 오퍼레이션 취소를 나타냄
+ @constant  KOErrorCancelled 오퍼레이션 cancel를 나타냄
  @constant  KOErrorOperationInProgress 오퍼레이션이 진행 중간에 있음을 나타냄
  @constant  KOErrorTokenNotFound 로그인 상태를 기대하는 상황에서 인증 토큰이 없는 오류
  @constant  KOErrorDeactivatedSession 세션이 만료된(access_token, refresh_token이 모두 만료된 경우) 상태

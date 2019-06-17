@@ -105,13 +105,13 @@ completionHandler:(KOSessionTaskCompletionHandler)completionHandler;
           completionHandler:(KOSessionTaskCompletionHandler)completionHandler;
 
 /*
- @abstract 해당 API 요청을 취소
+ @abstract 해당 API 요청을 cancel
  */
 - (void)cancel;
 
 /*
- @abstract 해당 API 요청을 취소
- @param error 취소할 때 발생시키고자 하는(원인) NSError.
+ @abstract 해당 API 요청을 cancel
+ @param error cancel할 때 발생시키고자 하는(원인) NSError.
  */
 - (void)cancelWithError:(NSError *)error;
 

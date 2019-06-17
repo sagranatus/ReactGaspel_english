@@ -5,7 +5,6 @@ import {PropTypes} from 'prop-types';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
-import Slideshow from 'react-native-image-slider-show';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
 import Icon4 from 'react-native-vector-icons/Feather'
@@ -16,8 +15,6 @@ var smallSize;
 var normalSize;
 var largeSize;
 // english version!!
-var urls = Array()
-
 
 export default class Main1 extends Component { 
 
@@ -64,208 +61,17 @@ constructor(props) {
       js2:"",
       mysentence:"",
       weekend: false,
-      position: 1,
-      interval: null,
-      dataSource: [
-      {
-        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide1.png" : ""
-      }, {
-        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide2.png" : ""
-      }, {
-        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/slide3.png" : ""
-      },
-    ], 
-    position2: 1,
-    interval2: null,
-    dataSource2: [
-      {
-        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/ad1.png" : ""
-      }, {
-        url: Platform.OS == "ios" ? "http://sssagranatus.cafe24.com/resource/ad2.png" : ""
-      }
-      
-    ],
     initialLoading: true,
-    url0: "",
-    url1: "",
-    url2: "",
-    modalVisible: false,
     selectShow: false,
     selectQuestion:false
   
   }
  
-  // slideshow 
-  this.onModalClose = this.onModalClose.bind(this);
-  this.onModalOpen = this.onModalOpen.bind(this);
-  this.getSlideImagefromServer = this.getSlideImagefromServer.bind(this);
 }
-// slideshow 
-getSlideImagefromServer(){
-   //test 
 
-   let dirs = RNFetchBlob.fs.dirs;
-   console.log(dirs)
-   RNFetchBlob.config({
-     // add this option that makes response data to be stored as a file,
-     // this is much more performant.
-     path: dirs.SDCardApplicationDir + "/slide1.png",
-     fileCache: false
-   })
-     .fetch(
-       "GET",
-       "http://sssagranatus.cafe24.com/resource/slide1.png",
-       {
-         //some headers ..
-       }
-     )
-     .progress((received, total) => {
-     
-     })
-     .then(res => {
-    //  alert("done")
-     });
- 
-     RNFetchBlob.config({
-       // add this option that makes response data to be stored as a file,
-       // this is much more performant.
-       path: dirs.SDCardApplicationDir + "/slide2.png",
-       fileCache: false
-     })
-       .fetch(
-         "GET",
-         "http://sssagranatus.cafe24.com/resource/slide2.png",
-         {
-           //some headers ..
-         }
-       )
-       .progress((received, total) => {
-       
-       })
-       .then(res => {
-       // alert("done")
-       });
- 
-       RNFetchBlob.config({
-         // add this option that makes response data to be stored as a file,
-         // this is much more performant.
-         path: dirs.SDCardApplicationDir + "/slide3.png",
-         fileCache: false
-       })
-         .fetch(
-           "GET",
-           "http://sssagranatus.cafe24.com/resource/slide3.png",
-           {
-             //some headers ..
-           }
-         )
-         .progress((received, total) => {
-         
-         })
-         .then(res => {
-        //  alert("done")
-         }); 
- 
-         RNFetchBlob.config({
-          // add this option that makes response data to be stored as a file,
-          // this is much more performant.
-          path: dirs.SDCardApplicationDir + "/ad1.png",
-          fileCache: false
-        })
-          .fetch(
-            "GET",
-            "http://sssagranatus.cafe24.com/resource/ad1.png",
-            {
-              //some headers ..
-            }
-          )
-          .progress((received, total) => {
-          
-          })
-          .then(res => {
-         //  alert("done")
-          }); 
-
-          
-         RNFetchBlob.config({
-          // add this option that makes response data to be stored as a file,
-          // this is much more performant.
-          path: dirs.SDCardApplicationDir + "/ad2.png",
-          fileCache: false
-        })
-          .fetch(
-            "GET",
-            "http://sssagranatus.cafe24.com/resource/ad2.png",
-            {
-              //some headers ..
-            }
-          )
-          .progress((received, total) => {
-          
-          })
-          .then(res => {
-         //  alert("done")
-          });
-  
-     this.setState( {dataSource: [
-       {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide1.png"
-       }, {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide2.png"
-       }, {
-         url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/slide3.png"
-       }]}) 
-
-       this.setState( {dataSource2: [
-        {
-          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/ad1.png"
-        }, {
-          url: "file:///storage/emulated/0/Android/data/com.yellowpg.gaspel_en/ad2.png"
-        },]}) 
- 
-}
 
 
 componentWillMount(){
-  // slideshow 
-  if(Platform.OS !== "ios"){
-    this.getSlideImagefromServer(); 
-  }
-  
-   // slide url 가져오기
-  fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ 
-    })
-  
-  }).then((response) => response.json())
-    .then((responseJson) => {
-      
-    if(responseJson.error == false)
-      {
-        const stack = responseJson.stack
-        console.log("Main1 - stacks in slide url : ", stack)
-        
-            var id, url;
-          for(var i=0; i<stack.length; i++){
-            id = stack[i][0]
-            url = stack[i][1]
-            console.log("Main1 - stacks in slide url : ",id+"/"+url)  
-            urls.push(url)
-          }
-          
-          console.log(urls[0])
-        
-      }else{
-        console.log("Main1 - stacks in slide url : ", 'failed')
-      }
-    }).catch((error) => {
-      console.error(error);
-    });   
   
   // fontSize 가져오기
   AsyncStorage.getItem('textSize', (err, result) => {
@@ -309,28 +115,6 @@ componentWillMount(){
     this.props.getGaspel(weekend) 
   }  
 
-}
-
-componentDidMount(){
-  // slideshow interval 세팅
-  this.setState({
-    interval: setInterval(() => {
-      this.setState({
-        position: this.state.position === (Platform.OS == "ios" ? this.state.dataSource.length-1 : this.state.dataSource.length) ? 0 : this.state.position + 1
-      });
-    }, 5000),
-    interval2: setInterval(() => {
-      this.setState({
-        position2: this.state.position2 === (Platform.OS == "ios" ? this.state.dataSource2.length-1 : this.state.dataSource2.length) ? 0 : this.state.position2 + 1
-      });
-    }, 2000)
-  });
-}
-
-componentWillUnmount(){
-  // slideshow interval 삭제
-  clearInterval(this.state.interval2);
-  clearInterval(this.state.interval);
 }
 
 
@@ -428,66 +212,7 @@ componentWillReceiveProps(nextProps){
         });     
         
       }else{       
-        // today1 달라진 경우
-        if(Platform.OS !== "ios"){
-          this.getSlideImagefromServer(); 
-        }else{
-          this.setState({dataSource: [
-            {
-              url: "http://sssagranatus.cafe24.com/resource/slide1.png"
-            }, {
-              url: "http://sssagranatus.cafe24.com/resource/slide2.png"
-            }, {
-              url:  "http://sssagranatus.cafe24.com/resource/slide3.png"
-            },
-          ]});
-          this.setState({dataSource2: [
-            {
-              url:  "http://sssagranatus.cafe24.com/resource/ad1.png"
-            }, {
-              url: "http://sssagranatus.cafe24.com/resource/ad2.png"
-            }            
-          ],
-        });
-        
-      }
-      
-         // slide url 다시 가져오기
-      fetch('https://sssagranatus.cafe24.com/servertest/slide.php', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-        })
-      
-      }).then((response) => response.json())
-        .then((responseJson) => {
-          
-        if(responseJson.error == false)
-          {
-            const stack = responseJson.stack
-            console.log("Main1 - stacks in slide url : ", stack)
-            
-                var id, url;
-              for(var i=0; i<stack.length; i++){
-                id = stack[i][0]
-                url = stack[i][1]
-                console.log("Main1 - stacks in slide url : ",id+"/"+url)  
-                urls.push(url)
-              }
-              
-              console.log(urls[0])
-            
-          }else{
-            console.log("Main1 - stacks in slide url : ", 'failed')
-          }
-        }).catch((error) => {
-          console.error(error);
-        });   
-
-        this.setState({initialLoading:true})
+        // today1 달라진 경우     
         console.log("today is different")
         try {
             AsyncStorage.setItem('today1', today);
@@ -580,24 +305,6 @@ componentWillReceiveProps(nextProps){
   }
  
 
-onModalClose() {
-  this.setState({
-    modalVisible: false,
-    modalUrl: undefined
-  });
-}
-
-onModalOpen(url) {
-  console.log("openmodal open", url)
-  if(url != undefined){
-    this.setState({
-      modalVisible: true,
-      modalUrl: url
-    });
-  }
- 
-}
-
 render() { 
   return (this.state.initialLoading)
   ? (    
@@ -613,23 +320,22 @@ render() {
   : (   
     <View style={{flex:1, backgroundColor:"#fff"}}>
       <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
-        <Text style={{color:"#fff", position: 'absolute', left:'24%', top:110}}>클릭하면 해당 내용을 읽을 수 있어요.</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'5%', top:210}}>오늘의 복음을 읽을 수 있어요.</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'5%', top:225, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'55%', top:195}}>거룩한 독서를 하면 {"\n"}내용을 공유할 수 있어요.</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'55%', top:225, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:295}}>오늘의 복음 주제성구를 읽을 수 있어요.{"\n"}거룩한 독서를 하면 {"\n"}하느님께서 내게 주신 말씀을 볼 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'3%', top:85}}>You can read Today's Gospel.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'4%', top:100, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'53%', top:70}}>You can share {"\n"}when you do Lectio Divina.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'53%', top:100, fontWeight:'bold', fontSize:16}}>   |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'15%', top:170}}>You can read First line of Gospel.{"\n"}If you do Lectio Divina,{"\n"}you can see what God told you.</Text>
      
-        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:430}}>주일의 복음 주제성구를 읽을 수 있어요.{"\n"}주일의 독서를 하면 {"\n"}한주간 묵상할 구절을 볼 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'15%', top:305}}>You can read First line of Gospel(Lord's Day).{"\n"}If you do Lectio Divina(Lord's Day),{"\n"}you can see a verse to comtemplate for a week.</Text>
     
 
-        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>메인화면</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>Main Page</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'8%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>거룩한독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>Lectio Divina</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'34%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:17}}>주일의독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:27}}>Lectio Divina{"\n"}(Lord's Day)</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'59%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>나의페이지</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>My Page</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
         <TouchableOpacity 
           activeOpacity = {0.9}
@@ -686,18 +392,8 @@ render() {
       <NavigationEvents
       onWillFocus={payload => {console.log(payload),
         this.setChange();
-      }} />
-      <View style={{display:'none'}}>   
-      <Image source={require('../resources/first_img1_2.png')} style={{width: '100%', height: 150}} />   
-        <Slideshow 
-          height={160}
-          dataSource={this.state.dataSource}
-          position={this.state.position}
-          arrowSize={0}
-          onPress={(end)=>[console.log(urls[end.index]), this.onModalOpen(urls[end.index])]}
-          onPositionChanged={position => this.setState({ position })} />                    
-      </View>            
-      <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
+      }} />        
+      <View style={{backgroundColor: "#F9F9F9", flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:5,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5, borderTopColor:"#d8d8d8", borderTopWidth:0.5}}>  
       
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '100%', height: 30, marginTop:5}}>
           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#686868'}]}>{this.state.todayDate}</Text>   
@@ -743,7 +439,7 @@ render() {
         </View>
       <View style={{flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10,  borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}}>  
         <View style={this.state.comment == "" && this.state.js2 == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>God said to me:</Text>   
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>God said to me today:</Text>   
         </View> 
         <View style={this.state.comment == "" && this.state.js2 == "" ? {flexDirection: "column", flexWrap: 'wrap', width: '48%', height: 20, marginTop:5, marginLeft:'2%'} : {display:'none'} }>
          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Today's Gospel</Text>   
@@ -776,10 +472,10 @@ render() {
 
       <View style={!this.state.weekend ? {flexDirection: "row", flexWrap: 'wrap', justifyContent: 'center',  paddingBottom:10, borderBottomColor:"#d8d8d8", borderBottomWidth:0.5}: {display:'none'}}>  
         <View style={this.state.mysentence == "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '58%', height: 20, marginTop:5, marginLeft:'2%'}}>
-          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Sentence to Meditate for a week</Text>   
+          <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>A Verse to Meditate for a week</Text>   
         </View>    
         <View style={this.state.mysentence !== "" ? {display:'none'} : {flexDirection: "column", flexWrap: 'wrap', width: '58%', height: 20, marginTop:5, marginLeft:'2%'}}>
-         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Weekend's Gospel</Text>   
+         <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'left', color:'#686868'}]}>Gospel of Lord's day</Text>   
         </View>  
         <View style={{flexDirection: "column", flexWrap: 'wrap', width: '38%', height: 20, marginTop:5, marginRight:'2%'}}>
           <Text style={[ styles.TextStyle, {fontSize:15, textAlign:'right', color:'#686868'}]}></Text>   
@@ -813,43 +509,8 @@ render() {
         <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>        
       </View>
         
-      <View>      
-        <Slideshow 
-          height={70}
-        //  indicatorSize={0}
-          arrowSize={0}
-          dataSource={this.state.dataSource2}
-          position={this.state.position2}
-          onPress={(end)=>[console.log(urls[end.index+3]), this.onModalOpen(urls[end.index+3])]}
-          onPositionChanged={position2 => this.setState({ position2 })} />        
-      </View>
-      <View style={{flex:1}}>
-        <Modal
-          animationType="slide"
-          visible={this.state.modalVisible}
-          onRequestClose={this.onModalClose}
-        >
-          <View style={styles.modalContent}>
-            <View style={[styles.modalButtons, Platform.OS=="ios" ? {marginTop:18}: {}]}>
-              <TouchableOpacity
-                  onPress={this.onModalClose}
-                  style={styles.closeButton}
-                >
-                  <Text>뒤로</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={()=>Linking.openURL(this.state.modalUrl)}
-                style={styles.closeButton}
-                >
-                <Text>웹으로보기</Text>
-              </TouchableOpacity>
-            </View>
-            <WebView
-              scalesPageToFit
-              source={{ uri: this.state.modalUrl }}
-            />
-          </View>
-        </Modal>
+      <View>  
+      <Image source={require('../resources/first_img1_2.png')} style={{width: '100%', height: 150}} />  
       </View>
     </ScrollView>  
     </View>

@@ -6,13 +6,25 @@ import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import XLSX from 'xlsx';
+
+// react-native-fs
+import { writeFile, readFile, DocumentDirectoryPath } from 'react-native-fs';
+const DDP = DocumentDirectoryPath + "/";
+const input = res => res;
+const output = str => str;
+
+
 var PushNotification = require('react-native-push-notification');
 var normalSize;
 var largeSize;
 var textSize;
 var course;
-var lectioContents, commentContents, weekendContents;
+var commentContents = [['date', 'from', 'comment']]
+var lectioContents = [['date', 'from', 'background1','background2','background3', 'sum1', 'sum2', 'js1', 'js2']]
+var weekendContents = [['date', 'mysentence']]
 //textSize 가져와서 textSize value 삽입
 AsyncStorage.getItem('textSize', (err, result) => { 
   if(result == "normal" || result == null){
@@ -38,7 +50,7 @@ AsyncStorage.getItem('course', (err, result) => {
 export default class Main1 extends Component { 
 
 async createPDF() {
-  let options = {
+ /* let options = {
     html: commentContents+"<br />"+lectioContents+"<br />"+weekendContents,
     fileName: 'test',
     directory: 'Download',
@@ -47,8 +59,30 @@ async createPDF() {
   let file = await RNHTMLtoPDF.convert(options)
   // console.log(file.filePath);
   alert(file.filePath);
-  console.log(file.filePath);
-}
+  console.log(file.filePath); */
+
+
+  /* convert AOA back to worksheet */
+  //const allarray = commentContents.concat(lectioContents, weekendContents)
+  const ws = XLSX.utils.aoa_to_sheet(commentContents);
+  const ws2 = XLSX.utils.aoa_to_sheet(lectioContents);
+  const ws3 = XLSX.utils.aoa_to_sheet(weekendContents);
+  const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/Today_Gaspel_data.xlsx`;
+
+  /* build new workbook */
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Comment Data");
+  XLSX.utils.book_append_sheet(wb, ws2, "Lectio Divina Data");
+  XLSX.utils.book_append_sheet(wb, ws3, "Weekend Data");
+  /* write file */
+  const wbout = XLSX.write(wb, {type:'binary', bookType:"xlsx"});
+  writeFile(pathToWrite, output(wbout), 'ascii').then(() => {
+    //  console.log(`wrote file ${pathToWrite}`);
+    Alert.alert("Download Completed.")
+      // wrote file /storage/emulated/0/Download/data.csv
+    })
+    .catch(error => console.error(error));
+  }
 
 
 constructor(props) { 
@@ -82,8 +116,8 @@ constructor(props) {
     console.log(year+"/"+month+"/"+day+"/"+hour+"/"+minutes)
     if(Platform.OS == 'ios'){
       PushNotificationIOS.scheduleLocalNotification({
-        alertTitle:"거룩한독서 알람",
-        alertBody: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+        alertTitle:"Lectio Divina Alarm",
+        alertBody: "It's time to do Lectio Divina. Listen to what God tell you.", // (required)
   // fireDate: new Date(2019,3,5,14,24,0).toISOString(), // in 60 secs
        fireDate:new Date(year, month, day, hour, minutes, 0).toISOString(),
         repeatInterval: 'day'
@@ -91,7 +125,7 @@ constructor(props) {
     }else{
       PushNotification.localNotificationSchedule({
         id: '123',
-        message: "거룩한 독서를 할 시간입니다. 하느님의 말씀을 들어보세요.", // (required)
+        message: "It's time to do Lectio Divina. Listen to what God tell you.", // (required)
         date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
         vibrate: true, // (optional) default: true
         vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
@@ -108,22 +142,31 @@ constructor(props) {
    this.setState({initialLoading: true})
     db.transaction(tx => {
       tx.executeSql(
-       'SELECT * FROM comment ORDER BY reg_id DESC',
+       'SELECT * FROM comment ORDER BY reg_id ASC',
        [],
        (tx, results) => {
          var len = results.rows.length;
-         if (len > 0) {     
-             commentContents = "<h1 style='text-align: center;'><strong>Comment Table</strong></h1><table style='text-align: center;'><tr><th style='width:20%'>Date</th><th style='width:40%'>OneSentence</th><th style='width:40%'>Comment</th></tr>";
-             var date, onesentence, comment;
+         if (len > 0) {  
+            // commentContents = "<h1 style='text-align: center;'><strong>Comment Table</strong></h1><table style='text-align: center;'><tr><th style='width:20%'>Date</th><th style='width:40%'>OneSentence</th><th style='width:40%'>Comment</th></tr>";
+             var date, onesentence, comment;             
+             var valueToPush = new Array();
              for(var i=0; i<results.rows.length; i++){
+              valueToPush = new Array();
+             
                date = results.rows.item(i).date
                onesentence = results.rows.item(i).onesentence
-               comment = results.rows.item(i).comment         
-               commentContents = commentContents + "<tr><td style='width:20%'>"+ date + "</td><td style='width:40%'>" + onesentence + "</td><td style='width:40%'>" + comment + "</td></tr>";
+               comment = results.rows.item(i).comment    
+              // alert(onesentence)
+               valueToPush[0] = date;
+               valueToPush[1] = onesentence   
+               valueToPush[2] = comment   
+               commentContents.push(valueToPush);
+              // commentContents = commentContents + "<tr><td style='width:20%'>"+ date + "</td><td style='width:40%'>" + onesentence + "</td><td style='width:40%'>" + comment + "</td></tr>";
                // 모든 값을 commentDates 배열에 저장             
                 if(i == results.rows.length-1){
-                  commentContents = commentContents + "</table>";
-                //  alert(commentContents)
+                //  commentContents = commentContents + "</table>";
+               //   alert(commentContents[0])
+              
                 }               
               }            
                          
@@ -133,14 +176,17 @@ constructor(props) {
        }
      ),
      tx.executeSql(
-      'SELECT * FROM lectio ORDER BY reg_id DESC',
+      'SELECT * FROM lectio ORDER BY reg_id ASC',
       [],
       (tx, results) => {
         var len = results.rows.length;
         if (len > 0) {                  
-          lectioContents = "<h1 style='text-align: center;'><strong>Lectio Divina Table</strong></h1><table style='text-align: center;'><tr><th style='width:10%'>Date</th><th style='width:15%'>OneSentence</th><th style='width:15%'>Backgrounds</th><th style='width:15%'>Summary</th><th>Summary2</th><th style='width:15%'>Jesus Feature</th><th style='width:15%'>Jesus2</th></tr>";
+         // lectioContents = "<h1 style='text-align: center;'><strong>Lectio Divina Table</strong></h1><table style='text-align: center;'><tr><th style='width:10%'>Date</th><th style='width:15%'>OneSentence</th><th style='width:15%'>Backgrounds</th><th style='width:15%'>Summary</th><th>Summary2</th><th style='width:15%'>Jesus Feature</th><th style='width:15%'>Jesus2</th></tr>";
           var date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence;
+          var valueToPush = new Array();
           for(var i=0; i<results.rows.length; i++){
+            valueToPush = new Array();
+            
             date = results.rows.item(i).date
             onesentence = results.rows.item(i).onesentence
             bg1 = results.rows.item(i).bg1
@@ -150,10 +196,20 @@ constructor(props) {
             sum2 = results.rows.item(i).sum2
             js1 = results.rows.item(i).js1
             js2 = results.rows.item(i).js2  
-            lectioContents = lectioContents + "<tr><td style='width:10%'>"+ date + "</td><td style='width:15%'>" + onesentence + "</td><td style='width:15%'>" + bg1 +"/"+bg2+"/"+bg3+  "</td><td style='width:15%'>" + sum1+ "</td><td style='width:15%'>"+ sum2+  "</td><td style='width:15%'>"+js1+ "</td><td style='width:15%'>"+js2+"</td></tr>";
+            valueToPush[0] = date;
+            valueToPush[1] = onesentence   
+            valueToPush[2] = bg1
+            valueToPush[3] = bg2
+            valueToPush[4] = bg3
+            valueToPush[5] = sum1
+            valueToPush[6] = sum2
+            valueToPush[7] = js1
+            valueToPush[8] = js2
+            lectioContents.push(valueToPush);
+           // lectioContents = lectioContents + "<tr><td style='width:10%'>"+ date + "</td><td style='width:15%'>" + onesentence + "</td><td style='width:15%'>" + bg1 +"/"+bg2+"/"+bg3+  "</td><td style='width:15%'>" + sum1+ "</td><td style='width:15%'>"+ sum2+  "</td><td style='width:15%'>"+js1+ "</td><td style='width:15%'>"+js2+"</td></tr>";
             // 모든 값을 commentDates 배열에 저장             
              if(i == results.rows.length-1){
-              lectioContents = lectioContents + "</table>";
+             // lectioContents = lectioContents + "</table>";
              //  alert(lectioContents)
              }               
            }             
@@ -164,20 +220,25 @@ constructor(props) {
       }
     ),
     tx.executeSql(
-      'SELECT * FROM weekend ORDER BY reg_id DESC',
+      'SELECT * FROM weekend ORDER BY reg_id ASC',
       [],
       (tx, results) => {
         var len = results.rows.length;
         if (len > 0) {                  
-          weekendContents = "<h1 style='text-align: center;'><strong>Weekend MySentence Table</strong></h1><table style='text-align: center;'><tr><th style='width:30%'>Date</th><th style='width:70%'>My sentence</th></tr>";
+        //  weekendContents = "<h1 style='text-align: center;'><strong>Weekend MySentence Table</strong></h1><table style='text-align: center;'><tr><th style='width:30%'>Date</th><th style='width:70%'>My sentence</th></tr>";
           var date, mysentence;
+          var valueToPush = new Array();
           for(var i=0; i<results.rows.length; i++){
+            valueToPush = new Array();
             date = results.rows.item(i).date
             mysentence = results.rows.item(i).mysentence
-            weekendContents = weekendContents + "<tr><td style='width:30%'>"+ date +"</td><td style='width:70%'>" + mysentence+"</td></tr>";
+            valueToPush[0] = date;
+            valueToPush[1] = mysentence  
+            weekendContents.push(valueToPush);
+          //  weekendContents = weekendContents + "<tr><td style='width:30%'>"+ date +"</td><td style='width:70%'>" + mysentence+"</td></tr>";
             // 모든 값을 commentDates 배열에 저장             
              if(i == results.rows.length-1){
-              weekendContents = weekendContents + "</table>";
+            //  weekendContents = weekendContents + "</table>";
             //   alert(weekendContents)
                this.createPDF()
                this.setState({initialLoading: false, getData: 'true'})
@@ -186,6 +247,8 @@ constructor(props) {
             
         } else {
           console.log('get Lectios data : ', "no value")   
+          this.createPDF()
+          this.setState({initialLoading: false, getData: 'true'})
         }
       }
     );
@@ -379,27 +442,27 @@ setChange(selectedValues){
   // 새로 보이기할때 및 값 세팅할때 
   // 값 세팅할때
   try {
-    if(selectedValues == "보통"){
+    if(selectedValues == "normal"){
       AsyncStorage.setItem('textSize', 'normal');
-    }else if(selectedValues == "크게"){
+    }else if(selectedValues == "large"){
       AsyncStorage.setItem('textSize', 'large');
-    }else if(selectedValues == "매우크게"){
+    }else if(selectedValues == "very large"){
       AsyncStorage.setItem('textSize', 'larger');
-    }else if(selectedValues == "말씀새기기"){
+    }else if(selectedValues == "Simple Meditation"){
       AsyncStorage.setItem('course', 'basic');
-    }else if(selectedValues == "거룩한독서"){
+    }else if(selectedValues == "Lectio Divina"){
       AsyncStorage.setItem('course', 'advanced');
-    }else if(selectedValues == "미선택"){
+    }else if(selectedValues == "unselected"){
       AsyncStorage.setItem('course', 'notselected');
     }
     var result  = selectedValues;
-    if(result == "보통" || result == null){
+    if(result == "normal" || result == null){
       normalSize = {fontSize:15}
       largeSize = {fontSize:17}
-    }else if(result == "크게"){
+    }else if(result == "large"){
       normalSize = {fontSize:17}
       largeSize = {fontSize:19}
-    }else if(result == "매우크게"){
+    }else if(result == "very large"){
       normalSize = {fontSize:19}
       largeSize = {fontSize:21}
     }
@@ -436,20 +499,20 @@ render() {
       onPress={() =>  this.props.navigation.navigate('Main5')} 
       >
         <Text style={{color:"#FFF", textAlign:'left'}}>
-            {"<"} 뒤로
+            {"<"} back
         </Text>
       </TouchableOpacity>  
-      <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>이름,세례명 설정</Text>      
+      <Text style={[{marginTop:10, marginBottom:10, textAlign:'center'},normalSize]}>Set your Name and Christian name</Text>      
       <View style={{  justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap', margin: 0 }}>
       <TextInput                
-      placeholder="이름"       
+      placeholder="Name"       
       value={this.state.UserName} 
       onChangeText={UserName => this.setState({UserName})}  
       underlineColorAndroid='transparent'        
       style={[styles.TextInputStyleClass, {width:'49%'},normalSize]}
       />
         <TextInput                
-      placeholder="세례명"        
+      placeholder="Christian name"        
       value={this.state.UserCatholicName}
       onChangeText={UserCatholicName => this.setState({UserCatholicName})}        
       underlineColorAndroid='transparent'        
@@ -463,17 +526,17 @@ render() {
         onPress={()=> this.UpdateUserFunction()} 
         >
         <Text style={{color:"#fff", textAlign:'center'}}>
-        프로필 저장
+        Save
         </Text>
         </TouchableOpacity>      
       </View>
-      <Text style={[{marginTop:20, marginBottom:10, textAlign:'center'},normalSize]}>글씨크기 선택</Text>      
+      <Text style={[{marginTop:10, paddingTop:10, marginBottom:10, textAlign:'center', borderTopWidth: 0.5, borderTopColor: '#d8d8d8'},normalSize]}>Select Text Size</Text>      
       <SelectMultipleGroupButton
         multiple={false}
         group={[
-          { value: '보통' },
-          { value: '크게' },
-          { value: '매우크게' }]}
+          { value: 'normal' },
+          { value: 'large' },
+          { value: 'very large' }]}
         defaultSelectedIndexes={textSize}
         buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
         highLightStyle={{
@@ -483,13 +546,13 @@ render() {
         onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
       />
 
-      <Text style={[{marginTop:30, marginBottom:10, textAlign:'center'},normalSize]}>말씀새기기 / 거룩한독서 선택</Text>    
+      <Text style={[{marginTop:20, paddingTop:10, marginBottom:10, textAlign:'center', borderTopWidth: 0.5, borderTopColor: '#d8d8d8'},normalSize]}>Select Simple Meditation / Lectio Divina</Text>    
       <SelectMultipleGroupButton
         multiple={false}
         group={[
-          { value: '미선택' },
-          { value: '말씀새기기' },
-          { value: '거룩한독서' }]}
+          { value: 'unselected' },
+          { value: 'Simple Meditation' },
+          { value: 'Lectio Divina' }]}
         defaultSelectedIndexes={course}
         buttonViewStyle={{ flex: 1, margin: 0, borderRadius: 0 }}
         highLightStyle={{
@@ -498,18 +561,17 @@ render() {
         }}
         onSelectedValuesChange={(selectedValues) => this.setChange(selectedValues)}
       />
-      <Text style={{margin:5, fontSize:14}}>* 말씀새기기 / 거룩한독서를 선택하시면 거룩한 독서를 할때 선택창이 뜨지 않습니다.</Text>
+      <Text style={{margin:5, fontSize:14}}>* when you select one, selection window does not open.</Text>
      
-      <Text style={[{marginTop:30, marginBottom:10, textAlign:'center'},normalSize]}>거룩한독서 알람 세팅</Text>
+      <Text style={[{marginTop:10, paddingTop:10, marginBottom:10, textAlign:'center', borderTopWidth: 0.5, borderTopColor: '#d8d8d8'},normalSize]}>Alarm Setting</Text>
       <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
         <TouchableOpacity 
         style={[styles.Button, {marginTop:0}]}
         onPress={this._showDateTimePicker}>
-          <Text style={{color:"#fff", textAlign:'center', fontWeight:'bold'}}>알람 설정 하기</Text>         
+          <Text style={{color:"#fff", textAlign:'center', fontWeight:'bold'}}>Set Alarm</Text>         
         </TouchableOpacity>
       </View>
 
-      <Text style={{margin:5, fontSize:14}}>* 오전에 거룩한 독서를 하면 하루동안 하느님의 말씀을 가지고 평온히 지낼 수 있습니다.</Text>
       <DateTimePicker
         isVisible={this.state.isDateTimePickerVisible}
         onConfirm={this._handleDatePicked}
@@ -522,11 +584,11 @@ render() {
       <View style={this.state.time !=="" ? {marginTop:10} : {display:'none'}}> 
         <TouchableOpacity 
         onPress={()=>this.stopAlarm1()}>
-         <Text style={{fontSize:14, textAlign:'center'}}>거룩한독서 알람 해제</Text>         
+         <Text style={{fontSize:14, textAlign:'center'}}>Clear Alarm</Text>         
         </TouchableOpacity>
       </View>    
 
-      <Text style={[{marginTop:5, marginBottom:5, textAlign:'center'},normalSize]}>내용 엑셀로 다운로드</Text>
+      <Text style={[{marginTop:10, paddingTop:10, marginBottom:10, textAlign:'center', borderTopWidth: 0.5, borderTopColor: '#d8d8d8'},normalSize]}>Download Database as excel</Text>
       <View style={{width:'100%',  justifyContent: 'center',  alignItems: 'center', marginBottom:10}}>
       <TouchableOpacity 
         activeOpacity = {0.9}
@@ -534,10 +596,10 @@ render() {
         onPress={()=> this.getDB()} 
         >
         <Text style={{color:"#fff", textAlign:'center'}}>
-        내용가져오기
+        Download Database
         </Text>
         </TouchableOpacity>                  
-      <Text style={this.state.getData=="true" ? {textAlign:'center'} : {display:'none'}}>Download 폴더에 파일이 다운로드 되었습니다.</Text>
+      <Text style={this.state.getData=="true" ? {textAlign:'center'} : {display:'none'}}>Excel file have been downloaded on Download Folder.</Text>
       </View>
     </ScrollView>
       )

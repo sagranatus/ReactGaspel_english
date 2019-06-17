@@ -16,15 +16,15 @@ const OnboardingButton = ({
 }) => (
     <View style = {styles.container}>
         <LinkButton style = {styles.button} onPress={movePrevious} active={currentIndex > 0}>
-            이전
+            prev
         </LinkButton>
         {currentIndex === totalItems -1 ? (
             <Button style = {styles.button} onPress={moveFinal}>
-               완료
+               complete
             </Button>
         ) : (
             <Button style = {styles.button} onPress={moveNext} active={currentIndex < totalItems - 1}>
-               다음
+               next
             </Button>
         )}
        

@@ -190,24 +190,20 @@ componentWillMount(){
     dayNamesShort: ['일','월','화','수','목','금','토']
   };
   
-  LocaleConfig.defaultLocale = 'kr';
+ // LocaleConfig.defaultLocale = 'en';
 
   // 오늘 날짜 설정, today5 저장, Today, selectedDate setting
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth()+1
   var month_previous = date.getMonth()
-  var day = date.getDate();
   if(month < 10){
       month = "0"+month;
   }
   if(month_previous < 10){
     month_previous = "0"+month_previous;
   } 
-  if(day < 10){
-      day = "0"+day;
-  } 
-  var today = year+"-"+month+"-"+day;
+  var today = dateFormat1("today")
   this.setState({Today: today, selectedDate: today})
 
   try {
@@ -541,17 +537,7 @@ commentFunc = (commentDates) => {
   this.setState({ Marked : result, initialLoading: false});
 
   // 가져온 값에 대해서 오늘, 이번주, 이번달 날짜 세기 
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth()+1
-  var day = date.getDate();
-  if(month < 10){
-      month = "0"+month;
-  }
-  if(day < 10){
-      day = "0"+day;
-  } 
-  var today = year+"-"+month+"-"+day;
+  var today = dateFormat1("today")
   if(this.state.selectedDate == today){
     // selectedDate 오늘인 경우만 날짜 세기
     this.countDays()
@@ -567,17 +553,7 @@ commentFunc = (commentDates) => {
   console.log("countDays",commentDates)
   console.log("countDays",lectioDates)
 
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth()+1
-  var day = date.getDate();
-  if(month < 10){
-      month = "0"+month;
-  } 
-  if(day < 10){
-    day = "0"+day;
-  } 
-  var today = year+"-"+month+"-"+day
+  var today = dateFormat1("today")
   console.log("countDays", commentDates.includes(today));
   console.log("countDays", lectioDates.includes(today));
   if(commentDates.includes(today) || lectioDates.includes(today)){
@@ -799,15 +775,16 @@ onselectDate(day, today){
       date = toShortFormat( new Date(date_format))       
       if(new Date(date_format).getDay() == 0){
         Alert.alert(
-          date+'의 독서를 하시겠습니까?',
+          
+          'Do you want to read on ' + date+'?',
           '',
           [                                 
             {
-            text: '취소',
+            text: 'cancel',
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
             },
-            {text: '확인', onPress: () => 
+            {text: 'confirm', onPress: () => 
               this.props.navigation.navigate('Main4_2', {otherParam: date_format}) 
             },
           ],
@@ -815,15 +792,15 @@ onselectDate(day, today){
           )        
       }else{
         Alert.alert(
-          date+'의 독서를 하시겠습니까?',
+          'Do you want to read on ' + date+'?',
           '',
           [                                 
             {
-            text: '취소',
+            text: 'cancel',
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
             },
-            {text: '확인', onPress: () => 
+            {text: 'confirm', onPress: () => 
               this.props.navigation.navigate('Main3_2', {otherParam: date_format}) 
             },
           ],
@@ -971,28 +948,28 @@ render() {
       <View style={{flex:1, backgroundColor:"#fff"}}>
       <View style={this.state.selectQuestion ? {flex:1,position: 'absolute', right:'0%', top:'0%', width:'100%', height:'100%', backgroundColor:"rgba(0,0,0, 0.7)", zIndex:1, borderWidth:1, borderColor:'#686868'} : {display:'none'}}>              
         <Text style={{color:"#fff", position: 'absolute', left:'80%', top:25, fontWeight:'bold', fontSize:16}}>    |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'2%', top:45}}>환경설정(글씨크기 및 알람 설정),프로필수정을 할 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'9%', top:45}}>You can set profile, text size, alarm and so on.{"\n"}you can download file of your records.</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'63%', top:105, fontWeight:'bold', fontSize:16}}>    |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'32%', top:125}}>오늘,이번주,이번달 기록을 알려주어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'6%', top:125}}>It shows records of today, this week and this month.</Text>
 
-        <Text style={{color:"#fff", position: 'absolute', left:'20%', top:140, fontWeight:'bold', fontSize:16}}>    |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'20%', top:160}}>프로필 사진을 등록해보세요.</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:265}}>날짜를 클릭하면 이전의 거룩한독서를 할 수 있어요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:140, fontWeight:'bold', fontSize:16}}>    |</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:160}}>Register your profile image.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'14%', top:265}}>If you click, You can do previous Lectio Divina.</Text>
         
         <Text style={{color:"#fff", position: 'absolute', left:'46%', top:280, fontWeight:'bold', fontSize:16}}>   |</Text>
 
         <Text style={{color:"#fff", position: 'absolute', left:'60%', top:320, fontWeight:'bold', fontSize:16}}>    |</Text>
         <Text style={{ position: 'absolute', left:'59.4%', top:288, fontWeight:'bold', fontSize:16}}><Icon3 name={"circle-thin"} size={40} color={"#01579b"} /></Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'16%', top:340}}>거룩한독서를 한 날짜에는 동그라미로 표시가 돼요.</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'17%', top:340}}>it is marked in a circle on the date{"\n"}when you did Lectio Divina.</Text>
     
 
-        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>메인화면</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'5%', bottom:17}}>Main Page</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'8%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>거룩한독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'29%', bottom:17}}>Lectio Divina</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'34%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:17}}>주일의독서</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'54%', bottom:27}}>Lectio Divina{"\n"}(Lord's Day)</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'59%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
-        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>나의페이지</Text>
+        <Text style={{color:"#fff", position: 'absolute', left:'79%', bottom:17}}>My Page</Text>
         <Text style={{color:"#fff", position: 'absolute', left:'84%', bottom:2, fontWeight:'bold', fontSize:16}}>   |</Text>
         <TouchableOpacity 
           activeOpacity = {0.9}
@@ -1034,7 +1011,7 @@ render() {
           style={{position: 'absolute', left:'40%', bottom:16, width:'20%', borderWidth:1, borderColor:'#4e99e0', borderRadius:2, padding:5}} 
           onPress={() => new Date(this.state.selectedDate).getDay() == 0 ? this.props.navigation.navigate('Main4_2', {otherParam: this.state.selectedDate}) : this.props.navigation.navigate('Main3_2', {otherParam: this.state.selectedDate})  } 
           >    
-           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#4e99e0'}]}>더보기</Text>    
+           <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#4e99e0'}]}>More</Text>    
         </TouchableOpacity>        
       </View>     
       <View style={{flex:1, backgroundColor:'#fff'}}>    

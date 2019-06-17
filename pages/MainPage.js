@@ -9,7 +9,6 @@ import Main5 from './Main5'
 import TabBarComponent from './TabBarComponent.js'
 import Main3_2 from '../containers/Main3_2Container';
 import Main4_2 from '../containers/Main4_2Container';
-import GuidePage from './GuidePage';
 import Setting from './Setting'
 import SendImage from './SendImage'
 import { TextInput } from 'react-native-gesture-handler';
@@ -41,7 +40,6 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			Main5: { screen: Main5 },
 			Main3_2: {screen: Main3_2},
 			Main4_2: {screen: Main4_2},
-			Guide: { screen: GuidePage },
 	//		Profile: { screen: Profile},
 			Setting: { screen: Setting },
 			SendImage: {screen: SendImage}
@@ -63,7 +61,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 			tabBarComponent: ({ navigation, ...rest }) => <TabBarComponent {...rest}
 			navigation={{
 				...navigation,
-				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Guide' && r.routeName !== 'Setting' && r.routeName !== 'SendImage' )}}} 
+				state: { ...navigation.state, routes: navigation.state.routes.filter(r => r.routeName !== 'Main3_2'&& r.routeName !== 'Main4_2' && r.routeName !== 'Setting' && r.routeName !== 'SendImage' )}}} 
 				/>, // 이는 keyboard show시에 navigation 안보이게 하기 위한 코드
 			tabBarPosition: 'bottom',
 			backBehavior: Platform.OS == 'ios' ? 'none' : 'history'
@@ -185,12 +183,12 @@ export default class App extends React.Component {
 	  return this.state.initialLoading ?
 	  <View style={styles.MainContainer}> 
 		<Image source={require('../resources/main_bible.png')} style={{width: 100, height: 100, justifyContent: 'center'}}/>
-		<Text style= {styles.TextComponentStyle}>오늘의 복음</Text>
+		<Text style= {styles.TextComponentStyle}>Today's Gospel</Text>
 	  </View>
 	  : 
 	  (!this.state.internet) ? 
 	  <View style={[styles.MainContainer, {backgroundColor:'#F8F8F8'}]}>             
-		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>인터넷을 연결해주세요</Text>
+		  <Text style= {[styles.TextComponentStyle, {color:'#000'}]}>Please connect the Internet.</Text>
 	  </View>
 		:
 	<View style={Platform.OS == "ios" ? {flex:1, marginTop:18} : {flex:1}}>

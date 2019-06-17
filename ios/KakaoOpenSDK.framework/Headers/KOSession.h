@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, KOAgeAuthProperty) {
 + (BOOL)handleOpenURL:(NSURL *)url;
 
 /*!
- openWithCompletionHandler로 인증 도중에 빠져나와 앱으로 돌아올때의 인증처리를 취소한다. 보통 applicationDidBecomeActive에서 해당 부분을 호출한다.
+ openWithCompletionHandler로 인증 도중에 빠져나와 앱으로 돌아올때의 인증처리를 cancel한다. 보통 applicationDidBecomeActive에서 해당 부분을 호출한다.
  */
 + (void)handleDidBecomeActive;
 
