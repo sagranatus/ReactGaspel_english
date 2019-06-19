@@ -5,13 +5,12 @@ import android.app.NotificationChannel;
 import android.os.Build;
 import android.graphics.Color;
 import android.content.Context;
-
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactApplication;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import com.rnfs.RNFSPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -20,12 +19,11 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-
+import com.swmansion.reanimated.ReanimatedPackage;
 import java.util.Arrays;
 import java.util.List;
 import org.pgsqlite.SQLitePluginPackage;
 //import com.emekalites.react.alarm.notification.ANPackage;
-import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 // Add imports
 import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import javax.annotation.Nullable;
@@ -46,13 +44,13 @@ public class MainApplication extends Application implements ShareApplication, Re
             new RNFSPackage(),
             new RNViewShotPackage(),
             new ReactNativeAutoUpdaterPackage(),
-            new ReactNativePushNotificationPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
             new SQLitePluginPackage(),
-            new RNHTMLtoPDFPackage()
+            new ReanimatedPackage(),
+            new NetInfoPackage()
            // new ANPackage()
       );
     }

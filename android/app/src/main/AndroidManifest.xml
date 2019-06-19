@@ -24,7 +24,9 @@
       android:usesCleartextTraffic="true"
       android:icon="@mipmap/ic_launcher"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+      tools:replace="android:appComponentFactory"
+      android:appComponentFactory="@string/app_name">
        <service android:name="com.emekalites.react.alarm.notification.ANService" android:enabled="true"/>
         <receiver android:name="com.emekalites.react.alarm.notification.ANAlarmReceiver" android:enabled="true"/>
         <receiver android:name="com.emekalites.react.alarm.notification.ANBootReceiver" android:enabled="true" android:exported="true">

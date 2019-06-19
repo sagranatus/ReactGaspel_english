@@ -1,7 +1,8 @@
 import React from 'react'
 import { createBottomTabNavigator, createAppContainer, createStackNavigator, NavigationActions } from 'react-navigation'
-import { Platform, Image, NetInfo, View, Text, StyleSheet, AsyncStorage } from 'react-native'
+import { Platform, Image, View, Text, StyleSheet, AsyncStorage } from 'react-native'
 import Icon from 'react-native-vector-icons/EvilIcons'
+import NetInfo from "@react-native-community/netinfo";
 import Main1 from '../containers/Main1Container'
 import Main3 from '../containers/Main3Container'
 import Main4 from '../containers/Main4Container'

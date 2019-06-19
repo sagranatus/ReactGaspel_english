@@ -72,6 +72,10 @@
 		FE515D6C8C9040A5A940179B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F6C90751C1A4A3893BDE295 /* SimpleLineIcons.ttf */; };
 		0E5B0759F70D4CFF8D20E26A /* libRNHTMLtoPDF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C7EB3D11F446B495A18444 /* libRNHTMLtoPDF.a */; };
 		0AFAF217EDF34024917B3B6B /* RNHTMLtoPDFTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 20C891AC48194AD69B5E0095 /* RNHTMLtoPDFTests.xctest */; };
+		4E791E9B1BBF4BAD8AD2CD33 /* libRNReanimated.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E20AB2F9A6134CF7B42A70E5 /* libRNReanimated.a */; };
+		58003DAED3154B6384513C59 /* libRNReanimated-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 110F454AE4A24B24A058E765 /* libRNReanimated-tvOS.a */; };
+		44ACA83F85404FB1891B05E5 /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6C5063E5BEB44B487A33AA8 /* libRNCNetInfo.a */; };
+		91B220779AE140858133AD56 /* libRNCNetInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CCA2394F97B4AEAB6E8B97E /* libRNCNetInfo-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -526,6 +530,12 @@
 		408C77D1FCD84E3BA3E1A3D4 /* RNHTMLtoPDF.xcodeproj */ = {isa = PBXFileReference; name = "RNHTMLtoPDF.xcodeproj"; path = "../node_modules/react-native-html-to-pdf/ios/RNHTMLtoPDF.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		A2C7EB3D11F446B495A18444 /* libRNHTMLtoPDF.a */ = {isa = PBXFileReference; name = "libRNHTMLtoPDF.a"; path = "libRNHTMLtoPDF.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		20C891AC48194AD69B5E0095 /* RNHTMLtoPDFTests.xctest */ = {isa = PBXFileReference; name = "RNHTMLtoPDFTests.xctest"; path = "RNHTMLtoPDFTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
+		9558B23E7C274E1BA5F2FF1D /* RNReanimated.xcodeproj */ = {isa = PBXFileReference; name = "RNReanimated.xcodeproj"; path = "../node_modules/react-native-reanimated/ios/RNReanimated.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		E20AB2F9A6134CF7B42A70E5 /* libRNReanimated.a */ = {isa = PBXFileReference; name = "libRNReanimated.a"; path = "libRNReanimated.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		110F454AE4A24B24A058E765 /* libRNReanimated-tvOS.a */ = {isa = PBXFileReference; name = "libRNReanimated-tvOS.a"; path = "libRNReanimated-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EA49096D5106493DB9B68B5E /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNCNetInfo.xcodeproj"; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A6C5063E5BEB44B487A33AA8 /* libRNCNetInfo.a */ = {isa = PBXFileReference; name = "libRNCNetInfo.a"; path = "libRNCNetInfo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		4CCA2394F97B4AEAB6E8B97E /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; name = "libRNCNetInfo-tvOS.a"; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -571,6 +581,8 @@
 				B8B5E8AE85644AAFA808950F /* libRNShare.a in Frameworks */,
 				0E5B0759F70D4CFF8D20E26A /* libRNHTMLtoPDF.a in Frameworks */,
 				0AFAF217EDF34024917B3B6B /* RNHTMLtoPDFTests.xctest in Resources */,
+				4E791E9B1BBF4BAD8AD2CD33 /* libRNReanimated.a in Frameworks */,
+				44ACA83F85404FB1891B05E5 /* libRNCNetInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +599,8 @@
 				2D02E4C71E0B4AEC006451C7 /* libRCTText-tvOS.a in Frameworks */,
 				2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */,
 				528D9E20C92F4ABBB51D9D55 /* libRNVectorIcons-tvOS.a in Frameworks */,
+				58003DAED3154B6384513C59 /* libRNReanimated-tvOS.a in Frameworks */,
+				91B220779AE140858133AD56 /* libRNCNetInfo-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +920,8 @@
 				C01F68BB4CC6443092B0EEF1 /* RNFS.xcodeproj */,
 				D5DDF3176F7C4DE08FD9D6E4 /* RNShare.xcodeproj */,
 				408C77D1FCD84E3BA3E1A3D4 /* RNHTMLtoPDF.xcodeproj */,
+				9558B23E7C274E1BA5F2FF1D /* RNReanimated.xcodeproj */,
+				EA49096D5106493DB9B68B5E /* RNCNetInfo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1706,12 +1722,18 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1744,12 +1766,18 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = GaspelAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1812,6 +1840,8 @@
 					"eact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1869,6 +1899,8 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = GaspelApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1912,11 +1944,17 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1958,11 +1996,17 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -2003,11 +2047,17 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -2048,11 +2098,17 @@
 					"$(SRCROOT)..\node_modules\neact-native-shareios",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-html-to-pdf\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-reanimated\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\netinfo\ios",
 				);
 				INFOPLIST_FILE = "GaspelApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
