@@ -163,6 +163,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-push-notification')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-reanimated')
     compile project(':react-native-share')

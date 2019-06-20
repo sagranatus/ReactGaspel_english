@@ -8,7 +8,7 @@ import {NavigationEvents} from 'react-navigation'
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import XLSX from 'xlsx';
-
+var PushNotification = require('react-native-push-notification');
 // react-native-fs
 import { writeFile, readFile, DocumentDirectoryPath } from 'react-native-fs';
 const DDP = DocumentDirectoryPath + "/";
@@ -121,7 +121,7 @@ constructor(props) {
         repeatInterval: 'day'
       });
     }else{
-      /*PushNotification.localNotificationSchedule({
+      PushNotification.localNotificationSchedule({
         id: '123',
         message: "It's time to do Lectio Divina. Listen to what God tell you.", // (required)
         date: new Date(month+'/'+day+'/'+year+' '+this.state.time), // in 60 secs
@@ -129,7 +129,7 @@ constructor(props) {
         vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
         playSound: true, // (optional) default: true
         repeatType: 'day'
-      }); */
+      }); 
     } 
 
 
@@ -302,7 +302,7 @@ async function requestExternalWritePermission() {
   if(Platform.OS == "ios"){
     PushNotificationIOS.requestPermissions()
   }else{
-   // PushNotification.requestPermissions()
+    PushNotification.requestPermissions()
   }
   
   //textSize 가져오기
@@ -370,7 +370,7 @@ stopAlarm1(){
   if(Platform.OS == "ios"){
     PushNotificationIOS.cancelAllLocalNotifications();
   }else{
-   // PushNotification.cancelLocalNotifications({id: '123'})
+    PushNotification.cancelLocalNotifications({id: '123'})
   }
   this.setState({ time: '' });
   try{

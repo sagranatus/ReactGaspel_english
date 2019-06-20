@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.content.Context;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactApplication;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import com.rnfs.RNFSPackage;
@@ -40,6 +41,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new ReactNativePushNotificationPackage(),
             new RNSharePackage(),
             new RNFSPackage(),
             new RNViewShotPackage(),
