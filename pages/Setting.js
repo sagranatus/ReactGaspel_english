@@ -22,7 +22,7 @@ var textSize;
 var course;
 var commentContents = [['date', 'from', 'comment']]
 var lectioContents = [['date', 'from', 'background1','background2','background3', 'sum1', 'sum2', 'js1', 'js2']]
-var weekendContents = [['date', 'mysentence']]
+var weekendContents = [['date', 'from', 'mysentence']]
 //textSize 가져와서 textSize value 삽입
 AsyncStorage.getItem('textSize', (err, result) => { 
   if(result == "normal" || result == null){
@@ -146,17 +146,17 @@ constructor(props) {
          var len = results.rows.length;
          if (len > 0) {  
             // commentContents = "<h1 style='text-align: center;'><strong>Comment Table</strong></h1><table style='text-align: center;'><tr><th style='width:20%'>Date</th><th style='width:40%'>OneSentence</th><th style='width:40%'>Comment</th></tr>";
-             var date, onesentence, comment;             
+             var date, place, comment;             
              var valueToPush = new Array();
              for(var i=0; i<results.rows.length; i++){
               valueToPush = new Array();
              
                date = results.rows.item(i).date
-               onesentence = results.rows.item(i).onesentence
+               place = results.rows.item(i).place
                comment = results.rows.item(i).comment    
               // alert(onesentence)
                valueToPush[0] = date;
-               valueToPush[1] = onesentence   
+               valueToPush[1] = place   
                valueToPush[2] = comment   
                commentContents.push(valueToPush);
               // commentContents = commentContents + "<tr><td style='width:20%'>"+ date + "</td><td style='width:40%'>" + onesentence + "</td><td style='width:40%'>" + comment + "</td></tr>";
@@ -180,13 +180,13 @@ constructor(props) {
         var len = results.rows.length;
         if (len > 0) {                  
          // lectioContents = "<h1 style='text-align: center;'><strong>Lectio Divina Table</strong></h1><table style='text-align: center;'><tr><th style='width:10%'>Date</th><th style='width:15%'>OneSentence</th><th style='width:15%'>Backgrounds</th><th style='width:15%'>Summary</th><th>Summary2</th><th style='width:15%'>Jesus Feature</th><th style='width:15%'>Jesus2</th></tr>";
-          var date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence;
+          var date, place, bg1, bg2, bg3, sum1, sum2, js1, js2, mysentence;
           var valueToPush = new Array();
           for(var i=0; i<results.rows.length; i++){
             valueToPush = new Array();
             
             date = results.rows.item(i).date
-            onesentence = results.rows.item(i).onesentence
+            place = results.rows.item(i).place
             bg1 = results.rows.item(i).bg1
             bg2 = results.rows.item(i).bg2
             bg3 = results.rows.item(i).bg3
@@ -195,7 +195,7 @@ constructor(props) {
             js1 = results.rows.item(i).js1
             js2 = results.rows.item(i).js2  
             valueToPush[0] = date;
-            valueToPush[1] = onesentence   
+            valueToPush[1] = place 
             valueToPush[2] = bg1
             valueToPush[3] = bg2
             valueToPush[4] = bg3
@@ -224,14 +224,16 @@ constructor(props) {
         var len = results.rows.length;
         if (len > 0) {                  
         //  weekendContents = "<h1 style='text-align: center;'><strong>Weekend MySentence Table</strong></h1><table style='text-align: center;'><tr><th style='width:30%'>Date</th><th style='width:70%'>My sentence</th></tr>";
-          var date, mysentence;
+          var date, place, mysentence;
           var valueToPush = new Array();
           for(var i=0; i<results.rows.length; i++){
             valueToPush = new Array();
             date = results.rows.item(i).date
+            place = results.rows.item(i).place
             mysentence = results.rows.item(i).mysentence
             valueToPush[0] = date;
-            valueToPush[1] = mysentence  
+            valueToPush[1] = place  
+            valueToPush[2] = mysentence  
             weekendContents.push(valueToPush);
           //  weekendContents = weekendContents + "<tr><td style='width:30%'>"+ date +"</td><td style='width:70%'>" + mysentence+"</td></tr>";
             // 모든 값을 commentDates 배열에 저장             
@@ -385,7 +387,7 @@ UpdateUserFunction(){
     AsyncStorage.setItem('name', this.state.UserName);
     AsyncStorage.setItem('catholic_name', this.state.UserCatholicName);
     AsyncStorage.setItem('refreshNames', 'true');
-    Alert.alert("수정하였습니다.") 
+    Alert.alert("saved.") 
   } catch (error) {
     console.error('AsyncStorage error: ' + error.message);
   }   

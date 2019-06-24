@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "20909586693",
+    "firebase_url": "https://gaspel-en.firebaseio.com",
+    "project_id": "gaspel-en",
+    "storage_bucket": "gaspel-en.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20909586693:android:293e6643cffa4b7d",
+        "android_client_info": {
+          "package_name": "com.yellowpg.gaspel_en"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20909586693-r3g8foa8g4qr5siv6bhkddc49acop5pl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwktT6NpdY6HRb6AcgtekYZdLVrhkpmzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20909586693-r3g8foa8g4qr5siv6bhkddc49acop5pl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-7847407199304521~7887584025"
+    }
+  ],
+  "configuration_version": "1"
+}

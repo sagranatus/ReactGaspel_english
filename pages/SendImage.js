@@ -13,7 +13,7 @@ import ColorPalette from 'react-native-color-palette'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import toShortFormat from '../etc/dateFormat';
 import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
-import Icon4 from 'react-native-vector-icons/Feather'
+import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 
 var db = openDatabase({ name: 'UserDatabase.db' });
@@ -31,6 +31,7 @@ export default class SendImage extends Component {
       this.state = {
           uri: null,
           js2: "",
+          place:"",
           sendVal: "saea",
           visible: false,
           fontColor: '#286F92',
@@ -106,14 +107,16 @@ export default class SendImage extends Component {
                 this.setState({
                    Sentence_comment: results.rows.item(0).onesentence,
                     comment: results.rows.item(0).comment,
-                    date_comment: "My Meditation on "+month_names[new Date(results.rows.item(0).date).getMonth()] + " " + new Date(results.rows.item(0).date).getDate() + " " + new Date(results.rows.item(0).date).getFullYear()
+                    date_comment: "My Meditation on "+month_names[new Date(results.rows.item(0).date).getMonth()] + " " + new Date(results.rows.item(0).date).getDate() + " " + new Date(results.rows.item(0).date).getFullYear(),
+                    place_comment: results.rows.item(0).place
                 })
             } else {  
               console.log("nono")      
                 this.setState({
                     Sentence_comment: "",
                     comment: "",
-                    date_comment: ""
+                    date_comment: "",
+                    place_comment: ""
                 })                             
             }
           }
@@ -128,6 +131,7 @@ export default class SendImage extends Component {
                   this.setState({
                       Sentence: results.rows.item(0).onesentence,
                       js2 : results.rows.item(0).js2,
+                      place: results.rows.item(0).place,
                       date: "My Meditation on "+month_names[new Date(results.rows.item(0).date).getMonth()] + " " + new Date(results.rows.item(0).date).getDate() + " " + new Date(results.rows.item(0).date).getFullYear()
                   })
               } else {   
@@ -135,7 +139,8 @@ export default class SendImage extends Component {
                   this.setState({
                     Sentence: "",
                       js2 : "",
-                      date:""
+                      date:"",
+                      place: ""
                   })                   
               }
           }
@@ -256,8 +261,11 @@ render() {
       <View style={this.state.backgroundWhite ? {position: 'absolute', top:'3%', color:'white',alignItems: 'center', padding:10, borderColor:"#fff", borderWidth:0.5, margin:10, width: 270, height:170} :  {position: 'absolute', top:'3%', color:'white',alignItems: 'center', padding:10, margin:10, width: 270, height:170} }>
       <View style={this.state.backgroundWhite ? {padding:10, backgroundColor:'rgba(256,256,256, 0.5)', width: 250, height:150,  justifyContent: 'center', alignItems: 'center'} : {padding:10, width: 250, height:150,  justifyContent: 'center', alignItems: 'center'}}>
    
-      <Text style={this.state.comment=="" ? {fontSize:16,color:this.state.fontColor, textAlign:'center'} : {display:'none'}}>{this.state.Sentence}</Text>
+      <Text style={this.state.comment=="" && this.state.mysentence=="" ? {fontSize:16,color:this.state.fontColor, textAlign:'center'} : {display:'none'}}>{this.state.Sentence}</Text>
+      <Text style={this.state.mysentence!=="" ? {fontSize:16,color:this.state.fontColor, textAlign:'center'} : {display:'none'}}>{this.state.mysentence}</Text>
       <Text style={this.state.comment!=="" ? {fontSize:16,color:this.state.fontColor, textAlign:'center'} : {display:'none'}}>{this.state.Sentence_comment}</Text>
+      <Text style={this.state.comment=="" ? {marginTop:3, paddingBottom:0, color:this.state.fontColor, textAlign:'center', fontSize:14} : {display:'none'}}>{this.state.place}</Text>
+      <Text style={this.state.comment!=="" ? {marginTop:3, paddingBottom:0, color:this.state.fontColor, textAlign:'center', fontSize:14} : {display:'none'}}>{this.state.place_comment}</Text>
       <Text style={this.state.comment!=="" && this.state.js2 =="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.comment}</Text>
       <Text style={this.state.js2 !=="" ? {fontSize:14,color:'black', textAlign:'center',marginTop:10} : {display:'none'}}>{this.state.js2}</Text>
 

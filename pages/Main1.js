@@ -7,9 +7,11 @@ var db = openDatabase({ name: 'UserDatabase.db' });
 import {NavigationEvents} from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon2 from 'react-native-vector-icons/EvilIcons'
-import Icon4 from 'react-native-vector-icons/Feather'
+import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import RNFetchBlob from "rn-fetch-blob";
+import firebase from 'react-native-firebase';
+
 import {toShortFormat, dateFormat1} from '../etc/dateFormat';
 var smallSize;
 var normalSize;
@@ -33,15 +35,15 @@ constructor(props) {
         //  txn.executeSql('DROP TABLE IF EXISTS lectio', []);
          // txn.executeSql('DROP TABLE IF EXISTS weekend', []);
           txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS comment(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, comment TEXT NOT NULL)',
+            'CREATE TABLE IF NOT EXISTS comment(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, comment TEXT NOT NULL, place TEXT NOT NULL)',
             []
           );
           txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS lectio(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, bg1 TEXT NOT NULL, bg2 TEXT NOT NULL, bg3 TEXT NOT NULL, sum1 TEXT NOT NULL, sum2 TEXT NOT NULL, js1 TEXT NOT NULL, js2 TEXT NOT NULL)',
+            'CREATE TABLE IF NOT EXISTS lectio(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, onesentence TEXT NOT NULL, bg1 TEXT NOT NULL, bg2 TEXT NOT NULL, bg3 TEXT NOT NULL, sum1 TEXT NOT NULL, sum2 TEXT NOT NULL, js1 TEXT NOT NULL, js2 TEXT NOT NULL, place TEXT NOT NULL)',
             []
           );
           txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, mysentence TEXT NOT NULL)',
+            'CREATE TABLE IF NOT EXISTS weekend(reg_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, mysentence TEXT NOT NULL, place TEXT NOT NULL)',
             []
           );
         }
@@ -306,6 +308,15 @@ componentWillReceiveProps(nextProps){
  
 
 render() { 
+  const Banner = firebase.admob.Banner;
+  const AdRequest = firebase.admob.AdRequest;
+  const request = new AdRequest();
+
+  const unitId =
+    Platform.OS === 'ios'
+      ? 'ca-app-pub-7987914246691031/4248107679'
+      : 'ca-app-pub-3940256099942544/6300978111';
+    //ca-app-pub-7847407199304521/4831009991 실제값
   return (this.state.initialLoading)
   ? (    
       <View style={styles.loadingContainer}>
@@ -350,7 +361,8 @@ render() {
     style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
      onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>   
        <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.todayDate}</Text>    
-       <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence_from}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:15, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.sentence_from}</Text>    
+       <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.place}</Text>
        <Text style={[styles.TextStyle,{marginTop:0, padding:5, color:'#000', textAlign:'left', lineHeight:22},  smallSize]}>{this.state.contents}</Text>   
        <View style={{flex:1, justifyContent: 'center', alignItems: 'center', marginTop:10, marginBottom:10}}>
        <TouchableOpacity 
@@ -409,7 +421,7 @@ render() {
             activeOpacity = {0.9}
             onPress={() => this.setState({selectShow:true})} // insertComment
             >  
-            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
+            <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
           </TouchableOpacity>
           </View>   
           <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -509,9 +521,17 @@ render() {
         <Text style={[normalSize, styles.TextStyle,{marginTop:10, paddingLeft:20, paddingRight:20, padding:5, color:'#01579b'}]}>{this.state.mysentence}</Text>        
       </View>
         
-      <View>  
-      <Image source={require('../resources/first_img1_2.png')} style={{width: '100%', height: 150}} />  
-      </View>
+      <Banner
+          unitId={unitId}
+          size={'SMART_BANNER'}
+          request={request.build()}
+          onAdLoaded={() => {
+            console.log('Advert loaded');
+          }}
+          onAdFailedToLoad={(error) => {
+            console.log(error)
+          }}
+        />
     </ScrollView>  
     </View>
       )

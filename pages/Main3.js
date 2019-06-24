@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/EvilIcons'
 import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
 import Icon3 from 'react-native-vector-icons/FontAwesome'
-import Icon4 from 'react-native-vector-icons/Feather'
+import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
@@ -103,7 +103,7 @@ moveFinal(){
                 //  console.log('Results', 'done');
                     if (results.rowsAffected > 0) {
                         console.log('Main3 - comment data updated : ', "update success")        
-                        Alert.alert("Edition succeeded.")           
+                        //Alert.alert("Edition succeeded.")           
                     } else {
                         console.log('Main3 - comment data updated : ', "update fail")  
                     }
@@ -146,13 +146,14 @@ moveFinal(){
         const js1 = this.state.js1
         const js2 = this.state.js2
         const comment = this.state.comment
+        const place = this.state.place
         if(this.state.basic){
                 // comment DB에 삽입
             db.transaction(tx => {
                 db.transaction(function(tx) {
                     tx.executeSql(
-                    'INSERT INTO comment (date, onesentence, comment) VALUES (?,?,?)',
-                    [date,sentence, comment],
+                    'INSERT INTO comment (date, onesentence, comment, place) VALUES (?,?,?,?)',
+                    [date,sentence, comment, place],
                     (tx, results) => {
                         if (results.rowsAffected > 0) {
                             console.log('Main3 - comment data inserted : ', "success")                 
@@ -178,8 +179,8 @@ moveFinal(){
                     } else {
                     db.transaction(function(tx) {
                         tx.executeSql(
-                        'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?)',
-                        [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+                        'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, place) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                        [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2, place],
                         (tx, results) => {
                             if (results.rowsAffected > 0) {
                                 console.log('Main3 - lectio data inserted : ', "success")                 
@@ -206,8 +207,8 @@ transitionToNextPanel(from, nextIndex){
     if(this.state.currentIndex == 1 && this.state.basic == null && from=="next"){
         // 복음읽기 후에 선택창 띄우기 
         Alert.alert(
-            '말씀새기기 / 거룩한독서를 선택하세요.',
-            '환경설정에서 설정하시면 선택창이 뜨지 않습니다.',
+            'Select Simple Meditation / Lectio Divina',
+            'When you select one, selection window does not open.',
             [
               {text: 'Simple Meditation', onPress: () => this.setState({
                 basic:true, currentIndex: nextIndex})
@@ -369,6 +370,7 @@ componentWillReceiveProps(nextProps){
           this.setState({
           Contents : contents+"\n",
           Sentence : sentence_from,
+          place: nextProps.gaspels.person+" "+nextProps.gaspels.cv,
           Firstverse:  Number(first.replace(/[^0-9]/g, ''))-3,
           Lastverse: Number(last.replace(/[^0-9]/g, ''))+3,
           Person: nextProps.gaspels.person,
@@ -823,8 +825,8 @@ setChange(){
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                      <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
-                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
-                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
+                     <Text style={[styles.TextStyle,{marginTop:15, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.place}</Text>
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>     
                     </ScrollView>
                     <TouchableOpacity 
@@ -863,7 +865,7 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({selectShow: true})} 
                   >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
@@ -871,7 +873,7 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'circle-edit-outline'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
@@ -915,7 +917,7 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({selectShow: true})} 
                   >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
@@ -923,7 +925,7 @@ setChange(){
                   activeOpacity = {0.9}
                   onPress={() => this.setState({ Lectioediting: true, currentIndex: 0 })}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'circle-edit-outline'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
@@ -1095,7 +1097,7 @@ setChange(){
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                      <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Lectiodate}</Text>    
-                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:15, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
                      <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>           
                     </ScrollView>
@@ -1131,7 +1133,7 @@ setChange(){
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Today's Gospel</Text>   
                     </TouchableOpacity>
                     </View>   
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -1139,7 +1141,7 @@ setChange(){
                     activeOpacity = {0.9}
                     onPress={() =>  this.setState({start: true})} 
                     > 
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle-outline'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
                     </TouchableOpacity>
                     </View>   
                 </View>
@@ -1253,7 +1255,8 @@ setChange(){
                 <KeyboardAvoidingView style={{height:130, width:'100%'}}>
                     
                     <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                        <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                             
+                        <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>          
+                         <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>                                   
                     </View>
 
                     <View style={this.state.currentIndex == 2 && !this.state.basic ? {} : {display:'none'}}>

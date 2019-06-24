@@ -3,7 +3,7 @@ import { PanResponder, PixelRatio, StyleSheet, TextInput, View, Button, Text, To
 import {PropTypes} from 'prop-types';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import Icon3 from 'react-native-vector-icons/FontAwesome'
-import Icon4 from 'react-native-vector-icons/Feather'
+import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons'
 import Icon5 from 'react-native-vector-icons/AntDesign'
 import { openDatabase } from 'react-native-sqlite-storage';
 import {NavigationEvents} from 'react-navigation'
@@ -168,7 +168,7 @@ moveFinal(){
     const js1 = this.state.js1
     const js2 = this.state.js2
     const mysentence = this.state.mysentence
-  
+    const place = this.state.place
     // 값이 있는지 확인하고 없는 경우 lectio,weekend DB에 삽입한다 
     db.transaction(tx => {
         tx.executeSql(
@@ -182,8 +182,8 @@ moveFinal(){
             } else {
               db.transaction(function(tx) {
                 tx.executeSql(
-                  'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2) VALUES (?,?,?,?,?,?,?,?,?)',
-                  [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2],
+                  'INSERT INTO lectio (date, onesentence, bg1, bg2, bg3, sum1, sum2, js1, js2, place) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                  [date,sentence, bg1, bg2, bg3, sum1, sum2, js1, js2, place],
                   (tx, results) => {                          
                     if (results.rowsAffected > 0) {
                         console.log('Main4_2 - lectio data inserted : ', "success")          
@@ -209,8 +209,8 @@ moveFinal(){
               } else {
                 db.transaction(function(tx) {
                   tx.executeSql(
-                    'INSERT INTO weekend (date, mysentence) VALUES (?,?)',
-                    [date,mysentence],
+                    'INSERT INTO weekend (date, mysentence, place) VALUES (?,?,?)',
+                    [date,mysentence,place],
                     (tx, results) => {                            
                       if (results.rowsAffected > 0) {
                         console.log('Main4_2 - weekend data inserted : ', "success") 
@@ -373,6 +373,7 @@ componentWillReceiveProps(nextProps){
       Firstverse:  Number(first.replace(/[^0-9]/g, ''))-3,
       Lastverse: Number(last.replace(/[^0-9]/g, ''))+3,
       Person: nextProps.gaspels.person,
+      place: nextProps.gaspels.person+" "+nextProps.gaspels.cv,
       Chapter: chapter,
       cv: nextProps.gaspels.cv
     })
@@ -597,7 +598,7 @@ render() {
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                    <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
-                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:15, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
                      <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>         
                   </ScrollView>
@@ -640,7 +641,7 @@ render() {
                   activeOpacity = {0.9}
                   onPress={() => this.setState({selectShow: true})} 
                   >  
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', marginRight:'1.5%', height: 40}}>
@@ -648,7 +649,7 @@ render() {
                   activeOpacity = {0.9}
                   onPress={() => this.setState({ Weekendediting: true, currentIndex: 0 })}
                   > 
-                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'edit-3'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
+                  <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'circle-edit-outline'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Edit</Text>   
                   </TouchableOpacity>
                   </View>   
                   <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '32%', height: 40}}>
@@ -665,6 +666,7 @@ render() {
               onPress={() => this.setState({selectShow:true}) } 
               >       
               <Text style={[{color:'#01579b', textAlign: 'center', marginTop: 10, marginBottom: 10, padding:5}, largeSize]}>{this.state.Sentence}</Text> 
+              <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
               </TouchableOpacity>
               <Text style={styles.UpdateQuestionStyleClass}>Who are the characters of the gospel?</Text>
             <Text style={[styles.TextResultStyleClass, normalSize]}>{this.state.bg1}</Text>   
@@ -701,7 +703,7 @@ render() {
                 style={{flex:1, marginLeft:5, marginRight:5, paddingBottom:200, marginBottom:20}}
                     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })}>        
                    <Text style={[styles.TextStyle,{marginTop:3, padding:10, color:'#000', textAlign:'center', fontSize:14}]}>{this.state.Weekenddate}</Text>    
-                     <Text style={[styles.TextStyle,{marginTop:5, padding:10, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
+                     <Text style={[styles.TextStyle,{marginTop:15, color:'#01579b', textAlign:'center'}, largeSize]}>{this.state.Sentence}</Text> 
                      <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>
                     <Text style={[styles.TextStyle,{marginTop:10, padding:5, color:'#000', textAlign:'left', lineHeight:22},  normalSize]}>{this.state.Contents}</Text>       
                   </ScrollView>
@@ -750,7 +752,7 @@ render() {
                     activeOpacity = {0.9}
                     onPress={() => this.setState({selectShow: true})} 
                     >  
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}> <Icon4 name={'book-open-page-variant'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Read Gospel</Text>   
                     </TouchableOpacity>
                     </View>   
                     <View style={{backgroundColor:"#f9fafc", borderColor:"#e6e8ef", borderWidth:1, borderRadius:5, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center',  width: '48%', height: 40}}>
@@ -758,7 +760,7 @@ render() {
                     activeOpacity = {0.9}
                     onPress={() =>  this.setState({start: true})} 
                     > 
-                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
+                    <Text style={[ styles.TextStyle, {fontSize:14, textAlign:'center', color:'#43484b'}]}><Icon4 name={'play-circle-outline'} size={20} color={"#4e99e0"} style={{paddingTop:9}} />  Start Lectio Divina</Text>   
                     </TouchableOpacity>
                     </View>   
                 </View>        
@@ -817,7 +819,8 @@ render() {
                       </View>
 
                       <View style={this.state.currentIndex == 1 ? {} : {display:'none'}}>
-                        <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>                                               
+                        <Text style={[{textAlign:'center', paddingTop:40, color: "#01579b"}, largeSize]}>{this.state.Sentence}</Text>       
+                        <Text style={[styles.TextStyle,{marginTop:3, paddingBottom:0, color:'#01579b', textAlign:'center', fontSize:14}]}>{this.state.Person} {this.state.cv}</Text>                                        
                       </View>
 
                       <View style={this.state.currentIndex == 2 ? {} : {display:'none'}}>

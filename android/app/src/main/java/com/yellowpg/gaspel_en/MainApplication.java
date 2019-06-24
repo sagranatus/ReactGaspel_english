@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.content.Context;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
@@ -28,6 +29,12 @@ import org.pgsqlite.SQLitePluginPackage;
 // Add imports
 import com.aerofs.reactnativeautoupdater.ReactNativeAutoUpdaterPackage;
 import javax.annotation.Nullable;
+
+// 구글 광고
+//import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.admob.RNFirebaseAdMobPackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
@@ -52,7 +59,10 @@ public class MainApplication extends Application implements ShareApplication, Re
             new RNGestureHandlerPackage(),
             new SQLitePluginPackage(),
             new ReanimatedPackage(),
-            new NetInfoPackage()
+            new NetInfoPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseAdMobPackage(),
+            new RNFirebaseAnalyticsPackage()
            // new ANPackage()
       );
     }
@@ -84,6 +94,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   @Override
   public void onCreate() {
     super.onCreate();
+    MobileAds.initialize(this, "ca-app-pub-7847407199304521~7887584025");
     SoLoader.init(this, /* native exopackage */ false);
 
     String id = "my_channel_id";					// The id of the channel. 
